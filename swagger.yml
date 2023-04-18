@@ -1,0 +1,158 @@
+info:
+  title: My api
+  version: '1.0'
+paths:
+  /api/file/{filename}:
+    get:
+      operationId: getFile
+      tags:
+        - File
+      description: Get file by filename
+      summary: Get file
+      parameters:
+        - name: filename
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Get file success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/file:
+    post:
+      operationId: uploadFile
+      tags:
+        - File
+      description: Upload file
+      summary: Upload file
+      parameters:
+        - name: hl
+          in: path
+          schema: &ref_0
+            type: string
+            enum:
+              - ko
+              - en
+              - vi
+            default: en
+      requestBody:
+        description: Upload multiple file
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Parameters fail
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/image/{filename}:
+    get:
+      operationId: getImage
+      tags:
+        - Image
+      description: Get image by filename
+      summary: Get image
+      parameters:
+        - name: filename
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Get image success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/image:
+    post:
+      operationId: uploadImage
+      tags:
+        - Image
+      description: Upload image
+      summary: Upload image
+      parameters:
+        - name: hl
+          in: path
+          schema: *ref_0
+      requestBody:
+        description: Upload multiple image
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Parameters fail
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+tags:
+  - name: File
+  - name: Image
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Sorry! Something went wrong.
+        type:
+          type: string
+          description: Error message
+          example: router_exception_something_went_wrong
+        code:
+          type: number
+          description: Error code
+          example: 500
+      required:
+        - message
+        - type
+        - code
+      description: Error Response`
+  parameters: {}
+openapi: 3.0.0
+externalDocs:
+  url: My url

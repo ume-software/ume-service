@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_WITH_SCHEMA")
+}
+
+model User {
+  id             String           @id @default(uuid()) @map("id")
+  createdAt      DateTime?        @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  loginType      LoginType?       @map("logint_type")
+  provider       Provider?
+  CoinHistory    CoinHistory[]
+  BookingHistory BookingHistory[]
+  Vote           Vote[]
+
+  @@map("user")
+}
+
+model Provider {
+  id             String           @id @default(uuid()) @map("id")
+  createdAt      DateTime?        @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  user           User             @relation(fields: [userId], references: [id])
+  userId         String           @unique @map("user_id")
+  name           String?          @map("name")
+  avatarUrl      String?          @map("avatar_url")
+  voiceUrl       String?          @map("voice_url")
+  description    String?          @map("description") @db.Text()
+  providerSkills ProviderSkill[]
+  BookingHistory BookingHistory[]
+
+  @@map("provider")
+}
+
+model Skill {
+  id             String          @id @default(uuid()) @map("id")
+  createdAt      DateTime?       @default(now()) @map("created_at")
+  updatedAt      DateTime?       @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
+  name           String?         @map("name")
+  imageUrl       String?         @map("image_url")
+  providerSkills ProviderSkill[]
+
+  @@map("skill")
+}
+
+model ProviderSkill {
+  id          String        @id @default(uuid()) @map("id")
+  createdAt   DateTime?     @default(now()) @map("created_at")
+  updatedAt   DateTime?     @updatedAt @map("updated_at")
+  deletedAt   DateTime?     @map("deleted_at")
+  provider    Provider      @relation(fields: [providerId], references: [id])
+  providerId  String        @unique @map("user_id")
+  skill       Skill         @relation(fields: [skillId], references: [id])
+  skillId     String        @unique @map("skill_id")
+  BookingCost BookingCost[]
+
+  @@map("provider_skill")
+}
+
+model BookingCost {
+  id              String        @id @default(uuid()) @map("id")
+  createdAt       DateTime?     @default(now()) @map("created_at")
+  updatedAt       DateTime?     @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
+  providerSkill   ProviderSkill @relation(fields: [providerSkillId], references: [id])
+  providerSkillId String        @unique @map("provider_skill_id")
+  startTimeOfDay  String?       @map("start_time_of_day")
+  endTimeOfDay    String?       @map("end_time_of_day")
+  amount          Float?        @map("amount")
+
+  @@map("booking_cost")
+}
+
+model CoinHistory {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String    @map("user_id")
+  coinType  CoinType?
+  amount    Float?    @map("amount")
+
+  @@map("coin_history")
+}
+
+model BookingHistory {
+  id         String    @id @default(uuid()) @map("id")
+  createdAt  DateTime? @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  booker     User?     @relation(fields: [bookerId], references: [id])
+  bookerId   String?   @map("booker_id")
+  provider   Provider? @relation(fields: [providerId], references: [id])
+  providerId String?   @map("provider_id")
+  Vote       Vote[]
+
+  @@map("booking_history")
+}
+
+model Vote {
+  id          String         @id @default(uuid()) @map("id")
+  createdAt   DateTime?      @default(now()) @map("created_at")
+  updatedAt   DateTime?      @updatedAt @map("updated_at")
+  deletedAt   DateTime?      @map("deleted_at")
+  booker      User           @relation(fields: [bookerId], references: [id])
+  bookerId    String         @map("booker_id")
+  booking     BookingHistory @relation(fields: [bookingId], references: [id])
+  bookingId   String         @map("booking_id")
+  amountStart Int?           @map("amount_start")
+
+  @@map("vote_history")
+}
+
+enum CoinType {
+  SPEND_BOOKING
+  SPEND_GIFT
+  SPEND_DONATE
+  GET_BOOKING
+  GET_DONATE
+  GET_GIFT
+  BUY_COIN
+  GET_MISSION
+  WITHDRAW
+  ADMIN
+}
+
+enum LoginType {
+  INAPP
+  FACEBOOK
+  GOOGLE
+  KAKAO
+  APPLE
+  PHONE
+}
