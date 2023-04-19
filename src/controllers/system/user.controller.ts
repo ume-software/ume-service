@@ -15,8 +15,9 @@ export class UserController extends BaseController {
     service: UserService
     async sync(req: Request, res: Response) {
         const userCreateInput: Prisma.UserCreateInput = {
-            ...req.body.data
+            ...req.body
         }
+
         const result = await userService.upsertById(userCreateInput)
         this.onEncryptSuccess(res, result)
     }
