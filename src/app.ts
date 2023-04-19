@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import api from "@/controllers/router";
-import { loggerMiddleware, morganMiddleware, parseRequestMiddleware, queryPrismaMiddleware } from './middlewares';
+import { decryptMiddleware, loggerMiddleware, morganMiddleware, parseRequestMiddleware, queryPrismaMiddleware } from './middlewares';
 import { config } from './configs';
 import * as path from "path";
 // import * as swagger from 'decorators';
@@ -45,6 +45,7 @@ export class App {
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(parseRequestMiddleware.run());
         this.app.use(queryPrismaMiddleware.run());
+        this.app.use('/system', decryptMiddleware.run());
     }
 
     public init(port = config.server.port) {

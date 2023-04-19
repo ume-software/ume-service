@@ -1,3 +1,5 @@
+import { config } from '@/configs'
+import axios, { CreateAxiosDefaults } from 'axios'
 import * as _ from 'lodash'
 import moment from 'moment'
 export class UtilService {
@@ -190,7 +192,12 @@ export class UtilService {
   isEmpty(val: any) {
     return (val === undefined || val == undefined || val.length <= 0) ? true : false;
   }
+  isObject(val: any) {
+    return typeof val === 'object' &&
+      !Array.isArray(val) &&
+      val !== null
 
+  }
   allEmpty(...val: any) {
     for (const item of val) {
       if (item !== undefined && item !== undefined) return false;
@@ -256,5 +263,12 @@ export class UtilService {
       }
       return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
+  }
+
+  fetch(baseURL = config.service.identity.url, configAxios: CreateAxiosDefaults<any> = {
+    timeout: 1000
+  }) {
+    configAxios.baseURL = baseURL;
+    return axios.create(configAxios);
   }
 }

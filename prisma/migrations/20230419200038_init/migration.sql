@@ -1,12 +1,16 @@
 -- CreateEnum
 CREATE TYPE "CoinType" AS ENUM ('SPEND_BOOKING', 'SPEND_GIFT', 'SPEND_DONATE', 'GET_BOOKING', 'GET_DONATE', 'GET_GIFT', 'BUY_COIN', 'GET_MISSION', 'WITHDRAW', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "LoginType" AS ENUM ('INAPP', 'FACEBOOK', 'GOOGLE', 'KAKAO', 'APPLE', 'PHONE');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
     "deleted_at" TIMESTAMP(3),
+    "login_type" "LoginType",
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );

@@ -1,2 +1,0 @@
--- CreateEnum
-CREATE TYPE "LoginType" AS ENUM ('INAPP', 'FACEBOOK', 'GOOGLE', 'KAKAO', 'APPLE', 'PHONE');

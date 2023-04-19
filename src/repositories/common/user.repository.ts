@@ -26,6 +26,24 @@ export class UserRepository extends BasePrismaRepository {
         }
 
     }
+    async upsertById(userCreateInput: Prisma.UserCreateInput): Promise<User> {
+        let user = await this.prisma.user.findFirst({ where: { id: userCreateInput.id!! } })
+        if (!user) {
+            user = await this.prisma.user.create({
+                data: userCreateInput
+            })
+        } else {
+            user = await this.prisma.user.update({
+                where: {
+                    id: userCreateInput.id!!
+                },
+                data: userCreateInput
+            })
+        }
+        return user
+
+    }
+
 
     async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
         return await this.prisma.user.create({ data: userCreateInput })

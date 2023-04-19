@@ -147,3 +147,4 @@ openapi/
 images/
 files/
 openapi/
+*.pem

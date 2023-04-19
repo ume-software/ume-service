@@ -9,6 +9,9 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         super(userRepository);
     }
 
+    async upsertById(userCreateInput: Prisma.UserCreateInput): Promise<User> {
+        return await this.repository.upsertById(userCreateInput)
+    }
     async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
         return await this.repository.create(userCreateInput);
     }
@@ -17,5 +20,5 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         return await this.repository.findOne(query);
     }
 
-    
+
 }

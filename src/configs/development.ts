@@ -13,7 +13,15 @@ export default {
         is_localhost: process.env["DEV_IS_LOCALHOST"] == 'true',
         logger: process.env["DEV_LOGGER"] ? JSON.parse(`${process.env["DEV_LOGGER"]}`) : [],
         path_images: 'images',
-        path_files: 'files'
+        path_files: 'files',
+        public_key: process.env["DEV_PATH_PUBLIC_KEY"] || "booking_public_key.pem",
+        private_key: process.env["DEV_PATH_PRIVATE_KEY"] || "booking_private_key.pem",
+    },
+    service: {
+        identity: {
+            url: process.env["DEV_URL_IDENTITY_SERVICE"] || "http://localhost:5000",
+            public_key: process.env["DEV_INDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem"
+        }
     },
     socket: {
         port: process.env["DEV_PORT_SOCKET"] || 8686
