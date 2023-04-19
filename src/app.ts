@@ -7,6 +7,7 @@ import * as path from "path";
 import "reflect-metadata";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger/swagger.config';
+import prisma from './models/base.prisma';
 export class App {
     constructor() {
         this.app = express();
@@ -52,6 +53,9 @@ export class App {
         this.app.listen(port, () => {
             return console.log(`Express is listening at http://localhost:${port}`);
         });
+        this.app.on('close', async () => {
+            await prisma.$disconnect()
+        })
     }
 
 }

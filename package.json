@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "jest --env=node --color",
-    "build": "tsc --build",
+    "build": "npm run prisma:generate && tsc --build",
     "start": "ts-node build/index.js",
     "lint": "eslint . --fix",
     "build:watch": "tsc --build --watch",
