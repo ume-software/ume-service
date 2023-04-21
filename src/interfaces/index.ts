@@ -2,7 +2,6 @@
 
 // Error Interface
 export interface IHLErrorResponse {
-  ko: string,
   en: string,
   vi: string
   [x: string]: any

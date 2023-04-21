@@ -12,6 +12,7 @@ import { FileService } from "./api/file.service";
 import { BcryptService } from "./common/bcrypt.service";
 import { FirebaseService } from "./common/firebase.service";
 import { CryptoService } from "./common/crypto.service";
+import { SkillService } from "./api/v1/skill.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -22,6 +23,9 @@ const bcryptService = new BcryptService();
 const cryptoService = new CryptoService();
 const errorService = new ErrorService();
 const firebaseService = new FirebaseService();
+
+//=============
+const skillService = new SkillService();
 const userService = new UserService();
 
 export {
@@ -35,7 +39,8 @@ export {
   fileService,
   firebaseService,
   // CRUD
-  userService
+  userService,
+  skillService
 
 
 };

@@ -1,10 +1,10 @@
-import { ERole } from "@/enums/role.enum"
+
+import { EAccountType } from "@/enums/accountType.enum"
 import { LoginType } from "@prisma/client"
 
 export interface IAccessToken {
     id: string
-    roles: Array<ERole>,
     loginType: LoginType,
-    type: "USER" | "ADMIN",
+    type: EAccountType,
     [key: string]: any
 }

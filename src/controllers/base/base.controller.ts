@@ -4,11 +4,11 @@ import { IHLErrorResponse } from '../../interfaces';
 import { cryptoService, errorService } from '../../services';
 import * as _ from 'lodash';
 import { IAccessToken } from '@/interfaces/auth/accessToken.interface';
-import { authMiddleware, authOrUnAuthMiddleware, roleMiddleware } from '@/middlewares';
-import { ERole } from '@/enums/role.enum';
+import { accountTypeMiddleware, authMiddleware, authOrUnAuthMiddleware } from '@/middlewares';
 import { ICrudOptionPrisma } from '@/services/base/basePrisma.service';
 import { config } from '@/configs';
 import { UNLIMITED } from '@/middlewares/queryPrisma.middleware';
+import { EAccountType } from '@/enums/accountType.enum';
 
 
 export interface Request extends express.Request {
@@ -222,7 +222,7 @@ export class BaseController {
         return [authOrUnAuthMiddleware.run()];
     }
 
-    roleMiddlewares(option: ERole[]): any[] {
-        return [roleMiddleware.run(option)]
+    accountTypeMiddlewares(option: EAccountType): any[] {
+        return [accountTypeMiddleware.run(option)]
     }
 }

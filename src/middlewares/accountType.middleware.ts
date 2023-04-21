@@ -2,11 +2,12 @@ import { BaseMiddleware } from "./base.middleware";
 import * as express from 'express';
 import { Request, Response } from "@/controllers/base/base.controller";
 import { errorService, tokenService } from "@/services";
-import { ERole } from "@/enums/role.enum";
+import { EAccountType } from "@/enums/accountType.enum";
+
 
 const HEADERS = "authorization";
-export class RoleMiddleware extends BaseMiddleware {
-    override async use(req: Request, _res: Response, next: express.NextFunction, option?: ERole[]) {
+export class AccountTypeMiddleware extends BaseMiddleware {
+    override async use(req: Request, _res: Response, next: express.NextFunction, option?: EAccountType[]) {
         if (!req.tokenInfo) {
             if (req.headers[HEADERS] !== "undefined" && typeof req.headers[HEADERS] != 'undefined') {
                 const bearerHeader = req.headers[HEADERS].toString();
@@ -27,10 +28,9 @@ export class RoleMiddleware extends BaseMiddleware {
             }
         }
         if (!option?.length) {
-            const checkRoles = req.tokenInfo.roles.some((value: ERole) =>
-                option?.includes(value)
-            )
-            if(!checkRoles){
+
+            const checkAccountTypes = option?.includes(req.tokenInfo.type)
+            if (!checkAccountTypes) {
                 throw errorService.auth.unauthorized();
             }
         }
