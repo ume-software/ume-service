@@ -26,6 +26,15 @@ export class ProviderRepository extends BasePrismaRepository {
         }
 
     }
+
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<Provider> {
+        return await this.prisma.provider.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(providerUpdateInput: Prisma.ProviderUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.provider.updateMany({ data: providerUpdateInput, where: query.where })
+    }
+
     async create(providerCreateInput: Prisma.ProviderCreateInput): Promise<Provider> {
         return await this.prisma.provider.create({ data: providerCreateInput })
     }
@@ -34,8 +43,15 @@ export class ProviderRepository extends BasePrismaRepository {
         return await this.prisma.provider.findFirst(query)
     }
 
-    async delete(providerWhereInput: Prisma.ProviderWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.provider.deleteMany({ where: providerWhereInput })
+    async findMany(query?: ICrudOptionPrisma): Promise<Provider[]> {
+        return await this.prisma.provider.findMany(query)
     }
 
+    async deleteById(id: string): Promise<Provider> {
+        return await this.prisma.provider.delete({ where: { id } })
+    }
+
+    async deleteMany(providerWhereInput: Prisma.ProviderWhereInput): Promise<Prisma.BatchPayload> {
+        return await this.prisma.provider.deleteMany({ where: providerWhereInput })
+    }
 }

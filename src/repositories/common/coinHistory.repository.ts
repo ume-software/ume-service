@@ -26,6 +26,15 @@ export class CoinHistoryRepository extends BasePrismaRepository {
         }
 
     }
+
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<CoinHistory> {
+        return await this.prisma.coinHistory.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(CoinHistoryUpdateInput: Prisma.CoinHistoryUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.coinHistory.updateMany({ data: CoinHistoryUpdateInput, where: query.where })
+    }
+
     async create(coinHistoryCreateInput: Prisma.CoinHistoryCreateInput): Promise<CoinHistory> {
         return await this.prisma.coinHistory.create({ data: coinHistoryCreateInput })
     }
@@ -34,8 +43,15 @@ export class CoinHistoryRepository extends BasePrismaRepository {
         return await this.prisma.coinHistory.findFirst(query)
     }
 
-    async delete(coinHistoryWhereInput: Prisma.CoinHistoryWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.coinHistory.deleteMany({ where: coinHistoryWhereInput })
+    async findMany(query?: ICrudOptionPrisma): Promise<CoinHistory[]> {
+        return await this.prisma.coinHistory.findMany(query)
     }
 
+    async deleteById(id: string): Promise<CoinHistory> {
+        return await this.prisma.coinHistory.delete({ where: { id } })
+    }
+
+    async deleteMany(coinHistoryWhereInput: Prisma.CoinHistoryWhereInput): Promise<Prisma.BatchPayload> {
+        return await this.prisma.coinHistory.deleteMany({ where: coinHistoryWhereInput })
+    }
 }

@@ -26,6 +26,17 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         }
 
     }
+
+ 
+
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<BookingHistory> {
+        return await this.prisma.bookingHistory.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(bookingHistoryUpdateInput: Prisma.BookingHistoryUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.bookingHistory.updateMany({ data: bookingHistoryUpdateInput, where: query.where })
+    }
+
     async create(bookingHistoryCreateInput: Prisma.BookingHistoryCreateInput): Promise<BookingHistory> {
         return await this.prisma.bookingHistory.create({ data: bookingHistoryCreateInput })
     }
@@ -34,8 +45,11 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         return await this.prisma.bookingHistory.findFirst(query)
     }
 
-    async delete(bookingHistoryWhereInput: Prisma.BookingHistoryWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.bookingHistory.deleteMany({ where: bookingHistoryWhereInput })
+    async deleteById(id: string): Promise<BookingHistory> {
+        return await this.prisma.bookingHistory.delete({ where: { id } })
     }
 
+    async deleteMany(bookingHistoryWhereInput: Prisma.BookingHistoryWhereInput): Promise<Prisma.BatchPayload> {
+        return await this.prisma.bookingHistory.deleteMany({ where: bookingHistoryWhereInput })
+    }
 }

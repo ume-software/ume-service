@@ -26,6 +26,16 @@ export class ProviderSkillRepository extends BasePrismaRepository {
         }
 
     }
+
+
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<ProviderSkill> {
+        return await this.prisma.providerSkill.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(providerSkillUpdateInput: Prisma.ProviderSkillUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.providerSkill.updateMany({ data: providerSkillUpdateInput, where: query.where })
+    }
+
     async create(providerSkillCreateInput: Prisma.ProviderSkillCreateInput): Promise<ProviderSkill> {
         return await this.prisma.providerSkill.create({ data: providerSkillCreateInput })
     }
@@ -34,8 +44,15 @@ export class ProviderSkillRepository extends BasePrismaRepository {
         return await this.prisma.providerSkill.findFirst(query)
     }
 
-    async delete(providerSkillWhereInput: Prisma.ProviderSkillWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.providerSkill.deleteMany({ where: providerSkillWhereInput })
+    async findMany(query?: ICrudOptionPrisma): Promise<ProviderSkill[]> {
+        return await this.prisma.providerSkill.findMany(query)
     }
 
+    async deleteById(id: string): Promise<ProviderSkill> {
+        return await this.prisma.providerSkill.delete({ where: { id } })
+    }
+
+    async deleteMany(providerSkillWhereInput: Prisma.ProviderSkillWhereInput): Promise<Prisma.BatchPayload> {
+        return await this.prisma.providerSkill.deleteMany({ where: providerSkillWhereInput })
+    }
 }

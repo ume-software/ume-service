@@ -43,6 +43,10 @@ export class SkillRepository extends BasePrismaRepository {
         return await this.prisma.skill.findFirst(query)
     }
 
+    async findMany(query?: ICrudOptionPrisma): Promise<Skill[]> {
+        return await this.prisma.skill.findMany(query)
+    }
+
     async deleteById(id: string): Promise<Skill> {
         return await this.prisma.skill.delete({ where: { id } })
     }

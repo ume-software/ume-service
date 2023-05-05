@@ -45,6 +45,14 @@ export class UserRepository extends BasePrismaRepository {
     }
 
 
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<User> {
+        return await this.prisma.user.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(userUpdateInput: Prisma.UserUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.user.updateMany({ data: userUpdateInput, where: query.where })
+    }
+
     async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
         return await this.prisma.user.create({ data: userCreateInput })
     }
@@ -53,7 +61,15 @@ export class UserRepository extends BasePrismaRepository {
         return await this.prisma.user.findFirst(query)
     }
 
-    async delete(userWhereInput: Prisma.UserWhereInput): Promise<Prisma.BatchPayload> {
+    async findMany(query?: ICrudOptionPrisma): Promise<User[]> {
+        return await this.prisma.user.findMany(query)
+    }
+
+    async deleteById(id: string): Promise<User> {
+        return await this.prisma.user.delete({ where: { id } })
+    }
+
+    async deleteMany(userWhereInput: Prisma.UserWhereInput): Promise<Prisma.BatchPayload> {
         return await this.prisma.user.deleteMany({ where: userWhereInput })
     }
 

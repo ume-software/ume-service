@@ -27,12 +27,12 @@ export class BookingCostRepository extends BasePrismaRepository {
 
     }
 
-    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput) {
-        return await this.prisma.skill.update({ data: bookingCostUpdateInput, where: { id } })
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<BookingCost> {
+        return await this.prisma.bookingCost.update({ data: bookingCostUpdateInput, where: { id } })
     }
 
-    async update(bookingCostUpdateInput: Prisma.BookingCostUpdateInput, query: ICrudOptionPrisma) {
-        return await this.prisma.skill.update({ data: bookingCostUpdateInput, where: query.where })
+    async updateMany(bookingCostUpdateInput: Prisma.BookingCostUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.bookingCost.updateMany({ data: bookingCostUpdateInput, where: query.where })
     }
 
     async create(bookingCostCreateInput: Prisma.BookingCostCreateInput): Promise<BookingCost> {
@@ -42,7 +42,11 @@ export class BookingCostRepository extends BasePrismaRepository {
     async findOne(query?: ICrudOptionPrisma): Promise<BookingCost | null> {
         return await this.prisma.bookingCost.findFirst(query)
     }
-    
+
+    async findMany(query?: ICrudOptionPrisma): Promise<BookingCost[]> {
+        return await this.prisma.bookingCost.findMany(query)
+    }
+
     async deleteById(id: string): Promise<BookingCost> {
         return await this.prisma.bookingCost.delete({ where: { id } })
     }

@@ -26,6 +26,16 @@ export class VoteRepository extends BasePrismaRepository {
         }
 
     }
+   
+
+    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<Vote> {
+        return await this.prisma.vote.update({ data: bookingCostUpdateInput, where: { id } })
+    }
+
+    async updateMany(voteUpdateInput: Prisma.VoteUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
+        return await this.prisma.vote.updateMany({ data: voteUpdateInput, where: query.where })
+    }
+
     async create(voteCreateInput: Prisma.VoteCreateInput): Promise<Vote> {
         return await this.prisma.vote.create({ data: voteCreateInput })
     }
@@ -34,8 +44,15 @@ export class VoteRepository extends BasePrismaRepository {
         return await this.prisma.vote.findFirst(query)
     }
 
-    async delete(voteWhereInput: Prisma.VoteWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.vote.deleteMany({ where: voteWhereInput })
+    async findMany(query?: ICrudOptionPrisma): Promise<Vote[]> {
+        return await this.prisma.vote.findMany(query)
     }
 
+    async deleteById(id: string): Promise<Vote> {
+        return await this.prisma.vote.delete({ where: { id } })
+    }
+
+    async deleteMany(voteWhereInput: Prisma.VoteWhereInput): Promise<Prisma.BatchPayload> {
+        return await this.prisma.vote.deleteMany({ where: voteWhereInput })
+    }
 }
