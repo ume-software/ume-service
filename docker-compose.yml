@@ -31,8 +31,6 @@ services:
       - postgres-booking
     ports:
       - "5997:5997"
-    environment:
-      NODE_ENV: docker
     restart: always
 
 volumes:
