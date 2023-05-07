@@ -1,0 +1,44 @@
+version: "3"
+services:
+  postgres-booking:
+    image: postgres:14.1-alpine
+    container_name: postgres-booking
+    hostname: postgres-booking
+    ports:
+      - 6997:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: booking_ume_db
+    networks:
+      - ume-booking-server
+      - shared-network
+    volumes:
+      - postgres-booking-data:/var/lib/postgresql/data
+    restart: unless-stopped
+  booking-server:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: booking-server
+    volumes:
+      - .:/var/www
+    networks:
+      - ume-booking-server
+      - shared-network
+    depends_on:
+      - postgres-booking
+    ports:
+      - "5997:5997"
+    environment:
+      NODE_ENV: docker
+    restart: always
+
+volumes:
+  postgres-booking-data:
+networks:
+  ume-booking-server:
+  shared-network:
+    external: true
+    name: shared-network
