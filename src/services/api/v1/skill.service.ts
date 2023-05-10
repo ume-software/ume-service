@@ -10,6 +10,14 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
     constructor() {
         super(skillRepository);
     }
+    async findAll(query?: ICrudOptionPrisma): Promise<Skill> {
+        const result = await this.repository.findOne(query);
+        if (!result) {
+            throw errorService.database.queryFail(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED)
+        }
+        return result;
+    }
+
 
     async create(SkillCreateInput: Prisma.SkillCreateInput): Promise<Skill> {
         return await this.repository.create(SkillCreateInput);

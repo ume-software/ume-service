@@ -37,6 +37,7 @@ const swaggerData: any = swagger.swaggerData({
 
   },
 })
+
 if (config.server.is_localhost) {
   fs.writeFileSync('swagger.yml', yaml.dump(swaggerData));
 

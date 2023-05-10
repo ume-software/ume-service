@@ -106,6 +106,10 @@ paths:
             schema:
               type: object
               properties:
+                width:
+                  type: integer
+                height:
+                  type: integer
                 files:
                   type: array
                   items:
@@ -122,11 +126,172 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
-  /api/v1/auth: {}
+  /api/v1/provider:
+    post:
+      operationId: becomeProvider
+      tags:
+        - Provider
+      description: Register become provider
+      summary: Register become provider
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BecomeProviderRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BecomeProviderResponse'
+          description: Register success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/providerSkill:
+    post:
+      operationId: createProviderSkill
+      tags:
+        - ProviderSkill
+      description: Register become providerSkill
+      summary: Register become providerSkill
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderSkillRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSkillRequest'
+          description: Register success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/skill:
+    get:
+      operationId: findAll
+      tags:
+        - Skill
+      description: Create Skill
+      summary: Get all skills
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+        - name: select
+          in: query
+          schema:
+            type: string
+            default: '["$all"]'
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema:
+            type: string
+            default: '{}'
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: limit
+          in: query
+          schema:
+            type: string
+            default: unlimited
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema:
+            type: string
+            default: '1'
+        - name: order
+          in: query
+          schema:
+            type: string
+            default: '[]'
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSkillRequest'
+          description: Create Skill success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+    post:
+      operationId: createSkill
+      tags:
+        - Skill
+      description: Create Skill
+      summary: Create Skill
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSkillRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSkillRequest'
+          description: Create Skill success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
 tags:
   - name: File
   - name: Image
-  - name: Auth
+  - name: Provider
+  - name: ProviderSkill
+  - name: Skill
 components:
   securitySchemes:
     bearerAuth:
@@ -134,6 +299,155 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    BecomeProviderRequest:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: Slug url
+          example: do_tran_minh_chu
+        name:
+          type: string
+          description: Display name of provider
+          example: Đỗ Trần Minh Chu
+        avatarUrl:
+          type: string
+          description: Avatart Url of provider
+          example: >-
+            https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png
+        voiceUrl:
+          type: string
+          description: Url mp3
+          example: >-
+            https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3
+        description:
+          type: string
+          description: Description
+          example: This is description about me <3
+      required:
+        - slug
+        - name
+        - avatarUrl
+        - voiceUrl
+        - description
+      description: User registor become provider
+    BaseResponse:
+      type: object
+      properties:
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+      required: []
+    BecomeProviderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        slug:
+          type: string
+          description: Slug url
+          example: do_tran_minh_chu
+        name:
+          type: string
+          description: Display name of provider
+          example: Đỗ Trần Minh Chu
+        avatarUrl:
+          type: string
+          description: Avatart Url of provider
+          example: >-
+            https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png
+        voiceUrl:
+          type: string
+          description: Url mp3
+          example: >-
+            https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3
+        description:
+          type: string
+          description: Description
+          example: This is description about me <3
+      required:
+        - id
+        - userId
+        - slug
+        - name
+        - avatarUrl
+        - voiceUrl
+        - description
+      description: User registor become provider response
+    BookingCostProviderSkillRequest:
+      type: object
+      properties:
+        startTimeOfDay:
+          type: string
+          description: The start time that this charge is in effect
+          example: '09:00'
+        endTimeOfDay:
+          type: string
+          description: The end time that this charge is in effect
+          example: '15:00'
+        amount:
+          type: number
+          description: Amount coin
+          example: 10
+      required:
+        - startTimeOfDay
+        - endTimeOfDay
+        - amount
+      description: Booking cost provider skill request
+    ProviderSkillRequest:
+      type: object
+      properties:
+        skillId:
+          type: string
+          description: Skill Id
+          example: 9fa9f3c5-640a-407f-b64f-12ff6f55e15c
+        defaultCost:
+          type: number
+          description: Default cost
+          example: 8
+        bookingCosts:
+          type: array
+          description: Booking Cost
+          example:
+            - startTimeOfDay: '09:00'
+              endTimeOfDay: '15:00'
+              amount: 10
+          items:
+            $ref: '#/components/schemas/BookingCostProviderSkillRequest'
+      required:
+        - skillId
+        - defaultCost
+      description: Provider skill request
+    CreateSkillRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Skill name
+          example: Liên Minh Huyền Thoại
+        imageUrl:
+          type: string
+          description: Image url of skill
+          example: >-
+            https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg
+      required:
+        - name
+        - imageUrl
+      description: Create skill request
     ErrorResponse:
       type: object
       properties:

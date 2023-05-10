@@ -105,6 +105,12 @@ export class ImageController extends BaseController {
           schema: {
             type: SwaggerDefinitionConstant.Model.Type.OBJECT,
             properties: {
+              width: {
+                type: SwaggerDefinitionConstant.Model.Property.Type.INTEGER,
+              },
+              height: {
+                type: SwaggerDefinitionConstant.Model.Property.Type.INTEGER,
+              },
               files: {
                 type: SwaggerDefinitionConstant.Model.Type.ARRAY,
                 items: {
@@ -113,15 +119,8 @@ export class ImageController extends BaseController {
                     SwaggerDefinitionConstant.Model.Property.Format.BINARY,
                 },
               },
-              width: {
-                type: SwaggerDefinitionConstant.Model.Property.Type.NUMBER,
-                required: false,
-              },
-              height: {
-                type: SwaggerDefinitionConstant.Model.Property.Type.NUMBER,
-                required: false,
-              }
             },
+ 
           },
         },
       },

@@ -1,72 +1,92 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
-import { IApiParameters, SwaggerDefinitionConstant } from "express-swagger-typescript";
+import {
+  IApiParameters,
+  SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 
 export const hostLanguageParameter: IApiParameters = {
-    hl: {
-        name: "hl",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            enum: Object.values(IHostLanguage),
-            default: IHostLanguage.en,
-        }
-    }
-}
+  hl: {
+    name: "hl",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      enum: Object.values(IHostLanguage),
+      default: IHostLanguage.en,
+    },
+  },
+};
 
-
-export const fieldsParameter: IApiParameters = {
-    fields: {
-        name: "fields",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: '["$all"]',
-        }
-    }
-}
+export const selectParameter: IApiParameters = {
+  select: {
+    name: "select",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: '["$all"]',
+    },
+    description: `
+        Example : select=["$all"]
+    `,
+  },
+};
 
 export const whereParameter: IApiParameters = {
-    where: {
-        name: "where",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: '{}',
-        }
-    }
-}
+  where: {
+    name: "where",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "{}",
+    },
+    description: `
+        Example : where={"name":{"contains":"Minh"}}
+    `,
+  },
+};
 
 export const limitParameter: IApiParameters = {
-    limit: {
-        name: "limit",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: 'unlimited',
-        }
-    }
-}
+  limit: {
+    name: "limit",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "unlimited",
+    },
+    description: `
+        Example : limit=50
+                : limit=unlimited
+    `,
+  },
+};
 export const pageParameter: IApiParameters = {
-    page: {
-        name: "page",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: '1',
-        }
-    }
-}
+  page: {
+    name: "page",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "1",
+    },
+  },
+};
 export const orderParameter: IApiParameters = {
-    order: {
-        name: "order",
-        required: false,
-        schema: {
-            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: '[]',
-        },
-        description:`
-        In Prisma : [{"updatedAt":"asc"}]
-        In sequelize: [["updateAt","asc"]]
-        `
-    }
-}
+  order: {
+    name: "order",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "[]",
+    },
+    description: `
+        Example : order=[{"updatedAt":"asc"}]
+        `,
+  },
+};
+
+export const queryParameters = {
+  ...hostLanguageParameter,
+  ...selectParameter,
+  ...whereParameter,
+  ...limitParameter,
+  ...pageParameter,
+  ...orderParameter,
+};

@@ -17,6 +17,7 @@ services:
       - postgres-booking-data:/var/lib/postgresql/data
     restart: unless-stopped
   booking-server:
+    image: dotranminhchu/ume-booking-service
     stdin_open: true
     build:
       context: .

@@ -1,60 +1,102 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import { BasePrismaRepository } from "../base/basePrisma.repository"
+import {
+  BasePrismaRepository,
+  PrismaTransation,
+} from "../base/basePrisma.repository";
 import { Prisma, BookingCost } from "@prisma/client";
-
-
-
 export class BookingCostRepository extends BasePrismaRepository {
-    constructor() {
-        super()
-    }
+  constructor() {
+    super();
+  }
 
+  async findAndCountAll(
+    query?: ICrudOptionPrisma,
+    tx: PrismaTransation | any = this.prisma
+  ): Promise<{
+    row: BookingCost[];
+    count: number;
+  }> {
+    const [row, count] = await tx.$transaction([
+      tx.bookingCost.findMany(query),
+      tx.bookingCost.count({
+        where: query?.where,
+      }),
+    ]);
+    return {
+      row,
+      count,
+    };
+  }
 
-    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: BookingCost[];
-        count: number;
-    }> {
-        const [row, count] = await this.prisma.$transaction([
-            this.prisma.bookingCost.findMany(query),
-            this.prisma.bookingCost.count({
-                where: query?.where
-            })
-        ]);
-        return {
-            row,
-            count
-        }
+  async updateById(
+    id: string,
+    bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BookingCost> {
+    return await tx.bookingCost.update({
+      data: bookingCostUpdateInput,
+      where: { id },
+    });
+  }
 
-    }
+  async updateMany(
+    bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+    query: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
+    return await tx.bookingCost.updateMany({
+      data: bookingCostUpdateInput,
+      where: query.where,
+    });
+  }
 
-    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<BookingCost> {
-        return await this.prisma.bookingCost.update({ data: bookingCostUpdateInput, where: { id } })
-    }
+  async create(
+    bookingCostCreateInput: Prisma.BookingCostCreateInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BookingCost> {
+    return await tx.bookingCost.create({
+      data: bookingCostCreateInput,
+    });
+  }
 
-    async updateMany(bookingCostUpdateInput: Prisma.BookingCostUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
-        return await this.prisma.bookingCost.updateMany({ data: bookingCostUpdateInput, where: query.where })
-    }
+  async createMany(
+    bookingCostCreateManyInput: Prisma.BookingCostCreateManyInput[],
+    skipDuplicates = false,
+    tx: PrismaTransation = this.prisma
+  ) {
+    return await tx.bookingCost.createMany({
+      data: bookingCostCreateManyInput,
+      skipDuplicates,
+    });
+  }
 
-    async create(bookingCostCreateInput: Prisma.BookingCostCreateInput): Promise<BookingCost> {
-        return await this.prisma.bookingCost.create({ data: bookingCostCreateInput })
-    }
+  async findOne(
+    query?: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BookingCost | null> {
+    return await tx.bookingCost.findFirst(query);
+  }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<BookingCost | null> {
-        return await this.prisma.bookingCost.findFirst(query)
-    }
+  async findMany(
+    query?: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BookingCost[]> {
+    return await tx.bookingCost.findMany(query);
+  }
 
-    async findMany(query?: ICrudOptionPrisma): Promise<BookingCost[]> {
-        return await this.prisma.bookingCost.findMany(query)
-    }
+  async deleteById(
+    id: string,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BookingCost> {
+    return await tx.bookingCost.delete({ where: { id } });
+  }
 
-    async deleteById(id: string): Promise<BookingCost> {
-        return await this.prisma.bookingCost.delete({ where: { id } })
-    }
-
-    async deleteMany(bookingCostWhereInput: Prisma.BookingCostWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.bookingCost.deleteMany({ where: bookingCostWhereInput })
-    }
-
-
-
+  async deleteMany(
+    bookingCostWhereInput: Prisma.BookingCostWhereInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Prisma.BatchPayload> {
+    return await tx.bookingCost.deleteMany({
+      where: bookingCostWhereInput,
+    });
+  }
 }

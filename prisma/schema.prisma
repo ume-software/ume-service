@@ -14,9 +14,9 @@ model User {
   deletedAt      DateTime?        @map("deleted_at")
   loginType      LoginType?       @map("login_type")
   provider       Provider?
-  CoinHistory    CoinHistory[]
-  BookingHistory BookingHistory[]
-  Vote           Vote[]
+  coinHistory    CoinHistory[]
+  bookingHistory BookingHistory[]
+  votes           Vote[]
 
   @@map("user")
 }
@@ -28,13 +28,13 @@ model Provider {
   deletedAt      DateTime?        @map("deleted_at")
   user           User             @relation(fields: [userId], references: [id])
   userId         String           @unique @map("user_id")
-  slug           String           @map("slug")
+  slug           String?           @map("slug")
   name           String?          @map("name")
   avatarUrl      String?          @map("avatar_url")
   voiceUrl       String?          @map("voice_url")
   description    String?          @map("description") @db.Text()
   providerSkills ProviderSkill[]
-  BookingHistory BookingHistory[]
+  bookingHistory BookingHistory[]
 
   @@map("provider")
 }
@@ -44,7 +44,7 @@ model Skill {
   createdAt      DateTime?       @default(now()) @map("created_at")
   updatedAt      DateTime?       @updatedAt @map("updated_at")
   deletedAt      DateTime?       @map("deleted_at")
-  name           String?         @map("name")
+  name           String          @map("name")
   imageUrl       String?         @map("image_url")
   providerSkills ProviderSkill[]
 
@@ -60,7 +60,8 @@ model ProviderSkill {
   providerId  String        @unique @map("user_id")
   skill       Skill         @relation(fields: [skillId], references: [id])
   skillId     String        @unique @map("skill_id")
-  BookingCost BookingCost[]
+  defaultCost Float         @map("default_cost")
+  bookingCosts BookingCost[]
 
   @@map("provider_skill")
 }
@@ -101,7 +102,7 @@ model BookingHistory {
   bookerId   String?   @map("booker_id")
   provider   Provider? @relation(fields: [providerId], references: [id])
   providerId String?   @map("provider_id")
-  Vote       Vote[]
+  votes       Vote[]
 
   @@map("booking_history")
 }

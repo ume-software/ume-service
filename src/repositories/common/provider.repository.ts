@@ -1,57 +1,82 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import { BasePrismaRepository } from "../base/basePrisma.repository"
+import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
 import { Prisma, Provider } from "@prisma/client";
 
-
-
 export class ProviderRepository extends BasePrismaRepository {
-    constructor() {
-        super()
-    }
+  constructor() {
+    super();
+  }
 
+  async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
+    row: Provider[];
+    count: number;
+  }> {
+    const [row, count] = await this.prisma.$transaction([
+      this.prisma.provider.findMany(query),
+      this.prisma.provider.count({
+        where: query?.where,
+      }),
+    ]);
+    return {
+      row,
+      count,
+    };
+  }
 
-    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: Provider[];
-        count: number;
-    }> {
-        const [row, count] = await this.prisma.$transaction([
-            this.prisma.provider.findMany(query),
-            this.prisma.provider.count({
-                where: query?.where
-            })
-        ]);
-        return {
-            row,
-            count
-        }
+  async updateById(
+    id: string,
+    bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Provider> {
+    return await tx.provider.update({
+      data: bookingCostUpdateInput,
+      where: { id },
+    });
+  }
 
-    }
+  async updateMany(
+    providerUpdateInput: Prisma.ProviderUpdateInput,
+    query: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
+    return await tx.provider.updateMany({
+      data: providerUpdateInput,
+      where: query.where,
+    });
+  }
 
-    async updateById(id: string, bookingCostUpdateInput: Prisma.BookingCostUpdateInput):Promise<Provider> {
-        return await this.prisma.provider.update({ data: bookingCostUpdateInput, where: { id } })
-    }
+  async create(
+    providerCreateInput: Prisma.ProviderCreateInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Provider> {
+    return await tx.provider.create({ data: providerCreateInput });
+  }
 
-    async updateMany(providerUpdateInput: Prisma.ProviderUpdateInput, query: ICrudOptionPrisma):Promise<Prisma.PrismaPromise<Prisma.BatchPayload>>  {
-        return await this.prisma.provider.updateMany({ data: providerUpdateInput, where: query.where })
-    }
+  async findOne(
+    query?: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Provider | null> {
+    return await tx.provider.findFirst(query);
+  }
 
-    async create(providerCreateInput: Prisma.ProviderCreateInput): Promise<Provider> {
-        return await this.prisma.provider.create({ data: providerCreateInput })
-    }
+  async findMany(
+    query?: ICrudOptionPrisma,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Provider[]> {
+    return await tx.provider.findMany(query);
+  }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
-        return await this.prisma.provider.findFirst(query)
-    }
+  async deleteById(
+    id: string,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Provider> {
+    return await tx.provider.delete({ where: { id } });
+  }
 
-    async findMany(query?: ICrudOptionPrisma): Promise<Provider[]> {
-        return await this.prisma.provider.findMany(query)
-    }
-
-    async deleteById(id: string): Promise<Provider> {
-        return await this.prisma.provider.delete({ where: { id } })
-    }
-
-    async deleteMany(providerWhereInput: Prisma.ProviderWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.provider.deleteMany({ where: providerWhereInput })
-    }
+  async deleteMany(
+    providerWhereInput: Prisma.ProviderWhereInput,
+    tx: PrismaTransation = this.prisma
+  ): Promise<Prisma.BatchPayload> {
+    return await tx.provider.deleteMany({ where: providerWhereInput });
+  }
 }

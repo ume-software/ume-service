@@ -1,55 +1,47 @@
-import { config } from '@/configs'
-import axios, { CreateAxiosDefaults } from 'axios'
-import * as _ from 'lodash'
-import moment from 'moment'
+import { config } from "@/configs";
+import axios, { CreateAxiosDefaults } from "axios";
+import * as _ from "lodash";
+import moment from "moment";
 export class UtilService {
   insertToArray(arr: any[], index: number, ...newItems: any) {
-    return [
-      ...arr.slice(0, index),
-      ...newItems,
-      ...arr.slice(index)
-    ]
+    return [...arr.slice(0, index), ...newItems, ...arr.slice(index)];
   }
 
-  async parseMessengeWithInfo(params: {
-    message: string,
-    info: any
-  }) {
-    let { message } = params
-    const { info } = params
-    const regex = /({|})/g
-    const regex2 = /({{\w+}})|({{\w+(?:\.\w+)+)}}/g
+  async parseMessengeWithInfo(params: { message: string; info: any }) {
+    let { message } = params;
+    const { info } = params;
+    const regex = /({|})/g;
+    const regex2 = /({{\w+}})|({{\w+(?:\.\w+)+)}}/g;
     if (regex.test(message)) {
-      const replaceText: RegExpMatchArray | null = message.match(regex2)
+      const replaceText: RegExpMatchArray | null = message.match(regex2);
       if (replaceText) {
         for (let item of replaceText) {
-          item = item.replace(regex, '');
+          item = item.replace(regex, "");
           message = message.replace(item, _.get(info, item));
         }
-        message = message.replace(regex, '')
+        message = message.replace(regex, "");
       }
     }
-    return message
+    return message;
   }
   async encode(data: any) {
-    const arr = this.encodeObject(data)
-    return arr.join(':')
+    const arr = this.encodeObject(data);
+    return arr.join(":");
   }
   encodeObject(data: any): any[] {
     const arr = [];
-    const keys = Object.keys(data)
+    const keys = Object.keys(data);
     for (const key of keys) {
       let str;
       let arrobj = [];
-      if (typeof (data[key]) == 'object') {
+      if (typeof data[key] == "object") {
         arrobj = this.encodeObject(data[key]);
         for (const element of arrobj) {
-          str = key + '.' + element;
+          str = key + "." + element;
           arr.push(str);
         }
-      }
-      else {
-        str = key + '=' + data[key];
+      } else {
+        str = key + "=" + data[key];
         arr.push(str);
       }
     }
@@ -58,20 +50,19 @@ export class UtilService {
   async decode(data: any) {
     const arr1 = [];
     const arr2 = [];
-    const arr = data.split(':');
+    const arr = data.split(":");
     const arrElement = [];
     for (let item of arr) {
       if (/(\.\d\.)/g.test(item)) {
         let num = item.match(/(\.\d\.)/g).join();
-        num = num.replace(/\./g, '');
-        item = item.replace(/(\.\d)/g, '[' + num + ']')
-      }
-      else if (/(\.\d)/g.test(item)) {
+        num = num.replace(/\./g, "");
+        item = item.replace(/(\.\d)/g, "[" + num + "]");
+      } else if (/(\.\d)/g.test(item)) {
         let num = item.match(/(\.\d)/g).join();
-        num = num.replace(/\./g, '');
-        item = item.replace(/(\.\d)/g, '[' + num + ']')
+        num = num.replace(/\./g, "");
+        item = item.replace(/(\.\d)/g, "[" + num + "]");
       }
-      const element = item.split('=');
+      const element = item.split("=");
       arr1.push(element[0]);
       arr2.push(element[1]);
     }
@@ -82,37 +73,90 @@ export class UtilService {
 
   convertViToEng(string: string) {
     const obj = {
-      Đ: 'D', đ: 'd', â: 'a',
-      ă: 'a', ê: 'e', ô: 'o', ơ: 'o',
-      ư: 'u',
-      á: 'a', à: 'a', ạ: 'a', ả: 'a', ã: 'a',
-      ắ: 'a', ằ: 'a', ặ: 'a', ẳ: 'a', ẵ: 'a',
-      ấ: 'a', ầ: 'a', ậ: 'a', ẩ: 'a', ẫ: 'a',
-      é: 'e', è: 'e', ẻ: 'e', ẽ: 'e', ẹ: 'e',
-      ế: 'e', ề: 'e', ể: 'e', ễ: 'e', ệ: 'e',
-      ý: 'y', ỳ: 'y', ỵ: 'y', ỷ: 'y', ỹ: 'y',
-      ú: 'u', ù: 'u', ủ: 'u', ũ: 'u', ụ: 'u',
-      ứ: 'u', ừ: 'u', ử: 'u', ữ: 'u', ự: 'u',
-      í: 'i', ì: 'i', ị: 'i', ỉ: 'i', ĩ: 'i',
-      ó: 'o', ò: 'o', ỏ: 'o', õ: 'o', ọ: 'o',
-      ố: 'o', ồ: 'o', ổ: 'o', ỗ: 'o', ộ: 'o',
-      ớ: 'o', ờ: 'o', ở: 'o', ỡ: 'o', ợ: 'o'
+      Đ: "D",
+      đ: "d",
+      â: "a",
+      ă: "a",
+      ê: "e",
+      ô: "o",
+      ơ: "o",
+      ư: "u",
+      á: "a",
+      à: "a",
+      ạ: "a",
+      ả: "a",
+      ã: "a",
+      ắ: "a",
+      ằ: "a",
+      ặ: "a",
+      ẳ: "a",
+      ẵ: "a",
+      ấ: "a",
+      ầ: "a",
+      ậ: "a",
+      ẩ: "a",
+      ẫ: "a",
+      é: "e",
+      è: "e",
+      ẻ: "e",
+      ẽ: "e",
+      ẹ: "e",
+      ế: "e",
+      ề: "e",
+      ể: "e",
+      ễ: "e",
+      ệ: "e",
+      ý: "y",
+      ỳ: "y",
+      ỵ: "y",
+      ỷ: "y",
+      ỹ: "y",
+      ú: "u",
+      ù: "u",
+      ủ: "u",
+      ũ: "u",
+      ụ: "u",
+      ứ: "u",
+      ừ: "u",
+      ử: "u",
+      ữ: "u",
+      ự: "u",
+      í: "i",
+      ì: "i",
+      ị: "i",
+      ỉ: "i",
+      ĩ: "i",
+      ó: "o",
+      ò: "o",
+      ỏ: "o",
+      õ: "o",
+      ọ: "o",
+      ố: "o",
+      ồ: "o",
+      ổ: "o",
+      ỗ: "o",
+      ộ: "o",
+      ớ: "o",
+      ờ: "o",
+      ở: "o",
+      ỡ: "o",
+      ợ: "o",
     } as any;
 
     string = string.trim();
     string = string.toLowerCase();
 
-    const arr: string[] = string.split('');
+    const arr: string[] = string.split("");
 
     for (const i in arr) {
-      const arri = arr[i]
+      const arri = arr[i];
       if (!arri) continue;
       if (obj[arri]) {
         arr[i] = obj[arri];
       }
     }
 
-    return arr.join('');
+    return arr.join("");
   }
 
   changeToSlug(title: string, prefix: string) {
@@ -120,65 +164,120 @@ export class UtilService {
     let slug = title.toLowerCase();
 
     // Đổi ký tự có dấu thành không dấu
-    slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
-    slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
-    slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
-    slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
-    slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
-    slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
-    slug = slug.replace(/đ/gi, 'd');
+    slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, "a");
+    slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, "e");
+    slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, "i");
+    slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, "o");
+    slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, "u");
+    slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, "y");
+    slug = slug.replace(/đ/gi, "d");
     // Xóa các ký tự đặt biệt
-    slug = slug.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
+    slug = slug.replace(
+      /\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi,
+      ""
+    );
     // Đổi khoảng trắng thành ký tự gạch ngang
     slug = slug.replace(/ /gi, "-");
     // Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
     // Phòng trường hợp người nhập vào quá nhiều ký tự trắng
-    slug = slug.replace(/\-\-\-\-\-/gi, '-');
-    slug = slug.replace(/\-\-\-\-/gi, '-');
-    slug = slug.replace(/\-\-\-/gi, '-');
-    slug = slug.replace(/\-\-/gi, '-');
+    slug = slug.replace(/\-\-\-\-\-/gi, "-");
+    slug = slug.replace(/\-\-\-\-/gi, "-");
+    slug = slug.replace(/\-\-\-/gi, "-");
+    slug = slug.replace(/\-\-/gi, "-");
     // Xóa các ký tự gạch ngang ở đầu và cuối
-    slug = `@${slug}@`.replace(/\@\-|\-\@|\@/gi, '');
-    return `@${slug}-${prefix}@`.replace(/\@\-|\-\@|\@/gi, '')
+    slug = `@${slug}@`.replace(/\@\-|\-\@|\@/gi, "");
+    return `@${slug}-${prefix}@`.replace(/\@\-|\-\@|\@/gi, "");
   }
-
 
   convertViToEngSlug(string: string) {
     const obj = {
-      Đ: 'D', đ: 'd', â: 'a',
-      ă: 'a', ê: 'e', ô: 'o', ơ: 'o',
-      ư: 'u',
-      á: 'a', à: 'a', ạ: 'a', ả: 'a', ã: 'a',
-      ắ: 'a', ằ: 'a', ặ: 'a', ẳ: 'a', ẵ: 'a',
-      ấ: 'a', ầ: 'a', ậ: 'a', ẩ: 'a', ẫ: 'a',
-      é: 'e', è: 'e', ẻ: 'e', ẽ: 'e', ẹ: 'e',
-      ế: 'e', ề: 'e', ể: 'e', ễ: 'e', ệ: 'e',
-      ý: 'y', ỳ: 'y', ỵ: 'y', ỷ: 'y', ỹ: 'y',
-      ú: 'u', ù: 'u', ủ: 'u', ũ: 'u', ụ: 'u',
-      ứ: 'u', ừ: 'u', ử: 'u', ữ: 'u', ự: 'u',
-      í: 'i', ì: 'i', ị: 'i', ỉ: 'i', ĩ: 'i',
-      ó: 'o', ò: 'o', ỏ: 'o', õ: 'o', ọ: 'o',
-      ố: 'o', ồ: 'o', ổ: 'o', ỗ: 'o', ộ: 'o',
-      ớ: 'o', ờ: 'o', ở: 'o', ỡ: 'o', ợ: 'o'
+      Đ: "D",
+      đ: "d",
+      â: "a",
+      ă: "a",
+      ê: "e",
+      ô: "o",
+      ơ: "o",
+      ư: "u",
+      á: "a",
+      à: "a",
+      ạ: "a",
+      ả: "a",
+      ã: "a",
+      ắ: "a",
+      ằ: "a",
+      ặ: "a",
+      ẳ: "a",
+      ẵ: "a",
+      ấ: "a",
+      ầ: "a",
+      ậ: "a",
+      ẩ: "a",
+      ẫ: "a",
+      é: "e",
+      è: "e",
+      ẻ: "e",
+      ẽ: "e",
+      ẹ: "e",
+      ế: "e",
+      ề: "e",
+      ể: "e",
+      ễ: "e",
+      ệ: "e",
+      ý: "y",
+      ỳ: "y",
+      ỵ: "y",
+      ỷ: "y",
+      ỹ: "y",
+      ú: "u",
+      ù: "u",
+      ủ: "u",
+      ũ: "u",
+      ụ: "u",
+      ứ: "u",
+      ừ: "u",
+      ử: "u",
+      ữ: "u",
+      ự: "u",
+      í: "i",
+      ì: "i",
+      ị: "i",
+      ỉ: "i",
+      ĩ: "i",
+      ó: "o",
+      ò: "o",
+      ỏ: "o",
+      õ: "o",
+      ọ: "o",
+      ố: "o",
+      ồ: "o",
+      ổ: "o",
+      ỗ: "o",
+      ộ: "o",
+      ớ: "o",
+      ờ: "o",
+      ở: "o",
+      ỡ: "o",
+      ợ: "o",
     } as any;
 
     string = string.trim();
     string = string.toLowerCase();
 
-    const arr = string.split('');
+    const arr = string.split("");
 
     for (const i in arr) {
-      const arri = arr[i]
+      const arri = arr[i];
       if (!arri) continue;
       if (obj[arri]) {
         arr[i] = obj[arri];
       }
     }
 
-    let slug = arr.join('');
-    slug = slug.replace(/ /g, '-');
+    let slug = arr.join("");
+    slug = slug.replace(/ /g, "-");
     // slug = slug.replace(/[^a-zA-Z0-9]/g, '');
-    return slug.replace(/[^a-zA-Z0-9\-]/g, '');
+    return slug.replace(/[^a-zA-Z0-9\-]/g, "");
   }
 
   validateEmail(email: string) {
@@ -187,16 +286,15 @@ export class UtilService {
       .match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
-  };
+  }
 
   isEmpty(val: any) {
-    return (val === undefined || val == undefined || val.length <= 0) ? true : false;
+    return val === undefined || val == undefined || val.length <= 0
+      ? true
+      : false;
   }
   isObject(val: any) {
-    return typeof val === 'object' &&
-      !Array.isArray(val) &&
-      val !== null
-
+    return typeof val === "object" && !Array.isArray(val) && val !== null;
   }
   allEmpty(...val: any) {
     for (const item of val) {
@@ -204,71 +302,107 @@ export class UtilService {
     }
     return true;
   }
-  revokeFileName(oldFileName: string, addTime: boolean = true, resizeOptions?: { height: number, width: number }) {
-
-    const index = oldFileName.lastIndexOf('.')
-    const newFileName = `${oldFileName.substring(0, index)}${addTime ? `-${moment().valueOf()}` : ''}`
+  revokeFileName(
+    oldFileName: string,
+    addTime: boolean = true,
+    resizeOptions?: { height: number; width: number }
+  ) {
+    const index = oldFileName.lastIndexOf(".");
+    const newFileName = `${oldFileName.substring(0, index)}${
+      addTime ? `-${moment().valueOf()}` : ""
+    }`;
     if (resizeOptions?.height || resizeOptions?.width) {
-      return `${newFileName}-${resizeOptions.width}x${resizeOptions.height}${oldFileName.substring(index)}`
+      return `${newFileName}-${resizeOptions.width}x${
+        resizeOptions.height
+      }${oldFileName.substring(index)}`;
     }
-    return `${newFileName}${oldFileName.substring(index)}`
-
+    return `${newFileName}${oldFileName.substring(index)}`;
   }
   makeContent(content: string, values: any) {
     for (const key in values) {
       if (values.hasOwnProperty(key)) {
         const value = values[key];
-        const re = new RegExp(`\\[${key}\\]`, 'g');
+        const re = new RegExp(`\\[${key}\\]`, "g");
         content = content.replace(re, value);
       }
     }
-    return content
+    return content;
   }
   snakeCaseToCamelCase(string: string) {
-    return string.toLowerCase().replace(/([-_][a-z])/g, group =>
-      group
-        .toUpperCase()
-        .replace('-', '')
-        .replace('_', '')
-    );
+    return string
+      .toLowerCase()
+      .replace(/([-_][a-z])/g, (group) =>
+        group.toUpperCase().replace("-", "").replace("_", "")
+      );
   }
-
 
   camelCaseToSnakeCase(string: string) {
     const result = string.replace(/([A-Z])/g, " $1");
-    return result.split(' ').filter(item => !!item.trim()).join('_').toLowerCase();
+    return result
+      .split(" ")
+      .filter((item) => !!item.trim())
+      .join("_")
+      .toLowerCase();
   }
 
   camelize(string: string) {
-    return string.replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
-      return index === 0 ? word.toLowerCase() : word.toUpperCase();
-    }).replace(/\s+/g, '');
+    return string
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+      })
+      .replace(/\s+/g, "");
   }
 
   capitalize(string: string) {
     return string[0]?.toUpperCase() + string.slice(1);
   }
 
-  generateUUIDV4() { // Public Domain/MIT
-    var d = new Date().getTime();//Timestamp
-    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16;//random number between 0 and 16
-      if (d > 0) {//Use timestamp until depleted
-        r = (d + r) % 16 | 0;
-        d = Math.floor(d / 16);
-      } else {//Use microseconds since page-load if supported
-        r = (d2 + r) % 16 | 0;
-        d2 = Math.floor(d2 / 16);
+  generateUUIDV4() {
+    // Public Domain/MIT
+    var d = new Date().getTime(); //Timestamp
+    var d2 =
+      (typeof performance !== "undefined" &&
+        performance.now &&
+        performance.now() * 1000) ||
+      0; //Time in microseconds since page-load or 0 if unsupported
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = Math.random() * 16; //random number between 0 and 16
+        if (d > 0) {
+          //Use timestamp until depleted
+          r = (d + r) % 16 | 0;
+          d = Math.floor(d / 16);
+        } else {
+          //Use microseconds since page-load if supported
+          r = (d2 + r) % 16 | 0;
+          d2 = Math.floor(d2 / 16);
+        }
+        return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
       }
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
+    );
   }
 
-  fetch(baseURL = config.service.identity.url, configAxios: CreateAxiosDefaults<any> = {
-    timeout: 1000
-  }) {
+  fetch(
+    baseURL = config.service.identity.url,
+    configAxios: CreateAxiosDefaults<any> = {
+      timeout: 1000,
+    }
+  ) {
     configAxios.baseURL = baseURL;
     return axios.create(configAxios);
+  }
+
+  timeToMinutes(time: string) {
+    const [hours, minutes] = time.split(":");
+
+    return (
+      parseInt(hours ? hours : "0", 10) * 60 +
+      parseInt(minutes ? minutes : "0", 10)
+    );
+  }
+
+  checkOverlap(startA: number, endA: number, startB: number, endB: number) {
+    return endA > startB && endB > startA;
   }
 }

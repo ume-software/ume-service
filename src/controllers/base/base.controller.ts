@@ -78,23 +78,13 @@ export class BaseController {
   onSuccess(res: Response, object: any = {}, extras: any = {}) {
     object = object || {};
     if (Object.keys(object).length === 0) {
-      res
-        .status(200)
-        .json({
-          code: 200,
-        })
-        .end();
+      res.status(200).json({}).end();
     } else {
       res
         .status(200)
         .json({
-          code: 200,
-          results: Object.assign(
-            {
-              object,
-            },
-            extras
-          ),
+          ...object,
+          ...extras,
         })
         .end();
     }
@@ -104,18 +94,11 @@ export class BaseController {
     object = object || {};
     let data = {};
     if (Object.keys(object).length === 0) {
-      data = {
-        code: 200,
-      };
+      data = {};
     } else {
       data = {
-        code: 200,
-        results: Object.assign(
-          {
-            object,
-          },
-          extras
-        ),
+        ...object,
+        ...extras,
       };
     }
 
@@ -135,11 +118,9 @@ export class BaseController {
     const queryLimit = res.req.query["limit"];
     const page = typeof queryPage == "string" ? Number.parseInt(queryPage) : 1;
     res.json({
-      code: 200,
+
       results: Object.assign(
-        {
-          objects,
-        },
+        objects,
         extras
       ),
 
