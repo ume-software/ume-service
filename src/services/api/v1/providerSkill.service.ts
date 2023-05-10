@@ -6,7 +6,7 @@ import {
   providerSkillRepository,
 } from "@/repositories";
 import { PrismaTransation } from "@/repositories/base/basePrisma.repository";
-import { errorService, utilService } from "@/services";
+import { errorService, skillService, utilService } from "@/services";
 import { BasePrismaService } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { Prisma } from "@prisma/client";
@@ -23,7 +23,7 @@ export class ProviderSkillService extends BasePrismaService<
     if (this.checkOverlapTime(bookingCosts)) {
       throw errorService.router.badRequest();
     }
-
+    await skillService.findOne({ where: { id: skillId } });
     const provider = await providerRepository.findOne({
       where: {
         userId,

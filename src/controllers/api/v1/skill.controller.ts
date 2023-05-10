@@ -31,7 +31,7 @@ export class SkillController extends BaseController {
   }
 
   customRouting() {
-    this.router.get("/", this.route(this.findAll));
+    this.router.get("/", this.route(this.findAndCountAll));
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.ADMIN]),
@@ -42,7 +42,7 @@ export class SkillController extends BaseController {
 
   @ApiOperationGet({
     path: "",
-    operationId: "findAll",
+    operationId: "findAndCountAll",
     security: {
       bearerAuth: [],
     },
@@ -62,10 +62,10 @@ export class SkillController extends BaseController {
       },
     },
   })
-  async findAll(req: Request, res: Response) {
+  async findAndCountAll(req: Request, res: Response) {
     const queryInfoPrisma = req.queryInfoPrisma;
-    const result = await this.service.findAll(queryInfoPrisma);
-    this.onSuccess(res, result);
+    const result = await this.service.findAndCountAll(queryInfoPrisma);
+    this.onSuccessAsList(res, result);
   }
 
   @ApiOperationPost({

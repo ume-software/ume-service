@@ -190,7 +190,7 @@ paths:
         - bearerAuth: []
   /api/v1/skill:
     get:
-      operationId: findAll
+      operationId: findAndCountAll
       tags:
         - Skill
       description: Create Skill
