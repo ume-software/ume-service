@@ -16,7 +16,7 @@ model User {
   provider       Provider?
   coinHistory    CoinHistory[]
   bookingHistory BookingHistory[]
-  votes           Vote[]
+  votes          Vote[]
 
   @@map("user")
 }
@@ -28,13 +28,12 @@ model Provider {
   deletedAt      DateTime?        @map("deleted_at")
   user           User             @relation(fields: [userId], references: [id])
   userId         String           @unique @map("user_id")
-  slug           String?           @map("slug")
+  slug           String?          @map("slug")
   name           String?          @map("name")
   avatarUrl      String?          @map("avatar_url")
   voiceUrl       String?          @map("voice_url")
   description    String?          @map("description") @db.Text()
   providerSkills ProviderSkill[]
-  bookingHistory BookingHistory[]
 
   @@map("provider")
 }
@@ -52,16 +51,17 @@ model Skill {
 }
 
 model ProviderSkill {
-  id          String        @id @default(uuid()) @map("id")
-  createdAt   DateTime?     @default(now()) @map("created_at")
-  updatedAt   DateTime?     @updatedAt @map("updated_at")
-  deletedAt   DateTime?     @map("deleted_at")
-  provider    Provider      @relation(fields: [providerId], references: [id])
-  providerId  String        @unique @map("user_id")
-  skill       Skill         @relation(fields: [skillId], references: [id])
-  skillId     String        @unique @map("skill_id")
-  defaultCost Float         @map("default_cost")
-  bookingCosts BookingCost[]
+  id             String           @id @default(uuid()) @map("id")
+  createdAt      DateTime?        @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  provider       Provider         @relation(fields: [providerId], references: [id])
+  providerId     String           @unique @map("user_id")
+  skill          Skill            @relation(fields: [skillId], references: [id])
+  skillId        String           @unique @map("skill_id")
+  defaultCost    Float            @map("default_cost")
+  bookingCosts   BookingCost[]
+  BookingHistory BookingHistory[]
 
   @@map("provider_skill")
 }
@@ -87,22 +87,22 @@ model CoinHistory {
   deletedAt DateTime? @map("deleted_at")
   user      User      @relation(fields: [userId], references: [id])
   userId    String    @map("user_id")
-  coinType  CoinType?
+  coinType  CoinType? @map("coin_type")
   amount    Float?    @map("amount")
-
+  createdId String?    @map("created_id")
   @@map("coin_history")
 }
 
 model BookingHistory {
-  id         String    @id @default(uuid()) @map("id")
-  createdAt  DateTime? @default(now()) @map("created_at")
-  updatedAt  DateTime? @updatedAt @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
-  booker     User?     @relation(fields: [bookerId], references: [id])
-  bookerId   String?   @map("booker_id")
-  provider   Provider? @relation(fields: [providerId], references: [id])
-  providerId String?   @map("provider_id")
-  votes       Vote[]
+  id              String         @id @default(uuid()) @map("id")
+  createdAt       DateTime?      @default(now()) @map("created_at")
+  updatedAt       DateTime?      @updatedAt @map("updated_at")
+  deletedAt       DateTime?      @map("deleted_at")
+  booker          User?          @relation(fields: [bookerId], references: [id])
+  bookerId        String?        @map("booker_id")
+  providerSkill   ProviderSkill? @relation(fields: [providerSkillId], references: [id])
+  providerSkillId String?        @map("provider_skill_id")
+  votes           Vote[]
 
   @@map("booking_history")
 }

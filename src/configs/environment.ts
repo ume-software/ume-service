@@ -15,12 +15,13 @@ export default {
     path_files: "files",
     public_key: process.env["PATH_PUBLIC_KEY"] || "public_key.pem",
     private_key: process.env["PATH_PRIVATE_KEY"] || "public_key.pem",
+    timezone :  process.env["DEFAULT_TIME_ZONE"] || "+0700",
   },
   service: {
     identity: {
-      url: process.env["URL_INDENTITY_SERVICE"] || "http://localhost:4000",
+      url: process.env["URL_IDENTITY_SERVICE"] || "http://localhost:4000",
       public_key:
-        process.env["INDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem",
+        process.env["IDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem",
     },
   },
   socket: {

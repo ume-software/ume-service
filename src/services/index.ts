@@ -15,6 +15,7 @@ import { CryptoService } from "./common/crypto.service";
 import { SkillService } from "./api/v1/skill.service";
 import { ProviderService } from "./api/v1/provider.service";
 import { ProviderSkillService } from "./api/v1/providerSkill.service";
+import { CoinService } from "./api/v1/coin.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -31,6 +32,7 @@ const providerService = new ProviderService();
 const providerSkillService =new ProviderSkillService();
 const skillService = new SkillService();
 const userService = new UserService();
+const coinService = new CoinService();
 
 
 export {
@@ -47,7 +49,8 @@ export {
   providerService,
   providerSkillService,
   userService,
-  skillService
+  skillService,
+  coinService
 
 
 };

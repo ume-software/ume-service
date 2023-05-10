@@ -3,13 +3,31 @@ import {
   BasePrismaRepository,
   PrismaTransation,
 } from "../base/basePrisma.repository";
-import { Prisma, CoinHistory } from "@prisma/client";
+import { Prisma, CoinHistory, CoinType } from "@prisma/client";
 
 export class CoinHistoryRepository extends BasePrismaRepository {
   constructor() {
     super();
   }
-
+  async countByUserIdAndCoinType(
+    userId: string,
+    coinTypes: CoinType[] = [],
+    tx: PrismaTransation = this.prisma
+  ): Promise<number | null> {
+    return (
+      await tx.coinHistory.aggregate({
+        where: {
+          userId,
+          coinType: {
+            in: coinTypes,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      })
+    )._sum.amount;
+  }
   async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
     row: CoinHistory[];
     count: number;

@@ -1,7 +1,10 @@
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { providerRepository } from "@/repositories";
-import { BasePrismaService } from "@/services/base/basePrisma.service";
+import {
+  BasePrismaService,
+  ICrudOptionPrisma,
+} from "@/services/base/basePrisma.service";
 import { Prisma, Provider } from "@prisma/client";
 
 export class ProviderService extends BasePrismaService<
@@ -29,5 +32,9 @@ export class ProviderService extends BasePrismaService<
     providerCreateInput: Prisma.ProviderCreateInput
   ): Promise<Provider> {
     return await this.repository.create(providerCreateInput);
+  }
+
+  async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
+    return await this.repository.findOne(query);
   }
 }
