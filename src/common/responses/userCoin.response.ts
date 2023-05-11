@@ -1,16 +1,15 @@
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
-import { UserInfomationResponse } from "./userInfomation.reponse";
 
 @ApiModel({
-  description: "Skill response",
+  description: "User coin response",
 })
 export class UserCoinResponse {
   @ApiModelProperty({
-    description: "User infomation",
+    description: "User id",
     required: true,
-    model: UserInfomationResponse,
+    example: "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
   })
-  userInfomation?: UserInfomationResponse;
+  userId?: string;
 
   @ApiModelProperty({
     description: "Total coin of user",

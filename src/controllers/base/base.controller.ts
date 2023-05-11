@@ -117,23 +117,25 @@ export class BaseController {
     const queryPage = res.req.query["page"];
     const queryLimit = res.req.query["limit"];
     const page = typeof queryPage == "string" ? Number.parseInt(queryPage) : 1;
+    const currentPage = page;
+    const nextPage = page + 1;
+    const prevPage = page - 1;
+    const limit =
+      queryLimit == UNLIMITED
+        ? UNLIMITED
+        : typeof queryLimit == "string"
+        ? Number.parseInt(queryLimit)
+        : config.database.defaultPageSize;
     res.json({
-
-      results: Object.assign(
+      ...Object.assign(
         objects,
         extras
       ),
-
       pagination: {
-        current_page: page,
-        next_page: page + 1,
-        prev_page: page - 1,
-        limit:
-          queryLimit == UNLIMITED
-            ? UNLIMITED
-            : typeof queryLimit == "string"
-            ? Number.parseInt(queryLimit)
-            : config.database.defaultPageSize,
+        currentPage,
+        nextPage,
+        prevPage,
+        limit
       },
     });
   }
@@ -145,25 +147,25 @@ export class BaseController {
     const queryPage = res.req.query["page"];
     const queryLimit = res.req.query["limit"];
     const page = typeof queryPage == "string" ? Number.parseInt(queryPage) : 1;
+    const currentPage = page;
+    const nextPage = page + 1;
+    const prevPage = page - 1;
+    const limit =
+      queryLimit == UNLIMITED
+        ? UNLIMITED
+        : typeof queryLimit == "string"
+        ? Number.parseInt(queryLimit)
+        : config.database.defaultPageSize;
     const data = {
-      code: 200,
-      results: Object.assign(
-        {
-          objects,
-        },
+      ...Object.assign(
+        objects,
         extras
       ),
-
       pagination: {
-        current_page: page,
-        next_page: page + 1,
-        prev_page: page - 1,
-        limit:
-          queryLimit == UNLIMITED
-            ? UNLIMITED
-            : typeof queryLimit == "string"
-            ? Number.parseInt(queryLimit)
-            : config.database.defaultPageSize,
+        currentPage,
+        nextPage,
+        prevPage,
+        limit
       },
     };
     res.json({

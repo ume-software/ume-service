@@ -1,4 +1,5 @@
 import { PointForUserRequest } from "@/common/requests/adminCreatePointForUser.request";
+import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
 import { UserCoinResponse } from "@/common/responses/userCoin.response";
 
 import {
@@ -9,8 +10,12 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { coinService } from "@/services";
 import { CoinService } from "@/services/api/v1/coin.service";
-import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import {
+  hostLanguageParameter,
+  queryParameters,
+} from "@/swagger/parameters/query.parameter";
+import {
+  ApiOperationGet,
   ApiOperationPost,
   ApiPath,
   SwaggerDefinitionConstant,
@@ -30,11 +35,80 @@ export class coinController extends BaseController {
   service: CoinService;
 
   customRouting() {
+    this.router.get(
+      "/history",
+      this.accountTypeMiddlewares([EAccountType.USER]),
+      this.route(this.getMyHistoryCoin)
+    );
+    this.router.get(
+      "/total",
+      this.accountTypeMiddlewares([EAccountType.USER]),
+      this.route(this.getMyTotalCoin)
+    );
     this.router.post(
       "/admin",
       this.accountTypeMiddlewares([EAccountType.ADMIN]),
       this.route(this.adminCreatePointForUser)
     );
+  }
+  @ApiOperationGet({
+    path: "/history",
+    operationId: "getMyHistoryCoin",
+    security: {
+      bearerAuth: [],
+    },
+    description: "Get hisotory coins of the user himself",
+    summary: "Get hisotory coins of the user himself",
+    parameters: {
+      query: queryParameters,
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: CoinHistoryPagingResponse },
+          },
+        },
+        description: "Response coin history success",
+      },
+    },
+  })
+  async getMyHistoryCoin(req: Request, res: Response) {
+    const queryInfoPrisma = req.queryInfoPrisma;
+    const userId = req.tokenInfo?.id;
+    const result = await this.service.getHistoryCoinByUserId(
+      userId!,
+      queryInfoPrisma!
+    );
+    this.onSuccessAsList(res, result);
+  }
+
+  @ApiOperationGet({
+    path: "/total",
+    operationId: "getMyTotalCoin",
+    security: {
+      bearerAuth: [],
+    },
+    description: "Total number of coins of the user himself",
+    summary: "Total number of coins of the user himself",
+    parameters: {
+      query: hostLanguageParameter,
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: UserCoinResponse },
+          },
+        },
+        description: "Get total point success",
+      },
+    },
+  })
+  async getMyTotalCoin(req: Request, res: Response) {
+    const userId = req.tokenInfo?.id;
+    const result = await this.service.getTotalCoinByUserId(userId!);
+    this.onSuccess(res, result);
   }
 
   @ApiOperationPost({

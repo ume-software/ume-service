@@ -126,6 +126,100 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
+  /api/v1/coin/history:
+    get:
+      operationId: getMyHistoryCoin
+      tags:
+        - Coin
+      description: Get hisotory coins of the user himself
+      summary: Get hisotory coins of the user himself
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+        - name: select
+          in: query
+          schema: &ref_1
+            type: string
+            default: '["$all"]'
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: &ref_2
+            type: string
+            default: '{}'
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: limit
+          in: query
+          schema: &ref_3
+            type: string
+            default: unlimited
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: &ref_4
+            type: string
+            default: '1'
+        - name: order
+          in: query
+          schema: &ref_5
+            type: string
+            default: '[]'
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinHistoryPagingResponse'
+          description: Response coin history success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/coin/total:
+    get:
+      operationId: getMyTotalCoin
+      tags:
+        - Coin
+      description: Total number of coins of the user himself
+      summary: Total number of coins of the user himself
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCoinResponse'
+          description: Get total point success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/coin/admin:
     post:
       operationId: adminCreatePointForUser
@@ -232,27 +326,21 @@ paths:
           schema: *ref_0
         - name: select
           in: query
-          schema:
-            type: string
-            default: '["$all"]'
+          schema: *ref_1
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema:
-            type: string
-            default: '{}'
+          schema: *ref_2
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
                 
         - name: limit
           in: query
-          schema:
-            type: string
-            default: unlimited
+          schema: *ref_3
           description: |2-
 
                     Example : limit=50
@@ -260,14 +348,10 @@ paths:
                 
         - name: page
           in: query
-          schema:
-            type: string
-            default: '1'
+          schema: *ref_4
         - name: order
           in: query
-          schema:
-            type: string
-            default: '[]'
+          schema: *ref_5
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -346,61 +430,80 @@ components:
         - amount
         - userId
       description: User registor become provider
-    UserInfomationResponse:
+    PaginationResponse:
       type: object
       properties:
-        name:
-          type: string
-          description: User name
-          example: Đỗ Trần Minh Chu
-        username:
-          type: string
-          description: User name
-          example: Đỗ Trần Minh Chu
-        dob:
-          type: string
-          description: Dob timezone 0
-          example: '2001-10-12 17:00:00.000'
-        gender:
-          type: string
-          description: Gender
-          example: MALE
-        phone:
-          type: string
-          description: Phone number
-          example: '0123456789'
-        email:
-          type: string
-          description: Email
-          example: dotranminhchu@gmail.com
-        avatar:
-          type: string
-          description: Avatar
-          example: >-
-            https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg
-      required:
-        - name
-        - username
-        - dob
-        - gender
-        - email
-        - avatar
-      description: User Infomation response
+        currentPage:
+          type: number
+          description: Current page
+          example: 2
+        nextPage:
+          type: number
+          description: Next page
+          example: 3
+        prevPage:
+          type: number
+          description: Previous page
+        limit:
+          type: object
+          description: Limit
+          example: 50
+      required: []
+    CoinHistoryPagingResponse:
+      type: object
+      properties:
+        rows:
+          type: array
+          description: Row
+          example:
+            - id: c8b6a728-6db6-42e6-b050-92ab31ced664
+              createdAt: '2023-05-10T10:13:19.401Z'
+              updatedAt: '2023-05-10T10:13:19.401Z'
+              deletedAt: null
+              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
+              coinType: ADMIN
+              amount: 10
+              createdId: c46c8037-0969-47d1-9337-e35571c87305
+            - id: f3ec70d2-549c-454f-b5bc-caf92f7240be
+              createdAt: '2023-05-10T10:14:38.564Z'
+              updatedAt: '2023-05-10T10:14:38.564Z'
+              deletedAt: null
+              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
+              coinType: ADMIN
+              amount: 10
+              createdId: c46c8037-0969-47d1-9337-e35571c87305
+          items:
+            $ref: '#/components/schemas/CoinHistoryPagingResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Coin History response
     UserCoinResponse:
       type: object
       properties:
-        userInfomation:
-          type: STRING
-          description: User infomation
-          $ref: '#/components/schemas/UserInfomationResponse'
+        userId:
+          type: string
+          description: User id
+          example: 9fa9f3c5-640a-407f-b64f-12ff6f55e15c
         totalCoin:
           type: number
           description: Total coin of user
           example: 1000
       required:
-        - userInfomation
+        - userId
         - totalCoin
-      description: Skill response
+      description: User coin response
     BecomeProviderRequest:
       type: object
       properties:
@@ -433,9 +536,13 @@ components:
         - voiceUrl
         - description
       description: User registor become provider
-    BaseResponse:
+    BecomeProviderResponse:
       type: object
       properties:
+        id:
+          type: string
+          description: Id's provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
         createdAt:
           type: date
           description: Created At
@@ -447,14 +554,6 @@ components:
         deletedAt:
           type: date
           description: Deleted At
-      required: []
-    BecomeProviderResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Id's provider
-          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
         userId:
           type: string
           description: Id's user

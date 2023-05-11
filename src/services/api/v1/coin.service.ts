@@ -1,9 +1,9 @@
 import { PointForUserRequest } from "@/common/requests/adminCreatePointForUser.request";
 import { UserCoinResponse } from "@/common/responses/userCoin.response";
-import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
 import { coinHistoryRepository } from "@/repositories";
 import { userService } from "@/services";
-import { CoinType } from "@prisma/client";
+import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
+import { CoinHistory, CoinType } from "@prisma/client";
 
 export class CoinService {
   async adminCreatePointToUser(
@@ -11,14 +11,11 @@ export class CoinService {
     pointForUserRequest: PointForUserRequest
   ): Promise<UserCoinResponse> {
     const { amount, userId } = pointForUserRequest;
-    await userService.findOne({
+    const user = await userService.findOne({
       where: {
         id: userId,
       },
     });
-    const { avatar, dob, gender, name, phone, email, username } =
-      (await userService.getInfomation(userId)) as UserInfomationResponse;
-
     await coinHistoryRepository.create({
       user: {
         connect: {
@@ -31,16 +28,36 @@ export class CoinService {
     });
 
     return {
-      userInfomation: {
-        avatar,
-        dob,
-        gender,
-        name,
-        phone,
-        email,
-        username,
-      },
+      userId: user?.id!!,
       totalCoin: await this.getTotalCoinUser(userId),
+    };
+  }
+
+  async getHistoryCoinByUserId(
+    userId: string,
+    queryCoinHistory: ICrudOptionPrisma
+  ): Promise<{
+    row: CoinHistory[];
+    count: number;
+  }> {
+    if (!queryCoinHistory.where) {
+      queryCoinHistory.where = { userId };
+    } else {
+      queryCoinHistory.where.userId = userId;
+    }
+    return await coinHistoryRepository.findAndCountAll(queryCoinHistory);
+  }
+
+  async getTotalCoinByUserId(userId: string): Promise<UserCoinResponse> {
+    const user = await userService.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const totalCoin = await this.getTotalCoinUser(user?.id!!);
+    return {
+      userId,
+      totalCoin,
     };
   }
 
