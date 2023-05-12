@@ -22,17 +22,17 @@ model User {
 }
 
 model Provider {
-  id             String           @id @default(uuid()) @map("id")
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  deletedAt      DateTime?        @map("deleted_at")
-  user           User             @relation(fields: [userId], references: [id])
-  userId         String           @unique @map("user_id")
-  slug           String?          @map("slug")
-  name           String?          @map("name")
-  avatarUrl      String?          @map("avatar_url")
-  voiceUrl       String?          @map("voice_url")
-  description    String?          @map("description") @db.Text()
+  id             String          @id @default(uuid()) @map("id")
+  createdAt      DateTime?       @default(now()) @map("created_at")
+  updatedAt      DateTime?       @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
+  user           User            @relation(fields: [userId], references: [id])
+  userId         String          @unique @map("user_id")
+  slug           String?         @map("slug")
+  name           String?         @map("name")
+  avatarUrl      String?         @map("avatar_url")
+  voiceUrl       String?         @map("voice_url")
+  description    String?         @map("description") @db.Text()
   providerSkills ProviderSkill[]
 
   @@map("provider")
@@ -56,12 +56,13 @@ model ProviderSkill {
   updatedAt      DateTime?        @updatedAt @map("updated_at")
   deletedAt      DateTime?        @map("deleted_at")
   provider       Provider         @relation(fields: [providerId], references: [id])
-  providerId     String           @unique @map("user_id")
+  providerId     String           @map("provider_id")
   skill          Skill            @relation(fields: [skillId], references: [id])
-  skillId        String           @unique @map("skill_id")
+  skillId        String           @map("skill_id")
   defaultCost    Float            @map("default_cost")
+  position       Int              @map("position")
   bookingCosts   BookingCost[]
-  BookingHistory BookingHistory[]
+  bookingHistory BookingHistory[]
 
   @@map("provider_skill")
 }
@@ -89,7 +90,8 @@ model CoinHistory {
   userId    String    @map("user_id")
   coinType  CoinType? @map("coin_type")
   amount    Float?    @map("amount")
-  createdId String?    @map("created_id")
+  createdId String?   @map("created_id")
+
   @@map("coin_history")
 }
 

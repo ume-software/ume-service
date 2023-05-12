@@ -136,7 +136,7 @@ export const ERROR_MESSAGE = {
   THIS_SKILL_DOES_NOT_EXISTED: {
     message: {
       vi: "Kỹ năng này không hề tồn tại.",
-      en: "This skill doesn't exist",
+      en: "This skill doesn't exist.",
     },
     code: 400,
   },
@@ -144,7 +144,14 @@ export const ERROR_MESSAGE = {
   THIS_PROVIDER_DOES_NOT_EXISTED: {
     message: {
       vi: "Nhà cung cấp này không hề tồn tại.",
-      en: "This provider doesn't exist",
+      en: "This provider doesn't exist.",
+    },
+    code: 400,
+  },
+  YOU_ARE_ALREADY_A_PROVIDER: {
+    message: {
+      vi: "Bạn đã là nhà cung cấp.",
+      en: "You are already a provider.",
     },
     code: 400,
   },
@@ -152,7 +159,7 @@ export const ERROR_MESSAGE = {
   THIS_PROVIDER_SKILL_IS_EXISTED: {
     message: {
       vi: "Kỹ năng này đã tồn tại trong danh sách kỹ năng của nhà cung cấp dịch vụ.",
-      en: "This skill already exists in the provider's skill list",
+      en: "This skill already exists in the provider's skill list.",
     },
     code: 400,
   },

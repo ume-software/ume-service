@@ -90,3 +90,39 @@ export const queryParameters = {
   ...pageParameter,
   ...orderParameter,
 };
+
+export const filterProviderParameters = {
+  start_cost: {
+    name: "start_cost",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+      default: 5,
+    },
+    description: `
+        Example : start_cost=5
+        `,
+  },
+  end_cost: {
+    name: "end_cost",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+      default: 10,
+    },
+    description: `
+        Example : end_cost=5
+        `,
+  },
+  skill_id: {
+    name: "skill_id",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "14476c02-2846-4097-8f00-b495e8fc77ae",
+    },
+    description: `
+        Example : skill_id=14476c02-2846-4097-8f00-b495e8fc77ae
+        `,
+  },
+};

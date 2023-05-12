@@ -36,7 +36,7 @@ export class ProviderSkillService extends BasePrismaService<
     }
     const preExistingProviderSkill = await this.repository.findOne({
       where: {
-        providerId: provider?.id,
+        providerId: provider.id,
         skillId,
       },
     });
@@ -45,7 +45,10 @@ export class ProviderSkillService extends BasePrismaService<
         ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
       );
     }
-
+    const countSkillProvider = await this.repository.countByProviderId(
+      provider.id
+    );
+    const position = countSkillProvider + 1;
     return await prisma.$transaction(async (tx: PrismaTransation) => {
       const createProviderSkill = await this.repository.create(
         {
@@ -56,10 +59,11 @@ export class ProviderSkillService extends BasePrismaService<
           },
           provider: {
             connect: {
-              id: provider?.id!!,
+              id: provider.id,
             },
           },
           defaultCost,
+          position,
         },
         tx
       );

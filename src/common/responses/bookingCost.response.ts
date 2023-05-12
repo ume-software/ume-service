@@ -1,9 +1,9 @@
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-  description: "Skill response",
+  description: "Booking cost response",
 })
-export class SkillResponse {
+export class BookingCostResponse {
   @ApiModelProperty({
     description: "Id's provider",
     example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
@@ -29,15 +29,26 @@ export class SkillResponse {
   deletedAt!: Date;
 
   @ApiModelProperty({
-    description: "Skill name",
-    example: "Liên Minh Huyền Thoại",
+    description: "Provider skill id",
+    example: "42ac81c2-1815-45f7-b598-412487161e1f",
   })
-  name!: string;
+  providerSkillId!: string;
 
   @ApiModelProperty({
-    description: "Image url of skill",
-    example:
-      "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
+    description: "Start time of day",
+    example: "09:00",
   })
-  imageUrl!: string;
+  startTimeOfDay!: string;
+
+  @ApiModelProperty({
+    description: "End time of day",
+    example: "15:00",
+  })
+  endTimeOfDay!: string;
+
+  @ApiModelProperty({
+    description: "Amount",
+    example: 10,
+  })
+  amount!: number;
 }

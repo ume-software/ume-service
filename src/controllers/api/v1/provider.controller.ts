@@ -1,7 +1,7 @@
+import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
-
-
+import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
 import {
   BaseController,
   Request,
@@ -10,8 +10,13 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
-import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import {
+  filterProviderParameters,
+  hostLanguageParameter,
+  queryParameters,
+} from "@/swagger/parameters/query.parameter";
+import {
+  ApiOperationGet,
   ApiOperationPost,
   ApiPath,
   SwaggerDefinitionConstant,
@@ -31,12 +36,54 @@ export class ProviderController extends BaseController {
   service: ProviderService;
 
   customRouting() {
-    
+    this.router.get("/", this.route(this.getListProvider));
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.USER]),
       this.route(this.becomeProvider)
     );
+  }
+  @ApiOperationGet({
+    path: "",
+    operationId: "getListProvider",
+    security: {
+      bearerAuth: [],
+    },
+    description: "Get list provider",
+    summary: "Get list provider",
+    parameters: {
+      query: {
+        ...queryParameters,
+        ...filterProviderParameters,
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: CoinHistoryPagingResponse },
+          },
+        },
+        description: "Provider success",
+      },
+    },
+  })
+  async getListProvider(req: Request, res: Response) {
+    const { queryInfoPrisma } = req;
+    let { start_cost, end_cost, skill_id } = req.query;
+    start_cost = start_cost?.toString();
+    const startCost = start_cost ? +start_cost : undefined;
+    end_cost = end_cost?.toString();
+    const endCost = end_cost ? +end_cost : undefined;
+    const result = await this.service.filterProvider(
+      {
+        startCost,
+        endCost,
+        skillId: skill_id?.toString() || undefined,
+      } as IOptionFilterProvider,
+      queryInfoPrisma!
+    );
+    this.onSuccessAsList(res, result);
   }
 
   @ApiOperationPost({

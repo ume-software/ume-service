@@ -252,6 +252,90 @@ paths:
       security:
         - bearerAuth: []
   /api/v1/provider:
+    get:
+      operationId: getListProvider
+      tags:
+        - Provider
+      description: Get list provider
+      summary: Get list provider
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+        - name: select
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_2
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: limit
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_4
+        - name: order
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+        - name: start_cost
+          in: query
+          schema:
+            type: number
+            default: 5
+          description: |2-
+
+                    Example : start_cost=5
+                    
+        - name: end_cost
+          in: query
+          schema:
+            type: number
+            default: 10
+          description: |2-
+
+                    Example : end_cost=5
+                    
+        - name: skill_id
+          in: query
+          schema:
+            type: string
+            default: 14476c02-2846-4097-8f00-b495e8fc77ae
+          description: |2-
+
+                    Example : skill_id=14476c02-2846-4097-8f00-b495e8fc77ae
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinHistoryPagingResponse'
+          description: Provider success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
     post:
       operationId: becomeProvider
       tags:
@@ -282,7 +366,7 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
-  /api/v1/providerSkill:
+  /api/v1/provider_skill:
     post:
       operationId: createProviderSkill
       tags:

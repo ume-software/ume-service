@@ -55,6 +55,17 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     return await tx.providerSkill.create({ data: providerSkillCreateInput });
   }
 
+  async countByProviderId(
+    providerId: string,
+    tx: PrismaTransation = this.prisma
+  ): Promise<number> {
+    return await tx.providerSkill.count({
+      where: {
+        providerId,
+      },
+    });
+  }
+
   async findOne(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
