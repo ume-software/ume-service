@@ -61,7 +61,7 @@ export class CoinService {
     };
   }
 
-  async getTotalCoinUser(userId: string) {
+  private async getTotalCoinUser(userId: string) {
     return (
       (await coinHistoryRepository.countByUserIdAndCoinType(
         userId,

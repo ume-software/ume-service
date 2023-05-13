@@ -1,4 +1,4 @@
-import { providerService, userService } from "@/services";
+import { coinService, providerService, userService } from "@/services";
 
 export class BookingService {
   async userBookingProvider(userId: string, providerId: string) {
@@ -7,6 +7,7 @@ export class BookingService {
         id: userId,
       },
     });
+    coinService.getTotalCoinByUserId(userId)
     const provider = await providerService.findOne({
       where: {
         id: providerId,

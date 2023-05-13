@@ -100,6 +100,7 @@ model BookingHistory {
   createdAt       DateTime?      @default(now()) @map("created_at")
   updatedAt       DateTime?      @updatedAt @map("updated_at")
   deletedAt       DateTime?      @map("deleted_at")
+  status          BookingStatus
   booker          User?          @relation(fields: [bookerId], references: [id])
   bookerId        String?        @map("booker_id")
   providerSkill   ProviderSkill? @relation(fields: [providerSkillId], references: [id])
@@ -143,4 +144,11 @@ enum LoginType {
   KAKAO
   APPLE
   PHONE
+}
+
+enum BookingStatus {
+  INIT
+  USER_CANCEL
+  PROVIDER_CANCEL
+  PROVIDER_ACCEPT
 }
