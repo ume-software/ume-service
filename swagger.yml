@@ -126,6 +126,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
+  /api/v1/booking:
+    post:
+      operationId: createbooking
+      tags:
+        - Booking
+      description: Register become booking
+      summary: Register become booking
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingProviderRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingProviderRequest'
+          description: Register success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/coin/history:
     get:
       operationId: getMyHistoryCoin
@@ -488,6 +519,7 @@ paths:
 tags:
   - name: File
   - name: Image
+  - name: Booking
   - name: Coin
   - name: Provider
   - name: ProviderSkill
@@ -499,6 +531,28 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    BookingProviderRequest:
+      type: object
+      properties:
+        providerSkillId:
+          type: string
+          description: Provider Skill Id
+          example: 42ac81c2-1815-45f7-b598-412487161e1f
+        bookingPeriod:
+          type: number
+          description: Booking peroid
+          example: 2
+        voucherIds:
+          type: array
+          description: Voucher ids
+          example:
+            - 42ac81c2-1815-45f7-b598-412487161e1f
+          items:
+            type: string
+      required:
+        - providerSkillId
+        - bookingPeriod
+      description: Booking cost provider skill request
     PointForUserRequest:
       type: object
       properties:
@@ -580,12 +634,17 @@ components:
           type: string
           description: User id
           example: 9fa9f3c5-640a-407f-b64f-12ff6f55e15c
+        totalCoinsAvailable:
+          type: number
+          description: Total coins available of user
+          example: 900
         totalCoin:
           type: number
           description: Total coin of user
           example: 1000
       required:
         - userId
+        - totalCoinsAvailable
         - totalCoin
       description: User coin response
     BecomeProviderRequest:

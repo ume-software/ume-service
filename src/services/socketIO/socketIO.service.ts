@@ -9,7 +9,6 @@ export const SOCKET_EVENTS = {
     // ON
 
     // EMIT
-
 };
 export class ServerSocket {
     public static instance: ServerSocket;
@@ -29,9 +28,7 @@ export class ServerSocket {
                 origin: "*",
             },
         });
-        console.log(
-            `Socket running`
-        );
+        console.log(`Socket running`);
         this.socketServer.use(this.authMiddleware.bind(this));
         this.socketServer.on(
             SOCKET_EVENTS.CONNECTION,
@@ -74,19 +71,35 @@ export class ServerSocket {
             return next(err);
         }
     }
+    private handleSocketEvent(
+        func: (socket: Socket, ...params: any[]) => any,
+        socket: Socket
+    ) {
+        return (...args: any[]) => func.bind(this)(socket, ...args);
+    }
 
     private StartListeners(socket: Socket) {
-        socket.on("Client-sent-message", (data) => {
-            const content = { ...data, socketId: socket.id };
-            // Message to sender himseft
-            socket.emit("Server-sent-message", content);
+        socket.on(
+            "Client-sent-message",
+            this.handleSocketEvent(this.onClientSentMessage, socket)
+        );
 
-            // Message to all
-            this.socketServer?.sockets.emit("Server-sent-message", content);
-        });
+        socket.on(
+            SOCKET_EVENTS.DISCONNECT,
+            this.handleSocketEvent(this.onClientDisconnect, socket)
+        );
+    }
 
-        socket.on(SOCKET_EVENTS.DISCONNECT, () => {
-            console.info("Disconnect received from: " + socket.id);
-        });
+    private onClientSentMessage(socket: Socket, data: any) {
+        const content = { ...data, socketId: socket.id };
+        // Message to sender himseft
+        socket.emit("Server-sent-message", content);
+
+        // Message to all
+        this.socketServer?.sockets.emit("Server-sent-message", content);
+    }
+
+    private onClientDisconnect(socket: Socket) {
+        console.info("Disconnect received from: " + socket.id);
     }
 }

@@ -12,6 +12,13 @@ export class UserCoinResponse {
   userId?: string;
 
   @ApiModelProperty({
+    description: "Total coins available of user",
+    required: true,
+    example: 900,
+  })
+  totalCoinsAvailable!: number;
+
+  @ApiModelProperty({
     description: "Total coin of user",
     required: true,
     example: 1000,

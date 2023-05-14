@@ -7,9 +7,9 @@ import {
 } from "@/repositories";
 import { PrismaTransation } from "@/repositories/base/basePrisma.repository";
 import { errorService, skillService, utilService } from "@/services";
-import { BasePrismaService } from "@/services/base/basePrisma.service";
+import { BasePrismaService, ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProviderSkill } from "@prisma/client";
 
 export class ProviderSkillService extends BasePrismaService<
   typeof providerSkillRepository
@@ -119,4 +119,9 @@ export class ProviderSkillService extends BasePrismaService<
     }
     return false;
   }
+
+  async findOne(query?: ICrudOptionPrisma): Promise<ProviderSkill | null> {
+    return await this.repository.findOne(query);
+  }
+
 }

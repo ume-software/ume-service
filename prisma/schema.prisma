@@ -105,7 +105,10 @@ model BookingHistory {
   bookerId        String?        @map("booker_id")
   providerSkill   ProviderSkill? @relation(fields: [providerSkillId], references: [id])
   providerSkillId String?        @map("provider_skill_id")
-  votes           Vote[]
+  totalCost       Float          @map("total_cost")
+  bookingPeriod   Int            @map("booking_period")
+
+  votes Vote[]
 
   @@map("booking_history")
 }

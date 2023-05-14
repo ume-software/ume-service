@@ -1,6 +1,4 @@
-
 import { ErrorService } from "./errorService";
-
 
 // Crud
 import { UserService } from "./api/v1/user.service";
@@ -16,6 +14,7 @@ import { SkillService } from "./api/v1/skill.service";
 import { ProviderService } from "./api/v1/provider.service";
 import { ProviderSkillService } from "./api/v1/providerSkill.service";
 import { CoinService } from "./api/v1/coin.service";
+import { BookingService } from "./api/v1/booking.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -28,29 +27,28 @@ const errorService = new ErrorService();
 const firebaseService = new FirebaseService();
 
 //=============
+const bookingService = new BookingService();
+const coinService = new CoinService();
 const providerService = new ProviderService();
-const providerSkillService =new ProviderSkillService();
+const providerSkillService = new ProviderSkillService();
 const skillService = new SkillService();
 const userService = new UserService();
-const coinService = new CoinService();
-
 
 export {
-  scheduleService,
-  errorService,
-  utilService,
-  tokenService,
-  bcryptService,
-  cryptoService,
-  imageService,
-  fileService,
-  firebaseService,
-  // CRUD
-  providerService,
-  providerSkillService,
-  userService,
-  skillService,
-  coinService
-
-
+    scheduleService,
+    errorService,
+    utilService,
+    tokenService,
+    bcryptService,
+    cryptoService,
+    imageService,
+    fileService,
+    firebaseService,
+    // CRUD
+    bookingService,
+    coinService,
+    providerService,
+    providerSkillService,
+    userService,
+    skillService,
 };
