@@ -134,7 +134,7 @@ export const ERROR_MESSAGE = {
     // Booking
     BOOKER_DOES_NOT_EXISTED: {
         message: {
-            vi: "Người đặt không hề tồn tại.",
+            vi: "Người đặt không tồn tại.",
             en: "Booker doesn't exist.",
         },
         code: 400,
@@ -146,11 +146,24 @@ export const ERROR_MESSAGE = {
         },
         code: 400,
     },
-
+    BOOKING_REQUEST_DOES_NOT_EXISTED: {
+        message: {
+            vi: "Yêu cầu thuê không tồn tại.",
+            en: "The booking request does not exist.",
+        },
+        code: 400,
+    },
+    BOOKING_ENDED: {
+        message: {
+            vi: "Yêu cầu thuê đã kết thúc.",
+            en: "Booking ended.",
+        },
+        code: 400,
+    },
     // Skill
     THIS_SKILL_DOES_NOT_EXISTED: {
         message: {
-            vi: "Kỹ năng này không hề tồn tại.",
+            vi: "Kỹ năng này không tồn tại.",
             en: "This skill doesn't exist.",
         },
         code: 400,
@@ -158,7 +171,7 @@ export const ERROR_MESSAGE = {
     // Provider
     THIS_PROVIDER_DOES_NOT_EXISTED: {
         message: {
-            vi: "Nhà cung cấp này không hề tồn tại.",
+            vi: "Nhà cung cấp này không tồn tại.",
             en: "This provider doesn't exist.",
         },
         code: 400,
@@ -180,7 +193,7 @@ export const ERROR_MESSAGE = {
     },
     THIS_PROVIDER_SKILL_DOES_NOT_EXISTED: {
         message: {
-            vi: "Kỹ năng này không hề tồn tại trong danh sách kỹ năng của nhà cung cấp dịch vụ.",
+            vi: "Kỹ năng này không tồn tại trong danh sách kỹ năng của nhà cung cấp dịch vụ.",
             en: "This skill doesn't exist in the provider's skill list.",
         },
         code: 400,

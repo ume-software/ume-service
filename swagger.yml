@@ -131,8 +131,8 @@ paths:
       operationId: createbooking
       tags:
         - Booking
-      description: Register become booking
-      summary: Register become booking
+      description: Create new booking
+      summary: Create new booking
       parameters:
         - name: hl
           in: query
@@ -147,8 +147,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookingProviderRequest'
-          description: Register success
+                $ref: '#/components/schemas/BookingHistoryResponse'
+          description: Create new booking success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/booking/handle:
+    put:
+      operationId: bookingHandle
+      tags:
+        - Booking
+      description: Booing handle
+      summary: Booing handle
+      parameters:
+        - name: hl
+          in: query
+          schema: *ref_0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingHandleRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingHistoryResponse'
+          description: Booing handle success
         '500':
           content:
             application/json:
@@ -531,6 +562,21 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    BookingHandleRequest:
+      type: object
+      properties:
+        bookingHistoryId:
+          type: string
+          description: Booking history id
+          example: 42ac81c2-1815-45f7-b598-412487161e1f
+        status:
+          type: string
+          description: Booking status
+          example: PROVIDER_ACCEPT
+      required:
+        - bookingHistoryId
+        - status
+      description: Booking handle provider request
     BookingProviderRequest:
       type: object
       properties:
@@ -553,6 +599,55 @@ components:
         - providerSkillId
         - bookingPeriod
       description: Booking cost provider skill request
+    BookingHistoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+          example: '2023-05-10T07:08:46.083Z'
+        acceptedAt:
+          type: date
+          description: Accepted At
+          example: '2023-05-10T07:08:46.083Z'
+        status:
+          type: string
+          description: Slug url
+          example: INIT
+        bookerId:
+          type: string
+          description: Id's user booking
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        providerSkillId:
+          type: string
+          description: Id's skill of provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        totalCost:
+          type: number
+          description: Total cost (bookingPeriod * skillCost)
+          example: 16
+        bookingPeriod:
+          type: number
+          description: Booking period (hours)
+          example: 2
+      required:
+        - id
+        - status
+        - bookerId
+        - providerSkillId
+      description: Booking History response
     PointForUserRequest:
       type: object
       properties:

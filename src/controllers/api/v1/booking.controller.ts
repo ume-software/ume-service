@@ -1,4 +1,6 @@
+import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
+import { BookingHistoryResponse } from "@/common/responses/bookingHistory.reponse";
 import {
     BaseController,
     Request,
@@ -10,6 +12,7 @@ import { BookingService } from "@/services/api/v1/booking.service";
 import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationPost,
+    ApiOperationPut,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -33,6 +36,11 @@ export class BookingController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.createbooking)
         );
+        this.router.put(
+            "/handle",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.bookingHandle)
+        );
     }
 
     @ApiOperationPost({
@@ -41,8 +49,8 @@ export class BookingController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Register become booking",
-        summary: "Register become booking",
+        description: "Create new booking",
+        summary: "Create new booking",
         parameters: {
             query: hostLanguageParameter,
         },
@@ -57,10 +65,10 @@ export class BookingController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingProviderRequest },
+                        schema: { model: BookingHistoryResponse },
                     },
                 },
-                description: "Register success",
+                description: "Create new booking success",
             },
         },
     })
@@ -70,6 +78,45 @@ export class BookingController extends BaseController {
         const result = await this.service.userBookingProvider(
             userId!!,
             bookingRequest
+        );
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPut({
+        path: "/handle",
+        operationId: "bookingHandle",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Booing handle",
+        summary: "Booing handle",
+        parameters: {
+            query: hostLanguageParameter,
+        },
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: BookingHandleRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryResponse },
+                    },
+                },
+                description: "Booing handle success",
+            },
+        },
+    })
+    async bookingHandle(req: Request, res: Response) {
+        const bookingHandle = req.body as BookingHandleRequest;
+        const userId = req.tokenInfo?.id;
+        const result = await this.service.bookingHandle(
+            userId!!,
+            bookingHandle
         );
         this.onSuccess(res, result);
     }

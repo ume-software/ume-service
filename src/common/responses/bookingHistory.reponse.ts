@@ -26,9 +26,15 @@ export class BookingHistoryResponse {
 
     @ApiModelProperty({
         description: "Deleted At",
-        example: null,
+        example: "2023-05-10T07:08:46.083Z",
     })
     deletedAt!: Date;
+
+    @ApiModelProperty({
+        description: "Accepted At",
+        example: "2023-05-10T07:08:46.083Z",
+    })
+    acceptedAt!: Date;
 
     @ApiModelProperty({
         description: "Slug url",
