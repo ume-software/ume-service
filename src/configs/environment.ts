@@ -13,6 +13,7 @@ export default {
     logger: process.env["LOGGER"] ? JSON.parse(`${process.env["LOGGER"]}`) : [],
     path_images: "images",
     path_files: "files",
+    path_audio: "audio",
     public_key: process.env["PATH_PUBLIC_KEY"] || "public_key.pem",
     private_key: process.env["PATH_PRIVATE_KEY"] || "public_key.pem",
     timezone :  process.env["DEFAULT_TIME_ZONE"] || "+0700",

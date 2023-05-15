@@ -2,6 +2,69 @@ info:
   title: My api
   version: '1.0'
 paths:
+  /api/audio/{filename}:
+    get:
+      operationId: getAudio
+      tags:
+        - Audio
+      description: Get audio by filename
+      summary: Get audio
+      parameters:
+        - name: filename
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Get file success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/audio:
+    post:
+      operationId: uploadAudio
+      tags:
+        - Audio
+      description: Upload file audio
+      summary: Upload file audio
+      parameters:
+        - name: hl
+          in: path
+          schema: &ref_0
+            type: string
+            enum:
+              - ko
+              - en
+              - vi
+            default: en
+      requestBody:
+        description: Upload multiple file audio
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Parameters fail
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/file/{filename}:
     get:
       operationId: getFile
@@ -34,13 +97,7 @@ paths:
       parameters:
         - name: hl
           in: path
-          schema: &ref_0
-            type: string
-            enum:
-              - ko
-              - en
-              - vi
-            default: en
+          schema: *ref_0
       requestBody:
         description: Upload multiple file
         required: true
@@ -548,6 +605,7 @@ paths:
       security:
         - bearerAuth: []
 tags:
+  - name: Audio
   - name: File
   - name: Image
   - name: Booking
