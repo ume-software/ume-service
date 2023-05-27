@@ -1,8 +1,8 @@
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
-import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
 import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
+import { GetProfieProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
 import {
   BaseController,
   Request,
@@ -107,7 +107,7 @@ export class ProviderController extends BaseController {
       200: {
         content: {
           [SwaggerDefinitionConstant.Produce.JSON]: {
-            schema: { model: CoinHistoryPagingResponse },
+            schema: { model: GetProfieProviderBySlugResponse },
           },
         },
         description: "Provider success",

@@ -96,6 +96,24 @@ export class ProviderRepository extends BasePrismaRepository {
         {
           slug: slug
         }]
+      },
+      include: {
+        providerSkills: {
+          where: {
+            deletedAt: null,
+            skill: {
+              deletedAt: null
+            }
+          },
+          include: {
+            bookingCosts: {
+              where: {
+                deletedAt: null
+              }
+            },
+            skill: true
+          }
+        },
       }
     })
 
