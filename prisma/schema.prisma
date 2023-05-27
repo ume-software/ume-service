@@ -73,7 +73,7 @@ model BookingCost {
   updatedAt       DateTime?     @updatedAt @map("updated_at")
   deletedAt       DateTime?     @map("deleted_at")
   providerSkill   ProviderSkill @relation(fields: [providerSkillId], references: [id])
-  providerSkillId String        @unique @map("provider_skill_id")
+  providerSkillId String        @map("provider_skill_id")
   startTimeOfDay  String?       @map("start_time_of_day")
   endTimeOfDay    String?       @map("end_time_of_day")
   amount          Float?        @map("amount")

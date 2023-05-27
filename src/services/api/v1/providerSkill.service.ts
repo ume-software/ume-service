@@ -34,41 +34,54 @@ export class ProviderSkillService extends BasePrismaService<
         ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
       );
     }
-    const preExistingProviderSkill = await this.repository.findOne({
-      where: {
-        providerId: provider.id,
-        skillId,
-      },
-    });
-    if (preExistingProviderSkill) {
-      throw errorService.router.errorCustom(
-        ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
-      );
-    }
+
+    // if (preExistingProviderSkill) {
+    //   throw errorService.router.errorCustom(
+    //     ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
+    //   );
+    // }
     const countSkillProvider = await this.repository.countByProviderId(
       provider.id
     );
     const position = countSkillProvider + 1;
     return await prisma.$transaction(async (tx: PrismaTransation) => {
-      const createProviderSkill = await this.repository.create(
-        {
-          skill: {
-            connect: {
-              id: skillId,
-            },
-          },
-          provider: {
-            connect: {
-              id: provider.id,
-            },
-          },
-          defaultCost,
-          position,
+      let providerSkill = await this.repository.findOne({
+        where: {
+          providerId: provider.id,
+          skillId,
         },
-        tx
-      );
+      });
+      if (!providerSkill) {
+        providerSkill = await this.repository.create(
+          {
+            skill: {
+              connect: {
+                id: skillId,
+              },
+            },
+            provider: {
+              connect: {
+                id: provider.id,
+              },
+            },
+            defaultCost,
+            position,
+          },
+          tx
+        );
+      }
+      const providerSkillId = providerSkill?.id!;
+      const preExistingBookingCosts = await bookingCostRepository.findMany({
+        where: {
+          providerSkillId
+        }
+      })
+      if (this.checkOverlapTime([...bookingCosts, ...preExistingBookingCosts])) {
+        throw errorService.router.badRequest();
+      }
+
       const bookingCostCreateManyInput = bookingCosts.map((item) => ({
-        providerSkillId: createProviderSkill.id,
+        providerSkillId,
         ...item,
       }));
       await bookingCostRepository.createMany(
@@ -79,7 +92,7 @@ export class ProviderSkillService extends BasePrismaService<
       return await this.repository.findOne(
         {
           where: {
-            id: createProviderSkill.id,
+            id: providerSkill.id,
           },
           include: {
             bookingCosts: true,

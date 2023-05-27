@@ -2,6 +2,7 @@ import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
+import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
 import {
   BaseController,
   Request,
@@ -37,6 +38,7 @@ export class ProviderController extends BaseController {
 
   customRouting() {
     this.router.get("/", this.route(this.getListProvider));
+    this.router.get("/:slug", this.route(this.getProviderBySlug));
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.USER]),
@@ -46,9 +48,6 @@ export class ProviderController extends BaseController {
   @ApiOperationGet({
     path: "",
     operationId: "getListProvider",
-    security: {
-      bearerAuth: [],
-    },
     description: "Get list provider",
     summary: "Get list provider",
     parameters: {
@@ -61,7 +60,7 @@ export class ProviderController extends BaseController {
       200: {
         content: {
           [SwaggerDefinitionConstant.Produce.JSON]: {
-            schema: { model: CoinHistoryPagingResponse },
+            schema: { model: FilterProviderPagingResponse },
           },
         },
         description: "Provider success",
@@ -85,6 +84,42 @@ export class ProviderController extends BaseController {
     );
     this.onSuccessAsList(res, result);
   }
+
+  @ApiOperationGet({
+    path: "/{slug}",
+    operationId: "getProviderBySlug",
+    description: "Get Provider by slug or id",
+    summary: "Get Provider by slug or id",
+    parameters: {
+      path: {
+        slug: {
+          required: true,
+          schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+          },
+        },
+      },
+      query: {
+        ...hostLanguageParameter
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: CoinHistoryPagingResponse },
+          },
+        },
+        description: "Provider success",
+      },
+    },
+  })
+  async getProviderBySlug(req: Request, res: Response) {
+    const { slug } = req.params
+    const result = await this.service.getProviderBySlug(slug!)
+    this.onSuccess(res, result);
+  }
+
 
   @ApiOperationPost({
     path: "",

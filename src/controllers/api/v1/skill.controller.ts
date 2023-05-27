@@ -43,10 +43,7 @@ export class SkillController extends BaseController {
   @ApiOperationGet({
     path: "",
     operationId: "findAndCountAll",
-    security: {
-      bearerAuth: [],
-    },
-    description: "Create Skill",
+    description: "Get all skills",
     summary: "Get all skills",
     parameters: {
       query: queryParameters

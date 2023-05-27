@@ -445,7 +445,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CoinHistoryPagingResponse'
+                $ref: '#/components/schemas/FilterProviderPagingResponse'
           description: Provider success
         '500':
           content:
@@ -453,8 +453,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
-      security:
-        - bearerAuth: []
     post:
       operationId: becomeProvider
       tags:
@@ -485,6 +483,35 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/provider/{slug}:
+    get:
+      operationId: getProviderBySlug
+      tags:
+        - Provider
+      description: Get Provider by slug or id
+      summary: Get Provider by slug or id
+      parameters:
+        - name: slug
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: hl
+          in: query
+          schema: *ref_0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinHistoryPagingResponse'
+          description: Provider success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/v1/provider_skill:
     post:
       operationId: createProviderSkill
@@ -521,7 +548,7 @@ paths:
       operationId: findAndCountAll
       tags:
         - Skill
-      description: Create Skill
+      description: Get all skills
       summary: Get all skills
       parameters:
         - name: hl
@@ -572,8 +599,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
-      security:
-        - bearerAuth: []
     post:
       operationId: createSkill
       tags:
@@ -885,6 +910,120 @@ components:
         - voiceUrl
         - description
       description: User registor become provider response
+    FilterProviderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        slug:
+          type: string
+          description: Slug url
+          example: do_tran_minh_chu
+        name:
+          type: string
+          description: Đỗ Trần Minh Chu
+          example: 10
+        avatarurl:
+          type: string
+          description: Avatar url
+          example: >-
+            https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png
+        voiceurl:
+          type: string
+          description: Avatar url
+          example: >-
+            https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3
+        description:
+          type: string
+          description: Description
+          example: This is description about me <3
+        cost:
+          type: number
+          description: Cost
+          example: 6
+        skillid:
+          type: string
+          description: Skill Id
+          example: 45cc1d82-644b-4f7a-b474-7492b2575f10
+        skillname:
+          type: string
+          description: Skill name
+          example: Liên Minh Huyền Thoại
+        skillimageurl:
+          type: string
+          description: Skill image url
+          example: Liên Minh Huyền Thoại
+      required:
+        - id
+        - userId
+        - slug
+        - name
+        - avatarurl
+        - voiceurl
+        - description
+        - cost
+        - skillid
+        - skillname
+        - skillimageurl
+      description: Filter Provider response
+    FilterProviderPagingResponse:
+      type: object
+      properties:
+        rows:
+          type: array
+          description: Row
+          example:
+            - id: d7d73d7b-5cbe-4d4c-b6b9-11756f3ea31a
+              userid: a5dc4dce-ae30-441b-a806-c5cdf77de171
+              slug: do_tran_minh_chu_2
+              name: Đỗ Trần Minh Chu
+              avatarurl: >-
+                https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png
+              voiceurl: >-
+                https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3
+              description: This is description about me <3
+              cost: 6
+              skillid: 45cc1d82-644b-4f7a-b474-7492b2575f10
+              skillname: Liên Minh Huyền Thoại
+              skillimageurl: >-
+                https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg
+            - id: e2c18733-4912-4bc0-bdf3-02c2243d22f4
+              userid: 8ef2aa17-dd44-426f-9606-c87e20199bef
+              slug: do_tran_minh_chu
+              name: Đỗ Trần Minh Chu
+              avatarurl: >-
+                https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png
+              voiceurl: >-
+                https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3
+              description: This is description about me <3
+              cost: 8
+              skillid: 45cc1d82-644b-4f7a-b474-7492b2575f10
+              skillname: Liên Minh Huyền Thoại
+              skillimageurl: >-
+                https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg
+          items:
+            $ref: '#/components/schemas/FilterProviderResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Filter provider paging response
     BookingCostProviderSkillRequest:
       type: object
       properties:
