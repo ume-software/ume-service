@@ -53,7 +53,7 @@ export class CoinHistoryPagingResponse {
     type: SwaggerDefinitionConstant.ARRAY,
     itemType: ProviderSkillResponse,
   })
-  rows!: Array<ProviderSkillResponse>;
+  row!: Array<ProviderSkillResponse>;
 
   @ApiModelProperty({
     description: "Count",

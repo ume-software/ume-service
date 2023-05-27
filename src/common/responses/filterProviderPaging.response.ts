@@ -44,7 +44,7 @@ export class FilterProviderPagingResponse {
     type: SwaggerDefinitionConstant.ARRAY,
     itemType: FilterProviderResponse,
   })
-  rows!: Array<FilterProviderResponse>;
+  row!: Array<FilterProviderResponse>;
 
   @ApiModelProperty({
     description: "Count",

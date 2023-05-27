@@ -37,7 +37,7 @@ export class CoinHistoryPagingResponse {
     type: SwaggerDefinitionConstant.ARRAY,
     itemType: CoinHistoryPagingResponse,
   })
-  rows!: Array<CoinHistoryResponse>;
+  row!: Array<CoinHistoryResponse>;
 
   @ApiModelProperty({
     description: "Count",

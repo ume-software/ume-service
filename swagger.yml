@@ -768,7 +768,7 @@ components:
     CoinHistoryPagingResponse:
       type: object
       properties:
-        rows:
+        row:
           type: array
           description: Row
           example:
@@ -975,7 +975,7 @@ components:
     FilterProviderPagingResponse:
       type: object
       properties:
-        rows:
+        row:
           type: array
           description: Row
           example:
