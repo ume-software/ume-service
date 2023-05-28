@@ -11,8 +11,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { coinService } from "@/services";
 import { CoinService } from "@/services/api/v1/coin.service";
 import {
-  hostLanguageParameter,
-  queryParameters,
+  queryParameters
 } from "@/swagger/parameters/query.parameter";
 import {
   ApiOperationGet,
@@ -91,9 +90,6 @@ export class coinController extends BaseController {
     },
     description: "Total number of coins of the user himself",
     summary: "Total number of coins of the user himself",
-    parameters: {
-      query: hostLanguageParameter,
-    },
     responses: {
       200: {
         content: {
@@ -119,9 +115,6 @@ export class coinController extends BaseController {
     },
     description: "Admin create point for user",
     summary: "Admin create point for user",
-    parameters: {
-      query: hostLanguageParameter,
-    },
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {

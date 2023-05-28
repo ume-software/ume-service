@@ -190,10 +190,6 @@ paths:
         - Booking
       description: Create new booking
       summary: Create new booking
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -221,10 +217,6 @@ paths:
         - Booking
       description: Booing handle
       summary: Booing handle
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -253,30 +245,9 @@ paths:
       description: Get hisotory coins of the user himself
       summary: Get hisotory coins of the user himself
       parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
-        - name: select
-          in: query
-          schema: &ref_1
-            type: string
-            default: '["$all"]'
-          description: |2-
-
-                    Example : select=["$all"]
-                
-        - name: where
-          in: query
-          schema: &ref_2
-            type: string
-            default: '{}'
-          description: |2-
-
-                    Example : where={"name":{"contains":"Minh"}}
-                
         - name: limit
           in: query
-          schema: &ref_3
+          schema: &ref_1
             type: string
             default: unlimited
           description: |2-
@@ -286,9 +257,27 @@ paths:
                 
         - name: page
           in: query
-          schema: &ref_4
+          schema: &ref_2
             type: string
             default: '1'
+        - name: select
+          in: query
+          schema: &ref_3
+            type: string
+            default: '["$all"]'
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: &ref_4
+            type: string
+            default: '{}'
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
         - name: order
           in: query
           schema: &ref_5
@@ -320,10 +309,6 @@ paths:
         - Coin
       description: Total number of coins of the user himself
       summary: Total number of coins of the user himself
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       responses:
         '200':
           content:
@@ -346,10 +331,6 @@ paths:
         - Coin
       description: Admin create point for user
       summary: Admin create point for user
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -378,41 +359,6 @@ paths:
       description: Get list provider
       summary: Get list provider
       parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
-        - name: select
-          in: query
-          schema: *ref_1
-          description: |2-
-
-                    Example : select=["$all"]
-                
-        - name: where
-          in: query
-          schema: *ref_2
-          description: |2-
-
-                    Example : where={"name":{"contains":"Minh"}}
-                
-        - name: limit
-          in: query
-          schema: *ref_3
-          description: |2-
-
-                    Example : limit=50
-                            : limit=unlimited
-                
-        - name: page
-          in: query
-          schema: *ref_4
-        - name: order
-          in: query
-          schema: *ref_5
-          description: |2-
-
-                    Example : order=[{"updatedAt":"asc"}]
-                    
         - name: start_cost
           in: query
           schema:
@@ -440,6 +386,38 @@ paths:
 
                     Example : skill_id=14476c02-2846-4097-8f00-b495e8fc77ae
                     
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
       responses:
         '200':
           content:
@@ -459,10 +437,6 @@ paths:
         - Provider
       description: Register become provider
       summary: Register become provider
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -496,9 +470,6 @@ paths:
           schema:
             type: string
           required: true
-        - name: hl
-          in: query
-          schema: *ref_0
       responses:
         '200':
           content:
@@ -519,10 +490,6 @@ paths:
         - ProviderSkill
       description: Register become providerSkill
       summary: Register become providerSkill
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -551,26 +518,9 @@ paths:
       description: Get all skills
       summary: Get all skills
       parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
-        - name: select
-          in: query
-          schema: *ref_1
-          description: |2-
-
-                    Example : select=["$all"]
-                
-        - name: where
-          in: query
-          schema: *ref_2
-          description: |2-
-
-                    Example : where={"name":{"contains":"Minh"}}
-                
         - name: limit
           in: query
-          schema: *ref_3
+          schema: *ref_1
           description: |2-
 
                     Example : limit=50
@@ -578,7 +528,21 @@ paths:
                 
         - name: page
           in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
           schema: *ref_4
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
         - name: order
           in: query
           schema: *ref_5
@@ -591,8 +555,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateSkillRequest'
-          description: Create Skill success
+                $ref: '#/components/schemas/SkillPagingResponse'
+          description: Filter Skill success
         '500':
           content:
             application/json:
@@ -605,10 +569,6 @@ paths:
         - Skill
       description: Create Skill
       summary: Create Skill
-      parameters:
-        - name: hl
-          in: query
-          schema: *ref_0
       requestBody:
         content:
           application/json:
@@ -1294,6 +1254,48 @@ components:
         - name
         - imageUrl
       description: Create skill request
+    SkillPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          example:
+            - id: 4383a434-c79f-4482-9203-f2a27f46791f
+              createdAt: '2023-05-28T06:30:52.967Z'
+              updatedAt: '2023-05-28T06:30:52.967Z'
+              deletedAt: null
+              name: earum
+              imageUrl: https://loremflickr.com/640/480?lock=458349380370432
+            - id: 54e72f72-93cb-4a61-a752-3715b3c18872
+              createdAt: '2023-05-28T06:30:52.984Z'
+              updatedAt: '2023-05-28T06:30:52.984Z'
+              deletedAt: null
+              name: inventore
+              imageUrl: https://loremflickr.com/640/480?lock=7190194765692928
+            - id: 497e693d-7f5c-4213-a9ba-27efd9057f6f
+              createdAt: '2023-05-28T06:30:52.996Z'
+              updatedAt: '2023-05-28T06:30:52.996Z'
+              deletedAt: null
+              name: quasi
+              imageUrl: https://picsum.photos/seed/zHGysvzi/640/480
+          items:
+            $ref: '#/components/schemas/SkillResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Skill Paging response
     ErrorResponse:
       type: object
       properties:

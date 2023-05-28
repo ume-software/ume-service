@@ -83,12 +83,11 @@ export const orderParameter: IApiParameters = {
 };
 
 export const queryParameters = {
-  ...hostLanguageParameter,
-  ...selectParameter,
-  ...whereParameter,
   ...limitParameter,
   ...pageParameter,
-  ...orderParameter,
+  ...selectParameter,
+  ...whereParameter,
+  ...orderParameter
 };
 
 export const filterProviderParameters = {

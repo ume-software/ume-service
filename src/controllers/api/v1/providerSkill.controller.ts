@@ -10,7 +10,6 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { providerSkillService } from "@/services";
 import { ProviderSkillService } from "@/services/api/v1/providerSkill.service";
-import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import {
   ApiOperationPost,
   ApiPath,
@@ -47,9 +46,6 @@ export class ProviderSkillController extends BaseController {
     },
     description: "Register become providerSkill",
     summary: "Register become providerSkill",
-    parameters: {
-      query: hostLanguageParameter,
-    },
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {

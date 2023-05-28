@@ -59,7 +59,6 @@ export class ProviderRepository extends BasePrismaRepository {
             ${endCost != undefined ? `AND amount < ${endCost}` : ""}
           ORDER BY
             amount ASC
-          LIMIT 1
         ) AS bc ON bc.provider_skill_id = ps.id
         INNER JOIN skill AS s ON ps.skill_id = s.id
       WHERE
@@ -74,6 +73,8 @@ export class ProviderRepository extends BasePrismaRepository {
         p.id,
         p.created_at
       `
+
+      console.log("query ===> ",query)
     const row = await this.prisma.$queryRawUnsafe(
       `
       ${query} 

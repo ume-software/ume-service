@@ -9,7 +9,6 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { bookingService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
-import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationPost,
     ApiOperationPut,
@@ -51,9 +50,6 @@ export class BookingController extends BaseController {
         },
         description: "Create new booking",
         summary: "Create new booking",
-        parameters: {
-            query: hostLanguageParameter,
-        },
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -90,9 +86,6 @@ export class BookingController extends BaseController {
         },
         description: "Booing handle",
         summary: "Booing handle",
-        parameters: {
-            query: hostLanguageParameter,
-        },
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {

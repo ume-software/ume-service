@@ -13,7 +13,6 @@ import { providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import {
   filterProviderParameters,
-  hostLanguageParameter,
   queryParameters,
 } from "@/swagger/parameters/query.parameter";
 import {
@@ -52,8 +51,8 @@ export class ProviderController extends BaseController {
     summary: "Get list provider",
     parameters: {
       query: {
-        ...queryParameters,
         ...filterProviderParameters,
+        ...queryParameters,
       },
     },
     responses: {
@@ -99,9 +98,6 @@ export class ProviderController extends BaseController {
           },
         },
       },
-      query: {
-        ...hostLanguageParameter
-      },
     },
     responses: {
       200: {
@@ -129,9 +125,6 @@ export class ProviderController extends BaseController {
     },
     description: "Register become provider",
     summary: "Register become provider",
-    parameters: {
-      query: hostLanguageParameter,
-    },
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {

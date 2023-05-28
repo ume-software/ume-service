@@ -1,4 +1,5 @@
 import { CreateSkillRequest } from "@/common/requests/createSkill.request";
+import { SkillPagingResponse } from "@/common/responses/skillPaging.response";
 import {
   BaseController,
   Request,
@@ -8,7 +9,6 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { skillService } from "@/services";
 import { SkillService } from "@/services/api/v1/skill.service";
 import {
-  hostLanguageParameter,
   queryParameters,
 } from "@/swagger/parameters/query.parameter";
 import {
@@ -52,10 +52,10 @@ export class SkillController extends BaseController {
       200: {
         content: {
           [SwaggerDefinitionConstant.Produce.JSON]: {
-            schema: { model: CreateSkillRequest },
+            schema: { model: SkillPagingResponse },
           },
         },
-        description: "Create Skill success",
+        description: "Filter Skill success",
       },
     },
   })
@@ -73,9 +73,6 @@ export class SkillController extends BaseController {
     },
     description: "Create Skill",
     summary: "Create Skill",
-    parameters: {
-      query: hostLanguageParameter,
-    },
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {
