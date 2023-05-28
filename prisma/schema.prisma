@@ -16,7 +16,7 @@ model User {
   provider       Provider?
   coinHistory    CoinHistory[]
   bookingHistory BookingHistory[]
-  votes          Vote[]
+  feedbacks      Feedback[]
 
   @@map("user")
 }
@@ -109,12 +109,12 @@ model BookingHistory {
   totalCost       Float          @map("total_cost")
   bookingPeriod   Int            @map("booking_period")
 
-  votes Vote[]
+  feedbacks Feedback[]
 
   @@map("booking_history")
 }
 
-model Vote {
+model Feedback {
   id          String         @id @default(uuid()) @map("id")
   createdAt   DateTime?      @default(now()) @map("created_at")
   updatedAt   DateTime?      @updatedAt @map("updated_at")
@@ -123,9 +123,10 @@ model Vote {
   bookerId    String         @map("booker_id")
   booking     BookingHistory @relation(fields: [bookingId], references: [id])
   bookingId   String         @map("booking_id")
+  content     String ?       @map("content")
   amountStart Int?           @map("amount_start")
 
-  @@map("vote_history")
+  @@map("feedback")
 }
 
 enum CoinType {

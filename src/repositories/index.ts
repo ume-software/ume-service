@@ -5,7 +5,7 @@ import { ProviderRepository } from "./common/provider.repository";
 import { ProviderSkillRepository } from "./common/providerSkill.repository";
 import { SkillRepository } from "./common/skill.repository";
 import { UserRepository } from "./common/user.repository";
-import { VoteRepository } from "./common/vote.repository";
+import { FeedbackRepository } from "./common/feedback.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -14,7 +14,7 @@ const providerRepository = new ProviderRepository();
 const providerSkillRepository = new ProviderSkillRepository();
 const skillRepository = new SkillRepository();
 const userRepository = new UserRepository();
-const voteRepository = new VoteRepository();
+const feedbackRepository = new FeedbackRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -23,5 +23,5 @@ export {
     providerSkillRepository,
     skillRepository,
     userRepository,
-    voteRepository
+    feedbackRepository
 }

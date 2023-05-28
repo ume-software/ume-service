@@ -163,15 +163,15 @@ paths:
             schema:
               type: object
               properties:
-                width:
-                  type: integer
-                height:
-                  type: integer
                 files:
                   type: array
                   items:
                     type: string
                     format: binary
+                width:
+                  type: integer
+                height:
+                  type: integer
       responses:
         '200':
           description: Success

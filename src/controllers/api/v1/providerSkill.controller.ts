@@ -30,7 +30,6 @@ export class ProviderSkillController extends BaseController {
   service: ProviderSkillService;
 
   customRouting() {
-    
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.USER]),

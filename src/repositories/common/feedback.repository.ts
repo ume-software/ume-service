@@ -1,19 +1,19 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
-import { Prisma, Vote } from "@prisma/client";
+import { Prisma, Feedback } from "@prisma/client";
 
-export class VoteRepository extends BasePrismaRepository {
+export class FeedbackRepository extends BasePrismaRepository {
   constructor() {
     super();
   }
 
   async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-    row: Vote[];
+    row: Feedback[];
     count: number;
   }> {
     const [row, count] = await this.prisma.$transaction([
-      this.prisma.vote.findMany(query),
-      this.prisma.vote.count({
+      this.prisma.feedback.findMany(query),
+      this.prisma.feedback.count({
         where: query?.where,
       }),
     ]);
@@ -27,56 +27,56 @@ export class VoteRepository extends BasePrismaRepository {
     id: string,
     bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
     tx: PrismaTransation = this.prisma
-  ): Promise<Vote> {
-    return await tx.vote.update({
+  ): Promise<Feedback> {
+    return await tx.feedback.update({
       data: bookingCostUpdateInput,
       where: { id },
     });
   }
 
   async updateMany(
-    voteUpdateInput: Prisma.VoteUpdateInput,
+    feedbackUpdateInput: Prisma.FeedbackUpdateInput,
     query: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
   ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
-    return await tx.vote.updateMany({
-      data: voteUpdateInput,
+    return await tx.feedback.updateMany({
+      data: feedbackUpdateInput,
       where: query.where,
     });
   }
 
   async create(
-    voteCreateInput: Prisma.VoteCreateInput,
+    feedbackCreateInput: Prisma.FeedbackCreateInput,
     tx: PrismaTransation = this.prisma
-  ): Promise<Vote> {
-    return await tx.vote.create({ data: voteCreateInput });
+  ): Promise<Feedback> {
+    return await tx.feedback.create({ data: feedbackCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
-  ): Promise<Vote | null> {
-    return await tx.vote.findFirst(query);
+  ): Promise<Feedback | null> {
+    return await tx.feedback.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
-  ): Promise<Vote[]> {
-    return await tx.vote.findMany(query);
+  ): Promise<Feedback[]> {
+    return await tx.feedback.findMany(query);
   }
 
   async deleteById(
     id: string,
     tx: PrismaTransation = this.prisma
-  ): Promise<Vote> {
-    return await tx.vote.delete({ where: { id } });
+  ): Promise<Feedback> {
+    return await tx.feedback.delete({ where: { id } });
   }
 
   async deleteMany(
-    voteWhereInput: Prisma.VoteWhereInput,
+    feedbackWhereInput: Prisma.FeedbackWhereInput,
     tx: PrismaTransation = this.prisma
   ): Promise<Prisma.BatchPayload> {
-    return await tx.vote.deleteMany({ where: voteWhereInput });
+    return await tx.feedback.deleteMany({ where: feedbackWhereInput });
   }
 }

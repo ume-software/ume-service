@@ -74,7 +74,7 @@ export class ProviderRepository extends BasePrismaRepository {
         p.created_at
       `
 
-      console.log("query ===> ",query)
+    console.log("query ===> ", query)
     const row = await this.prisma.$queryRawUnsafe(
       `
       ${query} 
@@ -89,6 +89,9 @@ export class ProviderRepository extends BasePrismaRepository {
     }
   }
   async getByIdOrSlug(slug: string): Promise<Provider | null> {
+    const nowTimehhmm = moment()
+      .utcOffset(config.server.timezone)
+      .format("HH:mm");
     return await this.prisma.provider.findFirst({
       where: {
         OR: [{
@@ -109,10 +112,20 @@ export class ProviderRepository extends BasePrismaRepository {
           include: {
             bookingCosts: {
               where: {
-                deletedAt: null
-              }
+                deletedAt: null,
+                startTimeOfDay: {
+                  gte: nowTimehhmm
+                },
+                endTimeOfDay: {
+                  lte: nowTimehhmm
+                },
+              },
+              take: 1
             },
             skill: true
+          },
+          orderBy: {
+            position: "asc"
           }
         },
       }
