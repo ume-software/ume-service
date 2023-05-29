@@ -483,6 +483,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
+  /api/v1/provider_skill/{id}/feedback:
+    get:
+      operationId: getFeedbackByProviderSkill
+      tags:
+        - ProviderSkill
+      description: Get all skills
+      summary: Get all skills
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackPagingResponse'
+          description: Filter Skill success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/v1/provider_skill:
     post:
       operationId: createProviderSkill
@@ -642,6 +700,46 @@ components:
         - providerSkillId
         - bookingPeriod
       description: Booking cost provider skill request
+    UserInfomationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User name
+          example: Đỗ Trần Minh Chu
+        username:
+          type: string
+          description: User name
+          example: Đỗ Trần Minh Chu
+        dob:
+          type: string
+          description: Dob timezone 0
+          example: '2001-10-12 17:00:00.000'
+        gender:
+          type: string
+          description: Gender
+          example: MALE
+        phone:
+          type: string
+          description: Phone number
+          example: '0123456789'
+        email:
+          type: string
+          description: Email
+          example: dotranminhchu@gmail.com
+        avatar:
+          type: string
+          description: Avatar
+          example: >-
+            https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg
+      required:
+        - name
+        - username
+        - dob
+        - gender
+        - email
+        - avatar
+      description: User Infomation response
     BookingHistoryResponse:
       type: object
       properties:
@@ -673,6 +771,16 @@ components:
           type: string
           description: Id's user booking
           example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        booker:
+          type: STRING
+          description: Booker Infomation
+          example:
+            id: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+            name: Christine Gutmann
+            slug: christine-gutmann
+            avatarUrl: >-
+              https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg
+          $ref: '#/components/schemas/UserInfomationResponse'
         providerSkillId:
           type: string
           description: Id's skill of provider
@@ -1238,6 +1346,139 @@ components:
         - skillId
         - defaultCost
       description: Provider skill request
+    FeedbackResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's provider
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+          example: '2023-05-10T07:08:46.083Z'
+        acceptedAt:
+          type: date
+          description: Accepted At
+          example: '2023-05-10T07:08:46.083Z'
+        content:
+          type: string
+          description: Content feedback
+          example: Good job
+        amountStart:
+          type: number
+          description: Start 0-5
+          example: 5
+        booking:
+          type: array
+          example:
+            id: f00ada3a-091b-4b6b-8efc-af2da32cd956
+            createdAt: '2023-05-29T17:23:04.562Z'
+            updatedAt: '2023-05-29T17:23:04.562Z'
+            deletedAt: null
+            status: USER_CANCEL
+            acceptedAt: '2023-05-28T23:49:56.469Z'
+            bookerId: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+            providerSkillId: eaf0d5a6-e305-438d-a78b-72bbb288eec1
+            totalCost: 194
+            bookingPeriod: 1
+            booker:
+              id: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+              name: Christine Gutmann
+              slug: christine-gutmann
+              avatarUrl: >-
+                https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg
+          items:
+            $ref: '#/components/schemas/BookingHistoryResponse'
+      required:
+        - id
+      description: Feedback response
+    FeedbackPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          example:
+            - id: 07e67962-76fb-49e4-b6da-d19fa9306593
+              createdAt: '2023-05-29T17:23:05.821Z'
+              updatedAt: '2023-05-29T17:23:05.821Z'
+              deletedAt: null
+              bookingId: f00ada3a-091b-4b6b-8efc-af2da32cd956
+              content: >-
+                Pariatur quaerat ea porro illum modi dolore inventore non
+                repellat. Exercitationem id possimus necessitatibus. Velit animi
+                quo dolores provident sed.
+              amountStart: 1
+              booking:
+                id: f00ada3a-091b-4b6b-8efc-af2da32cd956
+                createdAt: '2023-05-29T17:23:04.562Z'
+                updatedAt: '2023-05-29T17:23:04.562Z'
+                deletedAt: null
+                status: USER_CANCEL
+                acceptedAt: '2023-05-28T23:49:56.469Z'
+                bookerId: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+                providerSkillId: eaf0d5a6-e305-438d-a78b-72bbb288eec1
+                totalCost: 194
+                bookingPeriod: 1
+                bookerInformation:
+                  id: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+                  name: Christine Gutmann
+                  slug: christine-gutmann
+                  avatarUrl: >-
+                    https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg
+            - id: 1deb98e3-1676-48ce-b12d-07b6352a982b
+              createdAt: '2023-05-29T17:23:05.944Z'
+              updatedAt: '2023-05-29T17:23:05.944Z'
+              deletedAt: null
+              bookingId: 5e5930ef-f309-4d28-b87a-d4b9bd2c1599
+              content: >-
+                Repellendus iusto velit fugiat saepe harum enim quae. Soluta
+                sapiente iste nulla. Pariatur voluptatibus et ullam placeat
+                itaque perferendis natus praesentium dolor.
+              amountStart: 5
+              booking:
+                id: 5e5930ef-f309-4d28-b87a-d4b9bd2c1599
+                createdAt: '2023-05-29T17:23:04.727Z'
+                updatedAt: '2023-05-29T17:23:04.727Z'
+                deletedAt: null
+                status: USER_FINISH_SOON
+                acceptedAt: '2023-05-28T21:22:34.378Z'
+                bookerId: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+                providerSkillId: eaf0d5a6-e305-438d-a78b-72bbb288eec1
+                totalCost: 160
+                bookingPeriod: 9
+                bookerInformation:
+                  id: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
+                  name: Christine Gutmann
+                  slug: christine-gutmann
+                  avatarUrl: >-
+                    https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg
+          items:
+            $ref: '#/components/schemas/FeedbackResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Feedback paging response
     CreateSkillRequest:
       type: object
       properties:

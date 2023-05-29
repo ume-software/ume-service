@@ -7,6 +7,7 @@ import {
   accountTypeMiddleware,
   authMiddleware,
   authOrUnAuthMiddleware,
+  systemMiddleware,
 } from "@/middlewares";
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { config } from "@/configs";
@@ -124,8 +125,8 @@ export class BaseController {
       queryLimit == UNLIMITED
         ? UNLIMITED
         : typeof queryLimit == "string"
-        ? Number.parseInt(queryLimit)
-        : config.database.defaultPageSize;
+          ? Number.parseInt(queryLimit)
+          : config.database.defaultPageSize;
     res.json({
       ...Object.assign(
         objects,
@@ -154,8 +155,8 @@ export class BaseController {
       queryLimit == UNLIMITED
         ? UNLIMITED
         : typeof queryLimit == "string"
-        ? Number.parseInt(queryLimit)
-        : config.database.defaultPageSize;
+          ? Number.parseInt(queryLimit)
+          : config.database.defaultPageSize;
     const data = {
       ...Object.assign(
         objects,
@@ -195,7 +196,7 @@ export class BaseController {
                 errorRes.options.message = message.en;
               }
             }
-          } catch (e) {}
+          } catch (e) { }
           error.options = undefined;
           this.onError(res, errorRes);
         });
@@ -222,7 +223,7 @@ export class BaseController {
                 error.options.message = message.en;
               }
             }
-          } catch (e) {}
+          } catch (e) { }
           error.options = undefined;
           this.onError(res, error);
         });
@@ -238,5 +239,9 @@ export class BaseController {
 
   accountTypeMiddlewares(option?: EAccountType[]): any[] {
     return [accountTypeMiddleware.run(option)];
+  }
+
+  systemsMiddlewares(): any[] {
+    return [systemMiddleware.run()];
   }
 }

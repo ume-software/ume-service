@@ -2,15 +2,18 @@
 
 
 import { ProviderSkillRequest } from "@/common/requests/providerSkill.request";
+import { FeedbackPagingResponse } from "@/common/responses/feedbackPaging.response";
 import {
   BaseController,
   Request,
   Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { providerSkillService } from "@/services";
+import { feedbackService, providerSkillService } from "@/services";
 import { ProviderSkillService } from "@/services/api/v1/providerSkill.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
+  ApiOperationGet,
   ApiOperationPost,
   ApiPath,
   SwaggerDefinitionConstant,
@@ -30,11 +33,53 @@ export class ProviderSkillController extends BaseController {
   service: ProviderSkillService;
 
   customRouting() {
+    this.router.get(
+      "/:id/feedback",
+      this.route(this.getFeedbackByProviderSkill)
+    );
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.USER]),
       this.route(this.createProviderSkill)
     );
+  }
+
+  @ApiOperationGet({
+    path: "/{id}/feedback",
+    operationId: "getFeedbackByProviderSkill",
+    description: "Get all skills",
+    summary: "Get all skills",
+    parameters: {
+      path: {
+        id: {
+          required: true,
+          schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+          },
+        },
+      },
+      query: queryParameters
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: FeedbackPagingResponse },
+          },
+        },
+        description: "Filter Skill success",
+      },
+    },
+  })
+  async getFeedbackByProviderSkill(req: Request, res: Response) {
+    const { id: providerSkillId } = req.params
+    let queryInfoPrisma = req.queryInfoPrisma || {};
+    if (!queryInfoPrisma.where) queryInfoPrisma.where = {}
+    queryInfoPrisma.where.booking = {
+      providerSkillId
+    }
+    const result = await feedbackService.getFeedbackByProviderSkill(queryInfoPrisma);
+    this.onSuccessAsList(res, result);
   }
 
   @ApiOperationPost({

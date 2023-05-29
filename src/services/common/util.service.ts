@@ -308,13 +308,11 @@ export class UtilService {
     resizeOptions?: { height: number; width: number }
   ) {
     const index = oldFileName.lastIndexOf(".");
-    const newFileName = `${oldFileName.substring(0, index)}${
-      addTime ? `-${moment().valueOf()}` : ""
-    }`;
+    const newFileName = `${oldFileName.substring(0, index)}${addTime ? `-${moment().valueOf()}` : ""
+      }`;
     if (resizeOptions?.height || resizeOptions?.width) {
-      return `${newFileName}-${resizeOptions.width}x${
-        resizeOptions.height
-      }${oldFileName.substring(index)}`;
+      return `${newFileName}-${resizeOptions.width}x${resizeOptions.height
+        }${oldFileName.substring(index)}`;
     }
     return `${newFileName}${oldFileName.substring(index)}`;
   }
@@ -387,7 +385,8 @@ export class UtilService {
     baseURL = config.service.identity.url,
     configAxios: CreateAxiosDefaults<any> = {
       timeout: 1000,
-    }
+    },
+
   ) {
     configAxios.baseURL = baseURL;
     return axios.create(configAxios);
@@ -404,5 +403,12 @@ export class UtilService {
 
   checkOverlap(startA: number, endA: number, startB: number, endB: number) {
     return endA > startB && endB > startA;
+  }
+
+  convertArrayObjectToObject(input: Array<any>): any {
+    return input.reduce((acc, obj) => {
+      acc[obj.id] = obj;
+      return acc;
+    }, {});
   }
 }

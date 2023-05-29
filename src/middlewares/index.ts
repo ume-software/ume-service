@@ -6,6 +6,7 @@ import { LoggerMiddleware } from "./logger.middleware";
 import { MorganMiddleware } from "./morgan.middleware";
 import { ParseRequestMiddleware } from "./parseRequest.middleware";
 import { QueryPrismaMiddleware } from "./queryPrisma.middleware";
+import { SystemMiddleware } from "./system.middleware";
 
 
 
@@ -17,6 +18,7 @@ const authMiddleware = new AuthMiddleware();
 const authOrUnAuthMiddleware = new AuthOrUnAuthMiddleware();
 const accountTypeMiddleware = new AccountTypeMiddleware();
 const decryptMiddleware = new DecryptMiddleware();
+const systemMiddleware = new SystemMiddleware();
 export {
     queryPrismaMiddleware,
     loggerMiddleware,
@@ -25,5 +27,6 @@ export {
     authMiddleware,
     authOrUnAuthMiddleware,
     accountTypeMiddleware,
-    decryptMiddleware
+    decryptMiddleware,
+    systemMiddleware
 }

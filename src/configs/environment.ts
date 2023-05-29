@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+
 require("@/configs/dotenv.config");
 
 export default {
@@ -16,13 +18,14 @@ export default {
     path_audio: "audio",
     public_key: process.env["PATH_PUBLIC_KEY"] || "public_key.pem",
     private_key: process.env["PATH_PRIVATE_KEY"] || "public_key.pem",
-    timezone :  process.env["DEFAULT_TIME_ZONE"] || "+0700",
+    timezone: process.env["DEFAULT_TIME_ZONE"] || "+0700",
   },
   service: {
     identity: {
       url: process.env["URL_IDENTITY_SERVICE"] || "http://localhost:4000",
-      public_key:
-        process.env["IDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem",
+      path_public_key: process.env["IDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem",
+      path_private_key: process.env["IDENTITY_PATH_PRIVATE_KEY"] || "identity_private_key.pem",
+      public_key: readFileSync(process.env["IDENTITY_PATH_PUBLIC_KEY"] || "identity_public_key.pem") || ""
     },
   },
   socket: {

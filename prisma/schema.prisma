@@ -16,8 +16,7 @@ model User {
   provider       Provider?
   coinHistory    CoinHistory[]
   bookingHistory BookingHistory[]
-  feedbacks      Feedback[]
-
+  
   @@map("user")
 }
 
@@ -119,8 +118,6 @@ model Feedback {
   createdAt   DateTime?      @default(now()) @map("created_at")
   updatedAt   DateTime?      @updatedAt @map("updated_at")
   deletedAt   DateTime?      @map("deleted_at")
-  booker      User           @relation(fields: [bookerId], references: [id])
-  bookerId    String         @map("booker_id")
   booking     BookingHistory @relation(fields: [bookingId], references: [id])
   bookingId   String         @map("booking_id")
   content     String ?       @map("content")

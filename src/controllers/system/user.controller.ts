@@ -8,7 +8,7 @@ export class UserController extends BaseController {
         super()
         this.service = userService
         this.path = 'user'
-        this.router.post("/sync", this.route(this.sync))
+        this.router.post("/sync",this.systemsMiddlewares(), this.route(this.sync))
 
 
     }

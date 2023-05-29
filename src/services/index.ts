@@ -15,6 +15,7 @@ import { ProviderService } from "./api/v1/provider.service";
 import { ProviderSkillService } from "./api/v1/providerSkill.service";
 import { CoinService } from "./api/v1/coin.service";
 import { BookingService } from "./api/v1/booking.service";
+import { FeedbackService } from "./api/v1/feedback.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -33,6 +34,7 @@ const providerService = new ProviderService();
 const providerSkillService = new ProviderSkillService();
 const skillService = new SkillService();
 const userService = new UserService();
+const feedbackService = new FeedbackService();
 
 export {
     scheduleService,
@@ -51,4 +53,5 @@ export {
     providerSkillService,
     userService,
     skillService,
+    feedbackService
 };

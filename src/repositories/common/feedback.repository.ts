@@ -1,6 +1,6 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
-import { Prisma, Feedback } from "@prisma/client";
+import { Prisma, Feedback, BookingHistory } from "@prisma/client";
 
 export class FeedbackRepository extends BasePrismaRepository {
   constructor() {
@@ -8,7 +8,9 @@ export class FeedbackRepository extends BasePrismaRepository {
   }
 
   async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-    row: Feedback[];
+    row: (Feedback & {
+      booking?: BookingHistory;
+    })[];
     count: number;
   }> {
     const [row, count] = await this.prisma.$transaction([
@@ -27,7 +29,9 @@ export class FeedbackRepository extends BasePrismaRepository {
     id: string,
     bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
     tx: PrismaTransation = this.prisma
-  ): Promise<Feedback> {
+  ): Promise<(Feedback & {
+    booking?: BookingHistory;
+  })> {
     return await tx.feedback.update({
       data: bookingCostUpdateInput,
       where: { id },
@@ -48,28 +52,36 @@ export class FeedbackRepository extends BasePrismaRepository {
   async create(
     feedbackCreateInput: Prisma.FeedbackCreateInput,
     tx: PrismaTransation = this.prisma
-  ): Promise<Feedback> {
+  ): Promise<(Feedback & {
+    booking?: BookingHistory;
+  })> {
     return await tx.feedback.create({ data: feedbackCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
-  ): Promise<Feedback | null> {
+  ): Promise<(Feedback & {
+    booking?: BookingHistory;
+  }) | null> {
     return await tx.feedback.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
-  ): Promise<Feedback[]> {
+  ): Promise<(Feedback & {
+    booking?: BookingHistory;
+  })[]> {
     return await tx.feedback.findMany(query);
   }
 
   async deleteById(
     id: string,
     tx: PrismaTransation = this.prisma
-  ): Promise<Feedback> {
+  ): Promise<(Feedback & {
+    booking?: BookingHistory;
+  })> {
     return await tx.feedback.delete({ where: { id } });
   }
 
@@ -78,5 +90,30 @@ export class FeedbackRepository extends BasePrismaRepository {
     tx: PrismaTransation = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.feedback.deleteMany({ where: feedbackWhereInput });
+  }
+
+
+
+  async getByListByProviderSkillId(providerSkillId: string) {
+    const [row, count] = await this.prisma.$transaction([
+      this.prisma.feedback.findMany({
+        where: {
+          booking: {
+            providerSkillId
+          }
+        }
+      }),
+      this.prisma.feedback.findMany({
+        where: {
+          booking: {
+            providerSkillId
+          }
+        }
+      })
+    ]);
+    return {
+      row,
+      count,
+    };
   }
 }
