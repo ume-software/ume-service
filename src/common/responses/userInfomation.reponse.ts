@@ -20,6 +20,13 @@ export class UserInfomationResponse {
   username!: string;
 
   @ApiModelProperty({
+    description: "Slug",
+    required: true,
+    example: "do-tran-minh-chu",
+  })
+  slug!: string;
+
+  @ApiModelProperty({
     description: "Dob timezone 0",
     required: true,
     example: "2001-10-12 17:00:00.000",

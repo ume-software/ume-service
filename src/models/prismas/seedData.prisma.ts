@@ -43,7 +43,7 @@ const skillsDefault = [
         name: "FIFA"
     },
     {
-        url: ",https://static-oss.epal.gg/data/static/v2/img10_v2_GrandTheftAutoV.png",
+        url: "https://static-oss.epal.gg/data/static/v2/img10_v2_GrandTheftAutoV.png",
         name: "Grand Theft Auto V"
     },
     {

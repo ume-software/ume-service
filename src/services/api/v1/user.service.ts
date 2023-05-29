@@ -26,8 +26,32 @@ export class UserService extends BasePrismaService<typeof userRepository> {
   async getInfomation(userId: string) {
     return (
       await utilService
-        .fetch(config.service.identity.url)
+        .fetch(config.service.identity.url,
+          {
+            headers: {
+              common: {
+                key: Buffer.from(config.service.identity.public_key).toString('base64')
+              }
+            }
+          }
+        )
         .get(`system/user/${userId}`)
     ).data;
+  }
+
+  async getListByUserIds(bookerIds: string[]) {
+    return await utilService
+      .fetch(config.service.identity.url,
+        {
+          headers: {
+            common: {
+              key: Buffer.from(config.service.identity.public_key).toString('base64')
+            }
+          }
+        }
+      )
+      .post("system/user/get-list-user-by-ids", {
+        ids: bookerIds
+      });
   }
 }

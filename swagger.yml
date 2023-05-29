@@ -711,6 +711,10 @@ components:
           type: string
           description: User name
           example: Đỗ Trần Minh Chu
+        slug:
+          type: string
+          description: Slug
+          example: do-tran-minh-chu
         dob:
           type: string
           description: Dob timezone 0
@@ -735,6 +739,7 @@ components:
       required:
         - name
         - username
+        - slug
         - dob
         - gender
         - email
@@ -1281,7 +1286,15 @@ components:
                   skillId: 4624fdb2-3d58-4112-b3e4-f86fda9a833f
                   defaultCost: 8
                   position: 1
-                  bookingCosts: []
+                  bookingCosts:
+                    - id: 2b44a08f-bfff-45dc-91e3-7ce7fcc4b779
+                      createdAt: '2023-05-29T17:23:02.528Z'
+                      updatedAt: '2023-05-29T17:23:02.528Z'
+                      deletedAt: null
+                      providerSkillId: cdd1d441-0002-4c8f-ac64-d83d723c9656
+                      startTimeOfDay: '00:00'
+                      endTimeOfDay: '12:00'
+                      amount: 64
                   skill:
                     id: 4624fdb2-3d58-4112-b3e4-f86fda9a833f
                     createdAt: '2023-05-12T07:18:27.100Z'
@@ -1292,6 +1305,15 @@ components:
                       https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg
           items:
             $ref: '#/components/schemas/ProviderSkillResponse'
+        user:
+          type: STRING
+          description: providerSkills
+          example:
+            dob: '2023-04-06T23:18:06.604Z'
+            name: Christine Gutmann
+            slug: christine-gutmann
+            gender: MALE
+          $ref: '#/components/schemas/UserInfomationResponse'
       required:
         - id
         - userId
@@ -1456,7 +1478,7 @@ components:
                 providerSkillId: eaf0d5a6-e305-438d-a78b-72bbb288eec1
                 totalCost: 160
                 bookingPeriod: 9
-                bookerInformation:
+                booker:
                   id: 2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e
                   name: Christine Gutmann
                   slug: christine-gutmann

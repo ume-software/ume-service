@@ -1,9 +1,10 @@
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
+import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
 
 import { providerRepository } from "@/repositories";
-import { errorService } from "@/services";
+import { errorService, userService } from "@/services";
 import {
   BasePrismaService,
   ICrudOptionPrisma,
@@ -40,8 +41,17 @@ export class ProviderService extends BasePrismaService<
 
     return result;
   }
-  async getProviderBySlug(slug: string) {
-    return await this.repository.getByIdOrSlug(slug);
+  async getProviderBySlug(userSlug: string) {
+    const result = await this.repository.getByIdOrSlug(userSlug);
+    const { avatar, dob, name, gender, slug } = (await userService.getInfomation(result?.userId!)) as UserInfomationResponse;
+    (result as any).user = {
+      avatar,
+      dob,
+      name,
+      slug,
+      gender
+    }
+    return result;
 
   }
   async becomeProvider(

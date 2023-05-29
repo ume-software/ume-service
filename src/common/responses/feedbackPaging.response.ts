@@ -56,7 +56,7 @@ export class FeedbackPagingResponse {
                     providerSkillId: "eaf0d5a6-e305-438d-a78b-72bbb288eec1",
                     totalCost: 160,
                     bookingPeriod: 9,
-                    bookerInformation: {
+                    booker: {
                         id: "2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e",
                         name: "Christine Gutmann",
                         slug: "christine-gutmann",

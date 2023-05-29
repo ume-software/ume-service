@@ -1,8 +1,7 @@
 
 import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
-import { config } from "@/configs";
 import { feedbackRepository } from "@/repositories";
-import { utilService } from "@/services";
+import { userService, utilService } from "@/services";
 import {
     BasePrismaService, ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
@@ -33,18 +32,8 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
         }
 
         const result = await this.repository.findAndCountAll(query);
-        const bookerIds = result.row.map(item => item.booking?.bookerId);
-        const requestListIds = await utilService
-            .fetch(config.service.identity.url, {
-                headers: {
-                    common: {
-                        key: Buffer.from(config.service.identity.public_key).toString('base64')
-                    }
-                }
-            })
-            .post("system/user/get-list-user-by-ids", {
-                ids: bookerIds
-            });
+        const bookerIds: string[] = result.row.map(item => item.booking?.bookerId) as string[];
+        const requestListIds = await userService.getListByUserIds(bookerIds)
         const listUserInfo: Array<UserInfomationResponse> = requestListIds.data.row as Array<UserInfomationResponse>;
         const usersInfo: { [key: string]: UserInfomationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
 

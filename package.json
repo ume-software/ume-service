@@ -1,6 +1,6 @@
 {
   "name": "ume-booking-service",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "",
   "type": "commonjs",
   "main": "build/index.js",

@@ -74,7 +74,6 @@ export class ProviderRepository extends BasePrismaRepository {
         p.created_at
       `
 
-    console.log("query ===> ", query)
     const row = await this.prisma.$queryRawUnsafe(
       `
       ${query} 
@@ -114,10 +113,10 @@ export class ProviderRepository extends BasePrismaRepository {
               where: {
                 deletedAt: null,
                 startTimeOfDay: {
-                  gte: nowTimehhmm
+                  lte: nowTimehhmm
                 },
                 endTimeOfDay: {
-                  lte: nowTimehhmm
+                  gte: nowTimehhmm
                 },
               },
               take: 1
