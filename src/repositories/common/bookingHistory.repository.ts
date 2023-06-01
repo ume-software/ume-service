@@ -3,8 +3,13 @@ import {
     BasePrismaRepository,
     PrismaTransation,
 } from "../base/basePrisma.repository";
-import { Prisma, BookingHistory, BookingStatus } from "@prisma/client";
-
+import { Prisma, BookingHistory, BookingStatus, ProviderSkill, Provider, User } from "@prisma/client";
+export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider = BookingHistory & {
+    providerSkill: (ProviderSkill & {
+        provider: Provider;
+    }) | null;
+    booker: User | null
+}
 export class BookingHistoryRepository extends BasePrismaRepository {
     constructor() {
         super();
@@ -30,10 +35,18 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         id: string,
         bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
         tx: PrismaTransation = this.prisma
-    ): Promise<BookingHistory> {
+    ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
         return await tx.bookingHistory.update({
             data: bookingCostUpdateInput,
             where: { id },
+            include: {
+                booker: true,
+                providerSkill: {
+                    include: {
+                        provider: true
+                    }
+                }
+            }
         });
     }
 
@@ -51,9 +64,17 @@ export class BookingHistoryRepository extends BasePrismaRepository {
     async create(
         bookingHistoryCreateInput: Prisma.BookingHistoryCreateInput,
         tx: PrismaTransation = this.prisma
-    ): Promise<BookingHistory> {
+    ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
         return await tx.bookingHistory.create({
             data: bookingHistoryCreateInput,
+            include: {
+                booker: true,
+                providerSkill: {
+                    include: {
+                        provider: true
+                    }
+                }
+            }
         });
     }
 

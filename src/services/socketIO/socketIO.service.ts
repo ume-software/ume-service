@@ -1,25 +1,28 @@
 import { Socket, Server } from "socket.io";
 import http from "http";
-import { IConnection, IRoom } from "@/interfaces/socket.interface";
-import { errorService, tokenService } from "..";
 
+import { errorService, tokenService } from "..";
+type Connections = { [userId: string]: Socket };
+export type ServerSocket = Server & { connections?: Connections }
 export const SOCKET_EVENTS = {
     CONNECTION: "connection",
     DISCONNECT: "disconnect",
     // ON
 
     // EMIT
+    USER_BOOKING_PROVIDER: "USER_BOOKING_PROVIDER",
+    PROVIDER_HANDLED_BOOKING: "PROVIDER_HANDLED_BOOKING"
+
 };
-export class ServerSocket {
-    public static instance: ServerSocket;
+
+export const SOCKET_EXPRESS = "socketIO";
+export class SocketService {
 
     init(app: http.Server) {
         /** Server Handling */
         this.httpServer = app; // http.createServer(app);
 
-        ServerSocket.instance = this;
-
-        this.socketServer = new Server(this.httpServer, {
+        const server = new Server(this.httpServer, {
             serveClient: false,
             pingInterval: 10000,
             pingTimeout: 5000,
@@ -28,21 +31,25 @@ export class ServerSocket {
                 origin: "*",
             },
         });
+
+        this.socketServer = server;
+        this.socketServer.connections = {};
+        this.socketIdMapUserId = {};
         console.log(`Socket running`);
         this.socketServer.use(this.authMiddleware.bind(this));
         this.socketServer.on(
             SOCKET_EVENTS.CONNECTION,
             this.StartListeners.bind(this)
         );
+        (this.socketServer.sockets as any).userIds = {}
+        return this.socketServer;
+
     }
     private httpServer: http.Server | undefined;
-    private socketServer!: Server;
-    userIdMappingSocketId: { [userId: string]: string } = {};
-    connections: { [socketId: string]: IConnection } = {};
-    rooms: { [x: string]: IRoom } = {};
-    channels: { [channelId: string]: IRoom } = {};
+    private socketServer!: ServerSocket;
+    private socketIdMapUserId!: { [socketId: string]: string }
     private async authMiddleware(socket: Socket, next: any) {
-        return next();
+
         const { room_name } = socket.handshake.query;
         const { authorization } = socket.handshake.auth;
 
@@ -53,22 +60,16 @@ export class ServerSocket {
                 return next(errorService.auth.unauthorized());
             }
             const result: any = tokenService.decodeToken(`${token}`);
-            const { id } = result;
-            if (!this.connections[id]) {
-                this.connections[id] = { uid: id, socket };
-            }
+            const { id: userId } = result;
+
+            (this.socketServer.connections as Connections)[userId] = socket;
+            this.socketIdMapUserId[socket.id] = userId;
 
             const room = `${room_name}`;
             socket.join(room);
-            if (!room) {
-                this.rooms[room] = {
-                    sockets: [socket],
-                    uids: [id],
-                };
-            }
             return next();
         } catch (err) {
-            return next(err);
+            return next();
         }
     }
     private handleSocketEvent(
@@ -79,6 +80,8 @@ export class ServerSocket {
     }
 
     private StartListeners(socket: Socket) {
+        const userId = this.socketIdMapUserId[socket.id];
+        console.info("Disconnect received from: [", socket.id, "] --- [", userId, "]");
         socket.on(
             "Client-sent-message",
             this.handleSocketEvent(this.onClientSentMessage, socket)
@@ -100,6 +103,21 @@ export class ServerSocket {
     }
 
     private onClientDisconnect(socket: Socket) {
-        console.info("Disconnect received from: " + socket.id);
+        const userId = this.socketIdMapUserId[socket.id];
+        if (userId) {
+            if (this.socketServer.connections) {
+                delete this.socketServer.connections[userId];
+            }
+
+            delete this.socketIdMapUserId[socket.id]
+        }
+        console.info("Disconnect received from: [", socket.id, "] --- [", userId, "]");
+    }
+
+    public emitUserBookingProvider(socket: Socket, data: any) {
+        socket.emit(SOCKET_EVENTS.USER_BOOKING_PROVIDER, data)
+    }
+    public emitProviderHandledBooking(socket: Socket, data: any) {
+        socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data)
     }
 }

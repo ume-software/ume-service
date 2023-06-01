@@ -1,4 +1,6 @@
 import { BasePrismaRepository } from "@/repositories/base/basePrisma.repository";
+import { SOCKET_EXPRESS, ServerSocket } from "../socketIO/socketIO.service";
+import { Request } from "@/controllers/base/base.controller";
 
 export interface ICrudOptionPrisma {
     select?: any;
@@ -16,4 +18,8 @@ export class BasePrismaService<T extends BasePrismaRepository> {
         this.repository = repository
     }
     repository: T
+
+    socketIO(req: Request) {
+        return req.app.get(SOCKET_EXPRESS) as ServerSocket;
+    }
 }

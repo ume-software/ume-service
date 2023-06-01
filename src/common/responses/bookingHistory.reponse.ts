@@ -1,6 +1,7 @@
 import { BookingStatus } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { UserInfomationResponse } from "./userInfomation.reponse";
+import { ProviderSkillResponse } from "./providerSkill.response";
 
 @ApiModel({
     description: "Booking History response",
@@ -50,17 +51,11 @@ export class BookingHistoryResponse {
         example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
     })
     bookerId!: string;
-    
+
     @ApiModelProperty({
         description: "Booker Infomation",
         required: false,
         model: UserInfomationResponse,
-        example: {
-            id: "2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e",
-            name: "Christine Gutmann",
-            slug: "christine-gutmann",
-            avatarUrl: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg"
-        }
     })
     booker?: UserInfomationResponse;
 
@@ -85,5 +80,10 @@ export class BookingHistoryResponse {
     })
     bookingPeriod?: number;
 
-
+    @ApiModelProperty({
+        description: "Provider skill",
+        required: false,
+        model: ProviderSkillResponse,
+    })
+    providerSkill?: ProviderSkillResponse;
 }

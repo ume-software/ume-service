@@ -1,27 +1,37 @@
 import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
 import { config } from "@/configs";
+import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
 import { coinHistoryRepository, providerRepository } from "@/repositories";
 import {
     bookingHistoryRepository,
     providerSkillRepository,
 } from "@/repositories";
+import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.repository";
 import {
     coinService,
     errorService,
     providerService,
     userService,
 } from "@/services";
+import { BasePrismaService } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
+import { socketService } from "@/services/socketIO";
+
 import { BookingStatus, CoinType, Prisma } from "@prisma/client";
 import moment from "moment";
 
-export class BookingService {
+export class BookingService extends BasePrismaService<BookingHistoryRepository>{
+    constructor() {
+        super(bookingHistoryRepository)
+    }
     async userBookingProvider(
-        bookerId: string,
-        bookingProviderRequest: BookingProviderRequest
+        req: Request
     ) {
+        const bookingProviderRequest = req.body as BookingProviderRequest;
+        const bookerId = req.tokenInfo?.id;
+
         const { providerSkillId, bookingPeriod } = bookingProviderRequest;
         const booker = await userService.findOne({
             where: {
@@ -93,13 +103,21 @@ export class BookingService {
                 },
             },
         });
+        const socketIO = this.socketIO(req);
+        const userIdOfProvider = bookingHistory.providerSkill?.provider?.userId;
+        if (socketIO.connections && userIdOfProvider) {
+            const socket = socketIO.connections[userIdOfProvider];
+            if (socket) {
+                socketService.emitUserBookingProvider(socket, bookingHistory)
+            }
+        }
         return bookingHistory;
     }
 
-    async bookingHandle(
-        userRquestId: string,
-        bookingHandleRequest: BookingHandleRequest
-    ) {
+    async bookingHandle(req: Request) {
+
+        const bookingHandleRequest = req.body as BookingHandleRequest;
+        const userRquestId = req.tokenInfo?.id!;
         const { bookingHistoryId, status } = bookingHandleRequest;
         const {
             INIT,
@@ -123,6 +141,7 @@ export class BookingService {
                 ERROR_MESSAGE.BOOKING_REQUEST_DOES_NOT_EXISTED
             );
         }
+
         const { bookerId, providerSkillId, totalCost } = bookingHistory;
         const providerSkill = await providerSkillRepository.findOne({
             where: {
@@ -150,8 +169,8 @@ export class BookingService {
             userRquestId == bookerId
                 ? "BOOKER"
                 : userRquestId == provider.userId
-                ? "PROVIDER"
-                : "OTHER";
+                    ? "PROVIDER"
+                    : "OTHER";
         if (requestFrom == "OTHER") {
             throw errorService.auth.permissionDeny();
         }
@@ -162,9 +181,9 @@ export class BookingService {
                 throw errorService.auth.permissionDeny();
             }
             const updateBookingHistoryRequest: Prisma.BookingHistoryUpdateInput =
-                {
-                    status,
-                };
+            {
+                status,
+            };
             if (status == PROVIDER_ACCEPT) {
                 if (oldStatus != INIT) {
                     throw errorService.router.badRequest();
@@ -222,11 +241,19 @@ export class BookingService {
                 );
             }
 
-            return await bookingHistoryRepository.updateById(
+            const bookingHistory = await bookingHistoryRepository.updateById(
                 bookingHistoryId,
                 updateBookingHistoryRequest,
                 tx
             );
+            const socketIO = this.socketIO(req);
+            if (socketIO.connections && bookingHistory.bookerId) {
+                const socket = socketIO.connections[bookingHistory.bookerId];
+                if (socket) {
+                    socketService.emitProviderHandledBooking(socket, bookingHistory)
+                }
+            }
+            return bookingHistory;
         });
     }
 }

@@ -13,6 +13,7 @@ import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { config } from "@/configs";
 import { UNLIMITED } from "@/middlewares/queryPrisma.middleware";
 import { EAccountType } from "@/enums/accountType.enum";
+import { SOCKET_EXPRESS, ServerSocket } from "@/services/socketIO/socketIO.service";
 
 export interface Request extends express.Request {
   ipv4?: string;
@@ -229,6 +230,10 @@ export class BaseController {
         });
   }
 
+
+  socketIO(req: Request) {
+    return req.app.get(SOCKET_EXPRESS) as ServerSocket;
+  }
   authMiddlewares(): any[] {
     return [authMiddleware.run()];
   }

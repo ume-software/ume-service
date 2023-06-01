@@ -67,6 +67,7 @@ export class ProviderController extends BaseController {
     },
   })
   async getListProvider(req: Request, res: Response) {
+  
     const { queryInfoPrisma } = req;
     let { start_cost, end_cost, skill_id } = req.query;
     start_cost = start_cost?.toString();

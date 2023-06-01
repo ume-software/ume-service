@@ -9,6 +9,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { bookingService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
+
 import {
     ApiOperationPost,
     ApiOperationPut,
@@ -69,12 +70,9 @@ export class BookingController extends BaseController {
         },
     })
     async createbooking(req: Request, res: Response) {
-        const bookingRequest = req.body as BookingProviderRequest;
-        const userId = req.tokenInfo?.id;
-        const result = await this.service.userBookingProvider(
-            userId!!,
-            bookingRequest
-        );
+
+        const result = await this.service.userBookingProvider(req);
+     
         this.onSuccess(res, result);
     }
 
@@ -105,12 +103,8 @@ export class BookingController extends BaseController {
         },
     })
     async bookingHandle(req: Request, res: Response) {
-        const bookingHandle = req.body as BookingHandleRequest;
-        const userId = req.tokenInfo?.id;
-        const result = await this.service.bookingHandle(
-            userId!!,
-            bookingHandle
-        );
+       
+        const result = await this.service.bookingHandle(req);
         this.onSuccess(res, result);
     }
 }

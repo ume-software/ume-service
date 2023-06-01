@@ -12,11 +12,13 @@ model User {
   createdAt      DateTime?        @default(now()) @map("created_at")
   updatedAt      DateTime?        @updatedAt @map("updated_at")
   deletedAt      DateTime?        @map("deleted_at")
+  isOnline       Boolean?         @default(false) @map("is_online")
+  latestOnline   Boolean?         @map("latest_online")
   loginType      LoginType?       @map("login_type")
   provider       Provider?
   coinHistory    CoinHistory[]
   bookingHistory BookingHistory[]
-  
+
   @@map("user")
 }
 
@@ -120,7 +122,7 @@ model Feedback {
   deletedAt   DateTime?      @map("deleted_at")
   booking     BookingHistory @relation(fields: [bookingId], references: [id])
   bookingId   String         @map("booking_id")
-  content     String ?       @map("content")
+  content     String?        @map("content")
   amountStart Int?           @map("amount_start")
 
   @@map("feedback")

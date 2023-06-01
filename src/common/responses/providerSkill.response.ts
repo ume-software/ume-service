@@ -5,6 +5,7 @@ import {
 } from "express-swagger-typescript";
 import { BookingCostResponse } from "./bookingCost.response";
 import { SkillResponse } from "./skill.response";
+import { ProviderResponse } from "./provider.reponse";
 
 @ApiModel({
   description: "Provider skill response",
@@ -30,7 +31,7 @@ export class ProviderSkillResponse {
 
   @ApiModelProperty({
     description: "Deleted At",
-    example: null,
+    example: "2023-05-10T07:08:46.083Z",
   })
   deletedAt!: Date;
 
@@ -62,33 +63,19 @@ export class ProviderSkillResponse {
     description: "Position",
     type: SwaggerDefinitionConstant.ARRAY,
     itemType: BookingCostResponse,
-    example: [
-      {
-        id: "cee99f3c-d488-4991-a96f-5a5805987a78",
-        createdAt: "2023-05-12T07:31:19.794Z",
-        updatedAt: "2023-05-12T07:31:19.794Z",
-        deletedAt: null,
-        providerSkillId: "42ac81c2-1815-45f7-b598-412487161e1f",
-        startTimeOfDay: "09:00",
-        endTimeOfDay: "15:00",
-        amount: 10,
-      },
-    ],
   })
   bookingCosts!: Array<BookingCostResponse>;
 
   @ApiModelProperty({
-    description: "Position",
+    description: "Skill",
     model: SkillResponse,
-    example: {
-      id: "4624fdb2-3d58-4112-b3e4-f86fda9a833f",
-      createdAt: "2023-05-12T07:18:27.100Z",
-      updatedAt: "2023-05-12T07:18:27.100Z",
-      deletedAt: null,
-      name: "Liên Minh Huyền Thoại",
-      imageUrl:
-        "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
-    },
   })
   skill!: SkillResponse;
+
+
+  @ApiModelProperty({
+    description: "provider",
+    model: ProviderResponse
+  })
+  provider!: ProviderResponse;
 }

@@ -1,7 +1,7 @@
-import { ServerSocket } from "./socketIO.service";
+import { SocketService } from "./socketIO.service";
 
-const serverSocket = new ServerSocket();
+const socketService = new SocketService();
 
 export {
-    serverSocket
+    socketService
 }
