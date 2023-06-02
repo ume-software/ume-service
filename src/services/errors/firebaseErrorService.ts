@@ -1,36 +1,20 @@
-import { BaseError } from './base'
+import { BaseError, IBaseErrorOption } from './base'
 class FirebaseException extends BaseError {
-    constructor(key: string, message: string, code?: number) {
+    constructor(key: string, error: IBaseErrorOption) {
+        const { statusCode, codeNumber, type, message } = error
         super({
-            code: code || 403,
-            type: `firebase_exception_${key}`,
-            message
+          statusCode: statusCode || 403,
+          codeNumber,
+          type: type || `firebase_exception_${key}`,
+          message
         })
-    }
+      }
 }
 export class FirebaseErrorService {
-    cannotCreateToken(error: any) {
-        return new FirebaseException('create_token', error.message)
+    cannotCreateToken(error: IBaseErrorOption) {
+        return new FirebaseException('create_token', error)
     }
-    cannotDecodeToken(error: any) {
-        return new FirebaseException('decode_token', error.message)
-    }
-    cannotSendMessageToDevice(error: any) {
-        return new FirebaseException('send_message_device', error.message)
-    }
-    cannotSendMessageToDeviceGroup(error: any) {
-        return new FirebaseException('send_message_device_group', error.message)
-    }
-    cannotSendMessageToTopic(error: any) {
-        return new FirebaseException('send_message_topic', error.message)
-    }
-    cannotSendMessageToCondition(error: any) {
-        return new FirebaseException('send_message_condition', error.message)
-    }
-    cannotSubscribeToTopic(error: any) {
-        return new FirebaseException('subscribe_topic', error.message)
-    }
-    cannotUnsubscribeFromTopic(error: any) {
-        return new FirebaseException('unsubscribe_topic', error.message)
+    cannotDecodeToken(error: IBaseErrorOption) {
+        return new FirebaseException('decode_token', error)
     }
 }

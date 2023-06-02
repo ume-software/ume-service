@@ -1,13 +1,17 @@
 
 
-import { IErrorResponse, IHLErrorResponse } from '@/interfaces'
-import { BaseError } from './base'
+import { IErrorResponse } from '@/interfaces'
+import { BaseError, IBaseErrorOption } from './base'
 import { ERROR_MESSAGE } from './errorMessage'
 class RouterException extends BaseError {
-    constructor(key: string, message: string | IHLErrorResponse, code?: number) {
+
+
+    constructor(key: string, error: IBaseErrorOption) {
+        const { statusCode, codeNumber, type, message } = error
         super({
-            code: code || 500,
-            type: `router_exception_${key}`,
+            statusCode: statusCode || 500,
+            codeNumber,
+            type: type || `router_exception_${key}`,
             message
         })
     }
@@ -15,26 +19,25 @@ class RouterException extends BaseError {
 
 export class RouterErrorService {
     somethingWentWrong() {
-        return new RouterException('something_went_wrong', ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.message)
+        return new RouterException('something_went_wrong', ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG)
     }
     theAPINotSupported() {
-        return new RouterException('api_not_supported', ERROR_MESSAGE.THE_API_NOT_SUPPORTED.message)
+        return new RouterException('api_not_supported', ERROR_MESSAGE.THE_API_NOT_SUPPORTED)
     }
     badRequest() {
-        return new RouterException('bad_request', ERROR_MESSAGE.BAD_REQUEST.message, ERROR_MESSAGE.BAD_REQUEST.code)
+        return new RouterException('bad_request', ERROR_MESSAGE.BAD_REQUEST)
     }
-    errorCustom(message: IErrorResponse | string = "Error custom.", errCode?: number, key?: string) {
-        if (!key) key = "error_custom"
-        if (typeof message == 'string') return new RouterException(key, message, errCode);
+    errorCustom(message: IErrorResponse) {
+        const key = "error_custom";
+
         return this.resErrWithCode(key, message)
     }
-    requestDataInvalid(message: IErrorResponse | string = "Data invalid.") {
+    requestDataInvalid(message: IErrorResponse) {
         const key = "data_invalid"
-        if (typeof message == 'string') return new RouterException(key, message);
         return this.resErrWithCode(key, message)
     }
 
     private resErrWithCode(key: string, errorResonse: IErrorResponse) {
-        return new RouterException(key, errorResonse.message, errorResonse.code);
+        return new RouterException(key, errorResonse);
     }
 }

@@ -1,209 +1,153 @@
 export const ERROR_MESSAGE = {
     // DEFUALT DATABASE
     RECORD_NOT_FOUND: {
-        message: {
-            vi: "Không tìm thấy bản ghi tương ứng.",
-            en: "Record Not Found.",
-        },
-        code: 500,
+        message: "Record Not Found.",
+        codeNumber: 10000,
+        statusCode: 500,
     },
 
     // DEFUALT AUTH
     UNAUTHORIZED: {
-        message: {
-            vi: "Không được phép.",
-            en: "Unauthorized.",
-        },
-        code: 401,
+        message: "Unauthorized.",
+        codeNumber: 10101,
+        statusCode: 401,
     },
     YOU_NOT_PERMISSIONS: {
-        message: {
-            vi: "Bạn không đủ quyền.",
-            en: "You are not permissions.",
-        },
-        code: 401,
+        message: "You are not permissions.",
+        codeNumber: 10102,
+        statusCode: 401,
     },
     TOKEN_EXPIRED: {
-        message: {
-            vi: "Token hết hạn.",
-            en: "Token Expried.",
-        },
-        code: 401,
+        message: "Token Expried.",
+        codeNumber: 10103,
+        statusCode: 401,
     },
     BAD_TOKEN: {
-        message: {
-            vi: "Token không đúng.",
-            en: "Bad Token.",
-        },
-        code: 401,
+        message: "Bad Token.",
+        codeNumber: 10104,
+        statusCode: 401,
     },
 
     // DEFUALT ROUTER
     SORRY_SOMETHING_WENT_WRONG: {
-        message: {
-            vi: "Xin lỗi, có gì đó không đúng.",
-            en: "Sorry! Something went wrong.",
-        },
-        code: 500,
+        message: "Sorry! Something went wrong.",
+        codeNumber: 10201,
+        statusCode: 500,
     },
     THE_API_NOT_SUPPORTED: {
-        message: {
-            vi: "API không còn hổ trợ.",
-            en: "The API is not supported.",
-        },
-        code: 500,
+        message: "The API is not supported.",
+        codeNumber: 10202,
+        statusCode: 500,
     },
     BAD_REQUEST: {
-        message: {
-            vi: "Yêu cầu sai.",
-            en: "Bad Request.",
-        },
-        code: 400,
+        message: "Bad Request.",
+        codeNumber: 10203,
+        statusCode: 400,
     },
     // Auth
     USERNAME_DOES_NOT_EXIST: {
-        message: {
-            vi: "Tên đăng nhập không tồn tài.",
-            en: "Username does not exist.",
-        },
-        code: 404,
+        message: "Username does not exist.",
+        codeNumber: 20001,
+        statusCode: 404,
     },
     THIS_ACCOUNT_IS_APPLE: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó thông qua Apple.",
-            en: "This account is an account logged in through APPLE.",
-        },
-        code: 400,
+        message: "This account is an account logged in through APPLE.",
+        codeNumber: 20001,
+        statusCode: 400,
     },
     THIS_ACCOUNT_IS_PHONE: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó thông qua số điện thoại",
-            en: "This account is an account logged in through PHONE.",
-        },
-        code: 400,
+        message: "This account is an account logged in through PHONE.",
+        codeNumber: 20001,
+        statusCode: 400,
     },
     THIS_ACCOUNT_IS_NAVER: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó thông qua Naver.",
-            en: "This account is an account logged in through NAVER.",
-        },
-        code: 400,
+        message: "This account is an account logged in through NAVER.",
+        codeNumber: 20001,
+        statusCode: 400,
     },
     THIS_ACCOUNT_IS_KAKAOTALK: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó thông qua Kakaotalk.",
-            en: "This account is an account logged in through KAKAOTALK.",
-        },
-        code: 400,
+        message: "This account is an account logged in through KAKAOTALK.",
+        codeNumber: 20002,
+        statusCode: 400,
     },
     THIS_ACCOUNT_IS_GOOGLE: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó thông qua Google.",
-            en: "This account is an account logged in through GOOGLE.",
-        },
-        code: 400,
+        message: "This account is an account logged in through GOOGLE.",
+        codeNumber: 20003,
+        statusCode: 400,
     },
     THIS_ACCOUNT_IS_INAPP: {
-        message: {
-            vi: "Tài khoản này được đăng nhập trước đó bằng tên đăng nhập và mật khẩu.",
-            en: "This account is an account logged in through username and password.",
-        },
-        code: 400,
+        message: "This account is an account logged in through username and password.",
+        codeNumber: 20004,
+        statusCode: 400,
     },
     USERNAME_ALREADY_REGISTERED: {
-        message: {
-            vi: "Tên đăng nhập này đã được đăng ký trước đó.",
-            en: "Username already registered.",
-        },
-        code: 400,
+        message: "Username already registered.",
+        codeNumber: 20005,
+        statusCode: 400,
     },
     PASSWORD_OR_USERNAME_INCORRECT: {
-        message: {
-            vi: "Mật khẩu hoặc tài khoản không đúng.",
-            en: "Password or username incorrect.",
-        },
-        code: 400,
+        message: "Password or username incorrect.",
+        codeNumber: 20006,
+        statusCode: 400,
     },
     LOGIN_METHOD_NOT_SUPPORTED: {
-        message: {
-            vi: "Phương thức đăng nhập này không được hỗ trợ.",
-            en: "This login method is not supported.",
-        },
-        code: 400,
+        message: "This login method is not supported.",
+        codeNumber: 20007,
+        statusCode: 400,
     },
     // Booking
     BOOKER_DOES_NOT_EXISTED: {
-        message: {
-            vi: "Người đặt không tồn tại.",
-            en: "Booker doesn't exist.",
-        },
-        code: 400,
+        message: "Booker doesn't exist.",
+        codeNumber: 20100,
+        statusCode: 400,
     },
     YOU_CAN_NOT_BOOKING_YOURSELF: {
-        message: {
-            vi: "Bạn không thể đặt chính mình.",
-            en: "You can't booking yourself.",
-        },
-        code: 400,
+        message: "You can't booking yourself.",
+        codeNumber: 20101,
+        statusCode: 400,
     },
     BOOKING_REQUEST_DOES_NOT_EXISTED: {
-        message: {
-            vi: "Yêu cầu thuê không tồn tại.",
-            en: "The booking request does not exist.",
-        },
-        code: 400,
+        message: "The booking request does not exist.",
+        codeNumber: 20102,
+        statusCode: 400,
     },
     BOOKING_ENDED: {
-        message: {
-            vi: "Yêu cầu thuê đã kết thúc.",
-            en: "Booking ended.",
-        },
-        code: 400,
+        message: "Booking ended.",
+        codeNumber: 20103,
+        statusCode: 400,
     },
     // Skill
     THIS_SKILL_DOES_NOT_EXISTED: {
-        message: {
-            vi: "Kỹ năng này không tồn tại.",
-            en: "This skill doesn't exist.",
-        },
-        code: 400,
+        message: "This skill doesn't exist.",
+        codeNumber: 20200,
+        statusCode: 400,
     },
     // Provider
     THIS_PROVIDER_DOES_NOT_EXISTED: {
-        message: {
-            vi: "Nhà cung cấp này không tồn tại.",
-            en: "This provider doesn't exist.",
-        },
-        code: 400,
+        message: "This provider doesn't exist.",
+        codeNumber: 20300,
+        statusCode: 400,
     },
     YOU_ARE_ALREADY_A_PROVIDER: {
-        message: {
-            vi: "Bạn đã là nhà cung cấp.",
-            en: "You are already a provider.",
-        },
-        code: 400,
+        message: "You are already a provider.",
+        codeNumber: 20301,
+        statusCode: 400,
     },
     // Provider Skill
     THIS_PROVIDER_SKILL_IS_EXISTED: {
-        message: {
-            vi: "Kỹ năng này đã tồn tại trong danh sách kỹ năng của nhà cung cấp dịch vụ.",
-            en: "This skill already exists in the provider's skill list.",
-        },
-        code: 400,
+        message: "This skill already exists in the provider's skill list.",
+        codeNumber: 20400,
+        statusCode: 400,
     },
     THIS_PROVIDER_SKILL_DOES_NOT_EXISTED: {
-        message: {
-            vi: "Kỹ năng này không tồn tại trong danh sách kỹ năng của nhà cung cấp dịch vụ.",
-            en: "This skill doesn't exist in the provider's skill list.",
-        },
-        code: 400,
+        message: "This skill doesn't exist in the provider's skill list.",
+        codeNumber: 20401,
+        statusCode: 400,
     },
     // Coin
     YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION: {
-        message: {
-            vi: "Bạn không đủ xu để thực hiện giao dịch.",
-            en: "You don't have enough coins to make the transaction.",
-        },
-        code: 400,
+        message: "You don't have enough coins to make the transaction.",
+        codeNumber: 20500,
+        statusCode: 400,
     },
 };

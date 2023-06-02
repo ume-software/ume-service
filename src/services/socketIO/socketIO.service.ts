@@ -50,7 +50,6 @@ export class SocketService {
     private socketIdMapUserId!: { [socketId: string]: string }
     private async authMiddleware(socket: Socket, next: any) {
 
-        const { room_name } = socket.handshake.query;
         const { authorization } = socket.handshake.auth;
 
         try {
@@ -65,8 +64,6 @@ export class SocketService {
             (this.socketServer.connections as Connections)[userId] = socket;
             this.socketIdMapUserId[socket.id] = userId;
 
-            const room = `${room_name}`;
-            socket.join(room);
             return next();
         } catch (err) {
             return next();

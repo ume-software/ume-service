@@ -1,5 +1,4 @@
 import * as express from "express";
-import { IHLErrorResponse } from "../../interfaces";
 import { cryptoService, errorService } from "../../services";
 import * as _ from "lodash";
 import { IAccessToken } from "@/interfaces/auth/accessToken.interface";
@@ -50,9 +49,9 @@ export class BaseController {
     if (!error.options) {
       console.log("UNKNOW ERROR", error);
       const err = errorService.router.somethingWentWrong();
-      res.status(err.options.code).json(err.options);
+      res.status(err.options.statusCode).json(err.options);
     } else {
-      res.status(error.options.code).json(error.options);
+      res.status(error.options.statusCode).json(error.options);
     }
   }
   onEncryptError(res: Response, error: any) {
@@ -61,14 +60,14 @@ export class BaseController {
     if (!error.options) {
       console.log("UNKNOW ERROR", error);
       const err = errorService.router.somethingWentWrong();
-      res.status(err.options.code).json({
+      res.status(err.options.statusCode).json({
         data: cryptoService.encryptStringWithRsaPublicKey(
           error.options,
           pathPublicKey
         ),
       });
     } else {
-      res.status(error.options.code).json({
+      res.status(error.options.statusCode).json({
         data: cryptoService.encryptStringWithRsaPublicKey(
           error.options,
           pathPublicKey
@@ -186,18 +185,6 @@ export class BaseController {
             error.options = errorService.router.somethingWentWrong().options;
           }
           const errorRes = { ...error };
-          try {
-            const hl = req.query["hl"];
-            const message: IHLErrorResponse = errorRes.options.message;
-            const translateMessage = message[`${hl}`] || message.en;
-            if (typeof translateMessage === "string") {
-              errorRes.options.message = translateMessage;
-
-              if (translateMessage == "") {
-                errorRes.options.message = message.en;
-              }
-            }
-          } catch (e) { }
           error.options = undefined;
           this.onError(res, errorRes);
         });
@@ -213,18 +200,7 @@ export class BaseController {
             console.log("UNKNOW ERROR", error);
             error.options = errorService.router.somethingWentWrong().options;
           }
-          try {
-            const hl = req.query["hl"];
-            const message: IHLErrorResponse = error.options.message;
-            const translateMessage = message[`${hl}`] || message.en;
-            if (typeof translateMessage === "string") {
-              error.options.message = translateMessage;
-
-              if (translateMessage == "") {
-                error.options.message = message.en;
-              }
-            }
-          } catch (e) { }
+         
           error.options = undefined;
           this.onError(res, error);
         });

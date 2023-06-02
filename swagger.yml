@@ -1609,14 +1609,19 @@ components:
           type: string
           description: Error message
           example: router_exception_something_went_wrong
-        code:
+        statusCode:
+          type: number
+          description: statusCode
+          example: 500
+        codeNumber:
           type: number
           description: Error code
-          example: 500
+          example: 10201
       required:
         - message
         - type
-        - code
+        - statusCode
+        - codeNumber
       description: Error Response`
   parameters: {}
 openapi: 3.0.0

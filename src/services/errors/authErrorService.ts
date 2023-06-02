@@ -1,41 +1,42 @@
 
 
 
-import { IErrorResponse, IHLErrorResponse } from '@/interfaces'
-import { BaseError } from './base'
+import { IErrorResponse } from '@/interfaces'
+import { BaseError, IBaseErrorOption } from './base'
 import { ERROR_MESSAGE } from './errorMessage'
 class AuthException extends BaseError {
-  constructor(key: string, message: string | IHLErrorResponse, code?: number) {
+  constructor(key: string, error: IBaseErrorOption) {
+    const { statusCode, codeNumber, type, message } = error
     super({
-      code: code || 401,
-      type: `auth_exception_${key}`,
+      statusCode: statusCode || 401,
+      codeNumber,
+      type: type || `auth_exception_${key}`,
       message
     })
   }
 }
 export class AuthErrorService {
   unauthorized() {
-    return new AuthException('unauthorized', ERROR_MESSAGE.UNAUTHORIZED.message)
+    return new AuthException('unauthorized', ERROR_MESSAGE.UNAUTHORIZED)
   }
   permissionDeny() {
-    return new AuthException('permission_deny', ERROR_MESSAGE.YOU_NOT_PERMISSIONS.message)
+    return new AuthException('permission_deny', ERROR_MESSAGE.YOU_NOT_PERMISSIONS)
   }
   badToken() {
-    return new AuthException('bad_token', ERROR_MESSAGE.BAD_TOKEN.message)
+    return new AuthException('bad_token', ERROR_MESSAGE.BAD_TOKEN)
   }
   tokenExpired() {
-    return new AuthException('token_expired', ERROR_MESSAGE.TOKEN_EXPIRED.message, ERROR_MESSAGE.TOKEN_EXPIRED.code)
+    return new AuthException('token_expired', ERROR_MESSAGE.TOKEN_EXPIRED)
   }
 
-  errorCustom(message: IErrorResponse | string = "Error custom", errCode?: number) {
+  errorCustom(error: IErrorResponse) {
     const key = "error_custom"
-    if (typeof message == 'string') return new AuthException(key, message, errCode);
-    return this.resErrWithCode(key, message)
+    return this.resErrWithCode(key, error)
 
 
   }
   private resErrWithCode(key: string, errorResonse: IErrorResponse) {
-    return new AuthException(key, errorResonse.message, errorResonse.code);
+    return new AuthException(key, errorResonse);
   }
 
 }

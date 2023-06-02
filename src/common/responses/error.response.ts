@@ -8,7 +8,7 @@ export class ErrorResponse {
     @ApiModelProperty({ 
         description: 'Error message',
         required: true,
-        example: ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.message.en,
+        example: ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.message,
     })
     public message?: string;
 
@@ -20,9 +20,16 @@ export class ErrorResponse {
     public type?:string;
 
     @ApiModelProperty({
+        description: 'statusCode',
+        required: true,
+        example: ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.statusCode
+    })
+    public statusCode?: number;
+
+    @ApiModelProperty({
         description: 'Error code',
         required: true,
-        example: ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.code
+        example: ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.codeNumber
     })
-    public code?: number;
+    public codeNumber?: number;
 }

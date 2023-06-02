@@ -1,10 +1,10 @@
-import { IHLErrorResponse } from "../../interfaces"
 
 
 export interface IBaseErrorOption {
-    code: number
-    type: string
-    message: string | IHLErrorResponse
+    statusCode: number
+    codeNumber: number
+    type?: string
+    message: string 
     data?: any
 }
 export class BaseError extends Error {
