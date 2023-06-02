@@ -46,17 +46,21 @@ export class CryptoService {
 
     areKeysMatching(publicKey: string, privateKey: string) {
         try {
-            const testData = Buffer.from('data');
 
-            const sign = crypto.createSign('RSA-SHA256');
-            sign.update(testData);
-            const signature = sign.sign(privateKey);
+            const message = 'Test message';
 
-            const verify = crypto.createVerify('RSA-SHA256');
-            verify.update(testData);
-            const isMatch = verify.verify(publicKey, signature);
+            // Encrypt the test message with the public key
+            const encrypted = crypto.publicEncrypt(publicKey, Buffer.from(message));
 
-            return isMatch;
+            // Decrypt the encrypted message with the private key
+            const decrypted = crypto.privateDecrypt(privateKey, encrypted);
+
+            // Convert the decrypted message to a string
+            const decryptedMessage = decrypted.toString();
+            
+
+            const isMatching = message === decryptedMessage;
+            return isMatching;
         } catch (error) {
             console.error('Error occurred while checking key pair:', error);
             return false;
