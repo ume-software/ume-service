@@ -6,6 +6,8 @@ import { ProviderSkillRepository } from "./common/providerSkill.repository";
 import { SkillRepository } from "./common/skill.repository";
 import { UserRepository } from "./common/user.repository";
 import { FeedbackRepository } from "./common/feedback.repository";
+import { DepositRequestRepository } from "./common/depositRequest.repository";
+import { CoinSettingRepository } from "./common/coinSetting.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -15,6 +17,8 @@ const providerSkillRepository = new ProviderSkillRepository();
 const skillRepository = new SkillRepository();
 const userRepository = new UserRepository();
 const feedbackRepository = new FeedbackRepository();
+const depositRequestRepository = new DepositRequestRepository();
+const coinSettingRepository = new CoinSettingRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -23,5 +27,7 @@ export {
     providerSkillRepository,
     skillRepository,
     userRepository,
-    feedbackRepository
+    feedbackRepository,
+    depositRequestRepository,
+    coinSettingRepository
 }

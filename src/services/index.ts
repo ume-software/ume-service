@@ -16,6 +16,8 @@ import { ProviderSkillService } from "./api/v1/providerSkill.service";
 import { CoinService } from "./api/v1/coin.service";
 import { BookingService } from "./api/v1/booking.service";
 import { FeedbackService } from "./api/v1/feedback.service";
+import { DepositRequestService } from "./api/v1/depositRequest.service";
+import { IdentitySystemService } from "./system/identitySystem.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -35,7 +37,8 @@ const providerSkillService = new ProviderSkillService();
 const skillService = new SkillService();
 const userService = new UserService();
 const feedbackService = new FeedbackService();
-
+const depositRequestService = new DepositRequestService();
+const identitySystemService = new IdentitySystemService();
 export {
     scheduleService,
     errorService,
@@ -53,5 +56,7 @@ export {
     providerSkillService,
     userService,
     skillService,
-    feedbackService
+    feedbackService,
+    depositRequestService,
+    identitySystemService
 };

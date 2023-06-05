@@ -1,7 +1,7 @@
 
 import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
 import { feedbackRepository } from "@/repositories";
-import { userService, utilService } from "@/services";
+import { identitySystemService, utilService } from "@/services";
 import {
     BasePrismaService, ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
@@ -33,8 +33,8 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
 
         const result = await this.repository.findAndCountAll(query);
         const bookerIds: string[] = result.row.map(item => item.booking?.bookerId) as string[];
-        const requestListIds = await userService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInfomationResponse> = requestListIds.data.row as Array<UserInfomationResponse>;
+        const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
+        const listUserInfo: Array<UserInfomationResponse> = requestListIds.row as Array<UserInfomationResponse>;
         const usersInfo: { [key: string]: UserInfomationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
 
         result.row.forEach(item => {

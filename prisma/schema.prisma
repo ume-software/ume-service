@@ -8,16 +8,18 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(uuid()) @map("id")
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  deletedAt      DateTime?        @map("deleted_at")
-  isOnline       Boolean?         @default(false) @map("is_online")
-  latestOnline   Boolean?         @map("latest_online")
-  loginType      LoginType?       @map("login_type")
-  provider       Provider?
-  coinHistory    CoinHistory[]
-  bookingHistory BookingHistory[]
+  id                 String              @id @default(uuid()) @map("id")
+  createdAt          DateTime?           @default(now()) @map("created_at")
+  updatedAt          DateTime?           @updatedAt @map("updated_at")
+  deletedAt          DateTime?           @map("deleted_at")
+  isOnline           Boolean?            @default(false) @map("is_online")
+  latestOnline       Boolean?            @map("latest_online")
+  loginType          LoginType?          @map("login_type")
+  provider           Provider?
+  coinHistories      CoinHistory[]
+  bookingHistories   BookingHistory[]
+  depositRequests    DepositRequest[]
+  WithdrawalRequests WithdrawalRequest[]
 
   @@map("user")
 }
@@ -52,18 +54,18 @@ model Skill {
 }
 
 model ProviderSkill {
-  id             String           @id @default(uuid()) @map("id")
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  deletedAt      DateTime?        @map("deleted_at")
-  provider       Provider         @relation(fields: [providerId], references: [id])
-  providerId     String           @map("provider_id")
-  skill          Skill            @relation(fields: [skillId], references: [id])
-  skillId        String           @map("skill_id")
-  defaultCost    Float            @map("default_cost")
-  position       Int              @map("position")
-  bookingCosts   BookingCost[]
-  bookingHistory BookingHistory[]
+  id               String           @id @default(uuid()) @map("id")
+  createdAt        DateTime?        @default(now()) @map("created_at")
+  updatedAt        DateTime?        @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+  provider         Provider         @relation(fields: [providerId], references: [id])
+  providerId       String           @map("provider_id")
+  skill            Skill            @relation(fields: [skillId], references: [id])
+  skillId          String           @map("skill_id")
+  defaultCost      Float            @map("default_cost")
+  position         Int              @map("position")
+  bookingCosts     BookingCost[]
+  bookingHistories BookingHistory[]
 
   @@map("provider_skill")
 }
@@ -83,15 +85,17 @@ model BookingCost {
 }
 
 model CoinHistory {
-  id        String    @id @default(uuid()) @map("id")
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  user      User      @relation(fields: [userId], references: [id])
-  userId    String    @map("user_id")
-  coinType  CoinType? @map("coin_type")
-  amount    Float?    @map("amount")
-  createdId String?   @map("created_id")
+  id                String             @id @default(uuid()) @map("id")
+  createdAt         DateTime?          @default(now()) @map("created_at")
+  updatedAt         DateTime?          @updatedAt @map("updated_at")
+  deletedAt         DateTime?          @map("deleted_at")
+  user              User               @relation(fields: [userId], references: [id])
+  userId            String             @map("user_id")
+  coinType          CoinType?          @map("coin_type")
+  amount            Float?             @map("amount")
+  createdId         String?            @map("created_id")
+  DepositRequest    DepositRequest?
+  WithdrawalRequest WithdrawalRequest?
 
   @@map("coin_history")
 }
@@ -128,6 +132,79 @@ model Feedback {
   @@map("feedback")
 }
 
+model DepositRequest {
+  id              String                 @id @default(uuid()) @map("id")
+  createdAt       DateTime?              @default(now()) @map("created_at")
+  updatedAt       DateTime?              @updatedAt @map("updated_at")
+  deletedAt       DateTime?              @map("deleted_at")
+  amountMoney     Int?                   @map("amount_money")
+  amountCoin      Float?                 @map("amount_coin")
+  unitCurrency    UnitCurrency?          @map("unit_currency")
+  requester       User                   @relation(fields: [requesterId], references: [id])
+  requesterId     String                 @map("requester_id")
+  qrString        String?                @map("qr_string")
+  coinHistory     CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
+  coinHistoryId   String?                @unique @map("coin_history_id")
+  status          DepositRequestStatus   @default(INIT) @map("status")
+  handlerId       String?                @map("handler_id")
+  handlerFeeback  String?                @map("handler_feeback")
+  billImageUrl    String?                @map("bill_image_url")
+  platform        PaymentSystemPlatform? @map("platform")
+  transactionCode String?                @unique() @map("transcaction_code")
+  content         String?                @map("content")
+
+  @@map("deposit_request")
+}
+
+model WithdrawalRequest {
+  id             String                   @id @default(uuid()) @map("id")
+  createdAt      DateTime?                @default(now()) @map("created_at")
+  updatedAt      DateTime?                @updatedAt @map("updated_at")
+  deletedAt      DateTime?                @map("deleted_at")
+  content        String?                  @map("content")
+  amountMoney    Int?                     @map("amount_money")
+  amountCoin     Float?                   @map("amount_coin")
+  unitCurrency   UnitCurrency?            @map("unit_currency")
+  requester      User                     @relation(fields: [requesterId], references: [id])
+  requesterId    String                   @map("requester_id")
+  qrContent      String?                  @map("qr_content")
+  coinHistory    CoinHistory?             @relation(fields: [coinHistoryId], references: [id])
+  coinHistoryId  String?                  @unique @map("coin_history_id")
+  status         WithdrawalRequestStatus? @default(PENDING) @map("status")
+  handlerId      String?                  @map("handler_id")
+  handlerFeeback String?                  @map("handler_feeback")
+  billImageUrl   String?                  @map("bill_image_url")
+
+  @@map("withdrawal_request")
+}
+
+model Banner {
+  id        String        @id @default(uuid()) @map("id")
+  createdAt DateTime?     @default(now()) @map("created_at")
+  updatedAt DateTime?     @updatedAt @map("updated_at")
+  deletedAt DateTime?     @map("deleted_at")
+  imageUrl  String?       @map("image_url")
+  position  Int?          @map("position")
+  status    BannerStatus? @map("status")
+
+  @@map("banner")
+}
+
+model CoinSetting {
+  id                    String                 @id @default(uuid()) @map("id")
+  createdAt             DateTime?              @default(now()) @map("created_at")
+  updatedAt             DateTime?              @updatedAt @map("updated_at")
+  deletedAt             DateTime?              @map("deleted_at")
+  coinSettingType       CoinSettingType?       @map("coin_setting_type")
+  paymentSystemPlatform PaymentSystemPlatform? @map("payment_system_platform")
+  unitCurrency          UnitCurrency?          @map("unit_currency")
+  conversionRateCoin    Float?                 @map("conversion_rate_coin")
+  feePercentage         Float?                 @default(0) @map("fee")
+  surcharge             Float?                 @default(0) @map("surcharge")
+
+  @@map("coin_setting")
+}
+
 enum CoinType {
   SPEND_BOOKING
   SPEND_GIFT
@@ -157,4 +234,44 @@ enum BookingStatus {
   PROVIDER_ACCEPT
   PROVIDER_FINISH_SOON
   USER_FINISH_SOON
+}
+
+enum UnitCurrency {
+  VND
+  USD
+}
+
+enum DepositRequestStatus {
+  INIT
+  PENDING
+  REJECTED
+  APPROVED
+}
+
+enum WithdrawalRequestStatus {
+  PENDING
+  CANCEL
+  REJECTED
+  COMPLETED
+}
+
+enum BannerStatus {
+  INIT
+  ACTIVATED
+  UNACTIVATED
+}
+
+enum PaymentSystemPlatform {
+  MOMO
+  VNPAY
+  ZALOPAY
+  TPB
+  BIDV
+}
+
+enum CoinSettingType {
+  DEPOSIT
+  WITHDRAW
+  PROVIDER_GET_COIN_BOOKING
+  GIFT_TO_COIN
 }

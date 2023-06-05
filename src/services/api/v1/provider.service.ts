@@ -4,7 +4,7 @@ import { BecomeProviderResponse } from "@/common/responses/becomeProvider.respon
 import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
 
 import { providerRepository } from "@/repositories";
-import { errorService, userService } from "@/services";
+import { errorService, identitySystemService } from "@/services";
 import {
   BasePrismaService,
   ICrudOptionPrisma,
@@ -43,7 +43,7 @@ export class ProviderService extends BasePrismaService<
   }
   async getProviderBySlug(userSlug: string) {
     const result = await this.repository.getByIdOrSlug(userSlug);
-    const { avatar, dob, name, gender, slug } = (await userService.getInfomation(result?.userId!)) as UserInfomationResponse;
+    const { avatar, dob, name, gender, slug } = (await identitySystemService.getInfomation(result?.userId!)) as UserInfomationResponse;
     (result as any).user = {
       avatar,
       dob,

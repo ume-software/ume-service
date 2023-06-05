@@ -411,4 +411,18 @@ export class UtilService {
       return acc;
     }, {});
   }
+
+  generateTransactionCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const length = 10;
+    let transactionCode = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      transactionCode += characters.charAt(randomIndex);
+    }
+
+    return transactionCode + moment().format("DDMMYYYY");
+  }
+
 }

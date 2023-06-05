@@ -200,7 +200,7 @@ export class BaseController {
             console.log("UNKNOW ERROR", error);
             error.options = errorService.router.somethingWentWrong().options;
           }
-         
+
           error.options = undefined;
           this.onError(res, error);
         });

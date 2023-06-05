@@ -1,4 +1,4 @@
-import { BookingStatus, CoinType, LoginType, PrismaClient } from '@prisma/client';
+import { BookingStatus, CoinSettingType, CoinType, LoginType, PaymentSystemPlatform, PrismaClient, UnitCurrency } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 const userIds = [
     "9985b3de-3963-49a4-a6ac-aa5f273fd2b4",
@@ -58,157 +58,187 @@ const skillsDefault = [
 const prisma = new PrismaClient();
 async function seed() {
     try {
-        const check = await prisma.user.findFirst();
-        if (check) return;
-        // Create users
-        const users: any[] = [];
-        for (let i = 0; i < 10; i++) {
-            const user = await prisma.user.create({
-                data: {
-                    id: userIds[i]!,
-                    loginType: LoginType.GOOGLE,
-                },
-            });
-            users.push(user);
-        }
+        if (!await prisma.user.findFirst()) {
 
-        // Create providers
-        const providers = [];
-        for (let i = 0; i < 10; i++) {
-            const provider = await prisma.provider.create({
-                data: {
-                    user: {
-                        connect: {
-                            id: users[i].id
-                        }
-                    },
-                    slug: faker.lorem.slug(),
-                    name: faker.person.fullName(),
-                    avatarUrl: faker.image.avatar(),
-                    voiceUrl: faker.internet.url(),
-                    description: faker.lorem.paragraph(),
-                },
-            });
-            providers.push(provider);
-        }
 
-        // Create skills
-        const skills = [];
-        for (let i = 0; i < 10; i++) {
-            const skill = await prisma.skill.create({
-                data: {
-                    name: skillsDefault[i]?.name!,
-                    imageUrl: skillsDefault[i]?.url!,
-                },
-            });
-            skills.push(skill);
-        }
-
-        // Create provider skills
-        for (const provider of providers) {
-            for (const skill of skills) {
-                await prisma.providerSkill.create({
+            const users: any[] = [];
+            for (let i = 0; i < 10; i++) {
+                const user = await prisma.user.create({
                     data: {
-                        provider: {
-                            connect: {
-                                id: provider.id,
-                            }
-                        },
-                        skill: {
-                            connect: {
-                                id: skill.id!
-                            }
-                        },
-                        defaultCost: faker.number.int({ min: 5, max: 50 }) || 10,
-                        position: faker.number.int({ min: 1, max: 10 }) || 1,
+                        id: userIds[i]!,
+                        loginType: LoginType.GOOGLE,
                     },
                 });
+                users.push(user);
             }
-        }
 
-        // Create booking costs
-        for (const providerSkill of await prisma.providerSkill.findMany()) {
-            await prisma.bookingCost.create({
-                data: {
-
-                    providerSkill: {
-                        connect: {
-                            id: providerSkill.id,
-                        }
-                    },
-                    startTimeOfDay: ['09:00', '10:00', '11:00'][faker.number.int({ min: 0, max: 2 })] || "09:00",
-                    endTimeOfDay: ['12:00', '13:00', '14:00'][faker.number.int({ min: 0, max: 2 })] || "12:00",
-                    amount: faker.number.int({ min: 10, max: 100 }),
-
-                },
-            });
-        }
-        // Create CoinHistory
-        for (const user of users) {
-            const coinType = Object.values(CoinType)[faker.number.int({ min: 0, max: Object.values(CoinType).length - 1 })] || CoinType.ADMIN;
-
-            await prisma.coinHistory.create({
-                data: {
-                    user: {
-                        connect: {
-                            id: user.id,
-                        },
-                    },
-                    coinType: coinType,
-                    amount: (coinType.toString().includes("SPEND") ? -1 : 1) * faker.number.int({ min: 1, max: 100 }),
-                },
-            });
-        }
-
-        // Create BookingHistory
-        for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                const bookingStatus = Object.values(BookingStatus)[faker.number.int({ min: 0, max: Object.values(BookingStatus).length - 1 })] || BookingStatus.PROVIDER_ACCEPT;
-                await prisma.bookingHistory.create({
+            // Create providers
+            const providers = [];
+            for (let i = 0; i < 10; i++) {
+                const provider = await prisma.provider.create({
                     data: {
-                        status: bookingStatus,
-                        booker: {
+                        user: {
                             connect: {
-                                id: users[j].id,
-                            },
+                                id: users[i].id
+                            }
                         },
+                        slug: faker.lorem.slug(),
+                        name: faker.person.fullName(),
+                        avatarUrl: faker.image.avatar(),
+                        voiceUrl: faker.internet.url(),
+                        description: faker.lorem.paragraph(),
+                    },
+                });
+                providers.push(provider);
+            }
+
+            // Create skills
+            const skills = [];
+            for (let i = 0; i < 10; i++) {
+                const skill = await prisma.skill.create({
+                    data: {
+                        name: skillsDefault[i]?.name!,
+                        imageUrl: skillsDefault[i]?.url!,
+                    },
+                });
+                skills.push(skill);
+            }
+
+            // Create provider skills
+            for (const provider of providers) {
+                for (const skill of skills) {
+                    await prisma.providerSkill.create({
+                        data: {
+                            provider: {
+                                connect: {
+                                    id: provider.id,
+                                }
+                            },
+                            skill: {
+                                connect: {
+                                    id: skill.id!
+                                }
+                            },
+                            defaultCost: faker.number.int({ min: 5, max: 50 }) || 10,
+                            position: faker.number.int({ min: 1, max: 10 }) || 1,
+                        },
+                    });
+                }
+            }
+
+            // Create booking costs
+            for (const providerSkill of await prisma.providerSkill.findMany()) {
+                await prisma.bookingCost.create({
+                    data: {
+
                         providerSkill: {
                             connect: {
-                                id: (await prisma.providerSkill.findMany({
-                                    where: {
-                                        NOT: {
-                                            provider: {
-                                                userId: users[j].id
-                                            }
-                                        }
-                                    }
-                                }))[j]?.id!,
+                                id: providerSkill.id,
+                            }
+                        },
+                        startTimeOfDay: ['09:00', '10:00', '11:00'][faker.number.int({ min: 0, max: 2 })] || "09:00",
+                        endTimeOfDay: ['12:00', '13:00', '14:00'][faker.number.int({ min: 0, max: 2 })] || "12:00",
+                        amount: faker.number.int({ min: 10, max: 100 }),
+
+                    },
+                });
+            }
+            // Create CoinHistory
+            for (const user of users) {
+                const coinType = Object.values(CoinType)[faker.number.int({ min: 0, max: Object.values(CoinType).length - 1 })] || CoinType.ADMIN;
+
+                await prisma.coinHistory.create({
+                    data: {
+                        user: {
+                            connect: {
+                                id: user.id,
                             },
                         },
-                        acceptedAt: bookingStatus != BookingStatus.INIT ? faker.date.recent() : null,
-                        totalCost: faker.number.int({ min: 10, max: 200 }),
-                        bookingPeriod: faker.number.int({ min: 1, max: 10 }),
+                        coinType: coinType,
+                        amount: (coinType.toString().includes("SPEND") ? -1 : 1) * faker.number.int({ min: 1, max: 100 }),
+                    },
+                });
+            }
+
+            // Create BookingHistory
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    const bookingStatus = Object.values(BookingStatus)[faker.number.int({ min: 0, max: Object.values(BookingStatus).length - 1 })] || BookingStatus.PROVIDER_ACCEPT;
+                    await prisma.bookingHistory.create({
+                        data: {
+                            status: bookingStatus,
+                            booker: {
+                                connect: {
+                                    id: users[j].id,
+                                },
+                            },
+                            providerSkill: {
+                                connect: {
+                                    id: (await prisma.providerSkill.findMany({
+                                        where: {
+                                            NOT: {
+                                                provider: {
+                                                    userId: users[j].id
+                                                }
+                                            }
+                                        }
+                                    }))[j]?.id!,
+                                },
+                            },
+                            acceptedAt: bookingStatus != BookingStatus.INIT ? faker.date.recent() : null,
+                            totalCost: faker.number.int({ min: 10, max: 200 }),
+                            bookingPeriod: faker.number.int({ min: 1, max: 10 }),
+                        },
+                    });
+                }
+            }
+
+
+            // Create Feedback
+            for (const bookingHistory of await prisma.bookingHistory.findMany()) {
+                await prisma.feedback.create({
+                    data: {
+                        booking: {
+                            connect: {
+                                id: bookingHistory.id,
+                            },
+                        },
+                        content: faker.lorem.paragraph(),
+                        amountStart: faker.number.int({ min: 1, max: 5 }),
                     },
                 });
             }
         }
-
-
-        // Create Feedback
-        for (const bookingHistory of await prisma.bookingHistory.findMany()) {
-            await prisma.feedback.create({
-                data: {
-                    booking: {
-                        connect: {
-                            id: bookingHistory.id,
-                        },
+        if (!await prisma.coinSetting.findFirst()) {
+            await prisma.coinSetting.createMany({
+                data: [
+                    {
+                        unitCurrency: UnitCurrency.VND,
+                        feePercentage: 0.001,
+                        surcharge: 0,
+                        coinSettingType: CoinSettingType.DEPOSIT,
+                        paymentSystemPlatform: PaymentSystemPlatform.MOMO,
+                        conversionRateCoin: 0.001
                     },
-                    content: faker.lorem.paragraph(),
-                    amountStart: faker.number.int({ min: 1, max: 5 }),
-                },
-            });
+                    {
+                        unitCurrency: UnitCurrency.VND,
+                        feePercentage: 0.001,
+                        surcharge: 1000,
+                        coinSettingType: CoinSettingType.WITHDRAW,
+                        paymentSystemPlatform: PaymentSystemPlatform.MOMO,
+                        conversionRateCoin: 0.001
+                    },
+                    {
+                        coinSettingType: CoinSettingType.PROVIDER_GET_COIN_BOOKING,
+                        feePercentage: 0.001,
+                    },
+                    {
+                        coinSettingType: CoinSettingType.GIFT_TO_COIN,
+                        feePercentage: 0.001,
+                    }
+                ]
+            })
         }
-
         console.log('Seed data created successfully!');
     } catch (error) {
         console.error('Error seeding data:', error);
