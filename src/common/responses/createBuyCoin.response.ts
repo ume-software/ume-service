@@ -1,11 +1,11 @@
 
-import { DepositRequestStatus, PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
+import { BuyCoinRequestStatus, PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: 'Get Qr Deposit response'
+    description: 'Get Qr BuyCoin response'
 })
-export class CreateDepositResponse {
+export class CreateBuyCoinResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,
@@ -81,10 +81,10 @@ export class CreateDepositResponse {
     @ApiModelProperty({
         description: "Status",
         required: true,
-        enum: Object.values(DepositRequestStatus),
-        example: DepositRequestStatus.INIT
+        enum: Object.values(BuyCoinRequestStatus),
+        example: BuyCoinRequestStatus.INIT
     })
-    status!: DepositRequestStatus;
+    status!: BuyCoinRequestStatus;
 
 
     @ApiModelProperty({

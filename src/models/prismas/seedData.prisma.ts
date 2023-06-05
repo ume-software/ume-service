@@ -216,7 +216,7 @@ async function seed() {
                         unitCurrency: UnitCurrency.VND,
                         feePercentage: 0.001,
                         surcharge: 0,
-                        coinSettingType: CoinSettingType.DEPOSIT,
+                        coinSettingType: CoinSettingType.BUY_COIN,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
                         conversionRateCoin: 0.001
                     },
@@ -224,7 +224,7 @@ async function seed() {
                         unitCurrency: UnitCurrency.VND,
                         feePercentage: 0.001,
                         surcharge: 1000,
-                        coinSettingType: CoinSettingType.WITHDRAW,
+                        coinSettingType: CoinSettingType.SELL_COIN,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
                         conversionRateCoin: 0.001
                     },

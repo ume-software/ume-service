@@ -237,6 +237,33 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/buy-coin-request:
+    post:
+      operationId: createBuyCoinRequest
+      tags:
+        - BuyCoinRequest
+      description: Register become provider
+      summary: Register become provider
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBuyCoinRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBuyCoinResponse'
+          description: Response create BuyCoin response success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/coin/history:
     get:
       operationId: getMyHistoryCoin
@@ -343,33 +370,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserCoinResponse'
           description: Register success
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: 500 Internal Server Error Response
-      security:
-        - bearerAuth: []
-  /api/v1/deposit-request:
-    post:
-      operationId: createDepositRequest
-      tags:
-        - DepositRequest
-      description: Register become provider
-      summary: Register become provider
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateDepositRequest'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateDepositResponse'
-          description: Response create deposit response success
         '500':
           content:
             application/json:
@@ -679,8 +679,8 @@ tags:
   - name: File
   - name: Image
   - name: Booking
+  - name: BuyCoinRequest
   - name: Coin
-  - name: DepositRequest
   - name: Provider
   - name: ProviderSkill
   - name: Skill
@@ -998,101 +998,7 @@ components:
         - bookerId
         - providerSkillId
       description: Booking History response
-    PointForUserRequest:
-      type: object
-      properties:
-        amount:
-          type: number
-          description: Amount
-          example: 10
-        userId:
-          type: string
-          description: User Id
-          example: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
-      required:
-        - amount
-        - userId
-      description: User registor become provider
-    PaginationResponse:
-      type: object
-      properties:
-        currentPage:
-          type: number
-          description: Current page
-          example: 2
-        nextPage:
-          type: number
-          description: Next page
-          example: 3
-        prevPage:
-          type: number
-          description: Previous page
-        limit:
-          type: object
-          description: Limit
-          example: 50
-      required: []
-    CoinHistoryPagingResponse:
-      type: object
-      properties:
-        row:
-          type: array
-          description: Row
-          example:
-            - id: c8b6a728-6db6-42e6-b050-92ab31ced664
-              createdAt: '2023-05-10T10:13:19.401Z'
-              updatedAt: '2023-05-10T10:13:19.401Z'
-              deletedAt: null
-              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
-              coinType: ADMIN
-              amount: 10
-              createdId: c46c8037-0969-47d1-9337-e35571c87305
-            - id: f3ec70d2-549c-454f-b5bc-caf92f7240be
-              createdAt: '2023-05-10T10:14:38.564Z'
-              updatedAt: '2023-05-10T10:14:38.564Z'
-              deletedAt: null
-              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
-              coinType: ADMIN
-              amount: 10
-              createdId: c46c8037-0969-47d1-9337-e35571c87305
-          items:
-            $ref: '#/components/schemas/CoinHistoryPagingResponse'
-        count:
-          type: number
-          description: Count
-          example: 100
-        pagination:
-          type: STRING
-          description: Pagination
-          example:
-            currentPage: 2
-            nextPage: 3
-            prevPage: 1
-            limit: 2
-          $ref: '#/components/schemas/PaginationResponse'
-      required: []
-      description: Coin History response
-    UserCoinResponse:
-      type: object
-      properties:
-        userId:
-          type: string
-          description: User id
-          example: 9fa9f3c5-640a-407f-b64f-12ff6f55e15c
-        totalCoinsAvailable:
-          type: number
-          description: Total coins available of user
-          example: 900
-        totalCoin:
-          type: number
-          description: Total coin of user
-          example: 1000
-      required:
-        - userId
-        - totalCoinsAvailable
-        - totalCoin
-      description: User coin response
-    CreateDepositRequest:
+    CreateBuyCoinRequest:
       type: object
       properties:
         amountCoin:
@@ -1120,8 +1026,8 @@ components:
         - amountCoin
         - platform
         - unitCurrency
-      description: Get Qr Deposit request
-    CreateDepositResponse:
+      description: Get QR buy coin request
+    CreateBuyCoinResponse:
       type: object
       properties:
         id:
@@ -1222,7 +1128,101 @@ components:
         - platform
         - transactionCode
         - content
-      description: Get Qr Deposit response
+      description: Get Qr BuyCoin response
+    PointForUserRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount
+          example: 10
+        userId:
+          type: string
+          description: User Id
+          example: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
+      required:
+        - amount
+        - userId
+      description: User registor become provider
+    PaginationResponse:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 2
+        nextPage:
+          type: number
+          description: Next page
+          example: 3
+        prevPage:
+          type: number
+          description: Previous page
+        limit:
+          type: object
+          description: Limit
+          example: 50
+      required: []
+    CoinHistoryPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          example:
+            - id: c8b6a728-6db6-42e6-b050-92ab31ced664
+              createdAt: '2023-05-10T10:13:19.401Z'
+              updatedAt: '2023-05-10T10:13:19.401Z'
+              deletedAt: null
+              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
+              coinType: ADMIN
+              amount: 10
+              createdId: c46c8037-0969-47d1-9337-e35571c87305
+            - id: f3ec70d2-549c-454f-b5bc-caf92f7240be
+              createdAt: '2023-05-10T10:14:38.564Z'
+              updatedAt: '2023-05-10T10:14:38.564Z'
+              deletedAt: null
+              userId: 7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa
+              coinType: ADMIN
+              amount: 10
+              createdId: c46c8037-0969-47d1-9337-e35571c87305
+          items:
+            $ref: '#/components/schemas/CoinHistoryPagingResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Coin History response
+    UserCoinResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User id
+          example: 9fa9f3c5-640a-407f-b64f-12ff6f55e15c
+        totalCoinsAvailable:
+          type: number
+          description: Total coins available of user
+          example: 900
+        totalCoin:
+          type: number
+          description: Total coin of user
+          example: 1000
+      required:
+        - userId
+        - totalCoinsAvailable
+        - totalCoin
+      description: User coin response
     BecomeProviderRequest:
       type: object
       properties:

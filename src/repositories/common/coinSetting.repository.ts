@@ -9,10 +9,10 @@ export class CoinSettingRepository extends BasePrismaRepository {
     super();
   }
 
-  async convertCoinToMoneyForDeposit(amountCoin: number, unitCurrency: UnitCurrency, paymentSystemPlatform: PaymentSystemPlatform) {
+  async convertCoinToMoneyForBuyCoin(amountCoin: number, unitCurrency: UnitCurrency, paymentSystemPlatform: PaymentSystemPlatform) {
     const setting = await this.prisma.coinSetting.findFirst({
       where: {
-        coinSettingType: CoinSettingType.DEPOSIT,
+        coinSettingType: CoinSettingType.BUY_COIN,
         paymentSystemPlatform,
         unitCurrency
       }

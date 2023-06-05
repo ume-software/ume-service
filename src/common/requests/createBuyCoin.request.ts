@@ -3,9 +3,9 @@ import { PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: 'Get Qr Deposit request'
+    description: 'Get QR buy coin request'
 })
-export class CreateDepositRequest {
+export class CreateBuyCoinRequest {
     @ApiModelProperty({
         description: 'AmountCoin',
         required: true,
