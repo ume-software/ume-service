@@ -3,6 +3,7 @@ import * as express from 'express';
 import { Request, Response } from "@/controllers/base/base.controller";
 import { errorService, tokenService } from "@/services";
 import { EAccountType } from "@/enums/accountType.enum";
+import { IAccessToken } from "@/interfaces/auth/accessToken.interface";
 
 
 const HEADERS = "authorization";
@@ -16,7 +17,10 @@ export class AccountTypeMiddleware extends BaseMiddleware {
                 if (!bearerToken) {
                     throw errorService.auth.unauthorized();
                 }
-                const result = tokenService.decodeToken(bearerToken);
+                const result: IAccessToken = tokenService.decodeToken(bearerToken) as IAccessToken;
+                if (!result.id) {
+                    throw errorService.auth.badToken();
+                }
                 req.tokenInfo = result;
 
                 // === Check blocked ====
