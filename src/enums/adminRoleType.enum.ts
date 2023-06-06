@@ -1,0 +1,6 @@
+export enum EAdminRoleType {
+    SUPERADMIN = 'SUPERADMIN',
+    ADMIN = 'ADMIN',
+    COLLABORATOR = 'COLLABORATOR',
+    CASHIER = 'CASHIER'
+};

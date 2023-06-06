@@ -264,6 +264,33 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/buy-coin-request/handle:
+    post:
+      operationId: handleBuyConRequest
+      tags:
+        - BuyCoinRequest
+      description: Register become provider
+      summary: Register become provider
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyCoinHandleRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBuyCoinResponse'
+          description: Response create BuyCoin response success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/coin/history:
     get:
       operationId: getMyHistoryCoin
@@ -998,6 +1025,31 @@ components:
         - bookerId
         - providerSkillId
       description: Booking History response
+    BuyCoinHandleRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id
+          example: 42ac81c2-1815-45f7-b598-412487161e1f
+        billImageUrl:
+          type: string
+          description: billImageUrl
+          example: url
+        feedback:
+          type: string
+          description: feedback
+          example: feedback
+        status:
+          type: string
+          description: BuyCoinRequestStatus
+          enum:
+            - APPROVED
+            - REJECTED
+          example: APPROVED
+      required:
+        - status
+      description: Get QR buy coin request
     CreateBuyCoinRequest:
       type: object
       properties:
@@ -1080,6 +1132,7 @@ components:
           description: Status
           enum:
             - INIT
+            - USER_NOTICES_PAID
             - PENDING
             - REJECTED
             - APPROVED

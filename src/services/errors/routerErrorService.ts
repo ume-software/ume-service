@@ -24,8 +24,10 @@ export class RouterErrorService {
     theAPINotSupported() {
         return new RouterException('api_not_supported', ERROR_MESSAGE.THE_API_NOT_SUPPORTED)
     }
-    badRequest() {
-        return new RouterException('bad_request', ERROR_MESSAGE.BAD_REQUEST)
+    badRequest(message?: IErrorResponse) {
+        const key = "bad_request";
+        if (message) return this.resErrWithCode(key, message)
+        return new RouterException(key, ERROR_MESSAGE.BAD_REQUEST)
     }
     errorCustom(message: IErrorResponse) {
         const key = "error_custom";

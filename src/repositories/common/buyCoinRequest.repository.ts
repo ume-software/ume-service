@@ -5,6 +5,7 @@ import {
 } from "../base/basePrisma.repository";
 import { Prisma, BuyCoinRequest } from "@prisma/client";
 
+
 export class BuyCoinRequestRepository extends BasePrismaRepository {
   constructor() {
     super();
@@ -57,6 +58,18 @@ export class BuyCoinRequestRepository extends BasePrismaRepository {
     tx: PrismaTransation = this.prisma
   ): Promise<BuyCoinRequest | null> {
     return await tx.buyCoinRequest.findFirst(query);
+  }
+
+  async findById(
+    id: string,
+    tx: PrismaTransation = this.prisma
+  ): Promise<BuyCoinRequest | null> {
+
+    return await tx.buyCoinRequest.findFirst({
+      where: {
+        id
+      }
+    });
   }
 
   async findMany(

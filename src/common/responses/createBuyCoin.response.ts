@@ -67,7 +67,7 @@ export class CreateBuyCoinResponse {
     @ApiModelProperty({
         description: "QR string",
         required: true,
-        example: "2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023 - 1f0095c1-4795-4c77-b1f7-b5778501c77c|transfer_myqr",
+        example: "2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023|transfer_myqr",
     })
     qrString!: string;
 

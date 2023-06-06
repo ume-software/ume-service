@@ -112,9 +112,11 @@ export class SocketService {
     }
 
     public emitUserBookingProvider(socket: Socket, data: any) {
+        console.log("USER_BOOKING_PROVIDER ===> ", data)
         socket.emit(SOCKET_EVENTS.USER_BOOKING_PROVIDER, data)
     }
     public emitProviderHandledBooking(socket: Socket, data: any) {
+        console.log("PROVIDER_HANDLED_BOOKING ===> ", data)
         socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data)
     }
 }

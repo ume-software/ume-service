@@ -243,6 +243,7 @@ enum UnitCurrency {
 
 enum BuyCoinRequestStatus {
   INIT
+  USER_NOTICES_PAID
   PENDING
   REJECTED
   APPROVED

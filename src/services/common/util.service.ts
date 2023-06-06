@@ -422,7 +422,7 @@ export class UtilService {
       transactionCode += characters.charAt(randomIndex);
     }
 
-    return transactionCode + moment().format("DDMMYYYY");
+    return transactionCode + moment().format("DDMMYYYYhhmmssSSS");
   }
 
 }

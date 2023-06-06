@@ -150,4 +150,15 @@ export const ERROR_MESSAGE = {
         codeNumber: 20500,
         statusCode: 400,
     },
+    // Buy Coin Request
+    BUY_COIN_REQUEST_NOT_FOUND: {
+        message: "Buy coin request not found.",
+        codeNumber: 20600,
+        statusCode: 400,
+    },
+    BUY_COIN_REQUEST_HAS_BEEN_PROCESSED: {
+        message: "The request to buy coins has been processed.",
+        codeNumber: 20601,
+        statusCode: 400,
+    }
 };
