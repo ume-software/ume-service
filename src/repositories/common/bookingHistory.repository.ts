@@ -4,6 +4,7 @@ import {
     PrismaTransation,
 } from "../base/basePrisma.repository";
 import { Prisma, BookingHistory, BookingStatus, ProviderSkill, Provider, User } from "@prisma/client";
+import { config } from "@/configs";
 export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider = BookingHistory & {
     providerSkill: (ProviderSkill & {
         provider: Provider;
@@ -13,6 +14,66 @@ export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider = Booking
 export class BookingHistoryRepository extends BasePrismaRepository {
     constructor() {
         super();
+    }
+
+    async findAllCurrentBookingProvider(userId: string, tx: PrismaTransation = this.prisma) {
+        const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);
+        return await tx.bookingHistory.findMany({
+            where: {
+                providerSkill: {
+                    provider: {
+                        user: {
+                            id: userId
+                        }
+                    }
+                },
+                createdAt: {
+                    gte: now,
+                },
+                status: BookingStatus.INIT
+            },
+            include: {
+                providerSkill: {
+                    include: {
+                        skill: true
+                    }
+                }
+            }
+        })
+
+    }
+
+    async findAllCurrentBookingUser(userId: string, tx: PrismaTransation = this.prisma) {
+        const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);
+        return await tx.bookingHistory.findMany({
+            where: {
+                booker: {
+                    id: userId
+                },
+                createdAt: {
+                    gte: now,
+                },
+                status: BookingStatus.INIT
+            },
+            include: {
+                providerSkill: {
+                    include: {
+                        skill: true,
+                        provider: {
+                            select: {
+                                avatarUrl: true,
+                                voiceUrl: true,
+                                name: true,
+                                slug: true,
+                                id: true
+
+                            }
+                        }
+                    }
+                },
+            }
+        })
+
     }
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
@@ -105,8 +166,8 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         bookerId: string,
         tx: PrismaTransation = this.prisma
     ): Promise<number> {
-        const fiveMinutes = 5 * 60 * 1000;
-        const now = new Date(new Date().valueOf() - fiveMinutes);
+
+        const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);
         return (
             (
                 await tx.bookingHistory.aggregate({

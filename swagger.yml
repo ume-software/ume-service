@@ -183,6 +183,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: 500 Internal Server Error Response
+  /api/v1/booking/current-booking-provider:
+    get:
+      operationId: getCurrentBookingForProvider
+      tags:
+        - Booking
+      description: Create new booking
+      summary: Create new booking
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingHistoryResponse'
+          description: Create new booking success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/booking/current-booking-user:
+    get:
+      operationId: getCurrentBookingForUser
+      tags:
+        - Booking
+      description: Create new booking
+      summary: Create new booking
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingHistoryResponse'
+          description: Create new booking success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/booking:
     post:
       operationId: createbooking
@@ -293,7 +337,7 @@ paths:
         - bearerAuth: []
   /api/v1/coin/history:
     get:
-      operationId: getMyHistoryCoin
+      operationId: getHistoryCoin
       tags:
         - Coin
       description: Get hisotory coins of the user himself
@@ -358,7 +402,7 @@ paths:
         - bearerAuth: []
   /api/v1/coin/total:
     get:
-      operationId: getMyTotalCoin
+      operationId: getTotalCoin
       tags:
         - Coin
       description: Total number of coins of the user himself
@@ -1121,8 +1165,8 @@ components:
           type: string
           description: QR string
           example: >-
-            2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023 -
-            1f0095c1-4795-4c77-b1f7-b5778501c77c|transfer_myqr
+            2|99|0947875625|Đỗ Trần Minh
+            Chu||0|0|30030|HMJXXU19J605062023|transfer_myqr
         coinHistoryId:
           type: string
           description: Coin history Id

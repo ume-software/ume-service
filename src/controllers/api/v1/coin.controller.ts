@@ -37,12 +37,12 @@ export class coinController extends BaseController {
     this.router.get(
       "/history",
       this.accountTypeMiddlewares([EAccountType.USER]),
-      this.route(this.getMyHistoryCoin)
+      this.route(this.getHistoryCoin)
     );
     this.router.get(
       "/total",
       this.accountTypeMiddlewares([EAccountType.USER]),
-      this.route(this.getMyTotalCoin)
+      this.route(this.getTotalCoin)
     );
     this.router.post(
       "/admin",
@@ -52,7 +52,7 @@ export class coinController extends BaseController {
   }
   @ApiOperationGet({
     path: "/history",
-    operationId: "getMyHistoryCoin",
+    operationId: "getHistoryCoin",
     security: {
       bearerAuth: [],
     },
@@ -72,7 +72,7 @@ export class coinController extends BaseController {
       },
     },
   })
-  async getMyHistoryCoin(req: Request, res: Response) {
+  async getHistoryCoin(req: Request, res: Response) {
     const queryInfoPrisma = req.queryInfoPrisma;
     const userId = req.tokenInfo?.id;
     const result = await this.service.getHistoryCoinByUserId(
@@ -84,7 +84,7 @@ export class coinController extends BaseController {
 
   @ApiOperationGet({
     path: "/total",
-    operationId: "getMyTotalCoin",
+    operationId: "getTotalCoin",
     security: {
       bearerAuth: [],
     },
@@ -101,7 +101,7 @@ export class coinController extends BaseController {
       },
     },
   })
-  async getMyTotalCoin(req: Request, res: Response) {
+  async getTotalCoin(req: Request, res: Response) {
     const userId = req.tokenInfo?.id;
     const result = await this.service.getTotalCoinByUserId(userId!);
     this.onSuccess(res, result);

@@ -1,5 +1,6 @@
 import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
+import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
 import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
@@ -12,8 +13,10 @@ import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.r
 import {
     coinService,
     errorService,
+    identitySystemService,
     providerService,
     userService,
+    utilService,
 } from "@/services";
 import { BasePrismaService } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
@@ -25,6 +28,38 @@ import moment from "moment";
 export class BookingService extends BasePrismaService<BookingHistoryRepository>{
     constructor() {
         super(bookingHistoryRepository)
+    }
+    async getCurrentBookingForProvider(userId: string) {
+        const bookingLists = await bookingHistoryRepository.findAllCurrentBookingProvider(userId);
+        const bookerIds: Array<string> = [];
+
+        for (let index = 0; index < bookingLists.length; index++) {
+            const booking = bookingLists[index];
+            if (booking && booking.bookerId)
+                bookerIds.push(booking.bookerId)
+
+        }
+
+        const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
+        const listUserInfo: Array<UserInfomationResponse> = requestListIds.row as Array<UserInfomationResponse>;
+        const usersInfo: { [key: string]: UserInfomationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
+        bookingLists.forEach(item => {
+            if (item.bookerId) {
+                (item as any).booker = usersInfo[item.bookerId];
+            }
+
+        })
+        return {
+            row: bookingLists,
+            count: bookingLists.length
+        };
+    }
+    async getCurrentBookingForUser(userId: string) {
+        const bookingLists = await bookingHistoryRepository.findAllCurrentBookingUser(userId);
+        return {
+            row: bookingLists,
+            count: bookingLists.length
+        };
     }
     async userBookingProvider(
         req: Request

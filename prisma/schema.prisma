@@ -20,6 +20,7 @@ model User {
   bookingHistories BookingHistory[]
   buyCoinRequests  BuyCoinRequest[]
   sellCoinRequests SellCoinRequest[]
+  notices          Notice?
 
   @@map("user")
 }
@@ -178,6 +179,18 @@ model SellCoinRequest {
   @@map("withdrawal_request")
 }
 
+model Notice {
+  id        String      @id @default(uuid()) @map("id")
+  createdAt DateTime?   @default(now()) @map("created_at")
+  updatedAt DateTime?   @updatedAt @map("updated_at")
+  deletedAt DateTime?   @map("deleted_at")
+  type      NoticeType? @map("notice_type")
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @unique @map("user_id")
+  data      Json?       @map("data")
+  isReaded  Boolean?    @default(false) @map("is_readed")
+}
+
 model Banner {
   id        String        @id @default(uuid()) @map("id")
   createdAt DateTime?     @default(now()) @map("created_at")
@@ -275,4 +288,12 @@ enum CoinSettingType {
   SELL_COIN
   PROVIDER_GET_COIN_BOOKING
   GIFT_TO_COIN
+}
+
+enum NoticeType {
+  NEW_MESSAGE
+  HAVE_BOOKING
+  BOOKING_HAS_BEEN_DECLINED
+  BOOKING_HAS_BEEN_SUCCESSED
+  SOMEONE_FOLLOWING_YOU
 }

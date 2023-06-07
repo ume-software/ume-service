@@ -7,10 +7,11 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { bookingService } from "@/services";
+import { bookingService, errorService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
 
 import {
+    ApiOperationGet,
     ApiOperationPost,
     ApiOperationPut,
     ApiPath,
@@ -31,6 +32,16 @@ export class BookingController extends BaseController {
     service: BookingService;
 
     customRouting() {
+        this.router.get(
+            "/current-booking-provider",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getCurrentBookingForProvider)
+        );
+        this.router.get(
+            "/current-booking-user",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getCurrentBookingForUser)
+        );
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -41,6 +52,62 @@ export class BookingController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.bookingHandle)
         );
+    }
+
+    @ApiOperationGet({
+        path: "/current-booking-provider",
+        operationId: "getCurrentBookingForProvider",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Create new booking",
+        summary: "Create new booking",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryResponse },
+                    },
+                },
+                description: "Create new booking success",
+            },
+        },
+    })
+    async getCurrentBookingForProvider(req: Request, res: Response) {
+        const userId = req.tokenInfo?.id;
+        if(!userId){
+            throw errorService.auth.badToken();
+        }
+        const result = await this.service.getCurrentBookingForProvider(userId);
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/current-booking-user",
+        operationId: "getCurrentBookingForUser",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Create new booking",
+        summary: "Create new booking",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryResponse },
+                    },
+                },
+                description: "Create new booking success",
+            },
+        },
+    })
+    async getCurrentBookingForUser(req: Request, res: Response) {
+        const userId = req.tokenInfo?.id;
+        if(!userId){
+            throw errorService.auth.badToken();
+        }
+        const result = await this.service.getCurrentBookingForUser(userId);
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationPost({
@@ -70,9 +137,7 @@ export class BookingController extends BaseController {
         },
     })
     async createbooking(req: Request, res: Response) {
-
         const result = await this.service.userBookingProvider(req);
-     
         this.onSuccess(res, result);
     }
 

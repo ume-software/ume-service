@@ -19,6 +19,7 @@ export default {
     public_key: process.env["PATH_PUBLIC_KEY"] || "public_key.pem",
     private_key: process.env["PATH_PRIVATE_KEY"] || "public_key.pem",
     timezone: process.env["DEFAULT_TIME_ZONE"] || "+0700",
+    bookingExpireTimeMillisecond: 5 * 60 * 1000
   },
   service: {
     identity: {

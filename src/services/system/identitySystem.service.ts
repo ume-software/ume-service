@@ -23,9 +23,9 @@ export class IdentitySystemService {
         ).data;
     }
 
-    async getListByUserIds(bookerIds: string[]) {
+    async getListByUserIds(userIds: string[]) {
         return (await this.fetchIdentityService().post("system/user/get-list-user-by-ids", {
-            ids: bookerIds
+            ids: userIds
         })).data;
     }
 
