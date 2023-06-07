@@ -1,3 +1,4 @@
+import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
@@ -12,6 +13,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import {
+  filterHotProviderParameters,
   filterProviderParameters,
   queryParameters,
 } from "@/swagger/parameters/query.parameter";
@@ -37,6 +39,7 @@ export class ProviderController extends BaseController {
 
   customRouting() {
     this.router.get("/", this.route(this.getListProvider));
+    this.router.get("/hot", this.route(this.getListHotProvider));
     this.router.get("/:slug", this.route(this.getProviderBySlug));
     this.router.post(
       "/",
@@ -67,7 +70,7 @@ export class ProviderController extends BaseController {
     },
   })
   async getListProvider(req: Request, res: Response) {
-  
+
     const { queryInfoPrisma } = req;
     let { start_cost, end_cost, skill_id } = req.query;
     start_cost = start_cost?.toString();
@@ -84,6 +87,42 @@ export class ProviderController extends BaseController {
     );
     this.onSuccessAsList(res, result);
   }
+  @ApiOperationGet({
+    path: "/hot",
+    operationId: "getListHotProvider",
+    description: "Get List Hot Providerr",
+    summary: "Get List Hot Providerr",
+    parameters: {
+      query: {
+        ...filterHotProviderParameters,
+        ...queryParameters,
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: FilterProviderPagingResponse },
+          },
+        },
+        description: "Provider success",
+      },
+    },
+  })
+  async getListHotProvider(req: Request, res: Response) {
+
+    const { queryInfoPrisma } = req;
+    let { interval_days } = req.query;
+
+    const result = await this.service.filterHotProvider(
+      {
+        intervalDays: +(interval_days || 7),
+      } as IOptionFilterHotProvider,
+      queryInfoPrisma!
+    );
+    this.onSuccessAsList(res, result);
+  }
+
 
   @ApiOperationGet({
     path: "/{slug}",

@@ -61,8 +61,8 @@ export class BookingController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Create new booking",
-        summary: "Create new booking",
+        description: "Get current booking for provider",
+        summary: "Get current booking for provider",
         responses: {
             200: {
                 content: {
@@ -70,7 +70,7 @@ export class BookingController extends BaseController {
                         schema: { model: BookingHistoryPagingResponse },
                     },
                 },
-                description: "Create new booking success",
+                description: "Get current booking for provider success",
             },
         },
     })
@@ -89,8 +89,8 @@ export class BookingController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Create new booking",
-        summary: "Create new booking",
+        description: "Get current booking for user",
+        summary: "Get current booking for user",
         responses: {
             200: {
                 content: {
@@ -98,7 +98,7 @@ export class BookingController extends BaseController {
                         schema: { model: BookingHistoryPagingResponse },
                     },
                 },
-                description: "Create new booking success",
+                description: "Get current booking for user success",
             },
         },
     })

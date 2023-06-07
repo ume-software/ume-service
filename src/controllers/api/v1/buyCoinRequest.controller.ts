@@ -22,7 +22,7 @@ export class BuyCoinRequestController extends BaseController {
 
   customRouting() {
     this.router.post("/", this.accountTypeMiddlewares([EAccountType.USER]), this.route(this.createBuyCoinRequest));
-    this.router.post("/handle", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.handleBuyConRequest));
+    this.router.post("/handle", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.handleBuyCoinRequest));
   }
 
   @ApiOperationPost({
@@ -31,8 +31,8 @@ export class BuyCoinRequestController extends BaseController {
     security: {
       bearerAuth: [],
     },
-    description: "Register become provider",
-    summary: "Register become provider",
+    description: "User create buy coin request",
+    summary: "User create buy coin request",
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -47,7 +47,7 @@ export class BuyCoinRequestController extends BaseController {
             schema: { model: CreateBuyCoinResponse },
           },
         },
-        description: "Response create BuyCoin response success",
+        description: "Create buy coin request success",
       },
     },
   })
@@ -63,12 +63,12 @@ export class BuyCoinRequestController extends BaseController {
 
   @ApiOperationPost({
     path: "/handle",
-    operationId: "handleBuyConRequest",
+    operationId: "handleBuyCoinRequest",
     security: {
       bearerAuth: [],
     },
-    description: "Register become provider",
-    summary: "Register become provider",
+    description: "Handle buy coin request",
+    summary: "Handle buy coin request",
     requestBody: {
       content: {
         [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -83,11 +83,11 @@ export class BuyCoinRequestController extends BaseController {
             schema: { model: CreateBuyCoinResponse },
           },
         },
-        description: "Response create BuyCoin response success",
+        description: "Handle buy coin request success",
       },
     },
   })
-  async handleBuyConRequest(req: Request, res: Response) {
+  async handleBuyCoinRequest(req: Request, res: Response) {
     const buyCoinHandleRequest = req.body as BuyCoinHandleRequest;
     const userId = req.tokenInfo?.id;
     const result = await this.service.buyCoinHandle(

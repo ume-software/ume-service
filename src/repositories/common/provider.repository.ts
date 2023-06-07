@@ -1,6 +1,6 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
-import { Prisma, Provider } from "@prisma/client";
+import { BookingStatus, Prisma, Provider } from "@prisma/client";
 import moment from "moment";
 import { config } from "@/configs";
 
@@ -82,6 +82,105 @@ export class ProviderRepository extends BasePrismaRepository {
       `
     )
     const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM (${query}) AS subquery`)
+    return {
+      row,
+      count: Number(countResult[0].count)
+    }
+  }
+
+  async filterAndCountAllHotProvider(intervalDays: number, skip: number | undefined, take: number | undefined) {
+    const getListIdsQuery = `
+      SELECT
+      p.id
+      FROM
+        provider AS p
+        LEFT JOIN provider_skill AS ps ON p.id = ps.provider_id
+        LEFT JOIN booking_history AS b ON ps.id = b.provider_skill_id
+          AND (b.status = '${BookingStatus.PROVIDER_ACCEPT}' or b.status = '${BookingStatus.PROVIDER_FINISH_SOON}' or b.status = '${BookingStatus.USER_FINISH_SOON}')
+          AND b.created_at >= NOW() - INTERVAL '${intervalDays} days'
+      GROUP BY
+        p.id
+      ORDER BY
+        COALESCE(COUNT(b.id), 0) DESC
+    `;
+    let idsWhere = "";
+    let idsOrder = "";
+    const listIds = (await this.prisma.$queryRawUnsafe(`
+    ${getListIdsQuery} 
+    ${take != undefined ? `LIMIT ${take}` : ""}
+    ${skip != undefined ? `OFFSET ${skip}` : ""}
+    `)) as any[]
+    const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM (${getListIdsQuery}) AS subquery`)
+    listIds.forEach((item, index) => {
+      idsWhere += `'${item.id}' ${index < listIds.length - 1 ? "," : ""}\n`;
+      idsOrder += `WHEN '${item.id}' THEN ${index + 1} \n`
+    })
+    idsOrder += `ELSE ${listIds.length + 1}`
+    const nowTimehhmm = moment()
+      .utcOffset(config.server.timezone)
+      .format("HH:mm");
+    const query = `
+    SELECT *
+    FROM (
+        SELECT DISTINCT ON (p.id)
+            p.id,
+            p.user_id AS userId,
+            p.slug,
+            p.name,
+            p.avatar_url AS avatarUrl,
+            p.voice_url AS voiceUrl,
+            p.description,
+            COALESCE(bc.amount, ps.default_cost) AS cost,
+            s.id AS skillId,
+            s.name AS skillName,
+            s.image_url AS skillImageUrl
+        FROM
+            provider AS p
+            INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
+            LEFT JOIN (
+                SELECT
+                    provider_skill_id,
+                    amount
+                FROM
+                    booking_cost
+                WHERE
+                    deleted_at IS NULL
+                    AND start_time_of_day <= '${nowTimehhmm}'
+                    AND end_time_of_day >= '${nowTimehhmm}'
+                ORDER BY
+                    amount ASC
+            ) AS bc ON bc.provider_skill_id = ps.id
+            INNER JOIN skill AS s ON ps.skill_id = s.id
+        WHERE
+            ps.deleted_at IS NULL
+            AND p.id IN (
+                ${idsWhere}
+            )
+            AND (
+                (
+                    CASE
+                        WHEN (
+                            SELECT COUNT(*)
+                            FROM provider_skill AS psp
+                            LEFT JOIN booking_cost AS bcp ON bcp.provider_skill_id = psp.id
+                            WHERE psp.provider_id = p.id
+                            AND bcp.provider_skill_id IS NOT NULL
+                            AND bcp.start_time_of_day <= '${nowTimehhmm}'
+                            AND bcp.end_time_of_day >= '${nowTimehhmm}'
+                        ) > 0 THEN TRUE
+                        ELSE FALSE
+                    END
+                ) IS true
+                AND bc.amount IS NULL
+            ) = false
+    ) AS subquery
+    ORDER BY
+        CASE id
+        ${idsOrder}
+        END;
+  `
+
+    const row = await this.prisma.$queryRawUnsafe(query)
     return {
       row,
       count: Number(countResult[0].count)

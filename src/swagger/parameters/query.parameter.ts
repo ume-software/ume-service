@@ -125,3 +125,16 @@ export const filterProviderParameters = {
         `,
   },
 };
+export const filterHotProviderParameters = {
+  interval_days: {
+    name: "interval_days",
+    required: true,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+      default: 7,
+    },
+    description: `
+        Example : interval_days=7
+        `,
+  },
+};

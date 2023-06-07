@@ -1,3 +1,4 @@
+import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
@@ -26,7 +27,13 @@ export class ProviderService extends BasePrismaService<
     const { skillId, startCost, endCost } = option;
     return await this.repository.filterAndCountAllProvider(skillId, startCost, endCost, query?.skip, query?.take);
   }
-
+  async filterHotProvider(
+    option: IOptionFilterHotProvider,
+    query: ICrudOptionPrisma
+  ) {
+    const { intervalDays } = option;
+    return await this.repository.filterAndCountAllHotProvider(intervalDays, query?.skip, query?.take);
+  }
   async findAndCountAll(query: ICrudOptionPrisma) {
     if (!query.include) query.include = {};
     query.include = {

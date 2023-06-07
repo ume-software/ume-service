@@ -188,15 +188,15 @@ paths:
       operationId: getCurrentBookingForProvider
       tags:
         - Booking
-      description: Create new booking
-      summary: Create new booking
+      description: Get current booking for provider
+      summary: Get current booking for provider
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BookingHistoryPagingResponse'
-          description: Create new booking success
+          description: Get current booking for provider success
         '500':
           content:
             application/json:
@@ -210,15 +210,15 @@ paths:
       operationId: getCurrentBookingForUser
       tags:
         - Booking
-      description: Create new booking
-      summary: Create new booking
+      description: Get current booking for user
+      summary: Get current booking for user
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BookingHistoryPagingResponse'
-          description: Create new booking success
+          description: Get current booking for user success
         '500':
           content:
             application/json:
@@ -286,8 +286,8 @@ paths:
       operationId: createBuyCoinRequest
       tags:
         - BuyCoinRequest
-      description: Register become provider
-      summary: Register become provider
+      description: User create buy coin request
+      summary: User create buy coin request
       requestBody:
         content:
           application/json:
@@ -299,7 +299,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateBuyCoinResponse'
-          description: Response create BuyCoin response success
+          description: Create buy coin request success
         '500':
           content:
             application/json:
@@ -310,11 +310,11 @@ paths:
         - bearerAuth: []
   /api/v1/buy-coin-request/handle:
     post:
-      operationId: handleBuyConRequest
+      operationId: handleBuyCoinRequest
       tags:
         - BuyCoinRequest
-      description: Register become provider
-      summary: Register become provider
+      description: Handle buy coin request
+      summary: Handle buy coin request
       requestBody:
         content:
           application/json:
@@ -326,7 +326,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateBuyCoinResponse'
-          description: Response create BuyCoin response success
+          description: Handle buy coin request success
         '500':
           content:
             application/json:
@@ -340,8 +340,8 @@ paths:
       operationId: getHistoryCoin
       tags:
         - Coin
-      description: Get hisotory coins of the user himself
-      summary: Get hisotory coins of the user himself
+      description: Get hisotory coins of the user
+      summary: Get hisotory coins of the user
       parameters:
         - name: limit
           in: query
@@ -555,6 +555,69 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/provider/hot:
+    get:
+      operationId: getListHotProvider
+      tags:
+        - Provider
+      description: Get List Hot Providerr
+      summary: Get List Hot Providerr
+      parameters:
+        - name: interval_days
+          in: query
+          schema:
+            type: number
+            default: 7
+          description: |2-
+
+                    Example : interval_days=7
+                    
+          required: true
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterProviderPagingResponse'
+          description: Provider success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/v1/provider/{slug}:
     get:
       operationId: getProviderBySlug
