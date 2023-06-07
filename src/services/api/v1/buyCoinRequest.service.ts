@@ -35,7 +35,7 @@ export class BuyCoinRequestService extends BasePrismaService<typeof buyCoinReque
                 platform,
                 tranferContent
             })
-
+            console.log("adminPaymentSystem ===> ",adminPaymentSystem)
             return await this.repository.create({
                 requester: {
                     connect: {
@@ -49,6 +49,7 @@ export class BuyCoinRequestService extends BasePrismaService<typeof buyCoinReque
                 transactionCode,
                 platform,
                 handlerId: adminPaymentSystem.adminId,
+                beneficiary: adminPaymentSystem.beneficiary,
                 status: BuyCoinRequestStatus.INIT,
                 content: tranferContent
             }, tx);

@@ -153,6 +153,7 @@ model BuyCoinRequest {
   platform        PaymentSystemPlatform? @map("platform")
   transactionCode String?                @unique() @map("transcaction_code")
   content         String?                @map("content")
+  beneficiary     String?                @map("beneficiary")
 
   @@map("buy_coin_request")
 }
