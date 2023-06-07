@@ -1,6 +1,7 @@
 import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
 import { BookingHistoryResponse } from "@/common/responses/bookingHistory.reponse";
+import { BookingHistoryPagingResponse } from "@/common/responses/bookingHistoryPaging.response";
 import {
     BaseController,
     Request,
@@ -66,7 +67,7 @@ export class BookingController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryResponse },
+                        schema: { model: BookingHistoryPagingResponse },
                     },
                 },
                 description: "Create new booking success",
@@ -94,7 +95,7 @@ export class BookingController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryResponse },
+                        schema: { model: BookingHistoryPagingResponse },
                     },
                 },
                 description: "Create new booking success",

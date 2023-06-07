@@ -10,6 +10,7 @@ export class ImageService {
     async upload(req: any, pathApi: string = "api/image"): Promise<string[]> {
         let files = req.files;
         let { ...resize } = req.body;
+        resize = utilService.removeEmpty(resize);
         const pathnames = [];
         let listFiles = [];
         if (files?.length) {

@@ -412,6 +412,15 @@ export class UtilService {
     }, {});
   }
 
+  exclude<T, Key extends keyof T>(
+    object: T,
+    keys: Key[]
+  ): Omit<T, Key> {
+    for (let key of keys) {
+      delete object[key]
+    }
+    return object;
+  }
   generateTransactionCode() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const length = 10;
@@ -424,5 +433,7 @@ export class UtilService {
 
     return transactionCode + moment().format("DDMMYYYYhhmmssSSS");
   }
-
+  removeEmpty(obj: any, arr = [undefined, "", null]) {
+    return Object.fromEntries(Object.entries(obj).filter(([_, v]) => !arr.includes(v as any)));
+  }
 }

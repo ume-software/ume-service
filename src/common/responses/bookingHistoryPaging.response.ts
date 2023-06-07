@@ -7,13 +7,13 @@ import { PaginationResponse } from "./pagination.response";
 import { BookingHistoryResponse } from "./bookingHistory.reponse";
 
 @ApiModel({
-  description: "Coin History response",
+  description: "Booking History response",
 })
-export class CoinHistoryPagingResponse {
+export class BookingHistoryPagingResponse {
   @ApiModelProperty({
     description: "Row",
     type: SwaggerDefinitionConstant.ARRAY,
-    itemType: CoinHistoryPagingResponse,
+    itemType: BookingHistoryResponse,
   })
   row!: Array<BookingHistoryResponse>;
 

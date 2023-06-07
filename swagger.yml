@@ -195,7 +195,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookingHistoryResponse'
+                $ref: '#/components/schemas/BookingHistoryPagingResponse'
           description: Create new booking success
         '500':
           content:
@@ -217,7 +217,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookingHistoryResponse'
+                $ref: '#/components/schemas/BookingHistoryPagingResponse'
           description: Create new booking success
         '500':
           content:
@@ -1069,6 +1069,48 @@ components:
         - bookerId
         - providerSkillId
       description: Booking History response
+    PaginationResponse:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 2
+        nextPage:
+          type: number
+          description: Next page
+          example: 3
+        prevPage:
+          type: number
+          description: Previous page
+        limit:
+          type: object
+          description: Limit
+          example: 50
+      required: []
+    BookingHistoryPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/BookingHistoryResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          example:
+            currentPage: 2
+            nextPage: 3
+            prevPage: 1
+            limit: 2
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Booking History response
     BuyCoinHandleRequest:
       type: object
       properties:
@@ -1241,25 +1283,6 @@ components:
         - amount
         - userId
       description: User registor become provider
-    PaginationResponse:
-      type: object
-      properties:
-        currentPage:
-          type: number
-          description: Current page
-          example: 2
-        nextPage:
-          type: number
-          description: Next page
-          example: 3
-        prevPage:
-          type: number
-          description: Previous page
-        limit:
-          type: object
-          description: Limit
-          example: 50
-      required: []
     CoinHistoryPagingResponse:
       type: object
       properties:
