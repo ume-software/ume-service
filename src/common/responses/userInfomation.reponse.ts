@@ -54,9 +54,9 @@ export class UserInfomationResponse {
   email!: string;
 
   @ApiModelProperty({
-    description: "Avatar",
+    description: "avatarUrl",
     required: true,
     example: "https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg",
   })
-  avatar!: string;
+  avatarUrl!: string;
 }

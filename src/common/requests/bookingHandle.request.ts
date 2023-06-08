@@ -15,6 +15,7 @@ export class BookingHandleRequest {
     @ApiModelProperty({
         description: "Booking status",
         required: true,
+        enum: Object.values(BookingStatus),
         example: BookingStatus.PROVIDER_ACCEPT
     })
     status!: BookingStatus;

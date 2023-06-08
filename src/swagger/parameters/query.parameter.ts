@@ -1,4 +1,5 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
+import { BuyCoinRequestStatus } from "@prisma/client";
 import {
   IApiParameters,
   SwaggerDefinitionConstant,
@@ -138,3 +139,31 @@ export const filterHotProviderParameters = {
         `,
   },
 };
+
+export const handlerFilterBuyCoinParameters = {
+  ...limitParameter,
+  ...pageParameter,
+  ...orderParameter,
+  status: {
+    name: "status",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: BuyCoinRequestStatus.INIT
+    },
+    description: `
+        Example : status=${BuyCoinRequestStatus.INIT}
+        `,
+  },
+  transaction_code: {
+    name: "transaction_code",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING
+    },
+    description: `
+        Example : transaction_code=1LUDPOFOF507062023105048841
+        `,
+  },
+};
+

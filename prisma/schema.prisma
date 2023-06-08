@@ -190,6 +190,9 @@ model Notice {
   userId    String      @unique @map("user_id")
   data      Json?       @map("data")
   isReaded  Boolean?    @default(false) @map("is_readed")
+
+  @@map("notice")
+
 }
 
 model Banner {

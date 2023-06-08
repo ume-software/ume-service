@@ -5,7 +5,7 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 @ApiModel({
     description: 'Get Qr BuyCoin response'
 })
-export class CreateBuyCoinResponse {
+export class BuyCoinResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,
@@ -120,14 +120,14 @@ export class CreateBuyCoinResponse {
     @ApiModelProperty({
         description: "Transaction code",
         required: true,
-        example: "HMJXXU19J605062023"
+        example: "1LUDPOFOF507062023105048841"
     })
     transactionCode!: string;
 
     @ApiModelProperty({
         description: "Content",
         required: true,
-        example: "HMJXXU19J605062023 - 1f0095c1-4795-4c77-b1f7-b5778501c77c"
+        example: "1LUDPOFOF507062023105048841"
 
     })
     content!: string;

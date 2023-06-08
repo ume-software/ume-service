@@ -281,6 +281,70 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/buy-coin-request/request-to-handler:
+    get:
+      operationId: getBuyCoinRequestToHandler
+      tags:
+        - BuyCoinRequest
+      description: Handler get all buy coin request to them
+      summary: Handler get all buy coin request to them
+      parameters:
+        - name: limit
+          in: query
+          schema: &ref_1
+            type: string
+            default: unlimited
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: &ref_2
+            type: string
+            default: '1'
+        - name: order
+          in: query
+          schema: &ref_3
+            type: string
+            default: '[]'
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+        - name: status
+          in: query
+          schema:
+            type: string
+            default: INIT
+          description: |2-
+
+                    Example : status=INIT
+                    
+        - name: transaction_code
+          in: query
+          schema:
+            type: string
+          description: |2-
+
+                    Example : transaction_code=1LUDPOFOF507062023105048841
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyCoinResponse'
+          description: Get list buy coin request success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/buy-coin-request:
     post:
       operationId: createBuyCoinRequest
@@ -298,7 +362,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateBuyCoinResponse'
+                $ref: '#/components/schemas/BuyCoinResponse'
           description: Create buy coin request success
         '500':
           content:
@@ -325,7 +389,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateBuyCoinResponse'
+                $ref: '#/components/schemas/BuyCoinResponse'
           description: Handle buy coin request success
         '500':
           content:
@@ -345,9 +409,7 @@ paths:
       parameters:
         - name: limit
           in: query
-          schema: &ref_1
-            type: string
-            default: unlimited
+          schema: *ref_1
           description: |2-
 
                     Example : limit=50
@@ -355,12 +417,10 @@ paths:
                 
         - name: page
           in: query
-          schema: &ref_2
-            type: string
-            default: '1'
+          schema: *ref_2
         - name: select
           in: query
-          schema: &ref_3
+          schema: &ref_4
             type: string
             default: '["$all"]'
           description: |2-
@@ -369,7 +429,7 @@ paths:
                 
         - name: where
           in: query
-          schema: &ref_4
+          schema: &ref_5
             type: string
             default: '{}'
           description: |2-
@@ -378,9 +438,7 @@ paths:
                 
         - name: order
           in: query
-          schema: &ref_5
-            type: string
-            default: '[]'
+          schema: *ref_3
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -497,21 +555,21 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_3
+          schema: *ref_4
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_4
+          schema: *ref_5
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
                 
         - name: order
           in: query
-          schema: *ref_5
+          schema: *ref_3
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -586,21 +644,21 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_3
+          schema: *ref_4
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_4
+          schema: *ref_5
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
                 
         - name: order
           in: query
-          schema: *ref_5
+          schema: *ref_3
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -670,21 +728,21 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_3
+          schema: *ref_4
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_4
+          schema: *ref_5
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
                 
         - name: order
           in: query
-          schema: *ref_5
+          schema: *ref_3
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -750,21 +808,21 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_3
+          schema: *ref_4
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_4
+          schema: *ref_5
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
                 
         - name: order
           in: query
-          schema: *ref_5
+          schema: *ref_3
           description: |2-
 
                     Example : order=[{"updatedAt":"asc"}]
@@ -835,6 +893,13 @@ components:
         status:
           type: string
           description: Booking status
+          enum:
+            - INIT
+            - USER_CANCEL
+            - PROVIDER_CANCEL
+            - PROVIDER_ACCEPT
+            - PROVIDER_FINISH_SOON
+            - USER_FINISH_SOON
           example: PROVIDER_ACCEPT
       required:
         - bookingHistoryId
@@ -893,9 +958,9 @@ components:
           type: string
           description: Email
           example: dotranminhchu@gmail.com
-        avatar:
+        avatarUrl:
           type: string
-          description: Avatar
+          description: avatarUrl
           example: >-
             https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg
       required:
@@ -905,7 +970,7 @@ components:
         - dob
         - gender
         - email
-        - avatar
+        - avatarUrl
       description: User Infomation response
     BookingCostResponse:
       type: object
@@ -1228,7 +1293,7 @@ components:
         - platform
         - unitCurrency
       description: Get QR buy coin request
-    CreateBuyCoinResponse:
+    BuyCoinResponse:
       type: object
       properties:
         id:
@@ -1311,11 +1376,11 @@ components:
         transactionCode:
           type: string
           description: Transaction code
-          example: HMJXXU19J605062023
+          example: 1LUDPOFOF507062023105048841
         content:
           type: string
           description: Content
-          example: HMJXXU19J605062023 - 1f0095c1-4795-4c77-b1f7-b5778501c77c
+          example: 1LUDPOFOF507062023105048841
       required:
         - id
         - createdAt

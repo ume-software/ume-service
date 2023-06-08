@@ -3,13 +3,16 @@ import { CreateBuyCoinRequest } from "@/common/requests/createBuyCoin.request";
 import prisma from "@/models/base.prisma";
 import { coinSettingRepository, buyCoinRequestRepository, coinHistoryRepository } from "@/repositories";
 import { errorService, identitySystemService, utilService } from "@/services";
-import { BasePrismaService } from "@/services/base/basePrisma.service";
+import { BasePrismaService, ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BuyCoinRequestStatus, CoinType, Prisma, UnitCurrency } from "@prisma/client";
 
 export class BuyCoinRequestService extends BasePrismaService<typeof buyCoinRequestRepository> {
     constructor() {
         super(buyCoinRequestRepository);
+    }
+    async findAndCountAll(query?: ICrudOptionPrisma) {
+        return await this.repository.findAndCountAll(query)
     }
     async createBuyCoin(requesterId: string, getQrBuyCoinRequest: CreateBuyCoinRequest) {
         const { amountCoin, platform, unitCurrency } = getQrBuyCoinRequest;
@@ -34,8 +37,7 @@ export class BuyCoinRequestService extends BasePrismaService<typeof buyCoinReque
                 amount: totalMoney,
                 platform,
                 tranferContent
-            })
-            console.log("adminPaymentSystem ===> ",adminPaymentSystem)
+            });
             return await this.repository.create({
                 requester: {
                     connect: {

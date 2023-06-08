@@ -44,15 +44,16 @@ export class ProviderService extends BasePrismaService<
         },
       },
     };
+    console.log("query ====> ",query)
     const result = await this.repository.findAndCountAll(query);
 
     return result;
   }
   async getProviderBySlug(userSlug: string) {
     const result = await this.repository.getByIdOrSlug(userSlug);
-    const { avatar, dob, name, gender, slug } = (await identitySystemService.getInfomation(result?.userId!)) as UserInfomationResponse;
+    const { avatarUrl, dob, name, gender, slug } = (await identitySystemService.getInfomation(result?.userId!)) as UserInfomationResponse;
     (result as any).user = {
-      avatar,
+      avatarUrl,
       dob,
       name,
       slug,

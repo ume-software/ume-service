@@ -1,11 +1,12 @@
 import { BuyCoinHandleRequest } from "@/common/requests/buyCoinHandle.request";
 import { CreateBuyCoinRequest } from "@/common/requests/createBuyCoin.request";
-import { CreateBuyCoinResponse } from "@/common/responses/createBuyCoin.response";
+import { BuyCoinResponse } from "@/common/responses/buyCoin.response";
 import { BaseController, Request, Response } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
 import { buyCoinRequestService } from "@/services";
 import { BuyCoinRequestService } from "@/services/api/v1/buyCoinRequest.service";
-import { ApiOperationPost, ApiPath, SwaggerDefinitionConstant } from "express-swagger-typescript";
+import { handlerFilterBuyCoinParameters } from "@/swagger/parameters/query.parameter";
+import { ApiOperationGet, ApiOperationPost, ApiPath, SwaggerDefinitionConstant } from "express-swagger-typescript";
 
 @ApiPath({
   path: "/api/v1/buy-coin-request",
@@ -21,9 +22,54 @@ export class BuyCoinRequestController extends BaseController {
   service: BuyCoinRequestService;
 
   customRouting() {
+    this.router.get("/request-to-handler", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.getBuyCoinRequestToHandler));
     this.router.post("/", this.accountTypeMiddlewares([EAccountType.USER]), this.route(this.createBuyCoinRequest));
     this.router.post("/handle", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.handleBuyCoinRequest));
   }
+  @ApiOperationGet({
+    path: "/request-to-handler",
+    operationId: "getBuyCoinRequestToHandler",
+    security: {
+      bearerAuth: [],
+    },
+    parameters: {
+      query: handlerFilterBuyCoinParameters
+    },
+    description: "Handler get all buy coin request to them",
+    summary: "Handler get all buy coin request to them",
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: BuyCoinResponse },
+          },
+        },
+        description: "Get list buy coin request success",
+      },
+    },
+  })
+  async getBuyCoinRequestToHandler(req: Request, res: Response) {
+    let queryInfoPrisma = req.queryInfoPrisma;
+    const { transaction_code: transactionCode, status } = req.query
+    const userId = req.tokenInfo?.id;
+    if (!queryInfoPrisma) queryInfoPrisma = {}
+    delete queryInfoPrisma.select;
+    delete queryInfoPrisma.include;
+    queryInfoPrisma.where = {
+      handlerId: userId
+    }
+    if (transactionCode) {
+      queryInfoPrisma.where.transactionCode = {
+        contains: transactionCode
+      }
+    }
+    if (status) {
+      queryInfoPrisma.where.status = status
+    }
+    const result = await this.service.findAndCountAll(queryInfoPrisma);
+    this.onSuccessAsList(res, result);
+  }
+
 
   @ApiOperationPost({
     path: "",
@@ -44,7 +90,7 @@ export class BuyCoinRequestController extends BaseController {
       200: {
         content: {
           [SwaggerDefinitionConstant.Produce.JSON]: {
-            schema: { model: CreateBuyCoinResponse },
+            schema: { model: BuyCoinResponse },
           },
         },
         description: "Create buy coin request success",
@@ -80,7 +126,7 @@ export class BuyCoinRequestController extends BaseController {
       200: {
         content: {
           [SwaggerDefinitionConstant.Produce.JSON]: {
-            schema: { model: CreateBuyCoinResponse },
+            schema: { model: BuyCoinResponse },
           },
         },
         description: "Handle buy coin request success",
