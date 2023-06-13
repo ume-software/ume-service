@@ -507,9 +507,241 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
-  /api/v1/comment-post: {}
-  /api/v1/like-post: {}
-  /api/v1/post: {}
+  /api/v1/post/suggest:
+    get:
+      operationId: suggestPost
+      tags:
+        - Post
+      description: Get all posts
+      summary: Get all posts
+      parameters:
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPagingResponse'
+          description: Response post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/post/{id}:
+    get:
+      operationId: getPostById
+      tags:
+        - Post
+      description: Get post by id
+      summary: Get post by id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+          description: Response post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/post/{id}/like:
+    get:
+      operationId: getLikeByPostId
+      tags:
+        - Post
+      description: Get like by post id
+      summary: Get like by post id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikePostPagingResponse'
+          description: Response post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/post/{id}/comment:
+    get:
+      operationId: getCommentByPostId
+      tags:
+        - Post
+      description: Get comment by post id
+      summary: Get comment by post id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPostPagingResponse'
+          description: Response post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/provider:
     get:
       operationId: getListProvider
@@ -876,8 +1108,6 @@ tags:
   - name: Booking
   - name: BuyCoinRequest
   - name: Coin
-  - name: CommentPost
-  - name: LikePost
   - name: Post
   - name: Provider
   - name: ProviderSkill
@@ -1477,6 +1707,212 @@ components:
         - totalCoinsAvailable
         - totalCoin
       description: User coin response
+    CommentPostResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's comment post
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        user:
+          type: STRING
+          description: User
+          $ref: '#/components/schemas/UserInfomationResponse'
+        postId:
+          type: string
+          description: Post id
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        content:
+          type: string
+          description: Content
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati
+      required:
+        - id
+        - userId
+        - user
+        - postId
+        - content
+      description: Comment post response
+    CommentPostPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/CommentPostResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Comment Post paging response
+    LikePostResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's like post
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        user:
+          type: STRING
+          description: User
+          $ref: '#/components/schemas/UserInfomationResponse'
+        postId:
+          type: string
+          description: Post id
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+      required:
+        - id
+        - userId
+        - user
+        - postId
+      description: Like post response
+    LikePostPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/LikePostResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Like Post paging response
+    ThumbnailResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Url
+          example: https://picsum.photos/seed/Zmmvb/640/480
+        type:
+          type: string
+          description: Url type
+          enum:
+            - IMAGE
+            - VIDEO
+            - AUDIO
+          example: IMAGE
+      required: []
+      description: Thumbnail response
+    PostResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's Post
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        user:
+          type: STRING
+          description: User
+          $ref: '#/components/schemas/UserInfomationResponse'
+        content:
+          type: string
+          description: Content
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati. Reprehenderit dolorum illum repellendus non
+            necessitatibus modi. Fugiat iste quisquam molestias accusamus
+            consequuntur quisquam eum doloribus.
+        thumbnails:
+          type: array
+          description: Thumbnails
+          items:
+            $ref: '#/components/schemas/ThumbnailResponse'
+        likeCount:
+          type: number
+          description: Like count
+          example: 15
+        commentCount:
+          type: number
+          description: Comment count
+          example: 4
+      required:
+        - id
+        - userId
+        - user
+        - content
+        - thumbnails
+        - likeCount
+        - commentCount
+      description: Post response
+    PostPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/PostResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Post paging response
     BecomeProviderRequest:
       type: object
       properties:

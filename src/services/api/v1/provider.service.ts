@@ -44,7 +44,6 @@ export class ProviderService extends BasePrismaService<
         },
       },
     };
-    console.log("query ====> ",query)
     const result = await this.repository.findAndCountAll(query);
 
     return result;

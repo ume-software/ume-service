@@ -405,9 +405,9 @@ export class UtilService {
     return endA > startB && endB > startA;
   }
 
-  convertArrayObjectToObject(input: Array<any>): any {
+  convertArrayObjectToObject(input: Array<any>, key: string = "id"): any {
     return input.reduce((acc, obj) => {
-      acc[obj.id] = obj;
+      acc[obj[key]] = obj;
       return acc;
     }, {});
   }

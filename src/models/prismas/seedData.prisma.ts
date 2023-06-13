@@ -8,7 +8,7 @@ const userDefault = [
     },
     {
         id: "b5aa3ace-19da-4112-b41f-f93edb5b8a11",
-        avatarUrl: "	https://global-oss.epal.gg/data/cover/367563/16780986636345719.jpeg"
+        avatarUrl: "https://global-oss.epal.gg/data/cover/367563/16780986636345719.jpeg"
     },
     {
         id: "4fe8aae9-9d63-4683-baad-d3590ced2598",
@@ -394,6 +394,14 @@ async function seed() {
                 }
                 for (let i = 0; i < faker.number.int({ min: 0, max: userDefault.length }); i++) {
                     await prisma.likePost.create({
+                        data: {
+                            userId: userDefault[i]?.id!,
+                            postId: post.id,
+                        }
+                    })
+                }
+                for (let i = 0; i < faker.number.int({ min: 0, max: userDefault.length }); i++) {
+                    await prisma.watchedPost.create({
                         data: {
                             userId: userDefault[i]?.id!,
                             postId: post.id,
