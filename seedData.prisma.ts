@@ -349,60 +349,6 @@ async function seed() {
                 ]
             })
         }
-        if (!await prisma.post.findFirst()) {
-            // Generate sample posts
-            const posts = [];
-            for (const user of userDefault) {
-                for (let i = 0; i < faker.number.int({ min: 0, max: 10 }); i++) {
-                    const post = await prisma.post.create({
-                        data: {
-                            userId: user.id,
-                            content: faker.lorem.paragraph(),
-                            thumbnails: [
-                                {
-                                    url: faker.image.urlPicsumPhotos(),
-                                    type: "IMAGE"
-                                },
-                                {
-                                    url: faker.image.urlPicsumPhotos(),
-                                    type: "IMAGE"
-                                },
-                                {
-                                    url: faker.image.urlPicsumPhotos(),
-                                    type: "IMAGE"
-                                },
-                                {
-                                    url: faker.image.urlPicsumPhotos(),
-                                    type: "IMAGE"
-                                },
-                            ]
-                        }
-                    })
-
-                    posts.push(post);
-                }
-            }
-            for (const post of posts) {
-                for (let i = 0; i < faker.number.int({ min: 0, max: userDefault.length }); i++) {
-                    await prisma.commentPost.create({
-                        data: {
-                            userId: userDefault[i]?.id!,
-                            postId: post.id,
-                            content: faker.lorem.sentence(),
-                        }
-                    })
-                }
-                for (let i = 0; i < faker.number.int({ min: 0, max: userDefault.length }); i++) {
-                    await prisma.likePost.create({
-                        data: {
-                            userId: userDefault[i]?.id!,
-                            postId: post.id,
-                        }
-                    })
-                }
-            }
-        }
-
         console.log('Seed data created successfully!');
     } catch (error) {
         console.error('Error seeding data:', error);

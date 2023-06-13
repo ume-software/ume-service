@@ -24,7 +24,7 @@ import {
   path: "/api/v1/coin",
   name: "Coin",
 })
-export class coinController extends BaseController {
+export class CoinController extends BaseController {
   constructor() {
     super();
     this.service = coinService;

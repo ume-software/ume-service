@@ -18,6 +18,9 @@ import { BookingService } from "./api/v1/booking.service";
 import { FeedbackService } from "./api/v1/feedback.service";
 import { BuyCoinRequestService } from "./api/v1/buyCoinRequest.service";
 import { IdentitySystemService } from "./system/identitySystem.service";
+import { PostService } from "./api/v1/post.service";
+import { CommentPostService } from "./api/v1/commentPost.service";
+import { LikePostService } from "./api/v1/likePost.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -39,6 +42,10 @@ const userService = new UserService();
 const feedbackService = new FeedbackService();
 const buyCoinRequestService = new BuyCoinRequestService();
 const identitySystemService = new IdentitySystemService();
+const postService = new PostService();
+const commentPostService = new CommentPostService();
+const likePostService = new LikePostService();
+
 export {
     scheduleService,
     errorService,
@@ -58,5 +65,8 @@ export {
     skillService,
     feedbackService,
     buyCoinRequestService,
-    identitySystemService
+    identitySystemService,
+    postService,
+    commentPostService,
+    likePostService
 };

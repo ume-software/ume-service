@@ -507,6 +507,9 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/comment-post: {}
+  /api/v1/like-post: {}
+  /api/v1/post: {}
   /api/v1/provider:
     get:
       operationId: getListProvider
@@ -873,6 +876,9 @@ tags:
   - name: Booking
   - name: BuyCoinRequest
   - name: Coin
+  - name: CommentPost
+  - name: LikePost
+  - name: Post
   - name: Provider
   - name: ProviderSkill
   - name: Skill
