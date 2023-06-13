@@ -56,5 +56,30 @@ export class PostService extends BasePrismaService<typeof postRepository> {
     return await this.repository.findOne(query);
   }
 
+  async findById(postId: string) {
+    const post = await this.repository.findById(postId);
+    if (post) {
+      let listUsers = [];
+      try {
+        listUsers = (await identitySystemService.getListByUserIds([post.userId])).row;
 
+      } catch {
+
+      }
+      const mappingUser = utilService.convertArrayObjectToObject(listUsers, "id")
+      return {
+        id: post.id,
+        content: post.id,
+        userId: post.userId,
+        user: mappingUser[post.userId],
+        thumbnails: post.thumbnails,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        deletedAt: post.deletedAt,
+        likeCount: post._count?.likePosts,
+        commentCount: post._count?.commentPosts
+      }
+    }
+    return null;
+  }
 }

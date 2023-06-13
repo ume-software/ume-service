@@ -106,19 +106,12 @@ export class PostController extends BaseController {
     },
   })
   async getPostById(req: Request, res: Response) {
-    let queryInfoPrisma = req.queryInfoPrisma;
     const { id } = req.params;
     if (!id) {
       errorService.router.badRequest();
     }
-    if (!queryInfoPrisma) queryInfoPrisma = {}
-    queryInfoPrisma.where = {
-      ...queryInfoPrisma.where,
-      id
-    }
-    const result = await this.service.findOne(
-      queryInfoPrisma
-    );
+
+    const result = await this.service.findById(id!);
     this.onSuccess(res, result);
   }
 

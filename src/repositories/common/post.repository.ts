@@ -209,6 +209,27 @@ export class PostRepository extends BasePrismaRepository {
     return await tx.post.findFirst(query);
   }
 
+
+  async findById(
+    postId: string,
+    tx: PrismaTransation = this.prisma
+  ): Promise<PostAndCountLikeAndCountCommentType | null> {
+    return await tx.post.findFirst({
+      where: {
+        id: postId
+      },
+
+      include: {
+        _count: {
+          select: {
+            commentPosts: true,
+            likePosts: true
+          }
+        }
+      }
+    });
+  }
+
   async findMany(
     query?: ICrudOptionPrisma,
     tx: PrismaTransation = this.prisma
