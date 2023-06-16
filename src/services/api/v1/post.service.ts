@@ -27,7 +27,7 @@ export class PostService extends BasePrismaService<typeof postRepository> {
     result.row = result.row.map((item: any) => {
       return ({
         id: item.id,
-        content: item.id,
+        content: item.content,
         userId: item.user_id,
         user: mappingUser[item.user_id],
         thumbnails: item.thumbnails,
