@@ -79,4 +79,19 @@ export class LikePostRepository extends BasePrismaRepository {
   ): Promise<Prisma.BatchPayload> {
     return await tx.likePost.deleteMany({ where: LikePostWhereInput });
   }
+
+  async destroyByUserIdAndPostId(
+    userId: string,
+    postId: string
+  ) {
+    const query = `DELETE FROM like_post WHERE post_id='${postId}' AND user_id='${userId}';`
+    return await this.prisma.$queryRawUnsafe(query);
+  }
+
+  async destroyById(
+    id: string
+  ) {
+    const query = `DELETE FROM like_post WHERE id='${id}';`
+    return await this.prisma.$queryRawUnsafe(query);
+  }
 }

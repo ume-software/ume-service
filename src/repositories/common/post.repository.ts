@@ -33,73 +33,81 @@ export class PostRepository extends BasePrismaRepository {
 
   async suggestForUserId(userId: string, take: number | undefined) {
     const query = `
-      SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
-          (
-              SELECT COUNT(*) 
-              FROM like_post lp 
-              WHERE lp.post_id = p.id
-          )::int  AS like_count,
-          (
-              SELECT COUNT(*) 
-              FROM comment_post cp 
-              WHERE cp.post_id = p.id
-          )::int  AS comment_count,
-          CASE
-              WHEN EXISTS (
-                  SELECT 1 
-                  FROM post author
-                  WHERE author.user_id = p.user_id
-                  AND EXISTS (
-                      SELECT 1 
-                      FROM like_post lp 
-                      WHERE lp.user_id = '${userId}' 
-                      AND lp.post_id = author.id
-                  )
-                  AND EXISTS (
-                      SELECT 1 
-                      FROM comment_post cp 
-                      WHERE cp.user_id = '${userId}' 
-                      AND cp.post_id = author.id
-                  )
-                  AND NOT EXISTS (
-                      SELECT 1
-                      FROM watched_post wp
-                      WHERE wp.user_id = '${userId}'
-                      AND wp.post_id = p.id
-                  )
-              ) THEN 1 -- Regularly like and comment on other posts by the author of that article but have not seen the post
-              WHEN (
-                  SELECT COUNT(*) 
-                  FROM like_post lp 
-                  WHERE lp.post_id = p.id
-              ) > 0 
-              AND NOT EXISTS (
-                  SELECT 1 
-                  FROM like_post lp 
-                  WHERE lp.user_id = '${userId}' 
-                  AND lp.post_id = p.id
-              ) THEN 2 -- A lot of people like the comment but I haven't seen it myself
-              WHEN EXISTS (
-                  SELECT 1 
-                  FROM post author
-                  WHERE author.user_id = p.user_id
-                  AND EXISTS (
-                      SELECT 1 
-                      FROM like_post lp 
-                      WHERE lp.user_id = '${userId}' 
-                      AND lp.post_id = author.id
-                  )
-                  AND EXISTS (
-                      SELECT 1 
-                      FROM comment_post cp 
-                      WHERE cp.user_id = '${userId}' 
-                      AND cp.post_id = author.id
-                  )
-              ) THEN 3 -- Rarely like and comment on posts other than the author of that article and have seen it
-              ELSE 4 -- Rarely like and rarely comment on posts other than those by the author of that article and viewed
-          END AS priority
-      FROM post p
-      ORDER BY priority, p.created_at DESC
+    SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
+        (
+            SELECT COUNT(*) 
+            FROM like_post lp 
+            WHERE lp.post_id = p.id
+        )::int  AS like_count,
+        (
+            SELECT COUNT(*) 
+            FROM comment_post cp 
+            WHERE cp.post_id = p.id
+        )::int  AS comment_count,
+        CASE
+            WHEN EXISTS (
+                SELECT 1 
+                FROM post author
+                WHERE author.user_id = p.user_id
+                AND EXISTS (
+                    SELECT 1 
+                    FROM like_post lp 
+                    WHERE lp.user_id = '${userId}' 
+                    AND lp.post_id = author.id
+                )
+                AND EXISTS (
+                    SELECT 1 
+                    FROM comment_post cp 
+                    WHERE cp.user_id = '${userId}' 
+                    AND cp.post_id = author.id
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM watched_post wp
+                    WHERE wp.user_id = '${userId}'
+                    AND wp.post_id = p.id
+                )
+                
+            ) THEN 1 -- Regularly like and comment on other posts by the author of that article but have not seen the post
+            WHEN (
+                SELECT COUNT(*) 
+                FROM like_post lp 
+                WHERE lp.post_id = p.id
+            ) > 0 
+            AND NOT EXISTS (
+                SELECT 1 
+                FROM like_post lp 
+                WHERE lp.user_id = '${userId}' 
+                AND lp.post_id = p.id              
+            ) 
+            AND NOT EXISTS (
+                    SELECT 1
+                    FROM watched_post wp
+                    WHERE wp.user_id = '${userId}'
+                    AND wp.post_id = p.id
+            )
+            THEN 2 -- A lot of people like the comment but I haven't seen it myself
+            WHEN EXISTS (
+                SELECT 1 
+                FROM post author
+                WHERE author.user_id = p.user_id
+                AND EXISTS (
+                    SELECT 1 
+                    FROM like_post lp 
+                    WHERE lp.user_id = '${userId}' 
+                    AND lp.post_id = author.id
+                )
+                AND EXISTS (
+                    SELECT 1 
+                    FROM comment_post cp 
+                    WHERE cp.user_id = '${userId}' 
+                    AND cp.post_id = author.id
+                )
+            ) THEN 3 -- Rarely like and comment on posts other than the author of that article and have seen it
+            ELSE 4 -- Rarely like and rarely comment on posts other than those by the author of that article and viewed
+        END AS priority
+    FROM post p
+    ORDER BY priority, p.created_at DESC
     `
     const row = await this.prisma.$queryRawUnsafe(
       `

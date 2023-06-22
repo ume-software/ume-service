@@ -21,6 +21,7 @@ import { IdentitySystemService } from "./system/identitySystem.service";
 import { PostService } from "./api/v1/post.service";
 import { CommentPostService } from "./api/v1/commentPost.service";
 import { LikePostService } from "./api/v1/likePost.service";
+import { WatchedPostService } from "./api/v1/watchedPost.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -45,7 +46,7 @@ const identitySystemService = new IdentitySystemService();
 const postService = new PostService();
 const commentPostService = new CommentPostService();
 const likePostService = new LikePostService();
-
+const watchedPostService = new WatchedPostService();
 export {
     scheduleService,
     errorService,
@@ -68,5 +69,6 @@ export {
     identitySystemService,
     postService,
     commentPostService,
-    likePostService
+    likePostService,
+    watchedPostService
 };

@@ -1,11 +1,12 @@
 
+import { CreateNewPostRequest } from "@/common/requests/createNewPost.request";
 import { postRepository } from "@/repositories";
 import { identitySystemService, utilService } from "@/services";
 import {
   BasePrismaService,
   ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
-import { Prisma, Post } from "@prisma/client";
+import { Post } from "@prisma/client";
 
 export class PostService extends BasePrismaService<typeof postRepository> {
   constructor() {
@@ -22,7 +23,13 @@ export class PostService extends BasePrismaService<typeof postRepository> {
       result = await this.repository.suggestForAnonymous(query?.take)
     }
     const userIds: string[] = result.row.map((item: any) => item.user_id);
-    const listUsers = (await identitySystemService.getListByUserIds(userIds)).row;
+    let listUsers = []
+    try {
+      listUsers = (await identitySystemService.getListByUserIds(userIds)).row;
+    } catch {
+
+    }
+
     const mappingUser = utilService.convertArrayObjectToObject(listUsers, "id")
     result.row = result.row.map((item: any) => {
       return ({
@@ -48,8 +55,17 @@ export class PostService extends BasePrismaService<typeof postRepository> {
     return await this.repository.findAndCountAll(query);
   }
 
-  async create(postCreateInput: Prisma.PostCreateInput): Promise<Post> {
-    return await this.repository.create(postCreateInput);
+  async create(creatorId: string, createNewPostRequest: CreateNewPostRequest): Promise<Post> {
+    const { content, thumbnails } = createNewPostRequest
+    return await this.repository.create({
+      user: {
+        connect: {
+          id: creatorId
+        }
+      },
+      content,
+      thumbnails: thumbnails as any
+    });
   }
 
   async findOne(query?: ICrudOptionPrisma): Promise<Post | null> {

@@ -682,6 +682,27 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+    post:
+      operationId: likeForPostId
+      tags:
+        - Post
+      description: Like Post
+      summary: Like Post
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/v1/post/{id}/comment:
     get:
       operationId: getCommentByPostId
@@ -742,6 +763,109 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+    post:
+      operationId: commentForPostId
+      tags:
+        - Post
+      description: Comment Post
+      summary: Comment Post
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentPostRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPostResponse'
+          description: Response post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/post:
+    post:
+      operationId: createPost
+      tags:
+        - Post
+      description: Create new post
+      summary: Create new post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNewPostRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+          description: Create post success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/post/{id}/watched:
+    post:
+      operationId: watchedByPostId
+      tags:
+        - Post
+      description: Like Post
+      summary: Like Post
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/v1/post/{id}/unlike:
+    post:
+      operationId: unlikeForPostId
+      tags:
+        - Post
+      description: Unlike Post
+      summary: Unlike Post
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
   /api/v1/provider:
     get:
       operationId: getListProvider
@@ -1707,6 +1831,60 @@ components:
         - totalCoinsAvailable
         - totalCoin
       description: User coin response
+    CommentPostRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Content
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati. Reprehenderit dolorum illum repellendus non
+            necessitatibus modi. Fugiat iste quisquam molestias accusamus
+            consequuntur quisquam eum doloribus.
+        parentCommentId:
+          type: string
+          description: Parent Comment Id
+      required:
+        - content
+      description: Comment post request
+    ThumbnailResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Url
+          example: https://picsum.photos/seed/Zmmvb/640/480
+        type:
+          type: string
+          description: Url type
+          enum:
+            - IMAGE
+            - VIDEO
+            - AUDIO
+          example: IMAGE
+      required: []
+      description: Thumbnail response
+    CreateNewPostRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Content
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati. Reprehenderit dolorum illum repellendus non
+            necessitatibus modi. Fugiat iste quisquam molestias accusamus
+            consequuntur quisquam eum doloribus.
+        thumbnails:
+          type: array
+          description: Thumbnails
+          items:
+            $ref: '#/components/schemas/ThumbnailResponse'
+      required:
+        - content
+        - thumbnails
+      description: Create new post request
     CommentPostResponse:
       type: object
       properties:
@@ -1822,23 +2000,6 @@ components:
           $ref: '#/components/schemas/PaginationResponse'
       required: []
       description: Like Post paging response
-    ThumbnailResponse:
-      type: object
-      properties:
-        url:
-          type: string
-          description: Url
-          example: https://picsum.photos/seed/Zmmvb/640/480
-        type:
-          type: string
-          description: Url type
-          enum:
-            - IMAGE
-            - VIDEO
-            - AUDIO
-          example: IMAGE
-      required: []
-      description: Thumbnail response
     PostResponse:
       type: object
       properties:

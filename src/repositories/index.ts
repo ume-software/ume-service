@@ -11,6 +11,7 @@ import { CoinSettingRepository } from "./common/coinSetting.repository";
 import { PostRepository } from "./common/post.repository";
 import { CommentPostRepository } from "./common/commentPost.repository";
 import { LikePostRepository } from "./common/likePost.repository";
+import { WatchedPostRepository } from "./common/watchedPost.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -25,6 +26,7 @@ const coinSettingRepository = new CoinSettingRepository();
 const postRepository = new PostRepository();
 const commentPostRepository = new CommentPostRepository();
 const likePostRepository = new LikePostRepository();
+const watchedPostRepository = new WatchedPostRepository();
 
 export {
     bookingCostRepository,
@@ -39,5 +41,6 @@ export {
     coinSettingRepository,
     postRepository,
     commentPostRepository,
-    likePostRepository
+    likePostRepository,
+    watchedPostRepository
 }
