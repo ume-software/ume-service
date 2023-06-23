@@ -8,7 +8,13 @@ module.exports = {
     node_args: '-r ts-node/register -r tsconfig-paths/register',
     watch: true,
     restart_delay: 10000,
-    wait_ready: true
+    wait_ready: true,
+    env: {
+      NODE_ENV: 'production',
+    },
+    env_production: {
+      NODE_ENV: 'production',
+    },
   }],
 
 };
