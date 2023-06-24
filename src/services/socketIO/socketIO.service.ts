@@ -61,12 +61,13 @@ export class SocketService {
             const result: any = tokenService.decodeToken(`${token}`);
             const { id: userId } = result;
 
+
             (this.socketServer.connections as Connections)[userId] = socket;
             this.socketIdMapUserId[socket.id] = userId;
 
             return next();
         } catch (err) {
-            return next();
+            return next(err);
         }
     }
     private handleSocketEvent(
@@ -78,7 +79,7 @@ export class SocketService {
 
     private StartListeners(socket: Socket) {
         const userId = this.socketIdMapUserId[socket.id];
-        console.info("Disconnect received from: [", socket.id, "] --- [", userId, "]");
+        console.info("Connect received from: [", socket.id, "] --- [", userId, "]");
         socket.on(
             "Client-sent-message",
             this.handleSocketEvent(this.onClientSentMessage, socket)
