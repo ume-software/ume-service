@@ -3,8 +3,7 @@ import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
-
-import { providerRepository } from "@/repositories";
+import { postRepository, providerRepository } from "@/repositories";
 import { errorService, identitySystemService } from "@/services";
 import {
   BasePrismaService,
@@ -60,6 +59,21 @@ export class ProviderService extends BasePrismaService<
     }
     return result;
 
+  }
+
+  async getAblumByProviderSlug(userSlug: string, queryInfoPrisma: ICrudOptionPrisma) {
+    const { skip, take } = queryInfoPrisma
+    const provider = await this.repository.findOne({
+      where: {
+        OR: [{
+          id: userSlug
+        },
+        {
+          slug: userSlug
+        }]
+      },
+    });
+    return await postRepository.getUrlThumnailsByUserIdAndUrlType(provider?.userId!, "IMAGE", take, skip);
   }
   async becomeProvider(
     userId: string,

@@ -1,6 +1,7 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
+import { AlbumPagingResponse } from "@/common/responses/albumPaging.response";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
 import { GetProfieProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
@@ -15,6 +16,8 @@ import { ProviderService } from "@/services/api/v1/provider.service";
 import {
   filterHotProviderParameters,
   filterProviderParameters,
+  limitParameter,
+  pageParameter,
   queryParameters,
 } from "@/swagger/parameters/query.parameter";
 import {
@@ -41,6 +44,7 @@ export class ProviderController extends BaseController {
     this.router.get("/", this.route(this.getListProvider));
     this.router.get("/hot", this.route(this.getListHotProvider));
     this.router.get("/:slug", this.route(this.getProviderBySlug));
+    this.router.get("/:slug/album", this.route(this.getAblumByProviderSlug));
     this.router.post(
       "/",
       this.accountTypeMiddlewares([EAccountType.USER]),
@@ -125,6 +129,45 @@ export class ProviderController extends BaseController {
 
 
   @ApiOperationGet({
+    path: "/{slug}/album",
+    operationId: "getAblumByProviderSlug",
+    description: "Get Provider by slug or id",
+    summary: "Get Provider by slug or id",
+    parameters: {
+
+      query: {
+        ...limitParameter,
+        ...pageParameter,
+      },
+
+      path: {
+        slug: {
+          required: true,
+          schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: AlbumPagingResponse },
+          },
+        },
+        description: "Provider success",
+      },
+    },
+  })
+  async getAblumByProviderSlug(req: Request, res: Response) {
+    const queryInfoPrisma = req.queryInfoPrisma || {}
+    const { slug } = req.params
+    const result = await this.service.getAblumByProviderSlug(slug!, queryInfoPrisma)
+    this.onSuccessAsList(res, result);
+  }
+
+  @ApiOperationGet({
     path: "/{slug}",
     operationId: "getProviderBySlug",
     description: "Get Provider by slug or id",
@@ -155,7 +198,6 @@ export class ProviderController extends BaseController {
     const result = await this.service.getProviderBySlug(slug!)
     this.onSuccess(res, result);
   }
-
 
   @ApiOperationPost({
     path: "",

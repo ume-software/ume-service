@@ -4,6 +4,7 @@ import {
   PrismaTransation,
 } from "../base/basePrisma.repository";
 import { Prisma, Post } from "@prisma/client";
+import { EUrlType } from "@/enums/urlType";
 export type PostAndCountLikeAndCountCommentType = Post & {
   _count?: {
     likePosts?: number;
@@ -30,7 +31,38 @@ export class PostRepository extends BasePrismaRepository {
       count,
     };
   }
+  async getUrlThumnailsByUserIdAndUrlType(userId: string, urlType: string = EUrlType.IMAGE, limit?: number, offset?: number) {
+    const query = `
+      FROM post, LATERAL unnest(post.thumbnails::jsonb[]) AS thumbnail
+      WHERE (thumbnail->>'type') = '${urlType}' 
+        AND user_id = '${userId}'
+        AND deleted_at IS NULL
+    `
+    const row = await this.prisma.$queryRawUnsafe(
+      `
+      SELECT thumbnail->>'url' AS url , id as post_id , created_at , updated_at, deleted_at
+      ${query} 
+      ORDER BY created_at DESC
+      ${limit != undefined ? `LIMIT ${limit}` : ""}
+      ${offset != undefined ? `OFFSET ${offset}` : ""}
+      `
+    ) as any[]
+    const countResult: any = await this.prisma.$queryRawUnsafe(`
+      SELECT COUNT(*)::int as count
+      ${query} 
+    `);
 
+    return {
+      row: row.map(item => ({
+        url: item.url,
+        postId: item.post_id,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
+        deletedAt: item.deleted_at,
+      })),
+      count: countResult[0].count
+    }
+  }
   async suggestForUserId(userId: string, take: number | undefined) {
     const query = `
     SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
