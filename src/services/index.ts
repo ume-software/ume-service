@@ -22,6 +22,7 @@ import { PostService } from "./api/v1/post.service";
 import { CommentPostService } from "./api/v1/commentPost.service";
 import { LikePostService } from "./api/v1/likePost.service";
 import { WatchedPostService } from "./api/v1/watchedPost.service";
+import { NoticeService } from "./api/v1/notice.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -47,6 +48,7 @@ const postService = new PostService();
 const commentPostService = new CommentPostService();
 const likePostService = new LikePostService();
 const watchedPostService = new WatchedPostService();
+const noticeService = new NoticeService();
 export {
     scheduleService,
     errorService,
@@ -70,5 +72,6 @@ export {
     postService,
     commentPostService,
     likePostService,
-    watchedPostService
+    watchedPostService,
+    noticeService
 };

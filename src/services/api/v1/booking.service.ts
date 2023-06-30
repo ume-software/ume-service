@@ -14,6 +14,7 @@ import {
     coinService,
     errorService,
     identitySystemService,
+    noticeService,
     providerService,
     userService,
     utilService,
@@ -22,7 +23,7 @@ import { BasePrismaService } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { socketService } from "@/services/socketIO";
 
-import { BookingStatus, CoinType, Prisma } from "@prisma/client";
+import { BookingStatus, CoinType, NoticeType, Prisma } from "@prisma/client";
 import moment from "moment";
 
 export class BookingService extends BasePrismaService<BookingHistoryRepository>{
@@ -146,6 +147,15 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                 socketService.emitUserBookingProvider(socket, bookingHistory)
             }
         }
+        noticeService.create({
+            user: {
+                connect: {
+                    id: provider.userId
+                }
+            },
+            type: NoticeType.HAVE_BOOKING,
+            data: JSON.parse(JSON.stringify(bookingHistory)),
+        })
         return bookingHistory;
     }
 
@@ -288,6 +298,26 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                     socketService.emitProviderHandledBooking(socket, bookingHistory)
                 }
             }
+            let type: NoticeType;
+            switch (status) {
+                case PROVIDER_CANCEL: {
+                    type = NoticeType.BOOKING_HAS_BEEN_DECLINED
+                    break;
+                }
+                case PROVIDER_ACCEPT: {
+                    type = NoticeType.BOOKING_HAS_BEEN_SUCCESSED
+                    break;
+                }
+            }
+            noticeService.create({
+                user: {
+                    connect: {
+                        id: provider.userId
+                    }
+                },
+                type: type!,
+                data: JSON.parse(JSON.stringify(bookingHistory)),
+            })
             return bookingHistory;
         });
     }

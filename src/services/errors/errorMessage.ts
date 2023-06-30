@@ -160,5 +160,12 @@ export const ERROR_MESSAGE = {
         message: "The request to buy coins has been processed.",
         codeNumber: 20601,
         statusCode: 400,
-    }
+    },
+    // Skill
+    THIS_NOTICE_DOES_NOT_EXISTED: {
+        message: "This notice doesn't exist.",
+        codeNumber: 20700,
+        statusCode: 400,
+    },
+
 };

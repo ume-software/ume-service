@@ -507,6 +507,83 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/notice/amount-new:
+    get:
+      operationId: amountNewNotice
+      tags:
+        - Notice
+      description: Count New Notices
+      summary: Count New Notices
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmountNoticeResponse'
+          description: Amount Notice success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
+  /api/v1/notice:
+    get:
+      operationId: getNotice
+      tags:
+        - Notice
+      description: Get all Notices
+      summary: Get all Notices
+      parameters:
+        - name: limit
+          in: query
+          schema: *ref_1
+          description: |2-
+
+                    Example : limit=50
+                            : limit=unlimited
+                
+        - name: page
+          in: query
+          schema: *ref_2
+        - name: select
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : select=["$all"]
+                
+        - name: where
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : where={"name":{"contains":"Minh"}}
+                
+        - name: order
+          in: query
+          schema: *ref_3
+          description: |2-
+
+                    Example : order=[{"updatedAt":"asc"}]
+                    
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoticePagingResponse'
+          description: Filter Notice success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/post/suggest:
     get:
       operationId: suggestPost
@@ -1232,6 +1309,7 @@ tags:
   - name: Booking
   - name: BuyCoinRequest
   - name: Coin
+  - name: Notice
   - name: Post
   - name: Provider
   - name: ProviderSkill
@@ -1831,6 +1909,80 @@ components:
         - totalCoinsAvailable
         - totalCoin
       description: User coin response
+    AmountNoticeResponse:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount number
+          example: 10
+      required:
+        - amount
+      description: Amount Notice response
+    NoticeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's notice post
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        type:
+          type: string
+          description: Type noice
+          enum:
+            - NEW_MESSAGE
+            - HAVE_BOOKING
+            - BOOKING_HAS_BEEN_DECLINED
+            - BOOKING_HAS_BEEN_SUCCESSED
+            - SOMEONE_FOLLOWING_YOU
+          example: HAVE_BOOKING
+        data:
+          type: object
+          description: Data JSON format
+          example: {}
+        isReaded:
+          type: boolean
+          description: Is readed this notice
+      required:
+        - id
+        - userId
+        - type
+        - data
+        - isReaded
+      description: Notice response
+    NoticePagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/NoticeResponse'
+        count:
+          type: number
+          description: Count
+          example: 100
+        pagination:
+          type: STRING
+          description: Pagination
+          $ref: '#/components/schemas/PaginationResponse'
+      required: []
+      description: Notice paging response
     CommentPostRequest:
       type: object
       properties:
