@@ -42,6 +42,7 @@ export class PostService extends BasePrismaService<typeof postRepository> {
         updatedAt: item.updated_at,
         deletedAt: item.deleted_at,
         likeCount: item.like_count,
+        isLike: item.is_like,
         commentCount: item.comment_count
       })
     })

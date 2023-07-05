@@ -2139,6 +2139,10 @@ components:
           type: number
           description: Like count
           example: 15
+        isLike:
+          type: number
+          description: Is like
+          example: 15
         commentCount:
           type: number
           description: Comment count
@@ -2150,6 +2154,7 @@ components:
         - content
         - thumbnails
         - likeCount
+        - isLike
         - commentCount
       description: Post response
     TopDonateProviderResponse:

@@ -73,10 +73,18 @@ export class PostResponse {
     likeCount!: number;
 
     @ApiModelProperty({
+        description: "Is like",
+        required: true,
+        example: 15,
+    })
+    isLike!: number;
+
+    @ApiModelProperty({
         description: "Comment count",
         required: true,
         example: 4,
         type: SwaggerDefinitionConstant.NUMBER
     })
     commentCount!: string;
+    
 }
