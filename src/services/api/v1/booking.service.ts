@@ -4,7 +4,7 @@ import { UserInfomationResponse } from "@/common/responses/userInfomation.repons
 import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
-import { coinHistoryRepository, providerRepository } from "@/repositories";
+import { coinHistoryRepository, coinSettingRepository, providerRepository } from "@/repositories";
 import {
     bookingHistoryRepository,
     providerSkillRepository,
@@ -259,7 +259,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                             },
                         },
                         createdId: userRquestId,
-                        amount: totalCost,
+                        amount: await coinSettingRepository.calculateCoinBookingForProvider(totalCost),
                         coinType: CoinType.GET_BOOKING,
                     },
                     tx

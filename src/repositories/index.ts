@@ -13,6 +13,7 @@ import { CommentPostRepository } from "./common/commentPost.repository";
 import { LikePostRepository } from "./common/likePost.repository";
 import { WatchedPostRepository } from "./common/watchedPost.repository";
 import { NoticeRepository } from "./common/notice.repository";
+import { DonateProviderRepository } from "./common/donateProvider.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -29,7 +30,7 @@ const commentPostRepository = new CommentPostRepository();
 const likePostRepository = new LikePostRepository();
 const watchedPostRepository = new WatchedPostRepository();
 const noticeRepository = new NoticeRepository();
-
+const donateProviderRepository = new DonateProviderRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -45,5 +46,6 @@ export {
     commentPostRepository,
     likePostRepository,
     watchedPostRepository,
-    noticeRepository
+    noticeRepository,
+    donateProviderRepository
 }

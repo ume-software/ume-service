@@ -420,7 +420,7 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: &ref_4
+          schema: &ref_6
             type: string
             default: '["$all"]'
           description: |2-
@@ -429,7 +429,7 @@ paths:
                 
         - name: where
           in: query
-          schema: &ref_5
+          schema: &ref_7
             type: string
             default: '{}'
           description: |2-
@@ -507,6 +507,116 @@ paths:
           description: 500 Internal Server Error Response
       security:
         - bearerAuth: []
+  /api/v1/donate/provider/top:
+    get:
+      operationId: topDonateProvider
+      tags:
+        - Donate
+      description: Get top donate provider
+      summary: Get top donate provider
+      parameters:
+        - name: duration
+          in: query
+          schema: &ref_4
+            enum:
+              - 1Y
+              - 1M
+              - 1W
+            example: 1Y
+            default: 1Y
+          description: |2-
+
+                    Example : duration=1Y
+                    
+          required: true
+        - name: top
+          in: query
+          schema: &ref_5
+            type: number
+            example: 10
+            default: 10
+          description: |2-
+
+                    Example : top=10
+                    
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopDonateProviderPagingResponse'
+          description: Response top donate provider success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/v1/donate/user/top:
+    get:
+      operationId: topUserDonate
+      tags:
+        - Donate
+      description: Get top user donate
+      summary: Get top user donate
+      parameters:
+        - name: duration
+          in: query
+          schema: *ref_4
+          description: |2-
+
+                    Example : duration=1Y
+                    
+          required: true
+        - name: top
+          in: query
+          schema: *ref_5
+          description: |2-
+
+                    Example : top=10
+                    
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUserDonatePagingResponse'
+          description: Response top user donate success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+  /api/v1/donate/provider:
+    post:
+      operationId: donateForProvider
+      tags:
+        - Donate
+      description: Donate for provider
+      summary: Donate for provider
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DonateProviderRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+          description: Donate provider success
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 500 Internal Server Error Response
+      security:
+        - bearerAuth: []
   /api/v1/notice/amount-new:
     get:
       operationId: amountNewNotice
@@ -550,14 +660,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -605,14 +715,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -665,14 +775,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -725,14 +835,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -806,14 +916,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -991,14 +1101,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -1080,14 +1190,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -1201,14 +1311,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -1281,14 +1391,14 @@ paths:
           schema: *ref_2
         - name: select
           in: query
-          schema: *ref_4
+          schema: *ref_6
           description: |2-
 
                     Example : select=["$all"]
                 
         - name: where
           in: query
-          schema: *ref_5
+          schema: *ref_7
           description: |2-
 
                     Example : where={"name":{"contains":"Minh"}}
@@ -1346,6 +1456,7 @@ tags:
   - name: Booking
   - name: BuyCoinRequest
   - name: Coin
+  - name: Donate
   - name: Notice
   - name: Post
   - name: Provider
@@ -1946,6 +2057,163 @@ components:
         - totalCoinsAvailable
         - totalCoin
       description: User coin response
+    DonateProviderRequest:
+      type: object
+      properties:
+        providerId:
+          type: string
+          description: Provider Id
+          example: 42ac81c2-1815-45f7-b598-412487161e1f
+        amount:
+          type: number
+          description: Amount
+        message:
+          type: string
+          description: Message
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati. Reprehenderit dolorum illum repellendus non
+            necessitatibus modi. Fugiat iste quisquam molestias accusamus
+            consequuntur quisquam eum doloribus.
+      required:
+        - providerId
+        - amount
+      description: Donate provider request
+    ThumbnailResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Url
+          example: https://picsum.photos/seed/Zmmvb/640/480
+        type:
+          type: string
+          description: Url type
+          enum:
+            - IMAGE
+            - VIDEO
+            - AUDIO
+          example: IMAGE
+      required: []
+      description: Thumbnail response
+    PostResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id's Post
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        createdAt:
+          type: date
+          description: Created At
+          example: '2023-05-10T07:08:46.083Z'
+        updatedAt:
+          type: date
+          description: Update At
+          example: '2023-05-10T07:08:46.083Z'
+        deletedAt:
+          type: date
+          description: Deleted At
+        userId:
+          type: string
+          description: Id's user
+          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
+        user:
+          type: STRING
+          description: User
+          $ref: '#/components/schemas/UserInfomationResponse'
+        content:
+          type: string
+          description: Content
+          example: >-
+            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
+            aliquid occaecati. Reprehenderit dolorum illum repellendus non
+            necessitatibus modi. Fugiat iste quisquam molestias accusamus
+            consequuntur quisquam eum doloribus.
+        thumbnails:
+          type: array
+          description: Thumbnails
+          items:
+            $ref: '#/components/schemas/ThumbnailResponse'
+        likeCount:
+          type: number
+          description: Like count
+          example: 15
+        commentCount:
+          type: number
+          description: Comment count
+          example: 4
+      required:
+        - id
+        - userId
+        - user
+        - content
+        - thumbnails
+        - likeCount
+        - commentCount
+      description: Post response
+    TopDonateProviderResponse:
+      type: object
+      properties:
+        actualReceivingAmount:
+          type: number
+          description: Total coin donate
+          example: 20
+        countActualReceivingAmount:
+          type: number
+          description: Count donate
+          example: 2
+        providerId:
+          type: string
+          description: Provider id
+          example: 0c261207-3e82-4d56-a261-32175b797a78
+        provider:
+          type: STRING
+          description: provider
+          $ref: '#/components/schemas/ProviderResponse'
+      required: []
+      description: Top donate provider response
+    TopDonateProviderPagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/TopDonateProviderResponse'
+      required: []
+      description: Top donate provider response
+    TopUserDonateResponse:
+      type: object
+      properties:
+        totalCoinDonate:
+          type: number
+          description: Total coin donate
+          example: 20
+        countDonate:
+          type: number
+          description: Count donate
+          example: 2
+        userId:
+          type: string
+          description: Provider id
+          example: 0c261207-3e82-4d56-a261-32175b797a78
+        user:
+          type: STRING
+          description: User
+          $ref: '#/components/schemas/UserInfomationResponse'
+      required: []
+      description: Top donate provider response
+    TopUserDonatePagingResponse:
+      type: object
+      properties:
+        row:
+          type: array
+          description: Row
+          items:
+            $ref: '#/components/schemas/TopUserDonateResponse'
+      required: []
+      description: Top user donate response
     AmountNoticeResponse:
       type: object
       properties:
@@ -2037,23 +2305,6 @@ components:
       required:
         - content
       description: Comment post request
-    ThumbnailResponse:
-      type: object
-      properties:
-        url:
-          type: string
-          description: Url
-          example: https://picsum.photos/seed/Zmmvb/640/480
-        type:
-          type: string
-          description: Url type
-          enum:
-            - IMAGE
-            - VIDEO
-            - AUDIO
-          example: IMAGE
-      required: []
-      description: Thumbnail response
     CreateNewPostRequest:
       type: object
       properties:
@@ -2189,62 +2440,6 @@ components:
           $ref: '#/components/schemas/PaginationResponse'
       required: []
       description: Like Post paging response
-    PostResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Id's Post
-          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
-        createdAt:
-          type: date
-          description: Created At
-          example: '2023-05-10T07:08:46.083Z'
-        updatedAt:
-          type: date
-          description: Update At
-          example: '2023-05-10T07:08:46.083Z'
-        deletedAt:
-          type: date
-          description: Deleted At
-        userId:
-          type: string
-          description: Id's user
-          example: a1da9857-355e-43f1-8fdb-26a8a0ace6bd
-        user:
-          type: STRING
-          description: User
-          $ref: '#/components/schemas/UserInfomationResponse'
-        content:
-          type: string
-          description: Content
-          example: >-
-            Perspiciatis ducimus corporis consectetur quia aspernatur nulla
-            aliquid occaecati. Reprehenderit dolorum illum repellendus non
-            necessitatibus modi. Fugiat iste quisquam molestias accusamus
-            consequuntur quisquam eum doloribus.
-        thumbnails:
-          type: array
-          description: Thumbnails
-          items:
-            $ref: '#/components/schemas/ThumbnailResponse'
-        likeCount:
-          type: number
-          description: Like count
-          example: 15
-        commentCount:
-          type: number
-          description: Comment count
-          example: 4
-      required:
-        - id
-        - userId
-        - user
-        - content
-        - thumbnails
-        - likeCount
-        - commentCount
-      description: Post response
     PostPagingResponse:
       type: object
       properties:

@@ -349,9 +349,13 @@ async function seed() {
                         feePercentage: 0.001,
                     },
                     {
+                        coinSettingType: CoinSettingType.PROVODER_GET_COIN_DONATE,
+                        feePercentage: 0.0005,
+                    },
+                    {
                         coinSettingType: CoinSettingType.GIFT_TO_COIN,
                         feePercentage: 0.001,
-                    }
+                    },
                 ]
             })
         }

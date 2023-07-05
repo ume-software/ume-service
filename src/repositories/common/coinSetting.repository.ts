@@ -31,5 +31,26 @@ export class CoinSettingRepository extends BasePrismaRepository {
       totalMoney: amountMoney + totalFee
     }
   }
+  async calculateCoinBookingForProvider(amountCoin: number): Promise<number> {
+    return await this.calculateForProvider(amountCoin, CoinSettingType.PROVIDER_GET_COIN_BOOKING)
+  }
 
+  async calculateCoinDonateForProvider(amountCoin: number): Promise<number> {
+    return await this.calculateForProvider(amountCoin, CoinSettingType.PROVODER_GET_COIN_DONATE)
+  }
+
+  private async calculateForProvider(amountCoin: number, coinType: CoinSettingType): Promise<number> {
+    const setting = await this.prisma.coinSetting.findFirst({
+      where: {
+        coinSettingType: coinType
+      }
+    });
+    let feePercentage = 0.001, surcharge = 0;
+    if (setting) {
+      feePercentage = setting.feePercentage != null ? setting.feePercentage : feePercentage;
+      surcharge = setting.surcharge != null ? setting.surcharge : surcharge;
+    }
+    const totalFee = amountCoin * feePercentage + surcharge;
+    return amountCoin - totalFee
+  }
 }

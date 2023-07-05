@@ -1,4 +1,5 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
+import { ETopDonateDuration } from "@/enums/topDonateDuration.enum";
 import { BuyCoinRequestStatus } from "@prisma/client";
 import {
   IApiParameters,
@@ -167,3 +168,29 @@ export const handlerFilterBuyCoinParameters = {
   },
 };
 
+export const filterTopDonateParameters = {
+  duration: {
+    name: "duration",
+    required: true,
+    schema: {
+      enum: Object.values(ETopDonateDuration),
+      example: ETopDonateDuration.ONE_YEAR,
+      default: ETopDonateDuration.ONE_YEAR,
+    },
+    description: `
+        Example : duration=1Y
+        `,
+  },
+  top: {
+    name: "top",
+    required: true,
+    schema: {
+      type: SwaggerDefinitionConstant.NUMBER,
+      example: 10,
+      default: 10,
+    },
+    description: `
+        Example : top=10
+        `,
+  }
+}

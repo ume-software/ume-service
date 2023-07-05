@@ -23,25 +23,27 @@ model User {
   notices          Notice?
   posts            Post[]
   likePosts        LikePost[]
-  commentPosts      CommentPost[]
-  watchedPosts      WatchedPost[]
+  commentPosts     CommentPost[]
+  watchedPosts     WatchedPost[]
+  donateProvider   DonateProvider[]
 
   @@map("user")
 }
 
 model Provider {
-  id             String          @id @default(uuid()) @map("id")
-  createdAt      DateTime?       @default(now()) @map("created_at")
-  updatedAt      DateTime?       @updatedAt @map("updated_at")
-  deletedAt      DateTime?       @map("deleted_at")
-  user           User            @relation(fields: [userId], references: [id])
-  userId         String          @unique @map("user_id")
-  slug           String?         @map("slug")
-  name           String?         @map("name")
-  avatarUrl      String?         @map("avatar_url")
-  voiceUrl       String?         @map("voice_url")
-  description    String?         @map("description") @db.Text()
+  id             String           @id @default(uuid()) @map("id")
+  createdAt      DateTime?        @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  user           User             @relation(fields: [userId], references: [id])
+  userId         String           @unique @map("user_id")
+  slug           String?          @map("slug")
+  name           String?          @map("name")
+  avatarUrl      String?          @map("avatar_url")
+  voiceUrl       String?          @map("voice_url")
+  description    String?          @map("description") @db.Text()
   providerSkills ProviderSkill[]
+  donateProvider DonateProvider[]
 
   @@map("provider")
 }
@@ -236,7 +238,7 @@ model Post {
   thumbnails   Json[]        @default([]) @map("thumbnails")
   likePosts    LikePost[]
   commentPosts CommentPost[]
-  watchedPosts  WatchedPost[]
+  watchedPosts WatchedPost[]
 
   @@map("post")
 }
@@ -282,6 +284,22 @@ model WatchedPost {
   postId    String    @map("post_id")
 
   @@map("watched_post")
+}
+
+model DonateProvider {
+  id                    String    @id @default(uuid()) @map("id")
+  createdAt             DateTime? @default(now()) @map("created_at")
+  updatedAt             DateTime? @updatedAt @map("updated_at")
+  deletedAt             DateTime? @map("deleted_at")
+  user                  User      @relation(fields: [userId], references: [id])
+  userId                String    @map("user_id")
+  donateAmount          Float     @map("donate_amount")
+  provider              Provider  @relation(fields: [providerId], references: [id])
+  providerId            String    @map("provider_id")
+  actualReceivingAmount Float     @map("actual_receiving_amount")
+  message               String?   @map("message")
+
+  @@map("donate_provider")
 }
 
 enum CoinType {
@@ -354,6 +372,7 @@ enum CoinSettingType {
   SELL_COIN
   PROVIDER_GET_COIN_BOOKING
   GIFT_TO_COIN
+  PROVODER_GET_COIN_DONATE
 }
 
 enum NoticeType {
