@@ -75,9 +75,9 @@ export class PostResponse {
     @ApiModelProperty({
         description: "Is like",
         required: true,
-        example: 15,
+        example: true,
     })
-    isLike!: number;
+    isLike!: boolean;
 
     @ApiModelProperty({
         description: "Comment count",

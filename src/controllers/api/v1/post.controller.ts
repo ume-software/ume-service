@@ -10,6 +10,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { commentPostService, errorService, likePostService, postService, watchedPostService } from "@/services";
 import { PostService } from "@/services/api/v1/post.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
+import { Prisma } from "@prisma/client";
 import { ApiOperationGet, ApiOperationPost, ApiPath, SwaggerDefinitionConstant } from "express-swagger-typescript";
 
 @ApiPath({
@@ -401,7 +402,7 @@ export class PostController extends BaseController {
       errorService.router.badRequest();
     }
     const requesterId = req.tokenInfo?.id;
-    const result = await commentPostService.create({
+    let commentPostCreateInput: Prisma.CommentPostCreateInput = {
       post: {
         connect: {
           id: id!
@@ -412,13 +413,17 @@ export class PostController extends BaseController {
           id: requesterId!
         }
       },
-      content,
-      parentComment: {
+      content
+    }
+    if (parentCommentId) {
+      commentPostCreateInput.parentComment = {
         connect: {
           id: parentCommentId!
         }
       }
-    });
+    }
+
+    const result = await commentPostService.create(commentPostCreateInput);
     this.onSuccess(res, result);
   }
 }
