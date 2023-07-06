@@ -148,3 +148,4 @@ images/
 files/
 openapi/
 # *.pem
+swagger.yml
