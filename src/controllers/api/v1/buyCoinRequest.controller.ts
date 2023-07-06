@@ -1,6 +1,10 @@
+import { BuyCoinCalculateRequest } from "@/common/requests/buyCoinCalculate.request";
+import { BuyCoinCalculateListRequest } from "@/common/requests/buyCoinCalculateList.request";
 import { BuyCoinHandleRequest } from "@/common/requests/buyCoinHandle.request";
 import { CreateBuyCoinRequest } from "@/common/requests/createBuyCoin.request";
 import { BuyCoinResponse } from "@/common/responses/buyCoin.response";
+import { BuyCoinCalculateResponse } from "@/common/responses/buyCoinCalculate.response";
+import { BuyCoinCalculateListResponse } from "@/common/responses/buyCoinCalculateList.response";
 import { BaseController, Request, Response } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
 import { buyCoinRequestService } from "@/services";
@@ -24,6 +28,8 @@ export class BuyCoinRequestController extends BaseController {
   customRouting() {
     this.router.get("/request-to-handler", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.getBuyCoinRequestToHandler));
     this.router.post("/", this.accountTypeMiddlewares([EAccountType.USER]), this.route(this.createBuyCoinRequest));
+    this.router.post("/calculate", this.route(this.buyCoinCalculate));
+    this.router.post("/calculate-list", this.route(this.buyCoinCalculateList));
     this.router.post("/handle", this.accountTypeMiddlewares([EAccountType.ADMIN]), this.route(this.handleBuyCoinRequest));
   }
   @ApiOperationGet({
@@ -107,6 +113,73 @@ export class BuyCoinRequestController extends BaseController {
     this.onSuccess(res, result);
   }
 
+  @ApiOperationPost({
+    path: "/calculate",
+    operationId: "buyCoinCalculate",
+    security: {
+      bearerAuth: [],
+    },
+    description: "User create buy coin request",
+    summary: "User create buy coin request",
+    requestBody: {
+      content: {
+        [SwaggerDefinitionConstant.Produce.JSON]: {
+          schema: { model: BuyCoinCalculateRequest },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: BuyCoinCalculateResponse },
+          },
+        },
+        description: "Create buy coin request success",
+      },
+    },
+  })
+  async buyCoinCalculate(req: Request, res: Response) {
+    const buyCoinCalculateRequest = req.body as BuyCoinCalculateRequest;
+    const result = await this.service.buyCoinCalculate(
+      buyCoinCalculateRequest
+    );
+    this.onSuccess(res, result);
+  }
+
+  @ApiOperationPost({
+    path: "/calculate-list",
+    operationId: "buyCoinCalculateList",
+    security: {
+      bearerAuth: [],
+    },
+    description: "User create buy coin request",
+    summary: "User create buy coin request",
+    requestBody: {
+      content: {
+        [SwaggerDefinitionConstant.Produce.JSON]: {
+          schema: { model: BuyCoinCalculateListRequest },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          [SwaggerDefinitionConstant.Produce.JSON]: {
+            schema: { model: BuyCoinCalculateListResponse },
+          },
+        },
+        description: "Create buy coin request success",
+      },
+    },
+  })
+  async buyCoinCalculateList(req: Request, res: Response) {
+    const buyCoinCalculateListRequest = req.body as BuyCoinCalculateListRequest;
+    const result = await this.service.buyCoinCalculateList(
+      buyCoinCalculateListRequest
+    );
+    this.onSuccess(res, result);
+  }
   @ApiOperationPost({
     path: "/handle",
     operationId: "handleBuyCoinRequest",

@@ -1,5 +1,11 @@
+
+import { BuyCoinCalculateRequest } from "@/common/requests/buyCoinCalculate.request";
+import { BuyCoinCalculateListRequest } from "@/common/requests/buyCoinCalculateList.request";
 import { BuyCoinHandleRequest } from "@/common/requests/buyCoinHandle.request";
 import { CreateBuyCoinRequest } from "@/common/requests/createBuyCoin.request";
+import { BuyCoinCalculateResponse } from "@/common/responses/buyCoinCalculate.response";
+import { BuyCoinCalculateListResponse } from "@/common/responses/buyCoinCalculateList.response";
+
 import prisma from "@/models/base.prisma";
 import { coinSettingRepository, buyCoinRequestRepository, coinHistoryRepository } from "@/repositories";
 import { errorService, identitySystemService, utilService } from "@/services";
@@ -14,6 +20,40 @@ export class BuyCoinRequestService extends BasePrismaService<typeof buyCoinReque
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query)
     }
+
+    async buyCoinCalculate(buyCoinCalculateRequest: BuyCoinCalculateRequest): Promise<BuyCoinCalculateResponse> {
+        const { amountCoin, platform, unitCurrency } = buyCoinCalculateRequest;
+        if (!amountCoin || !platform || !unitCurrency) {
+            throw errorService.router.badRequest();
+        }
+        const result = await coinSettingRepository.convertCoinToMoneyForBuyCoin(amountCoin, unitCurrency, platform);
+
+        return {
+            ...buyCoinCalculateRequest,
+            ...result
+        }
+    }
+    async buyCoinCalculateList(buyCoinCalculateListRequest: BuyCoinCalculateListRequest): Promise<BuyCoinCalculateListResponse> {
+        const { amountCoins, platform, unitCurrency } = buyCoinCalculateListRequest;
+        if (!amountCoins || !platform || !unitCurrency) {
+            throw errorService.router.badRequest();
+        }
+        const option = await coinSettingRepository.getConvertCoinToMoneyForBuyCoinRate(unitCurrency, platform);
+        const row = amountCoins.map((amountCoin: number) => {
+            return {
+                amountCoin,
+                platform,
+                unitCurrency,
+                ...coinSettingRepository.calculateCoinToMoneyForBuyCoin(amountCoin, option)
+            }
+        })
+
+        return {
+            row
+        }
+    }
+
+
     async createBuyCoin(requesterId: string, getQrBuyCoinRequest: CreateBuyCoinRequest) {
         const { amountCoin, platform, unitCurrency } = getQrBuyCoinRequest;
         if (!amountCoin || !platform || !unitCurrency) {
