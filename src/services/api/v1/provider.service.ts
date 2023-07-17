@@ -23,8 +23,8 @@ export class ProviderService extends BasePrismaService<
     option: IOptionFilterProvider,
     query: ICrudOptionPrisma
   ) {
-    const { skillId, startCost, endCost } = option;
-    return await this.repository.filterAndCountAllProvider(skillId, startCost, endCost, query?.skip, query?.take);
+    // const { skillId, startCost, endCost, name, gender } = option;
+    return await this.repository.filterAndCountAllProvider(option, query?.skip, query?.take);
   }
   async filterHotProvider(
     option: IOptionFilterHotProvider,

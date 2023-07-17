@@ -1,6 +1,6 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
 import { ETopDonateDuration } from "@/enums/topDonateDuration.enum";
-import { BuyCoinRequestStatus } from "@prisma/client";
+import { BuyCoinRequestStatus, Gender } from "@prisma/client";
 import {
   IApiParameters,
   SwaggerDefinitionConstant,
@@ -126,6 +126,29 @@ export const filterProviderParameters = {
         Example : skill_id=14476c02-2846-4097-8f00-b495e8fc77ae
         `,
   },
+  name: {
+    name: "name",
+    required: false,
+    schema: {
+      type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+      default: "name",
+    },
+    description: `
+        Example : name=dotranminhchu
+        `,
+  },
+  gender: {
+    name: "gender",
+    required: false,
+    schema: {
+      enum: Object.values(Gender),
+      example: Gender.MALE,
+      default: Gender.MALE,
+    },
+    description: `
+        Example : gender=MALE
+        `,
+  }
 };
 export const filterHotProviderParameters = {
   interval_days: {

@@ -8,7 +8,7 @@ import {
     queryPrismaMiddleware,
 } from "./middlewares";
 import { config } from "./configs";
-
+import cors from 'cors';
 // import * as swagger from 'decorators';
 import "reflect-metadata";
 import swaggerUi from "swagger-ui-express";
@@ -19,7 +19,9 @@ export class App {
     constructor() {
         this.app = express();
         this.middleware();
-
+        this.app.use(cors({
+            origin: "*"
+        }));
         this.app.set("views", path.join(__dirname, "../views"));
         this.app.set("view engine", "ejs");
 

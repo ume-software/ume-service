@@ -15,6 +15,8 @@ model User {
   isOnline         Boolean?          @default(false) @map("is_online")
   latestOnline     Boolean?          @map("latest_online")
   loginType        LoginType?        @map("login_type")
+  gender           Gender?           @map("gender")
+  dob              DateTime?         @map("dob")
   provider         Provider?
   coinHistories    CoinHistory[]
   bookingHistories BookingHistory[]
@@ -381,4 +383,11 @@ enum NoticeType {
   BOOKING_HAS_BEEN_DECLINED
   BOOKING_HAS_BEEN_SUCCESSED
   SOMEONE_FOLLOWING_YOU
+}
+
+enum Gender {
+  MALE
+  FAMALE
+  ORTHER
+  PRIVATE
 }
