@@ -149,3 +149,4 @@ files/
 openapi/
 # *.pem
 swagger.yml
+package-lock.json
