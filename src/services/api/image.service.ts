@@ -66,7 +66,6 @@ export class ImageService {
             }
 
             const hostname = config.server.host ?? req.headers.host;
-
             const result = `${req.protocol}://${join(
                 hostname,
                 join(pathApi, encodeURIComponent(newFilename))
