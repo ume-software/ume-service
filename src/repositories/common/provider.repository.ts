@@ -27,11 +27,47 @@ export class ProviderRepository extends BasePrismaRepository {
   }
 
   async filterAndCountAllProvider(option: IOptionFilterProvider, skip: number | undefined, take: number | undefined) {
-    const { endCost, gender, name, skillId, startCost } = option
+    const { endCost, gender, name, skillId, startCost, order } = option;
+    const orderByQuery = order?.map((obj: { [key: string]: string }) => {
+      const key = Object.keys(obj)[0];
+      const value = obj[key!]; 
+      return `${key} ${value}`;
+    }).join(', ');
     const nowTimehhmm = moment()
       .utcOffset(config.server.timezone)
       .format("HH:mm");
     const query = `
+      WITH relevant_booking_costs AS (
+        SELECT
+          provider_skill_id,
+          amount
+        FROM
+          booking_cost
+        WHERE
+          deleted_at IS NULL
+          AND start_time_of_day <= '${nowTimehhmm}'
+          AND end_time_of_day >= '${nowTimehhmm}'
+          ${startCost != undefined ? `AND amount >= ${startCost}` : ""}
+          ${endCost != undefined ? `AND amount < ${endCost}` : ""}
+        ORDER BY
+          amount ASC
+      )
+      SELECT
+        id,
+        userId,
+        slug,
+        name,
+        avatarUrl,
+        voiceUrl,
+        description,
+        cost,
+        skillId,
+        skillName,
+        skillImageUrl,
+        gender,
+        dob,
+        start
+      FROM (
         SELECT DISTINCT ON (p.id)
           p.id,
           p.user_id AS userId,
@@ -40,74 +76,58 @@ export class ProviderRepository extends BasePrismaRepository {
           p.avatar_url AS avatarUrl,
           p.voice_url AS voiceUrl,
           p.description,
-          COALESCE(bc.amount,ps.default_cost) AS cost,
+          COALESCE(bc.amount, ps.default_cost) AS cost,
           s.id AS skillId,
           s.name AS skillName,
           s.image_url AS skillImageUrl,
           u.gender AS gender,
           u.dob AS dob,
           CASE
-            WHEN psf.avg_amount_start IS NULL THEN
-              NULL
+            WHEN  psf.avg_amount_start IS NOT NULL THEN
+              CAST ( psf.avg_amount_start AS FLOAT)
             ELSE
-              CAST (psf.avg_amount_start AS DOUBLE)
+              0
             END as start
-     
-      FROM
-        provider AS p
+        FROM
+          provider AS p
         INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
         INNER JOIN "user" AS u ON u.id = p.user_id
-        LEFT JOIN (
-          SELECT
-            provider_skill_id,
-            amount
-          FROM
-            booking_cost
-          WHERE
-            deleted_at IS NULL
-            AND start_time_of_day <= '${nowTimehhmm}'
-            AND end_time_of_day >= '${nowTimehhmm}'
-            ${startCost != undefined ? `AND amount >= ${startCost}` : ""}
-            ${endCost != undefined ? `AND amount < ${endCost}` : ""}
-          ORDER BY
-            amount ASC
-        ) AS bc ON bc.provider_skill_id = ps.id
         INNER JOIN skill AS s ON ps.skill_id = s.id
+        LEFT JOIN LATERAL (
+          SELECT amount
+          FROM relevant_booking_costs bc
+          WHERE bc.provider_skill_id = ps.id
+          LIMIT 1
+        ) bc ON true
         LEFT JOIN (
           SELECT
-              psfps.id AS providerSkillId,
-              AVG(f.amount_start) AS avg_amount_start
+            psfps.id AS providerSkillId,
+            AVG(f.amount_start) AS avg_amount_start
           FROM provider_skill AS psfps
           LEFT JOIN (
-              SELECT
-                  bh.provider_skill_id,
-                  f.amount_start
-              FROM booking_history AS bh
-              LEFT JOIN feedback AS f ON bh.id = f.booking_id
-              WHERE f.amount_start IS NOT null
+            SELECT
+              bh.provider_skill_id,
+              f.amount_start
+            FROM booking_history AS bh
+            LEFT JOIN feedback AS f ON bh.id = f.booking_id
+            WHERE f.amount_start IS NOT NULL
           ) AS f ON psfps.id = f.provider_skill_id
           GROUP BY psfps.id
-      ) AS psf ON psf.providerSkillId = ps.id
-      WHERE
-        ps.deleted_at IS NULL
-        ${startCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) >= ${startCost}` : ""}
-        ${endCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) < ${endCost}` : ""}
-        ${skillId != undefined ? `AND s.id = '${skillId}'` : ""}
-        ${name != undefined ? `AND p.name like '%${name}%'` : ""}
-        ${gender != undefined ? `AND u.gender = '${gender}'` : ""}
-        AND ((CASE WHEN (SELECT COUNT(*) FROM provider_skill AS psp LEFT JOIN booking_cost AS bcp ON bcp.provider_skill_id = psp.id WHERE psp.provider_id = p.id AND bcp.provider_skill_id IS NOT NULL AND bcp.start_time_of_day <= '${nowTimehhmm}' AND bcp.end_time_of_day >= '${nowTimehhmm}') > 0 THEN TRUE ELSE FALSE END) IS true and bc.amount IS NULL ) = false
-      ORDER BY
-        p.id,
-        p.created_at
+        ) AS psf ON psf.providerSkillId = ps.id
+        WHERE
+          ps.deleted_at IS NULL
+          ${startCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) >= ${startCost}` : ""}
+          ${endCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) < ${endCost}` : ""}
+          ${skillId != undefined ? `AND s.id = '${skillId}'` : ""}
+          ${name != undefined ? `AND p.name like '%${name}%'` : ""}
+          ${gender != undefined ? `AND u.gender = '${gender}'` : ""}
+          AND bc.amount IS NULL
+      ) AS pd
       `
-    console.log(`
-            ${query} 
-            ${take != undefined ? `LIMIT ${take}` : ""}
-            ${skip != undefined ? `OFFSET ${skip}` : ""}
-            `)
     const row = await this.prisma.$queryRawUnsafe(
       `
       ${query} 
+      ${order != undefined && order.length ? `ORDER BY ${orderByQuery}` : ""}
       ${take != undefined ? `LIMIT ${take}` : ""}
       ${skip != undefined ? `OFFSET ${skip}` : ""}
       `
@@ -226,7 +246,7 @@ export class ProviderRepository extends BasePrismaRepository {
         ${idsOrder}
         END;
   `
-
+    console.log(query)                  
     const row = await this.prisma.$queryRawUnsafe(query)
     return {
       row,

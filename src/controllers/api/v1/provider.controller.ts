@@ -17,6 +17,7 @@ import {
   filterHotProviderParameters,
   filterProviderParameters,
   limitParameter,
+  orderParameter,
   pageParameter,
   queryParameters,
 } from "@/swagger/parameters/query.parameter";
@@ -61,6 +62,7 @@ export class ProviderController extends BaseController {
         ...filterProviderParameters,
         ...limitParameter,
         ...pageParameter,
+        ...orderParameter
       },
     },
     responses: {
@@ -88,7 +90,8 @@ export class ProviderController extends BaseController {
         endCost,
         skillId: skill_id?.toString() || undefined,
         name,
-        gender
+        gender,
+        order: queryInfoPrisma?.orderBy
       } as IOptionFilterProvider,
       queryInfoPrisma!
     );

@@ -6,4 +6,5 @@ export interface IOptionFilterProvider {
   skillId: string | undefined;
   name: string | undefined;
   gender: Gender | undefined;
+  order: any[] | undefined;
 }
