@@ -245,8 +245,7 @@ export class ProviderRepository extends BasePrismaRepository {
         CASE id
         ${idsOrder}
         END;
-  `
-    console.log(query)                  
+  `               
     const row = await this.prisma.$queryRawUnsafe(query)
     return {
       row,
