@@ -94,7 +94,11 @@ export class ProviderRepository extends BasePrismaRepository {
         p.id,
         p.created_at
       `
-
+    console.log(`
+            ${query} 
+            ${take != undefined ? `LIMIT ${take}` : ""}
+            ${skip != undefined ? `OFFSET ${skip}` : ""}
+            `)
     const row = await this.prisma.$queryRawUnsafe(
       `
       ${query} 

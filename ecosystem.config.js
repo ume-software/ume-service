@@ -6,7 +6,7 @@ module.exports = {
     name: directoryName,
     script: './build/index.js',
     node_args: '-r ts-node/register -r tsconfig-paths/register',
-    watch: true,
+    watch: false,
     restart_delay: 10000,
     wait_ready: true,
     env: {
