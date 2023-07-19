@@ -46,7 +46,13 @@ export class ProviderRepository extends BasePrismaRepository {
           s.image_url AS skillImageUrl,
           u.gender AS gender,
           u.dob AS dob,
-          psf.avg_amount_start AS start
+          CASE
+            WHEN psf.avg_amount_start IS NULL THEN
+              NULL
+            ELSE
+              CAST (psf.avg_amount_start AS DOUBLE)
+            END as start
+     
       FROM
         provider AS p
         INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
