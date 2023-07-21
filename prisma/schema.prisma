@@ -387,7 +387,7 @@ enum NoticeType {
 
 enum Gender {
   MALE
-  FAMALE
+  FEMALE
   ORTHER
   PRIVATE
 }
