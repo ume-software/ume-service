@@ -136,7 +136,7 @@ model Feedback {
   booking     BookingHistory @relation(fields: [bookingId], references: [id])
   bookingId   String         @map("booking_id")
   content     String?        @map("content")
-  amountStart Int?           @map("amount_start")
+  amountStar Int?           @map("amount_star")
 
   @@map("feedback")
 }

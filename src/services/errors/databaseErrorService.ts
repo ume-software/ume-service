@@ -14,7 +14,10 @@ export class DatabaseException extends BaseError {
     }
 }
 export class DatabaseErrorService {
-    recordNotFound() {
+    recordNotFound(message?: IErrorResponse) {
+        if (!message) {
+            message = { ...ERROR_MESSAGE.RECORD_NOT_FOUND }
+        }
         return new DatabaseException("record_not_found", ERROR_MESSAGE.RECORD_NOT_FOUND);
     }
     queryFail(message: IErrorResponse) {

@@ -66,7 +66,7 @@ export class ProviderRepository extends BasePrismaRepository {
         skillImageUrl,
         gender,
         dob,
-        start
+        star
       FROM (
         SELECT DISTINCT ON (p.id)
           p.id,
@@ -83,8 +83,8 @@ export class ProviderRepository extends BasePrismaRepository {
           u.gender AS gender,
           u.dob AS dob,
           CASE
-            WHEN  psf.avg_amount_start IS NOT NULL THEN
-              CAST ( psf.avg_amount_start AS FLOAT)
+            WHEN  psf.avg_amount_star IS NOT NULL THEN
+              CAST ( psf.avg_amount_star AS FLOAT)
             ELSE
               0
             END as start
@@ -102,15 +102,15 @@ export class ProviderRepository extends BasePrismaRepository {
         LEFT JOIN (
           SELECT
             psfps.id AS providerSkillId,
-            AVG(f.amount_start) AS avg_amount_start
+            AVG(f.amount_star) AS avg_amount_star
           FROM provider_skill AS psfps
           LEFT JOIN (
             SELECT
               bh.provider_skill_id,
-              f.amount_start
+              f.amount_star
             FROM booking_history AS bh
             LEFT JOIN feedback AS f ON bh.id = f.booking_id
-            WHERE f.amount_start IS NOT NULL
+            WHERE f.amount_star IS NOT NULL
           ) AS f ON psfps.id = f.provider_skill_id
           GROUP BY psfps.id
         ) AS psf ON psf.providerSkillId = ps.id
@@ -185,7 +185,7 @@ export class ProviderRepository extends BasePrismaRepository {
             s.id AS skillId,
             s.name AS skillName,
             s.image_url AS skillImageUrl,
-            psf.avg_amount_start AS start
+            psf.avg_amount_star AS star
         FROM
             provider AS p
             INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
@@ -206,15 +206,15 @@ export class ProviderRepository extends BasePrismaRepository {
             LEFT JOIN (
               SELECT
                   psfps.id AS providerSkillId,
-                  AVG(f.amount_start) AS avg_amount_start
+                  AVG(f.amount_star) AS avg_amount_star
               FROM provider_skill AS psfps
               LEFT JOIN (
                   SELECT
                       bh.provider_skill_id,
-                      f.amount_start
+                      f.amount_star
                   FROM booking_history AS bh
                   LEFT JOIN feedback AS f ON bh.id = f.booking_id
-                  WHERE f.amount_start IS NOT null
+                  WHERE f.amount_star IS NOT null
               ) AS f ON psfps.id = f.provider_skill_id
               GROUP BY psfps.id
           ) AS psf ON psf.providerSkillId = ps.id

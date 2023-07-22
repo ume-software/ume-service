@@ -1,14 +1,16 @@
 import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
+import { FeedbackBookingRequest } from "@/common/requests/feedbackBooking.request";
 import { BookingHistoryResponse } from "@/common/responses/bookingHistory.reponse";
 import { BookingHistoryPagingResponse } from "@/common/responses/bookingHistoryPaging.response";
+import { FeedbackResponse } from "@/common/responses/feedback.response";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { bookingService, errorService } from "@/services";
+import { bookingService, errorService, feedbackService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
 
 import {
@@ -46,7 +48,12 @@ export class BookingController extends BaseController {
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.createbooking)
+            this.route(this.createBooking)
+        );
+        this.router.post(
+            "/:id/feedback",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.createFeedbackBooking)
         );
         this.router.put(
             "/handle",
@@ -76,7 +83,7 @@ export class BookingController extends BaseController {
     })
     async getCurrentBookingForProvider(req: Request, res: Response) {
         const userId = req.tokenInfo?.id;
-        if(!userId){
+        if (!userId) {
             throw errorService.auth.badToken();
         }
         const result = await this.service.getCurrentBookingForProvider(userId);
@@ -104,7 +111,7 @@ export class BookingController extends BaseController {
     })
     async getCurrentBookingForUser(req: Request, res: Response) {
         const userId = req.tokenInfo?.id;
-        if(!userId){
+        if (!userId) {
             throw errorService.auth.badToken();
         }
         const result = await this.service.getCurrentBookingForUser(userId);
@@ -113,7 +120,7 @@ export class BookingController extends BaseController {
 
     @ApiOperationPost({
         path: "",
-        operationId: "createbooking",
+        operationId: "createBooking",
         security: {
             bearerAuth: [],
         },
@@ -137,11 +144,58 @@ export class BookingController extends BaseController {
             },
         },
     })
-    async createbooking(req: Request, res: Response) {
+    async createBooking(req: Request, res: Response) {
+
         const result = await this.service.userBookingProvider(req);
         this.onSuccess(res, result);
     }
 
+
+
+    @ApiOperationPost({
+        path: "/{id}/feedback",
+        operationId: "createFeedbackBooking",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Create feedback",
+        summary: "Create feedback",
+        parameters: {
+            path: {
+                id: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: FeedbackBookingRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: FeedbackResponse },
+                    },
+                },
+                description: "Create feedback success",
+            },
+        },
+    })
+    async createFeedbackBooking(req: Request, res: Response) {
+        const { id: bookingId } = req.params
+        const userId = req.tokenInfo?.id;
+        const feedbackBookingRequest = { ...req.body, bookingId, bookerId: userId } as FeedbackBookingRequest;
+
+        const result = await feedbackService.create(feedbackBookingRequest);
+        this.onSuccess(res, result);
+    }
     @ApiOperationPut({
         path: "/handle",
         operationId: "bookingHandle",
@@ -169,7 +223,7 @@ export class BookingController extends BaseController {
         },
     })
     async bookingHandle(req: Request, res: Response) {
-       
+
         const result = await this.service.bookingHandle(req);
         this.onSuccess(res, result);
     }

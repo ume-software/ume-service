@@ -111,9 +111,14 @@ export const ERROR_MESSAGE = {
         codeNumber: 20102,
         statusCode: 400,
     },
+    BOOKING_DOES_NOT_EXISTED: {
+        message: "The booking does not exist.",
+        codeNumber: 20103,
+        statusCode: 400,
+    },
     BOOKING_ENDED: {
         message: "Booking ended.",
-        codeNumber: 20103,
+        codeNumber: 20104,
         statusCode: 400,
     },
     // Skill
@@ -167,5 +172,11 @@ export const ERROR_MESSAGE = {
         codeNumber: 20700,
         statusCode: 400,
     },
+    // Feedback 
+    THIS_BOOKING_HAS_BEEN_FEEDBACK: {
+        message: "this booking has been feedbacked",
+        codeNumber: 20800,
+        statusCode: 400,
+    }
 
 };

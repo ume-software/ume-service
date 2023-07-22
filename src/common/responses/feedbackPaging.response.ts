@@ -17,7 +17,7 @@ export class FeedbackPagingResponse {
                 deletedAt: null,
                 bookingId: "f00ada3a-091b-4b6b-8efc-af2da32cd956",
                 content: "Pariatur quaerat ea porro illum modi dolore inventore non repellat. Exercitationem id possimus necessitatibus. Velit animi quo dolores provident sed.",
-                amountStart: 1,
+                amountStar: 1,
                 booking: {
                     id: "f00ada3a-091b-4b6b-8efc-af2da32cd956",
                     createdAt: "2023-05-29T17:23:04.562Z",
@@ -44,7 +44,7 @@ export class FeedbackPagingResponse {
                 deletedAt: null,
                 bookingId: "5e5930ef-f309-4d28-b87a-d4b9bd2c1599",
                 content: "Repellendus iusto velit fugiat saepe harum enim quae. Soluta sapiente iste nulla. Pariatur voluptatibus et ullam placeat itaque perferendis natus praesentium dolor.",
-                amountStart: 5,
+                amountStar: 5,
                 booking: {
                     id: "5e5930ef-f309-4d28-b87a-d4b9bd2c1599",
                     createdAt: "2023-05-29T17:23:04.727Z",

@@ -47,7 +47,7 @@ export class FeedbackResponse {
         description: "Start 0-5",
         example: 5,
     })
-    amountStart!: number;
+    amountStar!: number;
 
     @ApiModelProperty({
         type: SwaggerDefinitionConstant.ARRAY,

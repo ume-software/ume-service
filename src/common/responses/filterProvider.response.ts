@@ -98,9 +98,9 @@ export class FilterProviderResponse {
     dob?: string;
 
     @ApiModelProperty({
-        description: "start",
+        description: "star",
         required: false,
         example: 4.9,
     })
-    start?: number;
+    star?: number;
 }

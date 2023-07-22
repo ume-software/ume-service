@@ -1,10 +1,12 @@
 
+import { FeedbackBookingRequest } from "@/common/requests/feedbackBooking.request";
 import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
-import { feedbackRepository } from "@/repositories";
-import { identitySystemService, utilService } from "@/services";
+import { bookingHistoryRepository, feedbackRepository } from "@/repositories";
+import { errorService, identitySystemService, utilService } from "@/services";
 import {
     BasePrismaService, ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BookingHistory, Feedback } from "@prisma/client";
 
 type FeedbackByProviderSkillType = (
@@ -47,4 +49,33 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
         return result;
     }
 
+    async create(feedbackBookingRequest: FeedbackBookingRequest) {
+        const { amountStar, bookingId, content, bookerId } = feedbackBookingRequest;
+        const checkBookingExisted = await bookingHistoryRepository.findOne({
+            where: {
+                id: bookingId,
+                bookerId
+            }
+        });
+        if (!checkBookingExisted) {
+            throw errorService.database.recordNotFound(ERROR_MESSAGE.BOOKING_DOES_NOT_EXISTED)
+        }
+        const checkFeedbackExisted = await feedbackRepository.findOne({
+            where: {
+                bookingId
+            }
+        })
+        if (checkFeedbackExisted) {
+            throw errorService.router.badRequest(ERROR_MESSAGE.THIS_BOOKING_HAS_BEEN_FEEDBACK)
+        }
+        return await feedbackRepository.create({
+            amountStar,
+            content,
+            booking: {
+                connect: {
+                    id: bookerId
+                }
+            }
+        })
+    }
 }

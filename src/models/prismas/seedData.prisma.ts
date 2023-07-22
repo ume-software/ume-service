@@ -320,7 +320,7 @@ async function seed() {
                             },
                         },
                         content: faker.lorem.paragraph(),
-                        amountStart: faker.number.int({ min: 1, max: 5 }),
+                        amountStar: faker.number.int({ min: 1, max: 5 }),
                     },
                 });
             }
