@@ -30,7 +30,7 @@ export class ProviderRepository extends BasePrismaRepository {
     const { endCost, gender, name, skillId, startCost, order } = option;
     const orderByQuery = order?.map((obj: { [key: string]: string }) => {
       const key = Object.keys(obj)[0];
-      const value = obj[key!]; 
+      const value = obj[key!];
       return `${key} ${value}`;
     }).join(', ');
     const nowTimehhmm = moment()
@@ -87,7 +87,7 @@ export class ProviderRepository extends BasePrismaRepository {
               CAST ( psf.avg_amount_star AS FLOAT)
             ELSE
               0
-            END as start
+            END as star
         FROM
           provider AS p
         INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
@@ -245,7 +245,7 @@ export class ProviderRepository extends BasePrismaRepository {
         CASE id
         ${idsOrder}
         END;
-  `               
+  `
     const row = await this.prisma.$queryRawUnsafe(query)
     return {
       row,
