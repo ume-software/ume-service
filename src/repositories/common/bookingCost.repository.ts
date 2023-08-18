@@ -99,4 +99,5 @@ export class BookingCostRepository extends BasePrismaRepository {
       where: bookingCostWhereInput,
     });
   }
+  
 }
