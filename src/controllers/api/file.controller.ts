@@ -11,6 +11,7 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
+import { UploadResponse } from "@/common/responses/upload.response";
 
 const pathFiles = config.server.path_files;
 @ApiPath({
@@ -129,10 +130,12 @@ export class FileController extends BaseController {
         },
         responses: {
             200: {
-                description: "Success",
-            },
-            400: {
-                description: "Parameters fail",
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UploadResponse },
+                    },
+                },
+                description: "Response post success",
             },
         },
     })

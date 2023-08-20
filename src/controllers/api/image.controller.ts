@@ -11,6 +11,7 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
+import { UploadResponse } from "@/common/responses/upload.response";
 
 const pathImages = config.server.path_images;
 
@@ -127,8 +128,7 @@ export class ImageController extends BaseController {
                             height: {
                                 type: SwaggerDefinitionConstant.Model.Property
                                     .Type.INTEGER,
-                            }
-
+                            },
                         },
                     },
                 },
@@ -136,9 +136,13 @@ export class ImageController extends BaseController {
         },
         responses: {
             200: {
-                description: "Success",
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UploadResponse },
+                    },
+                },
+                description: "Response post success",
             },
-            400: { description: "Parameters fail" },
         },
     })
     async upload(req: Request, res: Response) {
