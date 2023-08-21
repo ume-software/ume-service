@@ -2,7 +2,7 @@ import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotPro
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
-import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
+import { UserInformationResponse } from "@/common/responses/userInformation.response";
 import { postRepository, providerRepository } from "@/repositories";
 import { errorService, identitySystemService } from "@/services";
 import {
@@ -49,7 +49,7 @@ export class ProviderService extends BasePrismaService<
   }
   async getProviderBySlug(userSlug: string) {
     const result = await this.repository.getByIdOrSlug(userSlug);
-    const { avatarUrl, dob, name, gender, slug } = (await identitySystemService.getInfomation(result?.userId!)) as UserInfomationResponse;
+    const { avatarUrl, dob, name, gender, slug } = (await identitySystemService.getInformation(result?.userId!)) as UserInformationResponse;
     (result as any).user = {
       avatarUrl,
       dob,

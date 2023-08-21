@@ -16,6 +16,8 @@ export default {
         logger: process.env["LOGGER"]
             ? JSON.parse(`${process.env["LOGGER"]}`)
             : [],
+        morgan_middleware:
+            process.env["MORGAN_MIDDLEWARE"] == "true" ? true : false,
         run_seed_data: process.env["RUN_SEED_DATA"] == "true" ? true : false,
         path_images: "images",
         path_files: "files",

@@ -1,5 +1,5 @@
 import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
-import { UserInfomationResponse } from "./userInfomation.reponse";
+import { UserInformationResponse } from "./userInformation.response";
 
 @ApiModel({
     description: "Like post response",
@@ -42,9 +42,9 @@ export class LikePostResponse {
     @ApiModelProperty({
         description: "User",
         required: true,
-        model: UserInfomationResponse
+        model: UserInformationResponse
     })
-    user!: UserInfomationResponse;
+    user!: UserInformationResponse;
 
     @ApiModelProperty({
         description: "Post id",

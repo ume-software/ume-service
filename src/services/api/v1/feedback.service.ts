@@ -1,6 +1,6 @@
 
 import { FeedbackBookingRequest } from "@/common/requests/feedbackBooking.request";
-import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
+import { UserInformationResponse } from "@/common/responses/userInformation.response";
 import { bookingHistoryRepository, feedbackRepository } from "@/repositories";
 import { errorService, identitySystemService, utilService } from "@/services";
 import {
@@ -14,7 +14,7 @@ type FeedbackByProviderSkillType = (
     {
         booking?: (
             BookingHistory & {
-                booker?: UserInfomationResponse
+                booker?: UserInformationResponse
             }
         );
     }
@@ -36,8 +36,8 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
         const result = await this.repository.findAndCountAll(query);
         const bookerIds: string[] = result.row.map(item => item.booking?.bookerId) as string[];
         const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInfomationResponse> = requestListIds.row as Array<UserInfomationResponse>;
-        const usersInfo: { [key: string]: UserInfomationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
+        const listUserInfo: Array<UserInformationResponse> = requestListIds.row as Array<UserInformationResponse>;
+        const usersInfo: { [key: string]: UserInformationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
 
         result.row.forEach(item => {
             if (item.booking?.bookerId) {

@@ -2,7 +2,7 @@ import {
   ApiModel,
   ApiModelProperty,
 } from "express-swagger-typescript";
-import { UserInfomationResponse } from "./userInfomation.reponse";
+import { UserInformationResponse } from "./userInformation.response";
 
 @ApiModel({
   description: "Top donate provider response",
@@ -32,7 +32,7 @@ export class TopUserDonateResponse {
 
   @ApiModelProperty({
     description: "User",
-    model: UserInfomationResponse
+    model: UserInformationResponse
   })
-  user!: UserInfomationResponse;
+  user!: UserInformationResponse;
 }

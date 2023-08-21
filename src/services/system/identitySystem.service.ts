@@ -17,7 +17,7 @@ export class IdentitySystemService {
             }
         )
     }
-    async getInfomation(userId: string) {
+    async getInformation(userId: string) {
         return (
             await this.fetchIdentityService().get(`system/user/${userId}`)
         ).data;

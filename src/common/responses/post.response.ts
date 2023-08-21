@@ -1,6 +1,6 @@
 import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
 import { ThumbnailResponse } from "./thumbnail.reponse";
-import { UserInfomationResponse } from "./userInfomation.reponse";
+import { UserInformationResponse } from "./userInformation.response";
 
 @ApiModel({
     description: "Post response",
@@ -43,9 +43,9 @@ export class PostResponse {
     @ApiModelProperty({
         description: "User",
         required: true,
-        model: UserInfomationResponse
+        model: UserInformationResponse
     })
-    user!: UserInfomationResponse;
+    user!: UserInformationResponse;
 
     @ApiModelProperty({
         description: "Content",

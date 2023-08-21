@@ -1,6 +1,6 @@
 import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
 import { ProviderSkillResponse } from "./providerSkill.response";
-import { UserInfomationResponse } from "./userInfomation.reponse";
+import { UserInformationResponse } from "./userInformation.response";
 
 @ApiModel({
   description: "Provider response",
@@ -126,7 +126,7 @@ export class GetProfieProviderBySlugResponse {
       "slug": "christine-gutmann",
       "gender": "MALE"
     },
-    model: UserInfomationResponse
+    model: UserInformationResponse
   })
-  user!: UserInfomationResponse;
+  user!: UserInformationResponse;
 }

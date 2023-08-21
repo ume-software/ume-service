@@ -48,10 +48,6 @@ export class LikePostService extends BasePrismaService<typeof likePostRepository
     if (likeExisted) {
       return likeExisted;
     }
-    console.log({
-      userId,
-      postId
-    })
     return await this.create({
       user: {
         connect: {

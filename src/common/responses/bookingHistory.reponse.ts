@@ -1,6 +1,6 @@
 import { BookingStatus } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
-import { UserInfomationResponse } from "./userInfomation.reponse";
+import { UserInformationResponse } from "./userInformation.response";
 import { ProviderSkillResponse } from "./providerSkill.response";
 
 @ApiModel({
@@ -53,11 +53,11 @@ export class BookingHistoryResponse {
     bookerId!: string;
 
     @ApiModelProperty({
-        description: "Booker Infomation",
+        description: "Booker Information",
         required: false,
-        model: UserInfomationResponse,
+        model: UserInformationResponse,
     })
-    booker?: UserInfomationResponse;
+    booker?: UserInformationResponse;
 
     @ApiModelProperty({
         description: "Id's skill of provider",

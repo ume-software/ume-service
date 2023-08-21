@@ -1,9 +1,9 @@
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-  description: "User Infomation response",
+  description: "User Information response",
 })
-export class UserInfomationResponse {
+export class UserInformationResponse {
   @ApiModelProperty({
     description: "User name",
     required: true,

@@ -8,7 +8,7 @@ import {
     queryPrismaMiddleware,
 } from "./middlewares";
 import { config } from "./configs";
-import cors from 'cors';
+import cors from "cors";
 // import * as swagger from 'decorators';
 import "reflect-metadata";
 import swaggerUi from "swagger-ui-express";
@@ -19,9 +19,11 @@ export class App {
     constructor() {
         this.app = express();
         this.middleware();
-        this.app.use(cors({
-            origin: "*"
-        }));
+        this.app.use(
+            cors({
+                origin: "*",
+            })
+        );
         this.app.set("views", path.join(__dirname, "../views"));
         this.app.set("view engine", "ejs");
 
@@ -47,8 +49,10 @@ export class App {
         this.app.get("/", (_req: Request, res: Response) => {
             res.render("index");
         });
+
         this.app.use(loggerMiddleware.run());
-        this.app.use(morganMiddleware.run());
+        if (config.server.morgan_middleware)
+            this.app.use(morganMiddleware.run());
         this.app.use(api);
     }
     public app: Express;

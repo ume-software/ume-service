@@ -1,6 +1,6 @@
 import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
-import { UserInfomationResponse } from "@/common/responses/userInfomation.reponse";
+import { UserInformationResponse } from "@/common/responses/userInformation.response";
 import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
@@ -42,8 +42,8 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
         }
 
         const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInfomationResponse> = requestListIds.row as Array<UserInfomationResponse>;
-        const usersInfo: { [key: string]: UserInfomationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
+        const listUserInfo: Array<UserInformationResponse> = requestListIds.row as Array<UserInformationResponse>;
+        const usersInfo: { [key: string]: UserInformationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
         bookingLists.forEach(item => {
             if (item.bookerId) {
                 (item as any).booker = usersInfo[item.bookerId];
