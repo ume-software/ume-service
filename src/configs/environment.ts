@@ -1,17 +1,29 @@
 import { readFileSync } from "fs";
-
 require("@/configs/dotenv.config");
 
 export default {
     server: {
         host:
-            process.env["HOST_NAME"] ||
-            `localhost:${process.env["PORT"] || 8765}`,
+            process.env["HOST_NAME"] ??
+            `localhost:${process.env["PORT"] ?? 8765}`,
+        prefixPath: {
+            value: process.env["PREFIX_PATH"]
+                ? `/${process.env["PREFIX_PATH"]}`
+                : "",
+            join: (endpoint: string) => {
+                const basePath = process.env["PREFIX_PATH"]
+                    ? `/${process.env["PREFIX_PATH"]}`
+                    : "";
+                const cleanBasePath = basePath.replace(/\/+$/, "");
+                const cleanEndpoint = endpoint.replace(/^\/+/, "");
+                return `${cleanBasePath}/${cleanEndpoint}`;
+            },
+        },
         protocol: "http",
         debug: true,
         name: "LOCAL NAME",
-        port: process.env["PORT"] || 8765,
-        secret: process.env["SERVER_SECRET"] || "SERVER_SECRET",
+        port: process.env["PORT"] ?? 8765,
+        secret: process.env["SERVER_SECRET"] ?? "SERVER_SECRET",
         is_localhost: process.env["IS_LOCALHOST"] == "true",
         logger: process.env["LOGGER"]
             ? JSON.parse(`${process.env["LOGGER"]}`)
@@ -22,42 +34,42 @@ export default {
         path_images: "images",
         path_files: "files",
         path_audio: "audio",
-        public_key: process.env["PATH_PUBLIC_KEY"] || "public_key.pem",
-        private_key: process.env["PATH_PRIVATE_KEY"] || "public_key.pem",
-        timezone: process.env["DEFAULT_TIME_ZONE"] || "+0700",
+        public_key: process.env["PATH_PUBLIC_KEY"] ?? "public_key.pem",
+        private_key: process.env["PATH_PRIVATE_KEY"] ?? "public_key.pem",
+        timezone: process.env["DEFAULT_TIME_ZONE"] ?? "+0700",
         bookingExpireTimeMillisecond: 5 * 60 * 1000,
     },
     service: {
         identity: {
-            url: process.env["URL_IDENTITY_SERVICE"] || "http://localhost:4000",
+            url: process.env["URL_IDENTITY_SERVICE"] ?? "http://localhost:4000",
             path_public_key:
-                process.env["IDENTITY_PATH_PUBLIC_KEY"] ||
+                process.env["IDENTITY_PATH_PUBLIC_KEY"] ??
                 "identity_public_key.pem",
             path_private_key:
-                process.env["IDENTITY_PATH_PRIVATE_KEY"] ||
+                process.env["IDENTITY_PATH_PRIVATE_KEY"] ??
                 "identity_private_key.pem",
             public_key:
                 readFileSync(
-                    process.env["IDENTITY_PATH_PUBLIC_KEY"] ||
+                    process.env["IDENTITY_PATH_PUBLIC_KEY"] ??
                         "identity_public_key.pem"
-                ) || "",
+                ) ?? "",
         },
     },
     socket: {
-        port: process.env["PORT_SOCKET"] || 8686,
+        port: process.env["PORT_SOCKET"] ?? 8686,
     },
     database: {
         mongo: process.env["MONGODB_URI"],
         sessionSecret: process.env["SESSION_SECRET"],
         defaultPageSize: 50,
         sql: {
-            username: process.env["DB_USER"] || "",
-            password: process.env["DB_PASS"] || "",
-            database: process.env["DB_NAME"] || "",
-            host: process.env["DB_HOST"] || "",
-            timezone: process.env["DB_TIMEZONE"] || "+00:00",
-            port: process.env["DB_PORT"] || 5432,
-            url: process.env["DATABASE_URL_WITH_SCHEMA"] || "",
+            username: process.env["DB_USER"] ?? "",
+            password: process.env["DB_PASS"] ?? "",
+            database: process.env["DB_NAME"] ?? "",
+            host: process.env["DB_HOST"] ?? "",
+            timezone: process.env["DB_TIMEZONE"] ?? "+00:00",
+            port: process.env["DB_PORT"] ?? 5432,
+            url: process.env["DATABASE_URL_WITH_SCHEMA"] ?? "",
             dialect: "postgresql",
         },
     },
@@ -77,6 +89,6 @@ export default {
     },
     firebaseDbURL: process.env["FIREBASE_DATABASE_URL"],
     test: {
-        user_token: process.env["USER_TOKEN_TEST"] || "",
+        user_token: process.env["USER_TOKEN_TEST"] ?? "",
     },
 };

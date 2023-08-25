@@ -93,7 +93,7 @@
     "dotenv-cli": "^7.2.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "express-swagger-typescript": "^1.0.33",
+    "express-swagger-typescript": "^1.0.38",
     "firebase-admin": "^11.10.1",
     "install": "^0.13.0",
     "inversify": "^6.0.1",

@@ -19,22 +19,23 @@ export class App {
     constructor() {
         this.app = express();
         this.middleware();
+
         this.app.use(
             cors({
                 origin: "*",
             })
         );
+
         this.app.set("views", path.join(__dirname, "../views"));
         this.app.set("view engine", "ejs");
 
         this.app.use(
-            "/api-docs",
+            config.server.prefixPath.join("api-docs"),
             swaggerUi.serve,
             swaggerUi.setup(swaggerSpec)
         );
-
         this.app.use(
-            "/static",
+            config.server.prefixPath.join("/static"),
             express.static(path.join(__dirname, "../public"))
         );
         this.app.get("/policy", (_req: Request, res: Response) => {
@@ -46,14 +47,19 @@ export class App {
                 links,
             });
         });
-        this.app.get("/", (_req: Request, res: Response) => {
-            res.render("index");
-        });
+        this.app.get(
+            config.server.prefixPath.value,
+            (_req: Request, res: Response) => {
+                res.render("index", {
+                    prefixPath: config.server.prefixPath.value,
+                });
+            }
+        );
 
         this.app.use(loggerMiddleware.run());
         if (config.server.morgan_middleware)
             this.app.use(morganMiddleware.run());
-        this.app.use(api);
+        this.app.use(config.server.prefixPath.value, api);
     }
     public app: Express;
 
@@ -62,13 +68,16 @@ export class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(parseRequestMiddleware.run());
         this.app.use(queryPrismaMiddleware.run());
-        this.app.use("/system", decryptMiddleware.run());
+        this.app.use(
+            config.server.prefixPath.join("/system"),
+            decryptMiddleware.run()
+        );
     }
 
     public init(port = config.server.port) {
         const httpServer = this.app.listen(port, () => {
             return console.log(
-                `Express is listening at http://localhost:${port}`
+                `Express is listening at http://localhost:${port}${config.server.prefixPath.value}`
             );
         });
         this.app.on("close", async () => {

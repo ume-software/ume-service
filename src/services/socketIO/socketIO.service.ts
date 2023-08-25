@@ -2,8 +2,9 @@ import { Socket, Server } from "socket.io";
 import http from "http";
 
 import { errorService, tokenService } from "..";
+import { config } from "@/configs";
 type Connections = { [userId: string]: Socket };
-export type ServerSocket = Server & { connections?: Connections }
+export type ServerSocket = Server & { connections?: Connections };
 export const SOCKET_EVENTS = {
     CONNECTION: "connection",
     DISCONNECT: "disconnect",
@@ -11,18 +12,17 @@ export const SOCKET_EVENTS = {
 
     // EMIT
     USER_BOOKING_PROVIDER: "USER_BOOKING_PROVIDER",
-    PROVIDER_HANDLED_BOOKING: "PROVIDER_HANDLED_BOOKING"
-
+    PROVIDER_HANDLED_BOOKING: "PROVIDER_HANDLED_BOOKING",
 };
 
 export const SOCKET_EXPRESS = "socketIO";
 export class SocketService {
-
     init(app: http.Server) {
         /** Server Handling */
         this.httpServer = app; // http.createServer(app);
 
         const server = new Server(this.httpServer, {
+            path: config.server.prefixPath.join("/socket/"),
             serveClient: false,
             pingInterval: 10000,
             pingTimeout: 5000,
@@ -41,15 +41,13 @@ export class SocketService {
             SOCKET_EVENTS.CONNECTION,
             this.StartListeners.bind(this)
         );
-        (this.socketServer.sockets as any).userIds = {}
+        (this.socketServer.sockets as any).userIds = {};
         return this.socketServer;
-
     }
     private httpServer: http.Server | undefined;
     private socketServer!: ServerSocket;
-    private socketIdMapUserId!: { [socketId: string]: string }
+    private socketIdMapUserId!: { [socketId: string]: string };
     private async authMiddleware(socket: Socket, next: any) {
-
         const { authorization } = socket.handshake.auth;
 
         try {
@@ -60,7 +58,6 @@ export class SocketService {
             }
             const result: any = tokenService.decodeToken(`${token}`);
             const { id: userId } = result;
-
 
             (this.socketServer.connections as Connections)[userId] = socket;
             this.socketIdMapUserId[socket.id] = userId;
@@ -79,7 +76,13 @@ export class SocketService {
 
     private StartListeners(socket: Socket) {
         const userId = this.socketIdMapUserId[socket.id];
-        console.info("Connect received from: [", socket.id, "] --- [", userId, "]");
+        console.info(
+            "Connect received from: [",
+            socket.id,
+            "] --- [",
+            userId,
+            "]"
+        );
         socket.on(
             "Client-sent-message",
             this.handleSocketEvent(this.onClientSentMessage, socket)
@@ -107,17 +110,23 @@ export class SocketService {
                 delete this.socketServer.connections[userId];
             }
 
-            delete this.socketIdMapUserId[socket.id]
+            delete this.socketIdMapUserId[socket.id];
         }
-        console.info("Disconnect received from: [", socket.id, "] --- [", userId, "]");
+        console.info(
+            "Disconnect received from: [",
+            socket.id,
+            "] --- [",
+            userId,
+            "]"
+        );
     }
 
     public emitUserBookingProvider(socket: Socket, data: any) {
-        console.log("USER_BOOKING_PROVIDER ===> ", data)
-        socket.emit(SOCKET_EVENTS.USER_BOOKING_PROVIDER, data)
+        console.log("USER_BOOKING_PROVIDER ===> ", data);
+        socket.emit(SOCKET_EVENTS.USER_BOOKING_PROVIDER, data);
     }
     public emitProviderHandledBooking(socket: Socket, data: any) {
-        console.log("PROVIDER_HANDLED_BOOKING ===> ", data)
-        socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data)
+        console.log("PROVIDER_HANDLED_BOOKING ===> ", data);
+        socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data);
     }
 }
