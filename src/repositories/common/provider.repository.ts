@@ -1,42 +1,45 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
+import {
+    BasePrismaRepository,
+    PrismaTransation,
+} from "../base/basePrisma.repository";
 import { BookingStatus, Prisma, Provider } from "@prisma/client";
 import moment from "moment";
 import { config } from "@/configs";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
+import { utilService } from "@/services";
 
 export class ProviderRepository extends BasePrismaRepository {
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-    row: Provider[];
-    count: number;
-  }> {
-    const [row, count] = await this.prisma.$transaction([
-      this.prisma.provider.findMany(query),
-      this.prisma.provider.count({
-        where: query?.where,
-      }),
-    ]);
-    return {
-      row,
-      count,
-    };
-  }
+    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
+        row: Provider[];
+        count: number;
+    }> {
+        const [row, count] = await this.prisma.$transaction([
+            this.prisma.provider.findMany(query),
+            this.prisma.provider.count({
+                where: query?.where,
+            }),
+        ]);
+        return {
+            row,
+            count,
+        };
+    }
 
-  async filterAndCountAllProvider(option: IOptionFilterProvider, skip: number | undefined, take: number | undefined) {
-    const { endCost, gender, name, skillId, startCost, order } = option;
-    const orderByQuery = order?.map((obj: { [key: string]: string }) => {
-      const key = Object.keys(obj)[0];
-      const value = obj[key!];
-      return `${key} ${value}`;
-    }).join(', ');
-    const nowTimehhmm = moment()
-      .utcOffset(config.server.timezone)
-      .format("HH:mm");
-    const query = `
+    async filterAndCountAllProvider(
+        option: IOptionFilterProvider,
+        skip: number | undefined,
+        take: number | undefined
+    ) {
+        const { endCost, gender, name, skillId, startCost, order } = option;
+        const nowTimehhmm = moment()
+            .utcOffset(config.server.timezone)
+            .format("HH:mm");
+        const query = `
       WITH relevant_booking_costs AS (
         SELECT
           provider_skill_id,
@@ -116,31 +119,55 @@ export class ProviderRepository extends BasePrismaRepository {
         ) AS psf ON psf.providerSkillId = ps.id
         WHERE
           ps.deleted_at IS NULL
-          ${startCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) >= ${startCost}` : ""}
-          ${endCost != undefined ? `AND COALESCE(bc.amount, ps.default_cost) < ${endCost}` : ""}
+          ${
+              startCost != undefined
+                  ? `AND COALESCE(bc.amount, ps.default_cost) >= ${startCost}`
+                  : ""
+          }
+          ${
+              endCost != undefined
+                  ? `AND COALESCE(bc.amount, ps.default_cost) < ${endCost}`
+                  : ""
+          }
           ${skillId != undefined ? `AND s.id = '${skillId}'` : ""}
           ${name != undefined ? `AND p.name like '%${name}%'` : ""}
           ${gender != undefined ? `AND u.gender = '${gender}'` : ""}
           AND bc.amount IS NULL
       ) AS pd
-      `
-    const row = await this.prisma.$queryRawUnsafe(
-      `
+      `;
+        let orderQueryRaw = "";
+        if (order && order.length) {
+            const orderClauses = order.map((orderItem) => {
+                const key = Object.keys(orderItem)[0]!;
+                const value = orderItem[key];
+                const newKey = utilService.camelCaseToSnakeCase(key);
+                return `${newKey} ${value}`;
+            });
+            orderQueryRaw = orderClauses.join(", ");
+        }
+        const row = await this.prisma.$queryRawUnsafe(
+            `
       ${query} 
-      ${order != undefined && order.length ? `ORDER BY ${orderByQuery}` : ""}
+      ${orderQueryRaw ? `ORDER BY ${orderQueryRaw}` : ""}
       ${take != undefined ? `LIMIT ${take}` : ""}
       ${skip != undefined ? `OFFSET ${skip}` : ""}
       `
-    )
-    const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM (${query}) AS subquery`)
-    return {
-      row,
-      count: Number(countResult[0].count)
+        );
+        const countResult: any = await this.prisma.$queryRawUnsafe(
+            `SELECT COUNT(*) as count FROM (${query}) AS subquery`
+        );
+        return {
+            row,
+            count: Number(countResult[0].count),
+        };
     }
-  }
 
-  async filterAndCountAllHotProvider(intervalDays: number, skip: number | undefined, take: number | undefined) {
-    const getListIdsQuery = `
+    async filterAndCountAllHotProvider(
+        intervalDays: number,
+        skip: number | undefined,
+        take: number | undefined
+    ) {
+        const getListIdsQuery = `
       SELECT
       p.id
       FROM
@@ -154,23 +181,27 @@ export class ProviderRepository extends BasePrismaRepository {
       ORDER BY
         COALESCE(COUNT(b.id), 0) DESC
     `;
-    let idsWhere = "";
-    let idsOrder = "";
-    const listIds = (await this.prisma.$queryRawUnsafe(`
+        let idsWhere = "";
+        let idsOrder = "";
+        const listIds = (await this.prisma.$queryRawUnsafe(`
     ${getListIdsQuery} 
     ${take != undefined ? `LIMIT ${take}` : ""}
     ${skip != undefined ? `OFFSET ${skip}` : ""}
-    `)) as any[]
-    const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM (${getListIdsQuery}) AS subquery`)
-    listIds.forEach((item, index) => {
-      idsWhere += `'${item.id}' ${index < listIds.length - 1 ? "," : ""}\n`;
-      idsOrder += `WHEN '${item.id}' THEN ${index + 1} \n`
-    })
-    idsOrder += `ELSE ${listIds.length + 1}`
-    const nowTimehhmm = moment()
-      .utcOffset(config.server.timezone)
-      .format("HH:mm");
-    const query = `
+    `)) as any[];
+        const countResult: any = await this.prisma.$queryRawUnsafe(
+            `SELECT COUNT(*) as count FROM (${getListIdsQuery}) AS subquery`
+        );
+        listIds.forEach((item, index) => {
+            idsWhere += `'${item.id}' ${
+                index < listIds.length - 1 ? "," : ""
+            }\n`;
+            idsOrder += `WHEN '${item.id}' THEN ${index + 1} \n`;
+        });
+        idsOrder += `ELSE ${listIds.length + 1}`;
+        const nowTimehhmm = moment()
+            .utcOffset(config.server.timezone)
+            .format("HH:mm");
+        const query = `
     SELECT *
     FROM (
         SELECT DISTINCT ON (p.id)
@@ -245,114 +276,113 @@ export class ProviderRepository extends BasePrismaRepository {
         CASE id
         ${idsOrder}
         END;
-  `
-    const row = await this.prisma.$queryRawUnsafe(query)
-    return {
-      row,
-      count: Number(countResult[0].count)
+  `;
+        const row = await this.prisma.$queryRawUnsafe(query);
+        return {
+            row,
+            count: Number(countResult[0].count),
+        };
     }
-  }
-  async getByIdOrSlug(slug: string): Promise<Provider | null> {
-    const nowTimehhmm = moment()
-      .utcOffset(config.server.timezone)
-      .format("HH:mm");
-    return await this.prisma.provider.findFirst({
-      where: {
-        OR: [{
-          id: slug
-        },
-        {
-          slug: slug
-        }]
-      },
-      include: {
-        providerSkills: {
-          where: {
-            deletedAt: null,
-            skill: {
-              deletedAt: null
-            }
-          },
-          include: {
-            bookingCosts: {
-              where: {
-                deletedAt: null,
-                startTimeOfDay: {
-                  lte: nowTimehhmm
-                },
-                endTimeOfDay: {
-                  gte: nowTimehhmm
-                },
-              },
-              take: 1
+    async getByIdOrSlug(slug: string): Promise<Provider | null> {
+        const nowTimehhmm = moment()
+            .utcOffset(config.server.timezone)
+            .format("HH:mm");
+        return await this.prisma.provider.findFirst({
+            where: {
+                OR: [
+                    {
+                        id: slug,
+                    },
+                    {
+                        slug: slug,
+                    },
+                ],
             },
-            skill: true
-          },
-          orderBy: {
-            position: "asc"
-          }
-        },
-      }
-    })
+            include: {
+                providerSkills: {
+                    where: {
+                        deletedAt: null,
+                        skill: {
+                            deletedAt: null,
+                        },
+                    },
+                    include: {
+                        bookingCosts: {
+                            where: {
+                                deletedAt: null,
+                                startTimeOfDay: {
+                                    lte: nowTimehhmm,
+                                },
+                                endTimeOfDay: {
+                                    gte: nowTimehhmm,
+                                },
+                            },
+                            take: 1,
+                        },
+                        skill: true,
+                    },
+                    orderBy: {
+                        position: "asc",
+                    },
+                },
+            },
+        });
+    }
 
-  }
+    async updateById(
+        id: string,
+        bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Provider> {
+        return await tx.provider.update({
+            data: bookingCostUpdateInput,
+            where: { id },
+        });
+    }
 
+    async updateMany(
+        providerUpdateInput: Prisma.ProviderUpdateInput,
+        query: ICrudOptionPrisma,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
+        return await tx.provider.updateMany({
+            data: providerUpdateInput,
+            where: query.where,
+        });
+    }
 
+    async create(
+        providerCreateInput: Prisma.ProviderCreateInput,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Provider> {
+        return await tx.provider.create({ data: providerCreateInput });
+    }
 
-  async updateById(
-    id: string,
-    bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Provider> {
-    return await tx.provider.update({
-      data: bookingCostUpdateInput,
-      where: { id },
-    });
-  }
+    async findOne(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Provider | null> {
+        return await tx.provider.findFirst(query);
+    }
 
-  async updateMany(
-    providerUpdateInput: Prisma.ProviderUpdateInput,
-    query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
-    return await tx.provider.updateMany({
-      data: providerUpdateInput,
-      where: query.where,
-    });
-  }
+    async findMany(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Provider[]> {
+        return await tx.provider.findMany(query);
+    }
 
-  async create(
-    providerCreateInput: Prisma.ProviderCreateInput,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Provider> {
-    return await tx.provider.create({ data: providerCreateInput });
-  }
+    async deleteById(
+        id: string,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Provider> {
+        return await tx.provider.delete({ where: { id } });
+    }
 
-  async findOne(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Provider | null> {
-    return await tx.provider.findFirst(query);
-  }
-
-  async findMany(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Provider[]> {
-    return await tx.provider.findMany(query);
-  }
-
-  async deleteById(
-    id: string,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Provider> {
-    return await tx.provider.delete({ where: { id } });
-  }
-
-  async deleteMany(
-    providerWhereInput: Prisma.ProviderWhereInput,
-    tx: PrismaTransation = this.prisma
-  ): Promise<Prisma.BatchPayload> {
-    return await tx.provider.deleteMany({ where: providerWhereInput });
-  }
+    async deleteMany(
+        providerWhereInput: Prisma.ProviderWhereInput,
+        tx: PrismaTransation = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.provider.deleteMany({ where: providerWhereInput });
+    }
 }
