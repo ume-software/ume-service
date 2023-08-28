@@ -1,113 +1,151 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
+import { UpdateProviderProfileRequest } from "@/common/requests/updateProviderProfile.request";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { UserInformationResponse } from "@/common/responses/userInformation.response";
 import { postRepository, providerRepository } from "@/repositories";
 import { errorService, identitySystemService } from "@/services";
 import {
-  BasePrismaService,
-  ICrudOptionPrisma,
+    BasePrismaService,
+    ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { Prisma, Provider } from "@prisma/client";
 
-
 export class ProviderService extends BasePrismaService<
-  typeof providerRepository
+    typeof providerRepository
 > {
-  constructor() {
-    super(providerRepository);
-  }
-  async filterProvider(
-    option: IOptionFilterProvider,
-    query: ICrudOptionPrisma
-  ) {
-    // const { skillId, startCost, endCost, name, gender } = option;
-    return await this.repository.filterAndCountAllProvider(option, query?.skip, query?.take);
-  }
-  async filterHotProvider(
-    option: IOptionFilterHotProvider,
-    query: ICrudOptionPrisma
-  ) {
-    const { intervalDays } = option;
-    return await this.repository.filterAndCountAllHotProvider(intervalDays, query?.skip, query?.take);
-  }
-  async findAndCountAll(query: ICrudOptionPrisma) {
-    if (!query.include) query.include = {};
-    query.include = {
-      ...query.include,
-      providerSkills: {
-        include: {
-          bookingCosts: true,
-        },
-      },
-    };
-    const result = await this.repository.findAndCountAll(query);
-
-    return result;
-  }
-  async getProviderBySlug(userSlug: string) {
-    const result = await this.repository.getByIdOrSlug(userSlug);
-    const { avatarUrl, dob, name, gender, slug } = (await identitySystemService.getInformation(result?.userId!)) as UserInformationResponse;
-    (result as any).user = {
-      avatarUrl,
-      dob,
-      name,
-      slug,
-      gender
+    constructor() {
+        super(providerRepository);
     }
-    return result;
-
-  }
-
-  async getAblumByProviderSlug(userSlug: string, queryInfoPrisma: ICrudOptionPrisma) {
-    const { skip, take } = queryInfoPrisma
-    const provider = await this.repository.findOne({
-      where: {
-        OR: [{
-          id: userSlug
-        },
-        {
-          slug: userSlug
-        }]
-      },
-    });
-    return await postRepository.getUrlThumnailsByUserIdAndUrlType(provider?.userId!, "IMAGE", take, skip);
-  }
-  async becomeProvider(
-    userId: string,
-    becomeProviderRequest: BecomeProviderRequest
-  ): Promise<BecomeProviderResponse> {
-    const preExistingProvider = await this.repository.findOne({
-      where: {
-        userId,
-      },
-    });
-    if (preExistingProvider) {
-      throw errorService.database.queryFail(
-        ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER
-      );
+    async filterProvider(
+        option: IOptionFilterProvider,
+        query: ICrudOptionPrisma
+    ) {
+        // const { skillId, startCost, endCost, name, gender } = option;
+        return await this.repository.filterAndCountAllProvider(
+            option,
+            query?.skip,
+            query?.take
+        );
     }
-    const result = await this.repository.create({
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
-      ...becomeProviderRequest,
-    });
+    async filterHotProvider(
+        option: IOptionFilterHotProvider,
+        query: ICrudOptionPrisma
+    ) {
+        const { intervalDays } = option;
+        return await this.repository.filterAndCountAllHotProvider(
+            intervalDays,
+            query?.skip,
+            query?.take
+        );
+    }
+    async findAndCountAll(query: ICrudOptionPrisma) {
+        if (!query.include) query.include = {};
+        query.include = {
+            ...query.include,
+            providerSkills: {
+                include: {
+                    bookingCosts: true,
+                },
+            },
+        };
+        const result = await this.repository.findAndCountAll(query);
 
-    return result as BecomeProviderResponse;
-  }
+        return result;
+    }
+    async getProviderBySlug(userSlug: string) {
+        const result = await this.repository.getByIdOrSlug(userSlug);
+        const { avatarUrl, dob, name, gender, slug } =
+            (await identitySystemService.getInformation(
+                result?.userId!
+            )) as UserInformationResponse;
+        (result as any).user = {
+            avatarUrl,
+            dob,
+            name,
+            slug,
+            gender,
+        };
+        return result;
+    }
 
-  async create(
-    providerCreateInput: Prisma.ProviderCreateInput
-  ): Promise<Provider> {
-    return await this.repository.create(providerCreateInput);
-  }
+    async getAblumByProviderSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const { skip, take } = queryInfoPrisma;
+        const provider = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        return await postRepository.getUrlThumnailsByUserIdAndUrlType(
+            provider?.userId!,
+            "IMAGE",
+            take,
+            skip
+        );
+    }
+    async becomeProvider(
+        userId: string,
+        becomeProviderRequest: BecomeProviderRequest
+    ): Promise<BecomeProviderResponse> {
+        const preExistingProvider = await this.repository.findOne({
+            where: {
+                userId,
+            },
+        });
+        if (preExistingProvider) {
+            throw errorService.database.queryFail(
+                ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER
+            );
+        }
+        const result = await this.repository.create({
+            user: {
+                connect: {
+                    id: userId,
+                },
+            },
+            ...becomeProviderRequest,
+        });
 
-  async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
-    return await this.repository.findOne(query);
-  }
+        return result as BecomeProviderResponse;
+    }
+
+    async userUpdateProviderProfile(
+        updateProviderProfileRequest: UpdateProviderProfileRequest
+    ) {
+        const provider = await this.repository.findOne({
+            where: {
+                userId: updateProviderProfileRequest.userId,
+            },
+        });
+        if (!provider) {
+            throw errorService.auth.errorCustom(
+                ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
+            );
+        }
+        return await this.repository.updateById(
+            provider.id,
+            updateProviderProfileRequest
+        );
+    }
+    async create(
+        providerCreateInput: Prisma.ProviderCreateInput
+    ): Promise<Provider> {
+        return await this.repository.create(providerCreateInput);
+    }
+
+    async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
+        return await this.repository.findOne(query);
+    }
 }

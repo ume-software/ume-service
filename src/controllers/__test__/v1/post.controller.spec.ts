@@ -133,5 +133,6 @@ describe("watched Post API", () => {
         expect(responseWatchedPost.body).toHaveProperty("id");
         expect(responseWatchedPost.body).toHaveProperty("userId");
         expect(responseWatchedPost.body).toHaveProperty("postId");
+        expect(responseWatchedPost.body.postId).toBe(post.id);
     });
 });

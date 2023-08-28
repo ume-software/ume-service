@@ -331,11 +331,11 @@ export class ProviderRepository extends BasePrismaRepository {
 
     async updateById(
         id: string,
-        bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+        providerUpdateInput: Prisma.ProviderUpdateInput,
         tx: PrismaTransation = this.prisma
     ): Promise<Provider> {
         return await tx.provider.update({
-            data: bookingCostUpdateInput,
+            data: providerUpdateInput,
             where: { id },
         });
     }

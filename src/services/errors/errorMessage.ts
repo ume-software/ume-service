@@ -76,7 +76,8 @@ export const ERROR_MESSAGE = {
         statusCode: 400,
     },
     THIS_ACCOUNT_IS_INAPP: {
-        message: "This account is an account logged in through username and password.",
+        message:
+            "This account is an account logged in through username and password.",
         codeNumber: 20004,
         statusCode: 400,
     },
@@ -138,6 +139,11 @@ export const ERROR_MESSAGE = {
         codeNumber: 20301,
         statusCode: 400,
     },
+    YOU_HAVE_NOT_BECOME_A_PROVIDER: {
+        message: "You have not become a provider.",
+        codeNumber: 20302,
+        statusCode: 400,
+    },
     // Provider Skill
     THIS_PROVIDER_SKILL_IS_EXISTED: {
         message: "This skill already exists in the provider's skill list.",
@@ -172,11 +178,10 @@ export const ERROR_MESSAGE = {
         codeNumber: 20700,
         statusCode: 400,
     },
-    // Feedback 
+    // Feedback
     THIS_BOOKING_HAS_BEEN_FEEDBACK: {
         message: "this booking has been feedbacked",
         codeNumber: 20800,
         statusCode: 400,
-    }
-
+    },
 };
