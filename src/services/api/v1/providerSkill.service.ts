@@ -266,4 +266,11 @@ export class ProviderSkillService extends BasePrismaService<
     async findOne(query?: ICrudOptionPrisma): Promise<ProviderSkill | null> {
         return await this.repository.findOne(query);
     }
+
+    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
+        row: ProviderSkill[];
+        count: number;
+    }> {
+        return await this.repository.findAndCountAll(query);
+    }
 }

@@ -1,5 +1,6 @@
 import { ProviderSkillRequest } from "@/common/requests/providerSkill.request";
 import { UpdateProviderSkillRequest } from "@/common/requests/updateProviderSkill.request";
+import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
 import { FeedbackPagingResponse } from "@/common/responses/feedbackPaging.response";
 import {
     BaseController,
@@ -36,6 +37,7 @@ export class ProviderSkillController extends BaseController {
     service: ProviderSkillService;
 
     customRouting() {
+        this.router.get("/",this.route(this.getProviderSkill))
         this.router.get(
             "/:id/feedback",
             this.route(this.getFeedbackByProviderSkill)
@@ -50,6 +52,33 @@ export class ProviderSkillController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.updateProviderSkill)
         );
+    }
+    
+    @ApiOperationGet({
+        path: "",
+        operationId: "getProviderSkill",
+        description: "Get all skills",
+        summary: "Get all skills",
+        parameters: {
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: CoinHistoryPagingResponse },
+                    },
+                },
+                description: "Filter Provider Skill success",
+            },
+        },
+    })
+    async getProviderSkill(req: Request, res: Response) {
+        let queryInfoPrisma = req.queryInfoPrisma || {};
+        const result = await this.service.findAndCountAll(
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationGet({
