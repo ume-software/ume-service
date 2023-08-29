@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
     BasePrismaRepository,
-    PrismaTransation,
+    PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { BookingStatus, Prisma, Provider } from "@prisma/client";
 import moment from "moment";
@@ -332,7 +332,7 @@ export class ProviderRepository extends BasePrismaRepository {
     async updateById(
         id: string,
         providerUpdateInput: Prisma.ProviderUpdateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Provider> {
         return await tx.provider.update({
             data: providerUpdateInput,
@@ -343,7 +343,7 @@ export class ProviderRepository extends BasePrismaRepository {
     async updateMany(
         providerUpdateInput: Prisma.ProviderUpdateInput,
         query: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
         return await tx.provider.updateMany({
             data: providerUpdateInput,
@@ -353,35 +353,35 @@ export class ProviderRepository extends BasePrismaRepository {
 
     async create(
         providerCreateInput: Prisma.ProviderCreateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Provider> {
         return await tx.provider.create({ data: providerCreateInput });
     }
 
     async findOne(
         query?: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Provider | null> {
         return await tx.provider.findFirst(query);
     }
 
     async findMany(
         query?: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Provider[]> {
         return await tx.provider.findMany(query);
     }
 
     async deleteById(
         id: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Provider> {
         return await tx.provider.delete({ where: { id } });
     }
 
     async deleteMany(
         providerWhereInput: Prisma.ProviderWhereInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.BatchPayload> {
         return await tx.provider.deleteMany({ where: providerWhereInput });
     }

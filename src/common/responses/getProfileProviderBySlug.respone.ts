@@ -5,7 +5,7 @@ import { UserInformationResponse } from "./userInformation.response";
 @ApiModel({
   description: "Provider response",
 })
-export class GetProfieProviderBySlugResponse {
+export class GetProfileProviderBySlugResponse {
   @ApiModelProperty({
     description: "Id's provider",
     required: true,

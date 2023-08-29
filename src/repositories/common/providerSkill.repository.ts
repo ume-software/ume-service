@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
     BasePrismaRepository,
-    PrismaTransation,
+    PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, ProviderSkill } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     async updateById(
         id: string,
         bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<ProviderSkill> {
         return await tx.providerSkill.update({
             data: bookingCostUpdateInput,
@@ -40,7 +40,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     async updateMany(
         providerSkillUpdateInput: Prisma.ProviderSkillUpdateInput,
         query: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
         return await tx.providerSkill.updateMany({
             data: providerSkillUpdateInput,
@@ -50,7 +50,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
 
     async create(
         providerSkillCreateInput: Prisma.ProviderSkillCreateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<ProviderSkill> {
         return await tx.providerSkill.create({
             data: providerSkillCreateInput,
@@ -59,7 +59,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
 
     async countByProviderId(
         providerId: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<number> {
         return await tx.providerSkill.count({
             where: {
@@ -70,7 +70,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
 
     async findOne(
         query?: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<ProviderSkill | null> {
         return await tx.providerSkill.findFirst(query);
     }
@@ -78,7 +78,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     async findOneIncludeBookingCostInSpecialTime(
         where: any,
         nowTimehhmm: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ) {
         const timeOfDateBookingCostConditon = [
             {
@@ -110,21 +110,21 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     }
     async findMany(
         query?: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<ProviderSkill[]> {
         return await tx.providerSkill.findMany(query);
     }
 
     async deleteById(
         id: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<ProviderSkill> {
         return await tx.providerSkill.delete({ where: { id } });
     }
 
     async deleteMany(
         providerSkillWhereInput: Prisma.ProviderSkillWhereInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.BatchPayload> {
         return await tx.providerSkill.deleteMany({
             where: providerSkillWhereInput,

@@ -70,8 +70,28 @@ export class ProviderService extends BasePrismaService<
         };
         return result;
     }
+    async getPersonalProfileByUserId(userId: string) {
+        const result = await this.repository.getByIdOrSlug(userId);
+        if (!result) {
+            throw errorService.auth.errorCustom(
+                ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
+            );
+        }
+        const { avatarUrl, dob, name, gender, slug } =
+            (await identitySystemService.getInformation(
+                userId
+            )) as UserInformationResponse;
+        (result as any).user = {
+            avatarUrl,
+            dob,
+            name,
+            slug,
+            gender,
+        };
+        return result;
+    }
 
-    async getAblumByProviderSlug(
+    async getAlbumByProviderSlug(
         userSlug: string,
         queryInfoPrisma: ICrudOptionPrisma
     ) {

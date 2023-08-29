@@ -2,7 +2,7 @@ import prisma from "@/models/base.prisma";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
-export type PrismaTransation = Omit<
+export type PrismaTransaction = Omit<
   PrismaClient<
     Prisma.PrismaClientOptions,
     never,

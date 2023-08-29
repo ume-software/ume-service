@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, LikePost } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class LikePostRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     likePostUpdateInput: Prisma.LikePostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.likePost.update({ data: likePostUpdateInput, where: { id } });
   }
@@ -37,7 +37,7 @@ export class LikePostRepository extends BasePrismaRepository {
   async update(
     likePostUpdateInput: Prisma.LikePostUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.likePost.update({
       data: likePostUpdateInput,
@@ -47,35 +47,35 @@ export class LikePostRepository extends BasePrismaRepository {
 
   async create(
     likePostCreateInput: Prisma.LikePostCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<LikePost> {
     return await tx.likePost.create({ data: likePostCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<LikePost | null> {
     return await tx.likePost.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<LikePost[]> {
     return await tx.likePost.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<LikePost> {
     return await tx.likePost.delete({ where: { id } });
   }
 
   async deleteMany(
     LikePostWhereInput: Prisma.LikePostWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.likePost.deleteMany({ where: LikePostWhereInput });
   }

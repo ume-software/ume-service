@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, Post } from "@prisma/client";
 import { EUrlType } from "@/enums/urlType";
@@ -241,7 +241,7 @@ export class PostRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     postUpdateInput: Prisma.PostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.post.update({ data: postUpdateInput, where: { id } });
   }
@@ -249,7 +249,7 @@ export class PostRepository extends BasePrismaRepository {
   async update(
     postUpdateInput: Prisma.PostUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.post.update({
       data: postUpdateInput,
@@ -259,14 +259,14 @@ export class PostRepository extends BasePrismaRepository {
 
   async create(
     postCreateInput: Prisma.PostCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Post> {
     return await tx.post.create({ data: postCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Post | null> {
     return await tx.post.findFirst(query);
   }
@@ -274,7 +274,7 @@ export class PostRepository extends BasePrismaRepository {
 
   async findById(
     postId: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<PostAndCountLikeAndCountCommentType | null> {
     return await tx.post.findFirst({
       where: {
@@ -294,21 +294,21 @@ export class PostRepository extends BasePrismaRepository {
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Post[]> {
     return await tx.post.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Post> {
     return await tx.post.delete({ where: { id } });
   }
 
   async deleteMany(
     postWhereInput: Prisma.PostWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.post.deleteMany({ where: postWhereInput });
   }

@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, CommentPost } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class CommentPostRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     commentPostUpdateInput: Prisma.CommentPostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.commentPost.update({ data: commentPostUpdateInput, where: { id } });
   }
@@ -37,7 +37,7 @@ export class CommentPostRepository extends BasePrismaRepository {
   async update(
     commentPostUpdateInput: Prisma.CommentPostUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.commentPost.update({
       data: commentPostUpdateInput,
@@ -47,35 +47,35 @@ export class CommentPostRepository extends BasePrismaRepository {
 
   async create(
     commentPostCreateInput: Prisma.CommentPostCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CommentPost> {
     return await tx.commentPost.create({ data: commentPostCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CommentPost | null> {
     return await tx.commentPost.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CommentPost[]> {
     return await tx.commentPost.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CommentPost> {
     return await tx.commentPost.delete({ where: { id } });
   }
 
   async deleteMany(
     CommentPostWhereInput: Prisma.CommentPostWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.commentPost.deleteMany({ where: CommentPostWhereInput });
   }

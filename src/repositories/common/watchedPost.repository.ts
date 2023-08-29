@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, WatchedPost } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class WatchedPostRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     watchedPostUpdateInput: Prisma.WatchedPostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.watchedPost.update({ data: watchedPostUpdateInput, where: { id } });
   }
@@ -37,7 +37,7 @@ export class WatchedPostRepository extends BasePrismaRepository {
   async update(
     watchedPostUpdateInput: Prisma.WatchedPostUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.watchedPost.update({
       data: watchedPostUpdateInput,
@@ -47,35 +47,35 @@ export class WatchedPostRepository extends BasePrismaRepository {
 
   async create(
     watchedPostCreateInput: Prisma.WatchedPostCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<WatchedPost> {
     return await tx.watchedPost.create({ data: watchedPostCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<WatchedPost | null> {
     return await tx.watchedPost.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<WatchedPost[]> {
     return await tx.watchedPost.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<WatchedPost> {
     return await tx.watchedPost.delete({ where: { id } });
   }
 
   async deleteMany(
     watchedPostWhereInput: Prisma.WatchedPostWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.watchedPost.deleteMany({ where: watchedPostWhereInput });
   }

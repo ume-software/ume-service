@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, Skill } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class SkillRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     skillUpdateInput: Prisma.SkillUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.skill.update({ data: skillUpdateInput, where: { id } });
   }
@@ -37,7 +37,7 @@ export class SkillRepository extends BasePrismaRepository {
   async update(
     skillUpdateInput: Prisma.SkillUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.skill.update({
       data: skillUpdateInput,
@@ -47,35 +47,35 @@ export class SkillRepository extends BasePrismaRepository {
 
   async create(
     skillCreateInput: Prisma.SkillCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Skill> {
     return await tx.skill.create({ data: skillCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Skill | null> {
     return await tx.skill.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Skill[]> {
     return await tx.skill.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Skill> {
     return await tx.skill.delete({ where: { id } });
   }
 
   async deleteMany(
     skillWhereInput: Prisma.SkillWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.skill.deleteMany({ where: skillWhereInput });
   }

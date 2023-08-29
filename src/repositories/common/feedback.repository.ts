@@ -1,5 +1,5 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import { BasePrismaRepository, PrismaTransation } from "../base/basePrisma.repository";
+import { BasePrismaRepository, PrismaTransaction } from "../base/basePrisma.repository";
 import { Prisma, Feedback, BookingHistory } from "@prisma/client";
 
 export class FeedbackRepository extends BasePrismaRepository {
@@ -28,7 +28,7 @@ export class FeedbackRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<(Feedback & {
     booking?: BookingHistory;
   })> {
@@ -41,7 +41,7 @@ export class FeedbackRepository extends BasePrismaRepository {
   async updateMany(
     feedbackUpdateInput: Prisma.FeedbackUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
     return await tx.feedback.updateMany({
       data: feedbackUpdateInput,
@@ -51,7 +51,7 @@ export class FeedbackRepository extends BasePrismaRepository {
 
   async create(
     feedbackCreateInput: Prisma.FeedbackCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<(Feedback & {
     booking?: BookingHistory;
   })> {
@@ -60,7 +60,7 @@ export class FeedbackRepository extends BasePrismaRepository {
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<(Feedback & {
     booking?: BookingHistory;
   }) | null> {
@@ -69,7 +69,7 @@ export class FeedbackRepository extends BasePrismaRepository {
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<(Feedback & {
     booking?: BookingHistory;
   })[]> {
@@ -78,7 +78,7 @@ export class FeedbackRepository extends BasePrismaRepository {
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<(Feedback & {
     booking?: BookingHistory;
   })> {
@@ -87,7 +87,7 @@ export class FeedbackRepository extends BasePrismaRepository {
 
   async deleteMany(
     feedbackWhereInput: Prisma.FeedbackWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.feedback.deleteMany({ where: feedbackWhereInput });
   }

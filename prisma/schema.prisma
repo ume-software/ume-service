@@ -72,6 +72,7 @@ model ProviderSkill {
   skill            Skill            @relation(fields: [skillId], references: [id])
   skillId          String           @map("skill_id")
   defaultCost      Float            @map("default_cost")
+  description       String?          @map("description") @db.Text()
   position         Int              @map("position")
   bookingCosts     BookingCost[]
   bookingHistories BookingHistory[]
@@ -129,13 +130,13 @@ model BookingHistory {
 }
 
 model Feedback {
-  id          String         @id @default(uuid()) @map("id")
-  createdAt   DateTime?      @default(now()) @map("created_at")
-  updatedAt   DateTime?      @updatedAt @map("updated_at")
-  deletedAt   DateTime?      @map("deleted_at")
-  booking     BookingHistory @relation(fields: [bookingId], references: [id])
-  bookingId   String         @map("booking_id")
-  content     String?        @map("content")
+  id         String         @id @default(uuid()) @map("id")
+  createdAt  DateTime?      @default(now()) @map("created_at")
+  updatedAt  DateTime?      @updatedAt @map("updated_at")
+  deletedAt  DateTime?      @map("deleted_at")
+  booking    BookingHistory @relation(fields: [bookingId], references: [id])
+  bookingId  String         @map("booking_id")
+  content    String?        @map("content")
   amountStar Int?           @map("amount_star")
 
   @@map("feedback")

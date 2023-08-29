@@ -6,9 +6,9 @@ import {
 import { BookingCostProviderSkillRequest } from "./bookingCostProviderSkill.request";
 
 @ApiModel({
-    description: "Provider skill request",
+    description: "Update provider skill request",
 })
-export class ProviderSkillRequest {
+export class UpdateProviderSkillRequest {
     @ApiModelProperty({
         description: "Skill Id",
         required: true,
@@ -31,7 +31,7 @@ export class ProviderSkillRequest {
     description!: string;
 
     @ApiModelProperty({
-        description: "Booking Cost",
+        description: "Create booking cost",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: BookingCostProviderSkillRequest,
@@ -44,4 +44,29 @@ export class ProviderSkillRequest {
         ],
     })
     createBookingCosts!: BookingCostProviderSkillRequest[];
+
+    @ApiModelProperty({
+        description: "Update booking cost",
+        required: false,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: BookingCostProviderSkillRequest,
+        example: [
+            {
+                id: "42ac81c2-1815-45f7-b598-412487161e1f",
+                startTimeOfDay: "09:00",
+                endTimeOfDay: "15:00",
+                amount: 10,
+            },
+        ],
+    })
+    updateBookingCosts!: BookingCostProviderSkillRequest[];
+
+    @ApiModelProperty({
+        description: "Create booking cost",
+        required: false,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: SwaggerDefinitionConstant.STRING,
+        example: ["42ac81c2-1815-45f7-b598-412487161e1f"],
+    })
+    deleteBookingCosts!: Array<String>;
 }

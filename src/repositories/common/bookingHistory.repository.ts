@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
     BasePrismaRepository,
-    PrismaTransation,
+    PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, BookingHistory, BookingStatus, ProviderSkill, Provider, User } from "@prisma/client";
 import { config } from "@/configs";
@@ -16,7 +16,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         super();
     }
 
-    async findAllCurrentBookingProvider(userId: string, tx: PrismaTransation = this.prisma) {
+    async findAllCurrentBookingProvider(userId: string, tx: PrismaTransaction = this.prisma) {
         const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);
         return await tx.bookingHistory.findMany({
             where: {
@@ -43,7 +43,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
 
     }
 
-    async findAllCurrentBookingUser(userId: string, tx: PrismaTransation = this.prisma) {
+    async findAllCurrentBookingUser(userId: string, tx: PrismaTransaction = this.prisma) {
         const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);
         return await tx.bookingHistory.findMany({
             where: {
@@ -95,7 +95,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
     async updateById(
         id: string,
         bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
         return await tx.bookingHistory.update({
             data: bookingCostUpdateInput,
@@ -114,7 +114,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
     async updateMany(
         bookingHistoryUpdateInput: Prisma.BookingHistoryUpdateInput,
         query: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
         return await tx.bookingHistory.updateMany({
             data: bookingHistoryUpdateInput,
@@ -124,7 +124,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
 
     async create(
         bookingHistoryCreateInput: Prisma.BookingHistoryCreateInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
         return await tx.bookingHistory.create({
             data: bookingHistoryCreateInput,
@@ -141,21 +141,21 @@ export class BookingHistoryRepository extends BasePrismaRepository {
 
     async findOne(
         query?: ICrudOptionPrisma,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<BookingHistory | null> {
         return await tx.bookingHistory.findFirst(query);
     }
 
     async deleteById(
         id: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<BookingHistory> {
         return await tx.bookingHistory.delete({ where: { id } });
     }
 
     async deleteMany(
         bookingHistoryWhereInput: Prisma.BookingHistoryWhereInput,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.BatchPayload> {
         return await tx.bookingHistory.deleteMany({
             where: bookingHistoryWhereInput,
@@ -164,7 +164,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
 
     async getTotalCoinFrozenByBookerId(
         bookerId: string,
-        tx: PrismaTransation = this.prisma
+        tx: PrismaTransaction = this.prisma
     ): Promise<number> {
 
         const now = new Date(new Date().valueOf() - config.server.bookingExpireTimeMillisecond);

@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, Notice } from "@prisma/client";
 
@@ -29,7 +29,7 @@ export class NoticeRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     noticeUpdateInput: Prisma.NoticeUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.notice.update({ data: noticeUpdateInput, where: { id } });
   }
@@ -37,7 +37,7 @@ export class NoticeRepository extends BasePrismaRepository {
   async update(
     noticeUpdateInput: Prisma.NoticeUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.notice.updateMany({
       data: noticeUpdateInput,
@@ -47,14 +47,14 @@ export class NoticeRepository extends BasePrismaRepository {
 
   async create(
     noticeCreateInput: Prisma.NoticeCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Notice> {
     return await tx.notice.create({ data: noticeCreateInput });
   }
 
   async amountNewNoticeByUserId(
     userId: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<number> {
     return await tx.notice.count({
       where: {
@@ -67,28 +67,28 @@ export class NoticeRepository extends BasePrismaRepository {
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Notice | null> {
     return await tx.notice.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Notice[]> {
     return await tx.notice.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Notice> {
     return await tx.notice.delete({ where: { id } });
   }
 
   async deleteMany(
     noticeWhereInput: Prisma.NoticeWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.notice.deleteMany({ where: noticeWhereInput });
   }

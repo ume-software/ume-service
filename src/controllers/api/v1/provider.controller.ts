@@ -5,7 +5,8 @@ import { UpdateProviderProfileRequest } from "@/common/requests/updateProviderPr
 import { AlbumPagingResponse } from "@/common/responses/albumPaging.response";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
-import { GetProfieProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
+import { GetProfileProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
+import { ProviderResponse } from "@/common/responses/provider.reponse";
 import { UpdateProviderProfileResponse } from "@/common/responses/updateProviderProfile.response";
 import {
     BaseController,
@@ -49,8 +50,13 @@ export class ProviderController extends BaseController {
         this.router.get("/hot", this.route(this.getListHotProvider));
         this.router.get("/:slug", this.route(this.getProviderBySlug));
         this.router.get(
+            "/profile/information",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getPersonalProfile)
+        );
+        this.router.get(
             "/:slug/album",
-            this.route(this.getAblumByProviderSlug)
+            this.route(this.getAlbumByProviderSlug)
         );
         this.router.post(
             "/",
@@ -58,7 +64,7 @@ export class ProviderController extends BaseController {
             this.route(this.becomeProvider)
         );
         this.router.patch(
-            "/",
+            "/profile/information",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userUpdateProviderProfile)
         );
@@ -145,7 +151,7 @@ export class ProviderController extends BaseController {
 
     @ApiOperationGet({
         path: "/{slug}/album",
-        operationId: "getAblumByProviderSlug",
+        operationId: "getAlbumByProviderSlug",
         description: "Get Provider by slug or id",
         summary: "Get Provider by slug or id",
         parameters: {
@@ -174,10 +180,10 @@ export class ProviderController extends BaseController {
             },
         },
     })
-    async getAblumByProviderSlug(req: Request, res: Response) {
+    async getAlbumByProviderSlug(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const { slug } = req.params;
-        const result = await this.service.getAblumByProviderSlug(
+        const result = await this.service.getAlbumByProviderSlug(
             slug!,
             queryInfoPrisma
         );
@@ -203,7 +209,7 @@ export class ProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: GetProfieProviderBySlugResponse },
+                        schema: { model: GetProfileProviderBySlugResponse },
                     },
                 },
                 description: "Provider success",
@@ -215,7 +221,33 @@ export class ProviderController extends BaseController {
         const result = await this.service.getProviderBySlug(slug!);
         this.onSuccess(res, result);
     }
-
+    @ApiOperationGet({
+        path: "/profile/information",
+        operationId: "getPersonalProfile",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Get personal profile information",
+        summary: "Get personal profile information",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderResponse },
+                    },
+                },
+                description: "Get personal profile success.",
+            },
+        },
+    })
+    async getPersonalProfile(req: Request, res: Response) {
+        const userId = req.tokenInfo?.id;
+        if (!userId) {
+            throw errorService.auth.badToken();
+        }
+        const result = await this.service.getPersonalProfileByUserId(userId);
+        this.onSuccess(res, result);
+    }
     @ApiOperationPost({
         path: "",
         operationId: "becomeProvider",
@@ -253,7 +285,7 @@ export class ProviderController extends BaseController {
     }
 
     @ApiOperationPatch({
-        path: "",
+        path: "/profile/information",
         operationId: "userUpdateProviderProfile",
         security: {
             bearerAuth: [],
@@ -286,7 +318,9 @@ export class ProviderController extends BaseController {
             throw errorService.auth.badToken();
         }
         updateProviderProfileRequest.userId = userId;
-        const result = await this.service.userUpdateProviderProfile(updateProviderProfileRequest);
+        const result = await this.service.userUpdateProviderProfile(
+            updateProviderProfileRequest
+        );
         this.onSuccess(res, result);
     }
 }

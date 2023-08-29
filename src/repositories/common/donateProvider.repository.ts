@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, DonateProvider } from "@prisma/client";
 import { ETopDonateDuration } from "@/enums/topDonateDuration.enum";
@@ -88,7 +88,7 @@ export class DonateProviderRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     donateProviderUpdateInput: Prisma.DonateProviderUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.donateProvider.update({ data: donateProviderUpdateInput, where: { id } });
   }
@@ -96,7 +96,7 @@ export class DonateProviderRepository extends BasePrismaRepository {
   async update(
     donateProviderUpdateInput: Prisma.DonateProviderUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ) {
     return await tx.donateProvider.update({
       data: donateProviderUpdateInput,
@@ -106,35 +106,35 @@ export class DonateProviderRepository extends BasePrismaRepository {
 
   async create(
     donateProviderCreateInput: Prisma.DonateProviderCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<DonateProvider> {
     return await tx.donateProvider.create({ data: donateProviderCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<DonateProvider | null> {
     return await tx.donateProvider.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<DonateProvider[]> {
     return await tx.donateProvider.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<DonateProvider> {
     return await tx.donateProvider.delete({ where: { id } });
   }
 
   async deleteMany(
     donateProviderWhereInput: Prisma.DonateProviderWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.donateProvider.deleteMany({ where: donateProviderWhereInput });
   }

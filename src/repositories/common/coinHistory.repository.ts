@@ -1,7 +1,7 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
   BasePrismaRepository,
-  PrismaTransation,
+  PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, CoinHistory, CoinType } from "@prisma/client";
 
@@ -12,7 +12,7 @@ export class CoinHistoryRepository extends BasePrismaRepository {
   async countByUserIdAndCoinType(
     userId: string,
     coinTypes: CoinType[] = [],
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<number | null> {
     return (
       await tx.coinHistory.aggregate({
@@ -47,7 +47,7 @@ export class CoinHistoryRepository extends BasePrismaRepository {
   async updateById(
     id: string,
     bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CoinHistory> {
     return await tx.coinHistory.update({
       data: bookingCostUpdateInput,
@@ -58,7 +58,7 @@ export class CoinHistoryRepository extends BasePrismaRepository {
   async updateMany(
     CoinHistoryUpdateInput: Prisma.CoinHistoryUpdateInput,
     query: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
     return await tx.coinHistory.updateMany({
       data: CoinHistoryUpdateInput,
@@ -68,35 +68,35 @@ export class CoinHistoryRepository extends BasePrismaRepository {
 
   async create(
     coinHistoryCreateInput: Prisma.CoinHistoryCreateInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CoinHistory> {
     return await tx.coinHistory.create({ data: coinHistoryCreateInput });
   }
 
   async findOne(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CoinHistory | null> {
     return await tx.coinHistory.findFirst(query);
   }
 
   async findMany(
     query?: ICrudOptionPrisma,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CoinHistory[]> {
     return await tx.coinHistory.findMany(query);
   }
 
   async deleteById(
     id: string,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<CoinHistory> {
     return await tx.coinHistory.delete({ where: { id } });
   }
 
   async deleteMany(
     coinHistoryWhereInput: Prisma.CoinHistoryWhereInput,
-    tx: PrismaTransation = this.prisma
+    tx: PrismaTransaction = this.prisma
   ): Promise<Prisma.BatchPayload> {
     return await tx.coinHistory.deleteMany({ where: coinHistoryWhereInput });
   }

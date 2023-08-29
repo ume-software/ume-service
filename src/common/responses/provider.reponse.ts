@@ -1,4 +1,6 @@
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
+import { ProviderSkillResponse } from "./providerSkill.response";
+import { UserInformationResponse } from "./userInformation.response";
 
 @ApiModel({
   description: "Provider response",
@@ -72,4 +74,23 @@ export class ProviderResponse {
     example: "This is description about me <3",
   })
   description!: string;
+
+  @ApiModelProperty({
+    description: "providerSkills",
+    type: SwaggerDefinitionConstant.ARRAY,
+    itemType: ProviderSkillResponse,
+  })
+  providerSkills!: Array<ProviderSkillResponse>;
+
+  @ApiModelProperty({
+    description: "providerSkills",
+    example: {
+      "dob": "2023-04-06T23:18:06.604Z",
+      "name": "Christine Gutmann",
+      "slug": "christine-gutmann",
+      "gender": "MALE"
+    },
+    model: UserInformationResponse
+  })
+  user!: UserInformationResponse;
 }
