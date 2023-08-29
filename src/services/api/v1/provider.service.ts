@@ -129,6 +129,7 @@ export class ProviderService extends BasePrismaService<
                 ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER
             );
         }
+
         const result = await this.repository.create({
             user: {
                 connect: {
@@ -137,7 +138,18 @@ export class ProviderService extends BasePrismaService<
             },
             ...becomeProviderRequest,
         });
-
+        if (becomeProviderRequest.slug) {
+            const checkSlugExisted = await this.repository.findOne({
+                where: {
+                    slug: becomeProviderRequest.slug,
+                },
+            });
+            if (checkSlugExisted) {
+                throw errorService.database.duplicate(
+                    ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
+                );
+            }
+        }
         return result as BecomeProviderResponse;
     }
 
@@ -154,6 +166,31 @@ export class ProviderService extends BasePrismaService<
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }
+        if (
+            provider.slug &&
+            updateProviderProfileRequest.slug &&
+            updateProviderProfileRequest.slug != provider.slug
+        ) {
+            throw errorService.router.badRequest(
+                ERROR_MESSAGE.EACH_PROVIDER_CAN_ONLY_UPDATE_THE_SLUG_ONCE
+            );
+        }
+        if (updateProviderProfileRequest.slug) {
+            const checkSlugExisted = await this.repository.findOne({
+                where: {
+                    slug: updateProviderProfileRequest.slug,
+                    id: {
+                        not: provider.id,
+                    },
+                },
+            });
+            if (checkSlugExisted) {
+                throw errorService.database.duplicate(
+                    ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
+                );
+            }
+        }
+
         return await this.repository.updateById(
             provider.id,
             updateProviderProfileRequest
