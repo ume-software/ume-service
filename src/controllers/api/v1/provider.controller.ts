@@ -6,7 +6,7 @@ import { AlbumPagingResponse } from "@/common/responses/albumPaging.response";
 import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
 import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
 import { GetProfileProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
-import { ProviderResponse } from "@/common/responses/provider.reponse";
+import { ProviderResponse } from "@/common/responses/provider.response";
 import { UpdateProviderProfileResponse } from "@/common/responses/updateProviderProfile.response";
 import {
     BaseController,

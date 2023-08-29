@@ -2,7 +2,7 @@ import {
   ApiModel,
   ApiModelProperty,
 } from "express-swagger-typescript";
-import { ProviderResponse } from "./provider.reponse";
+import { ProviderResponse } from "./provider.response";
 
 @ApiModel({
   description: "Top donate provider response",

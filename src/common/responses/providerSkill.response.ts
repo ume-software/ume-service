@@ -5,8 +5,6 @@ import {
 } from "express-swagger-typescript";
 import { BookingCostResponse } from "./bookingCost.response";
 import { SkillResponse } from "./skill.response";
-import { ProviderResponse } from "./provider.reponse";
-
 @ApiModel({
   description: "Provider skill response",
 })
@@ -73,9 +71,9 @@ export class ProviderSkillResponse {
   skill!: SkillResponse;
 
 
-  @ApiModelProperty({
-    description: "provider",
-    model: ProviderResponse
-  })
-  provider!: ProviderResponse;
+  // @ApiModelProperty({
+  //   description: "provider",
+  //   model: ProviderResponse
+  // })
+  // provider!: ProviderResponse;
 }

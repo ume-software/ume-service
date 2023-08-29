@@ -2,6 +2,7 @@ import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-s
 import { ProviderSkillResponse } from "./providerSkill.response";
 import { UserInformationResponse } from "./userInformation.response";
 
+
 @ApiModel({
   description: "Provider response",
 })
