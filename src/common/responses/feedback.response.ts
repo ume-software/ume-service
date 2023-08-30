@@ -1,5 +1,8 @@
-
-import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { BookingHistoryResponse } from "./bookingHistory.reponse";
 
 @ApiModel({
@@ -40,12 +43,14 @@ export class FeedbackResponse {
     @ApiModelProperty({
         description: "Content feedback",
         example: "Good job",
+        required: false,
     })
     content!: string;
 
     @ApiModelProperty({
         description: "Start 0-5",
         example: 5,
+        type: SwaggerDefinitionConstant.INTEGER,
     })
     amountStar!: number;
 
@@ -67,10 +72,10 @@ export class FeedbackResponse {
                 id: "2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e",
                 name: "Christine Gutmann",
                 slug: "christine-gutmann",
-                avatarUrl: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg"
-            }
-        }
+                avatarUrl:
+                    "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/123.jpg",
+            },
+        },
     })
     booking!: Array<BookingHistoryResponse>;
-
 }
