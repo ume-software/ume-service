@@ -8,44 +8,46 @@ datasource db {
 }
 
 model User {
-  id               String            @id @default(uuid()) @map("id")
-  createdAt        DateTime?         @default(now()) @map("created_at")
-  updatedAt        DateTime?         @updatedAt @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
-  isOnline         Boolean?          @default(false) @map("is_online")
-  latestOnline     Boolean?          @map("latest_online")
-  loginType        LoginType?        @map("login_type")
-  gender           Gender?           @map("gender")
-  dob              DateTime?         @map("dob")
-  provider         Provider?
-  coinHistories    CoinHistory[]
-  bookingHistories BookingHistory[]
-  buyCoinRequests  BuyCoinRequest[]
-  sellCoinRequests SellCoinRequest[]
-  notices          Notice?
-  posts            Post[]
-  likePosts        LikePost[]
-  commentPosts     CommentPost[]
-  watchedPosts     WatchedPost[]
-  donateProvider   DonateProvider[]
+  id                     String                   @id @default(uuid()) @map("id")
+  createdAt              DateTime?                @default(now()) @map("created_at")
+  updatedAt              DateTime?                @updatedAt @map("updated_at")
+  deletedAt              DateTime?                @map("deleted_at")
+  isOnline               Boolean?                 @default(false) @map("is_online")
+  latestOnline           Boolean?                 @map("latest_online")
+  loginType              LoginType?               @map("login_type")
+  gender                 Gender?                  @map("gender")
+  dob                    DateTime?                @map("dob")
+  provider               Provider?
+  coinHistories          CoinHistory[]
+  bookingHistories       BookingHistory[]
+  buyCoinRequests        BuyCoinRequest[]
+  sellCoinRequests       SellCoinRequest[]
+  notices                Notice[]
+  posts                  Post[]
+  likePosts              LikePost[]
+  commentPosts           CommentPost[]
+  watchedPosts           WatchedPost[]
+  donateProviders        DonateProvider[]
+  voucherRedeemedBooking VoucherRedeemedBooking[]
 
   @@map("user")
 }
 
 model Provider {
-  id             String           @id @default(uuid()) @map("id")
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  deletedAt      DateTime?        @map("deleted_at")
-  user           User             @relation(fields: [userId], references: [id])
-  userId         String           @unique @map("user_id")
-  slug           String?          @map("slug")
-  name           String?          @map("name")
-  avatarUrl      String?          @map("avatar_url")
-  voiceUrl       String?          @map("voice_url")
-  description    String?          @map("description") @db.Text()
-  providerSkills ProviderSkill[]
-  donateProvider DonateProvider[]
+  id              String           @id @default(uuid()) @map("id")
+  createdAt       DateTime?        @default(now()) @map("created_at")
+  updatedAt       DateTime?        @updatedAt @map("updated_at")
+  deletedAt       DateTime?        @map("deleted_at")
+  user            User             @relation(fields: [userId], references: [id])
+  userId          String           @unique @map("user_id")
+  slug            String?          @map("slug")
+  name            String?          @map("name")
+  avatarUrl       String?          @map("avatar_url")
+  voiceUrl        String?          @map("voice_url")
+  description     String?          @map("description") @db.Text()
+  providerSkills  ProviderSkill[]
+  donateProviders DonateProvider[]
+  vouchers        Voucher[]
 
   @@map("provider")
 }
@@ -72,7 +74,7 @@ model ProviderSkill {
   skill            Skill            @relation(fields: [skillId], references: [id])
   skillId          String           @map("skill_id")
   defaultCost      Float            @map("default_cost")
-  description       String?          @map("description") @db.Text()
+  description      String?          @map("description") @db.Text()
   position         Int              @map("position")
   bookingCosts     BookingCost[]
   bookingHistories BookingHistory[]
@@ -111,22 +113,71 @@ model CoinHistory {
 }
 
 model BookingHistory {
-  id              String         @id @default(uuid()) @map("id")
-  createdAt       DateTime?      @default(now()) @map("created_at")
-  updatedAt       DateTime?      @updatedAt @map("updated_at")
-  deletedAt       DateTime?      @map("deleted_at")
-  status          BookingStatus
-  acceptedAt      DateTime?      @map("accepted_at")
-  booker          User?          @relation(fields: [bookerId], references: [id])
-  bookerId        String?        @map("booker_id")
-  providerSkill   ProviderSkill? @relation(fields: [providerSkillId], references: [id])
-  providerSkillId String?        @map("provider_skill_id")
-  totalCost       Float          @map("total_cost")
-  bookingPeriod   Int            @map("booking_period")
-
-  feedbacks Feedback[]
+  id                      String                   @id @default(uuid()) @map("id")
+  createdAt               DateTime?                @default(now()) @map("created_at")
+  updatedAt               DateTime?                @updatedAt @map("updated_at")
+  deletedAt               DateTime?                @map("deleted_at")
+  status                  BookingStatus
+  acceptedAt              DateTime?                @map("accepted_at")
+  booker                  User?                    @relation(fields: [bookerId], references: [id])
+  bookerId                String?                  @map("booker_id")
+  providerSkill           ProviderSkill?           @relation(fields: [providerSkillId], references: [id])
+  providerSkillId         String?                  @map("provider_skill_id")
+  totalCost               Float                    @map("total_cost")
+  bookingPeriod           Int                      @map("booking_period")
+  appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
+  feedbacks               Feedback[]
+  voucherRedeemedBookings VoucherRedeemedBooking[]
 
   @@map("booking_history")
+}
+
+model VoucherRedeemedBooking {
+  id                 String         @id @default(uuid()) @map("id")
+  createdAt          DateTime?      @default(now()) @map("created_at")
+  updatedAt          DateTime?      @updatedAt @map("updated_at")
+  deletedAt          DateTime?      @map("deleted_at")
+  voucher            Voucher        @relation(fields: [voucherId], references: [id])
+  voucherId          String         @map("voucher_id")
+  booker             User           @relation(fields: [bookerId], references: [id])
+  bookerId           String         @map("booker_id")
+  booking            BookingHistory @relation(fields: [bookingHistoryId], references: [id])
+  bookingHistoryId   String         @map("booking_history_id")
+  totalDiscountValue Int            @default(0) @map("total_discount_value")
+  totalCashbackValue Int            @default(0) @map("total_cashback_value")
+}
+
+model Voucher {
+  id                               String                   @id @default(uuid()) @map("id")
+  createdAt                        DateTime?                @default(now()) @map("created_at")
+  updatedAt                        DateTime?                @updatedAt @map("updated_at")
+  deletedAt                        DateTime?                @map("deleted_at")
+  provider                         Provider?                @relation(fields: [providerId], references: [id])
+  providerId                       String?                  @map("provider_id")
+  code                             String                   @unique @map("code")
+  image                            String?                  @map("image")
+  content                          String?                  @map("content")
+  description                      String?                  @map("description")
+  isActivated                      Boolean                  @default(false) @map("is_activated")
+  type                             VoucherType              @default(DISCOUNT) @map("type")
+  numberIssued                     Int?                     @map("number_issued")
+  dailyNumberIssued                Int?                     @map("daily_number_issued")
+  numberUsablePerBooker            Int?                     @map("number_usable_per_booker")
+  dailyUsageLimitPerBooker         Int?                     @map("daily_usage_limit_per_booker")
+  discountUnit                     DiscountUnit             @default(PERCENT) @map("discount_unit")
+  discountValue                    Int                      @default(0) @map("discount_value")
+  maximumDiscountValue             Int?                     @map("maximum_discount_value")
+  minimumBookingTotalPriceForUsage Int?                     @default(0) @map("minimum_booking_total_price_for_usage")
+  minimumBookingDurationForUsage   Int?                     @default(0) @map("minimum_booking_duration_for_sage")
+  startDate                        DateTime?                @map("start_date")
+  endDate                          DateTime?                @map("end_date")
+  applyISODayOfWeek                Int[]                    @default([1, 2, 3, 4, 5, 6, 7]) @map("apply_iso_day_of_week") //Monday is 1, Tuesday is 2, through to 7 for Sunday.
+  recipientType                    VoucherRecipientType     @default(ALL) @map("recipient_type")
+  selectiveBookerIds               String[]                 @default([]) @map("selective_booker_id")
+  isHided                          Boolean                  @default(false) @map("is_hided")
+  voucherRedeemedBookings          VoucherRedeemedBooking[]
+
+  @@map("voucher")
 }
 
 model Feedback {
@@ -391,4 +442,23 @@ enum Gender {
   FEMALE
   ORTHER
   PRIVATE
+}
+
+enum VoucherType {
+  DISCOUNT
+  CASHBACK
+}
+
+enum DiscountUnit {
+  CASH
+  PERCENT
+}
+
+enum VoucherRecipientType {
+  ALL
+  FIRST_TIME_BOOKING
+  PREVIOUS_BOOKING
+  SELECTIVE_BOOKER
+  TOP_5_BOOKER
+  TOP_10_BOOKER
 }
