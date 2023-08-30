@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 // import { config } from "@/configs";
 
 const HEADERS = "key";
-const privateKey = readFileSync("booking_private_key.pem", 'utf8');
+const privateKey = readFileSync("ume_private_key.pem", 'utf8');
 export class SystemMiddleware extends BaseMiddleware {
     override async use(req: Request, _res: Response, next: express.NextFunction) {
         if (req.headers[HEADERS] !== "undefined" && typeof req.headers[HEADERS] != 'undefined') {

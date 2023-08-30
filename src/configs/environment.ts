@@ -43,15 +43,14 @@ export default {
         identity: {
             url: process.env["URL_IDENTITY_SERVICE"] ?? "http://localhost:4000",
             path_public_key:
-                process.env["IDENTITY_PATH_PUBLIC_KEY"] ??
-                "identity_public_key.pem",
+                process.env["IDENTITY_PATH_PUBLIC_KEY"] ?? "ume_public_key.pem",
             path_private_key:
                 process.env["IDENTITY_PATH_PRIVATE_KEY"] ??
-                "identity_private_key.pem",
+                "ume_private_key.pem",
             public_key:
                 readFileSync(
                     process.env["IDENTITY_PATH_PUBLIC_KEY"] ??
-                        "identity_public_key.pem"
+                        "ume_public_key.pem"
                 ) ?? "",
         },
     },

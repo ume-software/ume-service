@@ -12,11 +12,11 @@ module.exports = {
             wait_ready: true,
             env: {
                 NODE_ENV: "production",
-                PREFIX_PATH: "booking-service",
+                PREFIX_PATH: "ume-service",
             },
             env_production: {
                 NODE_ENV: "production",
-                PREFIX_PATH: "booking-service",
+                PREFIX_PATH: "ume-service",
             },
         },
     ],
