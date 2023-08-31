@@ -26,6 +26,7 @@ import { NoticeService } from "./api/v1/notice.service";
 import { DonateService } from "./api/v1/donate.service";
 import { VoucherService } from "./api/v1/voucher.service";
 import { VoucherRedeemedBookingService } from "./api/v1/voucherRedeemedBooking.service";
+import { RedisService } from "./common/redis.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -55,6 +56,7 @@ const noticeService = new NoticeService();
 const donateService = new DonateService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
+const redisService = new RedisService();
 export {
     scheduleService,
     errorService,
@@ -83,4 +85,5 @@ export {
     donateService,
     voucherService,
     voucherRedeemedBookingService,
+    redisService,
 };

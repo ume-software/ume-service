@@ -4,7 +4,7 @@ import {
     Request,
     Response,
 } from "@/controllers/base/base.controller";
-import { voucherService } from "@/services";
+import { redisService, voucherService } from "@/services";
 import { VoucherService } from "@/services/api/v1/voucher.service";
 import {
     ApiOperationPost,
@@ -60,6 +60,7 @@ export class VoucherController extends BaseController {
     })
     async providerCreateVoucher(req: Request, res: Response) {
         const voucherProviderRequest = new CreateVoucherRequest(req.body);
+        console.log("key ===> ", await redisService.get("key"));
         this.onSuccess(res, voucherProviderRequest);
     }
 }

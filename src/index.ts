@@ -1,6 +1,8 @@
 import { App } from "./app";
 import { config } from "./configs";
 import { seed } from "./models/prismas/seedData.prisma";
+
+
 import { socketService } from "./services/socketIO";
 import { SOCKET_EXPRESS } from "./services/socketIO/socketIO.service";
 

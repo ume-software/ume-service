@@ -1,8 +1,9 @@
 import { GetQrDepositRequest } from "@/common/requests/coin/getQrDeposit.request";
-import { utilService } from "..";
+import { redisService, utilService } from "..";
 import { config } from "@/configs";
 import { AxiosInstance } from "axios";
 import { EAdminRoleType } from "@/enums/adminRoleType.enum";
+import { REDIS_PREFIX } from "../common/redis.service";
 
 export class IdentitySystemService {
     private fetchIdentityService(): AxiosInstance {
@@ -17,12 +18,28 @@ export class IdentitySystemService {
         });
     }
     async getInformation(userId: string) {
-        console.log(
-            "await this.fetchIdentityService().get(`system/user/${userId}`) ===> ",
-            await this.fetchIdentityService().get(`system/user/${userId}`)
-        );
-        return (await this.fetchIdentityService().get(`system/user/${userId}`))
-            .data;
+        await redisService.connect();
+
+        const data = await redisService.get(`${REDIS_PREFIX.USER}:${userId}`);
+        let result;
+
+        if (!data) {
+            result = (
+                await this.fetchIdentityService().get(`system/user/${userId}`)
+            ).data;
+            console.log("result ===> ", result);
+            if (result) {
+                await redisService.set(
+                    `${REDIS_PREFIX.USER}:${userId}`,
+                    JSON.stringify(result)
+                );
+            }
+            await redisService.disconnect();
+        } else {
+            result = JSON.parse(data);
+        }
+        await redisService.disconnect();
+        return result;
     }
 
     async getListByUserIds(userIds: string[]) {

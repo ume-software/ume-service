@@ -39,6 +39,12 @@ export default {
         timezone: process.env["DEFAULT_TIME_ZONE"] ?? "+0700",
         bookingExpireTimeMillisecond: 5 * 60 * 1000,
     },
+    redis: {
+        host: process.env["REDIS_HOST"] ?? "localhost",
+        port: process.env["REDIS_PORT"] ?? 6379,
+        username: process.env["REDIS_USERNAME"] ?? "redis",
+        password: process.env["REDIS_PASSWORD"] ?? "redis",
+    },
     service: {
         identity: {
             url: process.env["URL_IDENTITY_SERVICE"] ?? "http://localhost:4000",
