@@ -454,4 +454,20 @@ export class UtilService {
 
         return snakeCasedObj;
     }
+
+    mapToObject<T extends Record<string, any>>(
+        input: T,
+        targetClass: new () => T
+    ): T {
+
+        const targetInstance = new targetClass();
+
+        for (const key in input) {
+            if (targetInstance.hasOwnProperty(key)) {
+                targetInstance[key] = input[key];
+            }
+        }
+
+        return targetInstance;
+    }
 }

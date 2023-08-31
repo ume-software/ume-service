@@ -1,7 +1,12 @@
-import { ProviderSkillRequest } from "@/common/requests/providerSkill.request";
-import { UpdateProviderSkillRequest } from "@/common/requests/updateProviderSkill.request";
-import { CoinHistoryPagingResponse } from "@/common/responses/coinHistoryPaging.response";
-import { FeedbackPagingResponse } from "@/common/responses/feedbackPaging.response";
+import {
+    ProviderSkillRequest,
+    UpdateProviderSkillRequest,
+} from "@/common/requests";
+import {
+    CoinHistoryPagingResponse,
+    FeedbackPagingResponse,
+    ProviderSkillResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -37,7 +42,7 @@ export class ProviderSkillController extends BaseController {
     service: ProviderSkillService;
 
     customRouting() {
-        this.router.get("/",this.route(this.getProviderSkill))
+        this.router.get("/", this.route(this.getProviderSkill));
         this.router.get(
             "/:id/feedback",
             this.route(this.getFeedbackByProviderSkill)
@@ -53,7 +58,7 @@ export class ProviderSkillController extends BaseController {
             this.route(this.updateProviderSkill)
         );
     }
-    
+
     @ApiOperationGet({
         path: "",
         operationId: "getProviderSkill",
@@ -75,9 +80,7 @@ export class ProviderSkillController extends BaseController {
     })
     async getProviderSkill(req: Request, res: Response) {
         let queryInfoPrisma = req.queryInfoPrisma || {};
-        const result = await this.service.findAndCountAll(
-            queryInfoPrisma
-        );
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
     }
 
@@ -140,7 +143,7 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderSkillRequest },
+                        schema: { model: ProviderSkillResponse },
                     },
                 },
                 description: "Register success",
@@ -148,7 +151,7 @@ export class ProviderSkillController extends BaseController {
         },
     })
     async createProviderSkill(req: Request, res: Response) {
-        const providerSkillRequest = req.body as ProviderSkillRequest;
+        const providerSkillRequest = new ProviderSkillRequest(req.body);
         const userId = req.tokenInfo?.id;
         const result = await this.service.create(
             userId!!,
@@ -176,7 +179,7 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UpdateProviderSkillRequest },
+                        schema: { model: ProviderSkillResponse },
                     },
                 },
                 description: "Register success",
@@ -184,12 +187,17 @@ export class ProviderSkillController extends BaseController {
         },
     })
     async updateProviderSkill(req: Request, res: Response) {
-        const updateProviderSkillRequest = req.body as UpdateProviderSkillRequest;
+        const updateProviderSkillRequest = new UpdateProviderSkillRequest(
+            req.body
+        );
         const userId = req.tokenInfo?.id;
         if (!userId) {
             throw errorService.auth.badToken();
         }
-        const result = await this.service.updateProviderSkill(userId, updateProviderSkillRequest);
+        const result = await this.service.updateProviderSkill(
+            userId,
+            updateProviderSkillRequest
+        );
         this.onSuccess(res, result);
     }
 }

@@ -1,5 +1,6 @@
-import { ProviderSkillRequest } from "@/common/requests/providerSkill.request";
-import { UpdateProviderSkillRequest } from "@/common/requests/updateProviderSkill.request";
+
+import { ProviderSkillRequest } from "@/common/requests/providerSkill/providerSkill.request";
+import { UpdateProviderSkillRequest } from "@/common/requests/providerSkill/updateProviderSkill.request";
 import prisma from "@/models/base.prisma";
 import {
     bookingCostRepository,

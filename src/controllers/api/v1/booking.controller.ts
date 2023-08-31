@@ -1,9 +1,13 @@
-import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
-import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
-import { FeedbackBookingRequest } from "@/common/requests/feedbackBooking.request";
-import { BookingHistoryResponse } from "@/common/responses/bookingHistory.reponse";
-import { BookingHistoryPagingResponse } from "@/common/responses/bookingHistoryPaging.response";
-import { FeedbackResponse } from "@/common/responses/feedback.response";
+import {
+    BookingProviderRequest,
+    FeedbackBookingRequest,
+    BookingHandleRequest,
+} from "@/common/requests";
+import {
+    BookingHistoryPagingResponse,
+    BookingHistoryResponse,
+    FeedbackResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -12,6 +16,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { bookingService, errorService, feedbackService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 
 import {
     ApiOperationGet,
@@ -145,12 +150,9 @@ export class BookingController extends BaseController {
         },
     })
     async createBooking(req: Request, res: Response) {
-
         const result = await this.service.userBookingProvider(req);
         this.onSuccess(res, result);
     }
-
-
 
     @ApiOperationPost({
         path: "/{id}/feedback",
@@ -189,9 +191,17 @@ export class BookingController extends BaseController {
         },
     })
     async createFeedbackBooking(req: Request, res: Response) {
-        const { id: bookingId } = req.params
+        const { id: bookingId } = req.params;
         const userId = req.tokenInfo?.id;
-        const feedbackBookingRequest = { ...req.body, bookingId, bookerId: userId } as FeedbackBookingRequest;
+        if (!userId) {
+            throw errorService.auth.badToken();
+        }
+        if (!bookingId) {
+            throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
+        }
+        const feedbackBookingRequest = new FeedbackBookingRequest(req.body);
+        feedbackBookingRequest.bookerId = userId;
+        feedbackBookingRequest.bookingId = bookingId;
 
         const result = await feedbackService.create(feedbackBookingRequest);
         this.onSuccess(res, result);
@@ -223,7 +233,6 @@ export class BookingController extends BaseController {
         },
     })
     async bookingHandle(req: Request, res: Response) {
-
         const result = await this.service.bookingHandle(req);
         this.onSuccess(res, result);
     }

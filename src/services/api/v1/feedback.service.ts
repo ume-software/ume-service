@@ -1,6 +1,6 @@
 
-import { FeedbackBookingRequest } from "@/common/requests/feedbackBooking.request";
-import { UserInformationResponse } from "@/common/responses/userInformation.response";
+import { FeedbackBookingRequest } from "@/common/requests/feedback/feedbackBooking.request";
+import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { bookingHistoryRepository, feedbackRepository } from "@/repositories";
 import { errorService, identitySystemService, utilService } from "@/services";
 import {

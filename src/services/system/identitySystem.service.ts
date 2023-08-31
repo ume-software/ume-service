@@ -1,4 +1,4 @@
-import { GetQrDepositRequest } from "@/common/requests/getQrDeposit.request";
+import { GetQrDepositRequest } from "@/common/requests/coin/getQrDeposit.request";
 import { utilService } from "..";
 import { config } from "@/configs";
 import { AxiosInstance } from "axios";

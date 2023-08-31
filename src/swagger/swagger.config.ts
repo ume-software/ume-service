@@ -1,7 +1,7 @@
 import * as yaml from "js-yaml";
 import * as fs from "fs";
 import * as swagger from "express-swagger-typescript";
-import { ErrorResponse } from "@/common/responses/error.response";
+import { ErrorResponse } from "@/common/responses/error/error.response";
 import { config } from "@/configs";
 
 const swaggerData: any = swagger.swaggerData({

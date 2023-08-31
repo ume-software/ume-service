@@ -1,5 +1,5 @@
-import { PointForUserRequest } from "@/common/requests/adminCreatePointForUser.request";
-import { UserCoinResponse } from "@/common/responses/userCoin.response";
+import { CoinForUserRequest } from "@/common/requests/coin/adminCreateCoinForUser.request";
+import { UserCoinResponse } from "@/common/responses/coin/userCoin.response";
 import {
     bookingHistoryRepository,
     coinHistoryRepository,
@@ -11,9 +11,9 @@ import { CoinHistory, CoinType } from "@prisma/client";
 export class CoinService {
     async adminCreatePointToUser(
         adminId: string,
-        pointForUserRequest: PointForUserRequest
+        coinForUserRequest: CoinForUserRequest
     ): Promise<UserCoinResponse> {
-        const { amount, userId } = pointForUserRequest;
+        const { amount, userId } = coinForUserRequest;
         const user = await userService.findOne({
             where: {
                 id: userId,

@@ -1,13 +1,18 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
-import { UpdateProviderProfileRequest } from "@/common/requests/updateProviderProfile.request";
-import { AlbumPagingResponse } from "@/common/responses/albumPaging.response";
-import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
-import { FilterProviderPagingResponse } from "@/common/responses/filterProviderPaging.response";
-import { GetProfileProviderBySlugResponse } from "@/common/responses/getProfileProviderBySlug.respone";
-import { ProviderResponse } from "@/common/responses/provider.response";
-import { UpdateProviderProfileResponse } from "@/common/responses/updateProviderProfile.response";
+import {
+    BecomeProviderRequest,
+    UpdateProviderProfileRequest,
+} from "@/common/requests";
+import {
+    AlbumPagingResponse,
+    BecomeProviderResponse,
+    FilterProviderPagingResponse,
+    GetProfileProviderBySlugResponse,
+    ProviderResponse,
+    UpdateProviderProfileResponse,
+} from "@/common/responses";
+
 import {
     BaseController,
     Request,
@@ -275,7 +280,7 @@ export class ProviderController extends BaseController {
         },
     })
     async becomeProvider(req: Request, res: Response) {
-        const becomeProviderRequest = req.body as BecomeProviderRequest;
+        const becomeProviderRequest = new BecomeProviderRequest(req.body);
         const userId = req.tokenInfo?.id;
         const result = await this.service.becomeProvider(
             userId!!,
@@ -311,8 +316,9 @@ export class ProviderController extends BaseController {
         },
     })
     async userUpdateProviderProfile(req: Request, res: Response) {
-        const updateProviderProfileRequest =
-            req.body as UpdateProviderProfileRequest;
+        const updateProviderProfileRequest = new UpdateProviderProfileRequest(
+            req.body
+        );
         const userId = req.tokenInfo?.id;
         if (!userId) {
             throw errorService.auth.badToken();

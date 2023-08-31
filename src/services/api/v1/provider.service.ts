@@ -1,9 +1,9 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { BecomeProviderRequest } from "@/common/requests/becomeProvider.request";
-import { UpdateProviderProfileRequest } from "@/common/requests/updateProviderProfile.request";
-import { BecomeProviderResponse } from "@/common/responses/becomeProvider.response";
-import { UserInformationResponse } from "@/common/responses/userInformation.response";
+import { BecomeProviderRequest } from "@/common/requests/provider/becomeProvider.request";
+import { UpdateProviderProfileRequest } from "@/common/requests/provider/updateProviderProfile.request";
+import { BecomeProviderResponse } from "@/common/responses/provider/becomeProvider.response";
+import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { postRepository, providerRepository } from "@/repositories";
 import { errorService, identitySystemService } from "@/services";
 import {

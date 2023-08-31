@@ -1,4 +1,4 @@
-import { PostResponse } from "@/common/responses/post.response";
+import { PostResponse } from "@/common/responses";
 import { config } from "@/configs";
 import { express } from "@/index";
 import prismaWithoutSoftDelete from "@/models/baseWithoutSoftDelete.prisma";

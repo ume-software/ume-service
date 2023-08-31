@@ -1,10 +1,14 @@
-import { BookingHandleRequest } from "@/common/requests/bookingHandle.request";
-import { BookingProviderRequest } from "@/common/requests/bookingProvider.request";
-import { UserInformationResponse } from "@/common/responses/userInformation.response";
+import { BookingHandleRequest } from "@/common/requests/booking/bookingHandle.request";
+import { BookingProviderRequest } from "@/common/requests/booking/bookingProvider.request";
+import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
-import { coinHistoryRepository, coinSettingRepository, providerRepository } from "@/repositories";
+import {
+    coinHistoryRepository,
+    coinSettingRepository,
+    providerRepository,
+} from "@/repositories";
 import {
     bookingHistoryRepository,
     providerSkillRepository,
@@ -26,46 +30,49 @@ import { socketService } from "@/services/socketIO";
 import { BookingStatus, CoinType, NoticeType, Prisma } from "@prisma/client";
 import moment from "moment";
 
-export class BookingService extends BasePrismaService<BookingHistoryRepository>{
+export class BookingService extends BasePrismaService<BookingHistoryRepository> {
     constructor() {
-        super(bookingHistoryRepository)
+        super(bookingHistoryRepository);
     }
     async getCurrentBookingForProvider(userId: string) {
-        const bookingLists = await bookingHistoryRepository.findAllCurrentBookingProvider(userId);
+        const bookingLists =
+            await bookingHistoryRepository.findAllCurrentBookingProvider(
+                userId
+            );
         const bookerIds: Array<string> = [];
 
         for (let index = 0; index < bookingLists.length; index++) {
             const booking = bookingLists[index];
-            if (booking && booking.bookerId)
-                bookerIds.push(booking.bookerId)
-
+            if (booking && booking.bookerId) bookerIds.push(booking.bookerId);
         }
 
-        const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInformationResponse> = requestListIds.row as Array<UserInformationResponse>;
-        const usersInfo: { [key: string]: UserInformationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
-        bookingLists.forEach(item => {
+        const requestListIds = await identitySystemService.getListByUserIds(
+            bookerIds
+        );
+        const listUserInfo: Array<UserInformationResponse> =
+            requestListIds.row as Array<UserInformationResponse>;
+        const usersInfo: { [key: string]: UserInformationResponse } =
+            utilService.convertArrayObjectToObject(listUserInfo);
+        bookingLists.forEach((item) => {
             if (item.bookerId) {
                 (item as any).booker = usersInfo[item.bookerId];
             }
-
-        })
+        });
         return {
             row: bookingLists,
-            count: bookingLists.length
+            count: bookingLists.length,
         };
     }
     async getCurrentBookingForUser(userId: string) {
-        const bookingLists = await bookingHistoryRepository.findAllCurrentBookingUser(userId);
+        const bookingLists =
+            await bookingHistoryRepository.findAllCurrentBookingUser(userId);
         return {
             row: bookingLists,
-            count: bookingLists.length
+            count: bookingLists.length,
         };
     }
-    async userBookingProvider(
-        req: Request
-    ) {
-        const bookingProviderRequest = req.body as BookingProviderRequest;
+    async userBookingProvider(req: Request) {
+        const bookingProviderRequest = new BookingProviderRequest(req.body);
         const bookerId = req.tokenInfo?.id;
 
         const { providerSkillId, bookingPeriod } = bookingProviderRequest;
@@ -144,25 +151,24 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
         if (socketIO.connections && userIdOfProvider) {
             const socket = socketIO.connections[userIdOfProvider];
             if (socket) {
-                socketService.emitUserBookingProvider(socket, bookingHistory)
+                socketService.emitUserBookingProvider(socket, bookingHistory);
             }
         }
         noticeService.create({
             user: {
                 connect: {
-                    id: provider.userId
-                }
+                    id: provider.userId,
+                },
             },
             type: NoticeType.HAVE_BOOKING,
             data: JSON.parse(JSON.stringify(bookingHistory)),
-        })
+        });
         return bookingHistory;
     }
 
     async bookingHandle(req: Request) {
-
-        const bookingHandleRequest = req.body as BookingHandleRequest;
-        const userRquestId = req.tokenInfo?.id!;
+        const bookingHandleRequest = new BookingHandleRequest(req.body);
+        const userRequestId = req.tokenInfo?.id!;
         const { bookingHistoryId, status } = bookingHandleRequest;
         const {
             INIT,
@@ -211,11 +217,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
         }
 
         const requestFrom =
-            userRquestId == bookerId
+            userRequestId == bookerId
                 ? "BOOKER"
-                : userRquestId == provider.userId
-                    ? "PROVIDER"
-                    : "OTHER";
+                : userRequestId == provider.userId
+                ? "PROVIDER"
+                : "OTHER";
         if (requestFrom == "OTHER") {
             throw errorService.auth.permissionDeny();
         }
@@ -226,9 +232,9 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                 throw errorService.auth.permissionDeny();
             }
             const updateBookingHistoryRequest: Prisma.BookingHistoryUpdateInput =
-            {
-                status,
-            };
+                {
+                    status,
+                };
             if (status == PROVIDER_ACCEPT) {
                 if (oldStatus != INIT) {
                     throw errorService.router.badRequest();
@@ -245,7 +251,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                                 id: bookerId!,
                             },
                         },
-                        createdId: userRquestId,
+                        createdId: userRequestId,
                         amount: -totalCost,
                         coinType: CoinType.SPEND_BOOKING,
                     },
@@ -258,8 +264,10 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
                                 id: provider.userId,
                             },
                         },
-                        createdId: userRquestId,
-                        amount: await coinSettingRepository.calculateCoinBookingForProvider(totalCost),
+                        createdId: userRequestId,
+                        amount: await coinSettingRepository.calculateCoinBookingForProvider(
+                            totalCost
+                        ),
                         coinType: CoinType.GET_BOOKING,
                     },
                     tx
@@ -295,29 +303,32 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository>{
             if (socketIO.connections && bookingHistory.bookerId) {
                 const socket = socketIO.connections[bookingHistory.bookerId];
                 if (socket) {
-                    socketService.emitProviderHandledBooking(socket, bookingHistory)
+                    socketService.emitProviderHandledBooking(
+                        socket,
+                        bookingHistory
+                    );
                 }
             }
             let type: NoticeType;
             switch (status) {
                 case PROVIDER_CANCEL: {
-                    type = NoticeType.BOOKING_HAS_BEEN_DECLINED
+                    type = NoticeType.BOOKING_HAS_BEEN_DECLINED;
                     break;
                 }
                 case PROVIDER_ACCEPT: {
-                    type = NoticeType.BOOKING_HAS_BEEN_SUCCESSED
+                    type = NoticeType.BOOKING_HAS_BEEN_SUCCESSED;
                     break;
                 }
             }
             noticeService.create({
                 user: {
                     connect: {
-                        id: provider.userId
-                    }
+                        id: provider.userId,
+                    },
                 },
                 type: type!,
                 data: JSON.parse(JSON.stringify(bookingHistory)),
-            })
+            });
             return bookingHistory;
         });
     }

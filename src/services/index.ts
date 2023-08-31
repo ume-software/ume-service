@@ -24,6 +24,8 @@ import { LikePostService } from "./api/v1/likePost.service";
 import { WatchedPostService } from "./api/v1/watchedPost.service";
 import { NoticeService } from "./api/v1/notice.service";
 import { DonateService } from "./api/v1/donate.service";
+import { VoucherService } from "./api/v1/voucher.service";
+import { VoucherRedeemedBookingService } from "./api/v1/voucherRedeemedBooking.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -51,7 +53,8 @@ const likePostService = new LikePostService();
 const watchedPostService = new WatchedPostService();
 const noticeService = new NoticeService();
 const donateService = new DonateService();
-
+const voucherService = new VoucherService();
+const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
 export {
     scheduleService,
     errorService,
@@ -77,5 +80,7 @@ export {
     likePostService,
     watchedPostService,
     noticeService,
-    donateService
+    donateService,
+    voucherService,
+    voucherRedeemedBookingService,
 };

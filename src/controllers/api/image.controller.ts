@@ -11,7 +11,7 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
-import { UploadResponse } from "@/common/responses/upload.response";
+import { UploadResponse } from "@/common/responses/upload/upload.response";
 
 const pathImages = config.server.path_images;
 

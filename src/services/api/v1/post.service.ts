@@ -1,5 +1,5 @@
 
-import { CreateNewPostRequest } from "@/common/requests/createNewPost.request";
+import { CreateNewPostRequest } from "@/common/requests/post/createNewPost.request";
 import { postRepository } from "@/repositories";
 import { identitySystemService, utilService } from "@/services";
 import {

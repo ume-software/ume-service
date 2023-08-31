@@ -1,4 +1,4 @@
-import { AmountNoticeResponse } from "@/common/responses/amountNotice.reponse";
+import { AmountNoticeResponse } from "@/common/responses/notice/amountNotice.response";
 import { noticeRepository } from "@/repositories";
 import { errorService } from "@/services";
 import {

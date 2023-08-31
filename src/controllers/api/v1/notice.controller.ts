@@ -1,6 +1,6 @@
 
-import { AmountNoticeResponse } from "@/common/responses/amountNotice.reponse";
-import { NoticePagingResponse } from "@/common/responses/noticePaging.response";
+import { AmountNoticeResponse } from "@/common/responses/notice/amountNotice.response";
+import { NoticePagingResponse } from "@/common/responses/notice/noticePaging.response";
 import {
   BaseController,
   Request,

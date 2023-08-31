@@ -1,10 +1,11 @@
-import { CommentPostRequest } from "@/common/requests/commentPost.request";
-import { CreateNewPostRequest } from "@/common/requests/createNewPost.request";
-import { CommentPostResponse } from "@/common/responses/commentPost.response";
-import { CommentPostPagingResponse } from "@/common/responses/commentPostPaging.response";
-import { LikePostPagingResponse } from "@/common/responses/likePostPaging.response";
-import { PostResponse } from "@/common/responses/post.response";
-import { PostPagingResponse } from "@/common/responses/postPaging.response";
+import { CreateNewPostRequest, CommentPostRequest } from "@/common/requests";
+import {
+    PostPagingResponse,
+    PostResponse,
+    LikePostPagingResponse,
+    CommentPostPagingResponse,
+    CommentPostResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -266,7 +267,7 @@ export class PostController extends BaseController {
         },
     })
     async createPost(req: Request, res: Response) {
-        const createNewPostRequest = req.body as CreateNewPostRequest;
+        const createNewPostRequest = new CreateNewPostRequest(req.body);
         const creatorId = req.tokenInfo?.id;
         const result = await this.service.create(
             creatorId!,
@@ -409,7 +410,7 @@ export class PostController extends BaseController {
         },
     })
     async commentForPostId(req: Request, res: Response) {
-        const { content, parentCommentId } = req.body as CommentPostRequest;
+        const { content, parentCommentId } = new CommentPostRequest(req.body);
         const { id } = req.params;
         if (!id) {
             errorService.router.badRequest();
