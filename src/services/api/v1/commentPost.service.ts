@@ -16,7 +16,7 @@ export class CommentPostService extends BasePrismaService<typeof commentPostRepo
     const result = await this.repository.findAndCountAll(query);
     try {
       const userIds: string[] = result.row.map(item => item.userId);
-      const listUsers = (await identitySystemService.getListByUserIds(userIds)).row;
+      const listUsers = (await identitySystemService.getListByUserIds(userIds));
       const mappingUser = utilService.convertArrayObjectToObject(listUsers, "id");
       result.row = result.row.map(item => {
         return {

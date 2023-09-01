@@ -66,7 +66,7 @@ export class DonateService {
 
         const listUsers = (
             await identitySystemService.getListByUserIds(userIds)
-        ).row;
+        );
         const mappinguser = utilService.convertArrayObjectToObject(
             listUsers,
             "id"

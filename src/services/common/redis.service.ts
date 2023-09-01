@@ -29,7 +29,9 @@ export class RedisService {
     }
 
     public async connect(): Promise<void> {
-        await this.client.connect();
+        try {
+            return await this.client.connect();
+        } catch (e) {}
     }
 
     public async set(
@@ -50,7 +52,9 @@ export class RedisService {
     }
 
     public async disconnect(): Promise<void> {
-        return await this.client.disconnect();
+        try {
+            return await this.client.disconnect();
+        } catch (e) {}
     }
 
     public async quit(): Promise<string> {

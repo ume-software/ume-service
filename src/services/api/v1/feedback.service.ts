@@ -36,7 +36,7 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
         const result = await this.repository.findAndCountAll(query);
         const bookerIds: string[] = result.row.map(item => item.booking?.bookerId) as string[];
         const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInformationResponse> = requestListIds.row as Array<UserInformationResponse>;
+        const listUserInfo: Array<UserInformationResponse> = requestListIds as Array<UserInformationResponse>;
         const usersInfo: { [key: string]: UserInformationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
 
         result.row.forEach(item => {

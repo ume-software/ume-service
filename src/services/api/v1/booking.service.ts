@@ -50,7 +50,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             bookerIds
         );
         const listUserInfo: Array<UserInformationResponse> =
-            requestListIds.row as Array<UserInformationResponse>;
+            requestListIds as Array<UserInformationResponse>;
         const usersInfo: { [key: string]: UserInformationResponse } =
             utilService.convertArrayObjectToObject(listUserInfo);
         bookingLists.forEach((item) => {

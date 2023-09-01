@@ -4,6 +4,7 @@ import { config } from "@/configs";
 import { AxiosInstance } from "axios";
 import { EAdminRoleType } from "@/enums/adminRoleType.enum";
 import { REDIS_PREFIX } from "../common/redis.service";
+import _ from "lodash";
 
 export class IdentitySystemService {
     private fetchIdentityService(): AxiosInstance {
@@ -27,14 +28,12 @@ export class IdentitySystemService {
             result = (
                 await this.fetchIdentityService().get(`system/user/${userId}`)
             ).data;
-            console.log("result ===> ", result);
             if (result) {
                 await redisService.set(
                     `${REDIS_PREFIX.USER}:${userId}`,
                     JSON.stringify(result)
                 );
             }
-            await redisService.disconnect();
         } else {
             result = JSON.parse(data);
         }
@@ -42,15 +41,45 @@ export class IdentitySystemService {
         return result;
     }
 
-    async getListByUserIds(userIds: string[]) {
-        return (
-            await this.fetchIdentityService().post(
-                "system/user/get-list-user-by-ids",
-                {
-                    ids: userIds,
-                }
-            )
-        ).data;
+    async getListByUserIds(userIds: Array<string>) {
+        let results = [];
+        const userIdsFromRedis: Array<string> = [];
+        await redisService.connect();
+        const promiseUserList = userIds.map((userId: string) =>
+            redisService.get(`${REDIS_PREFIX.USER}:${userId}`)
+        );
+        const users = await Promise.all(promiseUserList);
+        for (const userString of users) {
+            if (userString) {
+                const user = JSON.parse(userString);
+                results.push(user);
+                userIdsFromRedis.push(user?.id);
+            }
+        }
+        const userIdsMissing = _.difference(userIds, userIdsFromRedis);
+        if (userIdsMissing?.length) {
+            const fetchDataUsers = (
+                await this.fetchIdentityService().post(
+                    "system/user/get-list-user-by-ids",
+                    {
+                        ids: userIds,
+                    }
+                )
+            ).data;
+            if (fetchDataUsers?.row?.length) {
+                await Promise.all(
+                    fetchDataUsers?.row.map((data: any) =>
+                        redisService.set(
+                            `${REDIS_PREFIX.USER}:${data.id}`,
+                            JSON.stringify(data)
+                        )
+                    )
+                );
+                results = [...results, ...fetchDataUsers?.row];
+            }
+        }
+        await redisService.disconnect();
+        return results;
     }
 
     async getListRolesByAdminIds(
