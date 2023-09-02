@@ -19,7 +19,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { errorService, providerService } from "@/services";
+import { providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import {
     filterHotProviderParameters,
@@ -246,10 +246,7 @@ export class ProviderController extends BaseController {
         },
     })
     async getPersonalProfile(req: Request, res: Response) {
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.getPersonalProfileByUserId(userId);
         this.onSuccess(res, result);
     }
@@ -281,9 +278,9 @@ export class ProviderController extends BaseController {
     })
     async becomeProvider(req: Request, res: Response) {
         const becomeProviderRequest = new BecomeProviderRequest(req.body);
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.becomeProvider(
-            userId!!,
+            userId,
             becomeProviderRequest
         );
         this.onSuccess(res, result);
@@ -319,10 +316,7 @@ export class ProviderController extends BaseController {
         const updateProviderProfileRequest = new UpdateProviderProfileRequest(
             req.body
         );
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         updateProviderProfileRequest.userId = userId;
         const result = await this.service.userUpdateProviderProfile(
             updateProviderProfileRequest

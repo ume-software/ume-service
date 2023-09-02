@@ -102,8 +102,7 @@ export class PostController extends BaseController {
     })
     async suggestPost(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma;
-        const userId = req.tokenInfo?.id;
-
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.suggestPost(userId, queryInfoPrisma!);
         this.onSuccessAsList(res, result);
     }

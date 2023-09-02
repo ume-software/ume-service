@@ -152,11 +152,8 @@ export class ProviderSkillController extends BaseController {
     })
     async createProviderSkill(req: Request, res: Response) {
         const providerSkillRequest = new ProviderSkillRequest(req.body);
-        const userId = req.tokenInfo?.id;
-        const result = await this.service.create(
-            userId!!,
-            providerSkillRequest
-        );
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.create(userId, providerSkillRequest);
         this.onSuccess(res, result);
     }
 
@@ -190,10 +187,7 @@ export class ProviderSkillController extends BaseController {
         const updateProviderSkillRequest = new UpdateProviderSkillRequest(
             req.body
         );
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.updateProviderSkill(
             userId,
             updateProviderSkillRequest

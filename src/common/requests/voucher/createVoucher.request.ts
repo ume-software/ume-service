@@ -13,6 +13,7 @@ import {
     description: "Create voucher request",
 })
 export class CreateVoucherRequest {
+    providerId?: string;
     @ApiModelProperty({
         description:
             " A unique string representing the voucher code that users can enter to redeem the voucher.",

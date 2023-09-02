@@ -73,7 +73,7 @@ export class CoinController extends BaseController {
     })
     async getHistoryCoin(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma;
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.getHistoryCoinByUserId(
             userId!,
             queryInfoPrisma!
@@ -101,7 +101,7 @@ export class CoinController extends BaseController {
         },
     })
     async getTotalCoin(req: Request, res: Response) {
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.getTotalCoinByUserId(userId!);
         this.onSuccess(res, result);
     }

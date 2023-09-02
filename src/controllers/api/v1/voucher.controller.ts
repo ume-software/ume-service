@@ -4,9 +4,12 @@ import {
     Request,
     Response,
 } from "@/controllers/base/base.controller";
-import { redisService, voucherService } from "@/services";
+import { EAccountType } from "@/enums/accountType.enum";
+import { voucherService } from "@/services";
 import { VoucherService } from "@/services/api/v1/voucher.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
+    ApiOperationGet,
     ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
@@ -25,19 +28,43 @@ export class VoucherController extends BaseController {
     }
     service: VoucherService;
     customRouting() {
+        this.router.get(
+            "/",
+            // this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getMyVoucher)
+        );
         this.router.post(
             "/provider",
-            // this.accountTypeMiddlewares([EAccountType.USER]),
+            this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.providerCreateVoucher)
         );
     }
-
+    @ApiOperationGet({
+        path: "",
+        operationId: "getMyVoucher",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Voucher for provider",
+        summary: "Voucher for provider",
+    })
+    async getMyVoucher(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.getMyVoucher(
+            userId,
+            req.queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
+    }
     @ApiOperationPost({
         path: "/provider",
         operationId: "providerCreateVoucher",
-        // security: {
-        //     bearerAuth: [],
-        // },
+        security: {
+            bearerAuth: [],
+        },
         description: "Voucher for provider",
         summary: "Voucher for provider",
         requestBody: {
@@ -59,8 +86,12 @@ export class VoucherController extends BaseController {
         },
     })
     async providerCreateVoucher(req: Request, res: Response) {
-        const voucherProviderRequest = new CreateVoucherRequest(req.body);
-        console.log("key ===> ", await redisService.get("key"));
-        this.onSuccess(res, voucherProviderRequest);
+        const providerCreateVoucherRequest = new CreateVoucherRequest(req.body);
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.providerCreateVoucher(
+            userId,
+            providerCreateVoucherRequest
+        );
+        this.onSuccess(res, result);
     }
 }

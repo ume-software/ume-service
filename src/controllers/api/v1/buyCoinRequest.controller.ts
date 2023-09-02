@@ -85,7 +85,7 @@ export class BuyCoinRequestController extends BaseController {
     async getBuyCoinRequestToHandler(req: Request, res: Response) {
         let queryInfoPrisma = req.queryInfoPrisma;
         const { transaction_code: transactionCode, status } = req.query;
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         if (!queryInfoPrisma) queryInfoPrisma = {};
         delete queryInfoPrisma.select;
         delete queryInfoPrisma.include;
@@ -132,9 +132,9 @@ export class BuyCoinRequestController extends BaseController {
     })
     async createBuyCoinRequest(req: Request, res: Response) {
         const createBuyCoinRequest = new CreateBuyCoinRequest(req.body);
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.createBuyCoin(
-            userId!!,
+            userId,
             createBuyCoinRequest
         );
         this.onSuccess(res, result);
@@ -237,7 +237,7 @@ export class BuyCoinRequestController extends BaseController {
     })
     async handleBuyCoinRequest(req: Request, res: Response) {
         const buyCoinHandleRequest = new BuyCoinHandleRequest(req.body);
-        const userId = req.tokenInfo?.id;
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.buyCoinHandle(
             userId!!,
             buyCoinHandleRequest

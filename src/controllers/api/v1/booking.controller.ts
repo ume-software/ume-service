@@ -87,10 +87,7 @@ export class BookingController extends BaseController {
         },
     })
     async getCurrentBookingForProvider(req: Request, res: Response) {
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.getCurrentBookingForProvider(userId);
         this.onSuccessAsList(res, result);
     }
@@ -115,10 +112,7 @@ export class BookingController extends BaseController {
         },
     })
     async getCurrentBookingForUser(req: Request, res: Response) {
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         const result = await this.service.getCurrentBookingForUser(userId);
         this.onSuccessAsList(res, result);
     }
@@ -192,10 +186,7 @@ export class BookingController extends BaseController {
     })
     async createFeedbackBooking(req: Request, res: Response) {
         const { id: bookingId } = req.params;
-        const userId = req.tokenInfo?.id;
-        if (!userId) {
-            throw errorService.auth.badToken();
-        }
+        const userId = this.getTokenInfo(req).id;
         if (!bookingId) {
             throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
         }
