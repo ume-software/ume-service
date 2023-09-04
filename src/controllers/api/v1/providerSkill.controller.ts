@@ -13,11 +13,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import {
-    errorService,
-    feedbackService,
-    providerSkillService,
-} from "@/services";
+import { feedbackService, providerSkillService } from "@/services";
 import { ProviderSkillService } from "@/services/api/v1/providerSkill.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
