@@ -159,7 +159,7 @@ export class UtilService {
         return arr.join("");
     }
 
-    changeToSlug(title: string, prefix: string) {
+    changeToSlug(title: string, prefix: string = "") {
         // Đổi chữ hoa thành chữ thường
         let slug = title.toLowerCase();
 
@@ -459,7 +459,6 @@ export class UtilService {
         input: T,
         targetClass: new () => T
     ): T {
-
         const targetInstance = new targetClass();
 
         for (const key in input) {

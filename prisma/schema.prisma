@@ -60,6 +60,7 @@ model Skill {
   name           String          @map("name")
   imageUrl       String?         @map("image_url")
   providerSkills ProviderSkill[]
+  slug           String?         @map("slug")
 
   @@map("skill")
 }
