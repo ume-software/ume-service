@@ -3,8 +3,8 @@ import {
     UpdateProviderSkillRequest,
 } from "@/common/requests";
 import {
-    CoinHistoryPagingResponse,
     FeedbackPagingResponse,
+    ProviderSkillPagingResponse,
     ProviderSkillResponse,
 } from "@/common/responses";
 import {
@@ -67,7 +67,7 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: CoinHistoryPagingResponse },
+                        schema: { model: ProviderSkillPagingResponse },
                     },
                 },
                 description: "Filter Provider Skill success",
