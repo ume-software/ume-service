@@ -228,6 +228,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const { status: oldStatus } = bookingHistory;
         const hasBookingEnded = bookingHistory.createdAt! < fiveMinutesBefore;
         return await prisma.$transaction(async (tx) => {
+          
             if (!status.includes(requestFrom)) {
                 throw errorService.auth.permissionDeny();
             }

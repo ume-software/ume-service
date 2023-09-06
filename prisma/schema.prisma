@@ -118,7 +118,7 @@ model BookingHistory {
   createdAt               DateTime?                @default(now()) @map("created_at")
   updatedAt               DateTime?                @updatedAt @map("updated_at")
   deletedAt               DateTime?                @map("deleted_at")
-  status                  BookingStatus
+  status                  BookingStatus            @map("status")
   acceptedAt              DateTime?                @map("accepted_at")
   booker                  User?                    @relation(fields: [bookerId], references: [id])
   bookerId                String?                  @map("booker_id")

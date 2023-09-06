@@ -8,7 +8,7 @@ function mapRouter(pathName: string, currentPathApi = '') {
   const mainPathNames = fs.readdirSync(pathName);
   for (const mainPathName of mainPathNames) {
     const mainPath = path.join(pathName, mainPathName);
-    if (['/base'].includes(currentPathApi)) continue;
+    if (['/base','/__test__'].includes(currentPathApi)) continue;
     if (fs.lstatSync(mainPath).isDirectory()) {
       mapRouter(mainPath, `${currentPathApi}/${mainPathName}`)
     } else {
