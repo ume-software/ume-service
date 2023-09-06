@@ -30,7 +30,7 @@ export class VoucherController extends BaseController {
     customRouting() {
         this.router.get(
             "/",
-            // this.accountTypeMiddlewares([EAccountType.USER]),
+            this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getMyVoucher)
         );
         this.router.post(
@@ -57,7 +57,7 @@ export class VoucherController extends BaseController {
             userId,
             req.queryInfoPrisma
         );
-        this.onSuccessAsList(res, result);
+        this.onSuccess(res, { row: result });
     }
     @ApiOperationPost({
         path: "/provider",

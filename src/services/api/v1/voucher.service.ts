@@ -6,23 +6,14 @@ import {
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Voucher } from "@prisma/client";
-
 export class VoucherService extends BasePrismaService<
     typeof voucherRepository
 > {
     constructor() {
         super(voucherRepository);
     }
-    async getMyVoucher(
-        userId: string,
-        query?: ICrudOptionPrisma
-    ): Promise<{
-        row: Voucher[];
-        count: number;
-    }> {
-        console.log(userId);
-        return await this.repository.findAndCountAll(query);
+    async getMyVoucher(userId: string, _query?: ICrudOptionPrisma) {
+        return await this.repository.findVoucherByBookerId(userId);
     }
     async providerCreateVoucher(
         userId: string,

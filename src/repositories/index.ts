@@ -34,6 +34,7 @@ const watchedPostRepository = new WatchedPostRepository();
 const noticeRepository = new NoticeRepository();
 const donateProviderRepository = new DonateProviderRepository();
 const voucherRepository = new VoucherRepository();
+
 const voucherRedeemedBookingRepository = new VoucherRedeemedBookingRepository();
 export {
     bookingCostRepository,

@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
+import { PrismaClient } from "@prisma/client";
 
 // add prisma to the NodeJS global type
 interface CustomNodeJsGlobal extends Global {
@@ -9,11 +8,13 @@ interface CustomNodeJsGlobal extends Global {
 // Prevent multiple instances of Prisma Client in development
 declare const global: CustomNodeJsGlobal;
 
-const prisma = global.prisma || new PrismaClient();
+const prisma =
+    global.prisma ||
+    new PrismaClient({
+        log: ["query", "info", "warn", "error"],
+    });
 
-if (process.env['NODE_ENV'] === 'development') global.prisma = prisma;
-
-
+if (process.env["NODE_ENV"] === "development") global.prisma = prisma;
 
 async function softDelete() {
     /***********************************/
@@ -21,36 +22,39 @@ async function softDelete() {
     /***********************************/
     prisma.$use(async (params, next) => {
         // Check incoming query type
-        if (params.action == 'count' || params.action.includes('find')) {
+        if (params.action == "count" || params.action.includes("find")) {
             if (params.args == undefined) {
                 params.args = {
                     where: {
-                        deletedAt: null
-                    }
-                }
+                        deletedAt: null,
+                    },
+                };
             } else {
-                params.args['where'] = { ...params.args['where'], deletedAt: null }
+                params.args["where"] = {
+                    ...params.args["where"],
+                    deletedAt: null,
+                };
             }
         }
-        if (params.action == 'delete') {
+        if (params.action == "delete") {
             // Delete queries
             // Change action to an update
-            params.action = 'update'
-            params.args['data'] = { deletedAt: new Date() }
+            params.action = "update";
+            params.args["data"] = { deletedAt: new Date() };
         }
-        if (params.action == 'deleteMany') {
+        if (params.action == "deleteMany") {
             // Delete many queries
-            params.action = 'updateMany'
+            params.action = "updateMany";
             if (params.args.data != undefined) {
-                params.args.data['deletedAt'] = new Date();
+                params.args.data["deletedAt"] = new Date();
             } else {
-                params.args['data'] = { deletedAt: new Date() }
+                params.args["data"] = { deletedAt: new Date() };
             }
         }
 
-        return next(params)
-    })
+        return next(params);
+    });
 }
 
-softDelete()
+softDelete();
 export default prisma;
