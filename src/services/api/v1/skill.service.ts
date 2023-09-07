@@ -17,7 +17,7 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
     }> {
         const result = await this.repository.findAndCountAll(query);
         if (!result) {
-            throw errorService.database.queryFail(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
             );
         }
@@ -31,7 +31,7 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
     async findOne(query?: ICrudOptionPrisma): Promise<Skill> {
         const result = await this.repository.findOne(query);
         if (!result) {
-            throw errorService.database.queryFail(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
             );
         }
@@ -46,7 +46,7 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
             where: { id: skillId },
         });
         if (!skill) {
-            throw errorService.database.queryFail(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
             );
         }
@@ -55,7 +55,7 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
     async deleteBySkillId(skillId: string): Promise<Skill> {
         const result = await this.repository.deleteById(skillId);
         if (!result) {
-            throw errorService.database.queryFail(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
             );
         }

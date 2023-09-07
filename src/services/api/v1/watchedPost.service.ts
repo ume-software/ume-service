@@ -14,7 +14,7 @@ export class WatchedPostService extends BasePrismaService<typeof watchedPostRepo
 
   async create(userId: string, postId: string): Promise<WatchedPost> {
     if (!userId || !postId) {
-      throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
+      throw errorService.error(ERROR_MESSAGE.BAD_REQUEST);
     }
     const watchedPostExisted = await this.repository.findOne({
       where: {

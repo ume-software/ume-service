@@ -211,7 +211,7 @@ model BuyCoinRequest {
   coinHistoryId   String?                @unique @map("coin_history_id")
   status          BuyCoinRequestStatus   @default(INIT) @map("status")
   handlerId       String?                @map("handler_id")
-  handlerFeeback  String?                @map("handler_feeback")
+  handlerFeedback  String?                @map("handler_feedback")
   billImageUrl    String?                @map("bill_image_url")
   platform        PaymentSystemPlatform? @map("platform")
   transactionCode String?                @unique() @map("transcaction_code")
@@ -237,7 +237,7 @@ model SellCoinRequest {
   coinHistoryId  String?                @unique @map("coin_history_id")
   status         SellCoinRequestStatus? @default(PENDING) @map("status")
   handlerId      String?                @map("handler_id")
-  handlerFeeback String?                @map("handler_feeback")
+  handlerFeedback String?                @map("handler_feedback")
   billImageUrl   String?                @map("bill_image_url")
 
   @@map("withdrawal_request")

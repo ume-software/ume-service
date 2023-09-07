@@ -73,7 +73,7 @@ export class ProviderService extends BasePrismaService<
     async getPersonalProfileByUserId(userId: string) {
         const result = await this.repository.getByIdOrSlug(userId);
         if (!result) {
-            throw errorService.auth.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }
@@ -125,9 +125,7 @@ export class ProviderService extends BasePrismaService<
             },
         });
         if (preExistingProvider) {
-            throw errorService.database.queryFail(
-                ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER
-            );
+            throw errorService.error(ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER);
         }
 
         const result = await this.repository.create({
@@ -145,7 +143,7 @@ export class ProviderService extends BasePrismaService<
                 },
             });
             if (checkSlugExisted) {
-                throw errorService.database.duplicate(
+                throw errorService.error(
                     ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
                 );
             }
@@ -162,7 +160,7 @@ export class ProviderService extends BasePrismaService<
             },
         });
         if (!provider) {
-            throw errorService.auth.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }
@@ -171,7 +169,7 @@ export class ProviderService extends BasePrismaService<
             updateProviderProfileRequest.slug &&
             updateProviderProfileRequest.slug != provider.slug
         ) {
-            throw errorService.router.badRequest(
+            throw errorService.error(
                 ERROR_MESSAGE.EACH_PROVIDER_CAN_ONLY_UPDATE_THE_SLUG_ONCE
             );
         }
@@ -185,7 +183,7 @@ export class ProviderService extends BasePrismaService<
                 },
             });
             if (checkSlugExisted) {
-                throw errorService.database.duplicate(
+                throw errorService.error(
                     ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
                 );
             }

@@ -22,7 +22,7 @@ export class SystemMiddleware extends BaseMiddleware {
                 "base64"
             ).toString("utf8");
             if (!cryptoService.areKeysMatching(publicKey, privateKey)) {
-                throw errorService.auth.permissionDeny();
+                throw errorService.permissionDeny();
             }
 
             next();

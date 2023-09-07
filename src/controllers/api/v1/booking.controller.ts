@@ -188,7 +188,7 @@ export class BookingController extends BaseController {
         const { id: bookingId } = req.params;
         const userId = this.getTokenInfo(req).id;
         if (!bookingId) {
-            throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
+            throw errorService.error(ERROR_MESSAGE.BAD_REQUEST);
         }
         const feedbackBookingRequest = new FeedbackBookingRequest(req.body);
         feedbackBookingRequest.bookerId = userId;

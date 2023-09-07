@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as swagger from "express-swagger-typescript";
 import { ErrorResponse } from "@/common/responses/error/error.response";
 import { config } from "@/configs";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 
 const swaggerData: any = swagger.swaggerData({
     definition: {
@@ -28,7 +29,8 @@ const swaggerData: any = swagger.swaggerData({
                         schema: { model: ErrorResponse },
                     },
                 },
-                description: "500 Internal Server Error Response",
+                description:
+                    ERROR_MESSAGE.SORRY_SOMETHING_WENT_WRONG.description,
             },
         },
         externalDocs: {

@@ -12,11 +12,11 @@ export class AuthMiddleware extends BaseMiddleware {
             const bearer = bearerHeader.split(" ");
             const bearerToken = bearer[1];
             if (!bearerToken) {
-                throw errorService.auth.unauthorized();
+                throw errorService.unauthorized();
             }
             const result: IAccessToken = tokenService.decodeToken(bearerToken) as IAccessToken;
             if (!result.id) {
-                throw errorService.auth.badToken();
+                throw errorService.badToken();
             }
             req.tokenInfo = result;
 
@@ -26,7 +26,7 @@ export class AuthMiddleware extends BaseMiddleware {
             //=======================
             next();
         } else {
-            throw errorService.auth.unauthorized();
+            throw errorService.unauthorized();
         }
     }
 

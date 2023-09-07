@@ -15,11 +15,11 @@ export class AccountTypeMiddleware extends BaseMiddleware {
                 const bearer = bearerHeader.split(" ");
                 const bearerToken = bearer[1];
                 if (!bearerToken) {
-                    throw errorService.auth.unauthorized();
+                    throw errorService.unauthorized();
                 }
                 const result: IAccessToken = tokenService.decodeToken(bearerToken) as IAccessToken;
                 if (!result.id) {
-                    throw errorService.auth.badToken();
+                    throw errorService.badToken();
                 }
                 req.tokenInfo = result;
 
@@ -28,14 +28,14 @@ export class AccountTypeMiddleware extends BaseMiddleware {
                 // req.userInfo = await userService.checkUserBlockedAndDeleted(user_id)
                 //=======================
             } else {
-                throw errorService.auth.unauthorized();
+                throw errorService.unauthorized();
             }
         }
         if (!option?.length) {
 
             const checkAccountTypes = option?.includes(req.tokenInfo.type)
             if (!checkAccountTypes) {
-                throw errorService.auth.unauthorized();
+                throw errorService.unauthorized();
             }
         }
         next();

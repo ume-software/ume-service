@@ -1,4 +1,3 @@
-
 import { ProviderSkillRequest } from "@/common/requests/providerSkill/providerSkill.request";
 import { UpdateProviderSkillRequest } from "@/common/requests/providerSkill/updateProviderSkill.request";
 import prisma from "@/models/base.prisma";
@@ -27,7 +26,7 @@ export class ProviderSkillService extends BasePrismaService<
         const { skillId, defaultCost, description, createBookingCosts } =
             providerSkillRequest;
         if (this.checkOverlapTime(createBookingCosts)) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         await skillService.findOne({ where: { id: skillId } });
         const provider = await providerRepository.findOne({
@@ -36,13 +35,13 @@ export class ProviderSkillService extends BasePrismaService<
             },
         });
         if (!provider) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
 
         // if (preExistingProviderSkill) {
-        //   throw errorService.router.errorCustom(
+        //   throw errorService.error(
         //     ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
         //   );
         // }
@@ -90,7 +89,7 @@ export class ProviderSkillService extends BasePrismaService<
                     ...preExistingBookingCosts,
                 ])
             ) {
-                throw errorService.router.badRequest();
+                throw errorService.badRequest();
             }
 
             const bookingCostCreateManyInput = createBookingCosts.map(
@@ -134,13 +133,11 @@ export class ProviderSkillService extends BasePrismaService<
                 ...updateBookingCosts,
             ])
         ) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const skill = await skillService.findOne({ where: { id: skillId } });
         if (!skill) {
-            throw errorService.router.badRequest(
-                ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
-            );
+            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
         }
         const provider = await providerRepository.findOne({
             where: {
@@ -148,7 +145,7 @@ export class ProviderSkillService extends BasePrismaService<
             },
         });
         if (!provider) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
@@ -205,7 +202,7 @@ export class ProviderSkillService extends BasePrismaService<
                     ...preExistingBookingCosts,
                 ])
             ) {
-                throw errorService.router.badRequest();
+                throw errorService.badRequest();
             }
 
             const bookingCostCreateManyInput = createBookingCosts.map(

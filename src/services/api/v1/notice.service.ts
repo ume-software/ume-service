@@ -18,7 +18,7 @@ export class NoticeService extends BasePrismaService<typeof noticeRepository> {
   }> {
     const result = await this.repository.findAndCountAll(query);
     if (!result) {
-      throw errorService.database.queryFail(
+      throw errorService.error(
         ERROR_MESSAGE.THIS_NOTICE_DOES_NOT_EXISTED
       );
     }
@@ -58,7 +58,7 @@ export class NoticeService extends BasePrismaService<typeof noticeRepository> {
   async findOne(query?: ICrudOptionPrisma): Promise<Notice> {
     const result = await this.repository.findOne(query);
     if (!result) {
-      throw errorService.database.queryFail(
+      throw errorService.error(
         ERROR_MESSAGE.THIS_NOTICE_DOES_NOT_EXISTED
       );
     }
@@ -68,7 +68,7 @@ export class NoticeService extends BasePrismaService<typeof noticeRepository> {
   async deleteByNoticeId(noticeId: string): Promise<Notice> {
     const result = await this.repository.deleteById(noticeId);
     if (!result) {
-      throw errorService.database.queryFail(
+      throw errorService.error(
         ERROR_MESSAGE.THIS_NOTICE_DOES_NOT_EXISTED
       );
     }

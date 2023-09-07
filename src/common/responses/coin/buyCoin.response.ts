@@ -95,11 +95,11 @@ export class BuyCoinResponse {
     handlerId!: string;
 
     @ApiModelProperty({
-        description: "Handler feeback",
+        description: "Handler feedback",
         required: false,
         example: "Done"
     })
-    handlerFeeback?: string;
+    handlerFeedback?: string;
 
     @ApiModelProperty({
         description: "Bill image url",

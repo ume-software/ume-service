@@ -88,14 +88,14 @@ export class DonateService {
     ) {
         const { amount, message, providerId } = donateProviderRequest;
         if (!creatorId || !providerId || !amount) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const { totalCoinsAvailable } = await coinService.getTotalCoinByUserId(
             creatorId
         );
 
         if (totalCoinsAvailable < amount) {
-            throw errorService.router.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
         }
@@ -105,7 +105,7 @@ export class DonateService {
             },
         });
         if (!provider) {
-            throw errorService.database.queryFail(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }

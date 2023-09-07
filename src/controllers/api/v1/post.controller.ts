@@ -140,7 +140,7 @@ export class PostController extends BaseController {
     async getPostById(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
 
         const result = await this.service.findById(id!);
@@ -181,7 +181,7 @@ export class PostController extends BaseController {
         let queryInfoPrisma = req.queryInfoPrisma;
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         if (!queryInfoPrisma) queryInfoPrisma = {};
         queryInfoPrisma.where = {
@@ -226,7 +226,7 @@ export class PostController extends BaseController {
         let queryInfoPrisma = req.queryInfoPrisma;
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         if (!queryInfoPrisma) queryInfoPrisma = {};
         queryInfoPrisma.where = {
@@ -307,7 +307,7 @@ export class PostController extends BaseController {
     async watchedByPostId(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const requesterId = req.tokenInfo?.id;
         const result = await watchedPostService.create(requesterId!, id!);
@@ -336,7 +336,7 @@ export class PostController extends BaseController {
     async likeForPostId(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const requesterId = req.tokenInfo?.id;
         const result = await likePostService.like(requesterId!, id!);
@@ -365,7 +365,7 @@ export class PostController extends BaseController {
     async unlikeForPostId(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const requesterId = req.tokenInfo?.id;
         const result = await likePostService.unlike(requesterId!, id!);
@@ -412,7 +412,7 @@ export class PostController extends BaseController {
         const { content, parentCommentId } = new CommentPostRequest(req.body);
         const { id } = req.params;
         if (!id) {
-            errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const requesterId = req.tokenInfo?.id;
         let commentPostCreateInput: Prisma.CommentPostCreateInput = {

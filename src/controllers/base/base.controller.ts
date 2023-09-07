@@ -49,7 +49,7 @@ export class BaseController {
     router: express.Router;
     getTokenInfo(req: Request) {
         if (!req.tokenInfo) {
-            throw errorService.auth.badToken();
+            throw errorService.badToken();
         }
         return req.tokenInfo;
     }
@@ -57,7 +57,7 @@ export class BaseController {
         // Raven.captureException(error);
         if (!error.options) {
             console.log("UNKNOW ERROR", error);
-            const err = errorService.router.somethingWentWrong();
+            const err = errorService.somethingWentWrong();
             res.status(err.options.statusCode).json(err.options);
         } else {
             res.status(error.options.statusCode).json(error.options);
@@ -68,7 +68,7 @@ export class BaseController {
 
         if (!error.options) {
             console.log("UNKNOW ERROR", error);
-            const err = errorService.router.somethingWentWrong();
+            const err = errorService.somethingWentWrong();
             res.status(err.options.statusCode).json({
                 data: cryptoService.encryptStringWithRsaPublicKey(
                     error.options,
@@ -192,7 +192,7 @@ export class BaseController {
                     if (!error.options) {
                         console.log("UNKNOW ERROR", error);
                         error.options =
-                            errorService.router.somethingWentWrong().options;
+                            errorService.somethingWentWrong().options;
                     }
                     const errorRes = { ...error };
                     error.options = undefined;
@@ -209,7 +209,7 @@ export class BaseController {
                     if (!error.options) {
                         console.log("UNKNOW ERROR", error);
                         error.options =
-                            errorService.router.somethingWentWrong().options;
+                            errorService.somethingWentWrong().options;
                     }
 
                     error.options = undefined;

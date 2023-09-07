@@ -1,4 +1,4 @@
-import { ErrorService } from "./errorService";
+import { ErrorService } from "./errors/errorService";
 
 // Crud
 import { UserService } from "./api/v1/user.service";

@@ -37,7 +37,7 @@ export class LikePostService extends BasePrismaService<typeof likePostRepository
 
   async like(userId: string, postId: string) {
     if (!userId || !postId) {
-      throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
+      throw errorService.error(ERROR_MESSAGE.BAD_REQUEST);
     }
     const likeExisted = await this.repository.findOne({
       where: {
@@ -64,7 +64,7 @@ export class LikePostService extends BasePrismaService<typeof likePostRepository
 
   async unlike(userId: string, postId: string) {
     if (!userId || !postId) {
-      throw errorService.router.badRequest(ERROR_MESSAGE.BAD_REQUEST);
+      throw errorService.error(ERROR_MESSAGE.BAD_REQUEST);
     }
     return await this.repository.destroyByUserIdAndPostId(userId, postId);
   }

@@ -25,7 +25,7 @@ export class VoucherService extends BasePrismaService<
             },
         });
         if (!provider || provider.userId != userId) {
-            throw errorService.auth.permissionDeny(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }

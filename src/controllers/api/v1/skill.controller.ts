@@ -10,7 +10,9 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { errorService, skillService } from "@/services";
 import { SkillService } from "@/services/api/v1/skill.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
+import { MappingErrorResponseSwaggerApi } from "@/swagger/swagger.helper";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -98,6 +100,9 @@ export class SkillController extends BaseController {
                 },
                 description: "Provider success",
             },
+            ...MappingErrorResponseSwaggerApi([
+                ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED,
+            ]),
         },
     })
     async getSkillBySlug(req: Request, res: Response) {
@@ -186,7 +191,7 @@ export class SkillController extends BaseController {
     async updateSkillById(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const createSkillRequest = new UpdateSkillRequest(req.body);
         const result = await this.service.updateSkillById(

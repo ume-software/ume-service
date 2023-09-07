@@ -38,7 +38,7 @@ export class TokenService {
             const secret = (option && option.secret) || config.server.secret;
             return jsonwebtoken.verify(token, secret).valueOf() as IAccessToken;
         } catch (err) {
-            throw errorService.auth.badToken();
+            throw errorService.badToken();
         }
 
     }

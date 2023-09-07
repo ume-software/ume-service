@@ -54,7 +54,7 @@ export class SocketService {
             const token = authorization?.split(" ")[1];
             // 1. Validate token with user
             if (!token) {
-                return next(errorService.auth.unauthorized());
+                return next(errorService.unauthorized());
             }
             const result: any = tokenService.decodeToken(`${token}`);
             const { id: userId } = result;

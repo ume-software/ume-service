@@ -42,7 +42,7 @@ export class BuyCoinRequestService extends BasePrismaService<
     ): Promise<BuyCoinCalculateResponse> {
         const { amountCoin, platform, unitCurrency } = buyCoinCalculateRequest;
         if (!amountCoin || !platform || !unitCurrency) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const result = await coinSettingRepository.convertCoinToMoneyForBuyCoin(
             amountCoin,
@@ -61,7 +61,7 @@ export class BuyCoinRequestService extends BasePrismaService<
         const { amountCoins, platform, unitCurrency } =
             buyCoinCalculateListRequest;
         if (!amountCoins || !platform || !unitCurrency) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         const option =
             await coinSettingRepository.getConvertCoinToMoneyForBuyCoinRate(
@@ -91,7 +91,7 @@ export class BuyCoinRequestService extends BasePrismaService<
     ) {
         const { amountCoin, platform, unitCurrency } = getQrBuyCoinRequest;
         if (!amountCoin || !platform || !unitCurrency) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         return await prisma.$transaction(async (tx) => {
             let transactionCode = "";
@@ -149,17 +149,15 @@ export class BuyCoinRequestService extends BasePrismaService<
     ) {
         const { id, status, billImageUrl, feedback } = buyCoinHandleRequest;
         if (!id || !status) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
 
         let buyCoinRequest = await this.repository.findById(id);
         if (!buyCoinRequest) {
-            throw errorService.database.queryFail(
-                ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND
-            );
+            throw errorService.error(ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND);
         }
         if (buyCoinRequest.handlerId != adminId) {
-            throw errorService.auth.permissionDeny();
+            throw errorService.permissionDeny();
         }
         const { APPROVED, INIT, PENDING, REJECTED, USER_NOTICES_PAID } =
             BuyCoinRequestStatus;
@@ -169,10 +167,10 @@ export class BuyCoinRequestService extends BasePrismaService<
             ) ||
             [INIT, USER_NOTICES_PAID].includes(status as any)
         ) {
-            throw errorService.router.badRequest();
+            throw errorService.badRequest();
         }
         if ([APPROVED, REJECTED].includes(buyCoinRequest.status as any)) {
-            throw errorService.router.badRequest(
+            throw errorService.error(
                 ERROR_MESSAGE.BUY_COIN_REQUEST_HAS_BEEN_PROCESSED
             );
         }
@@ -180,7 +178,7 @@ export class BuyCoinRequestService extends BasePrismaService<
         return await prisma.$transaction(async (tx) => {
             const body: Prisma.BuyCoinRequestUpdateInput = {
                 billImageUrl: billImageUrl!,
-                handlerFeeback: feedback!,
+                handlerFeedback: feedback!,
                 status,
             };
 

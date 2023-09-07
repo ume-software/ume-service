@@ -82,7 +82,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         if (!booker) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.BOOKER_DOES_NOT_EXISTED
             );
         }
@@ -97,7 +97,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             );
 
         if (!providerSkill) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
             );
         }
@@ -107,12 +107,12 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         if (!provider) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
         if (provider.userId == bookerId) {
-            throw errorService.router.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_CAN_NOT_BOOKING_YOURSELF
             );
         }
@@ -127,7 +127,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         );
 
         if (totalCoinsAvailable < totalCost) {
-            throw errorService.router.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
         }
@@ -188,7 +188,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         });
 
         if (!bookingHistory) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.BOOKING_REQUEST_DOES_NOT_EXISTED
             );
         }
@@ -200,7 +200,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         if (!providerSkill) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
             );
         }
@@ -211,7 +211,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         if (!provider) {
-            throw errorService.database.errorCustom(
+            throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
@@ -223,14 +223,14 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ? "PROVIDER"
                 : "OTHER";
         if (requestFrom == "OTHER") {
-            throw errorService.auth.permissionDeny();
+            throw errorService.permissionDeny();
         }
         const { status: oldStatus } = bookingHistory;
         const hasBookingEnded = bookingHistory.createdAt! < fiveMinutesBefore;
         return await prisma.$transaction(async (tx) => {
           
             if (!status.includes(requestFrom)) {
-                throw errorService.auth.permissionDeny();
+                throw errorService.permissionDeny();
             }
             const updateBookingHistoryRequest: Prisma.BookingHistoryUpdateInput =
                 {
@@ -238,10 +238,10 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 };
             if (status == PROVIDER_ACCEPT) {
                 if (oldStatus != INIT) {
-                    throw errorService.router.badRequest();
+                    throw errorService.badRequest();
                 }
                 if (hasBookingEnded) {
-                    throw errorService.router.errorCustom(
+                    throw errorService.error(
                         ERROR_MESSAGE.BOOKING_ENDED
                     );
                 }
@@ -284,13 +284,13 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     (status == USER_FINISH_SOON ||
                         status == PROVIDER_FINISH_SOON))
             ) {
-                throw errorService.router.badRequest();
+                throw errorService.badRequest();
             }
             if (
                 (status == PROVIDER_CANCEL || status == USER_CANCEL) &&
                 hasBookingEnded
             ) {
-                throw errorService.router.errorCustom(
+                throw errorService.error(
                     ERROR_MESSAGE.BOOKING_ENDED
                 );
             }

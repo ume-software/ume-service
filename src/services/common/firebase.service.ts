@@ -27,7 +27,7 @@ export class FirebaseService {
             const result = await admin.auth().verifyIdToken(token);
             return result
         } catch (err) {
-            throw errorService.auth.badToken()
+            throw errorService.badToken()
         }
     }
     async createUser(params: { email: string; password: string }) {

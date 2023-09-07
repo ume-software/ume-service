@@ -5,7 +5,7 @@ import * as express from 'express'
 export class BaseMiddleware {
     onError(res: Response, error: any) {
         if (!error.options) {
-            const err = errorService.router.somethingWentWrong()
+            const err = errorService.somethingWentWrong()
             res.status(err.options.statusCode).json(err.options)
         } else {
             res.status(error.options.statusCode).json(error.options)
@@ -17,7 +17,7 @@ export class BaseMiddleware {
             .catch((error: any) => {
                 if (!error.options) {
                     console.log("UNKNOW ERROR", error)
-                    error.options = errorService.router.somethingWentWrong().options
+                    error.options = errorService.somethingWentWrong().options
                 }
                
                 this.onError(res, error)

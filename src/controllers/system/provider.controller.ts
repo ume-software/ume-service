@@ -18,7 +18,7 @@ export class providerController extends BaseController {
     async getProviderByUserId(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
-            throw errorService.router.badRequest
+            throw errorService
         }
         const result = await providerRepository.findOne({
             where: {

@@ -58,7 +58,7 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
             }
         });
         if (!checkBookingExisted) {
-            throw errorService.database.recordNotFound(ERROR_MESSAGE.BOOKING_DOES_NOT_EXISTED)
+            throw errorService.error(ERROR_MESSAGE.BOOKING_DOES_NOT_EXISTED)
         }
         const checkFeedbackExisted = await feedbackRepository.findOne({
             where: {
@@ -66,7 +66,7 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
             }
         })
         if (checkFeedbackExisted) {
-            throw errorService.router.badRequest(ERROR_MESSAGE.THIS_BOOKING_HAS_BEEN_FEEDBACK)
+            throw errorService.error(ERROR_MESSAGE.THIS_BOOKING_HAS_BEEN_FEEDBACK)
         }
         return await feedbackRepository.create({
             amountStar,
