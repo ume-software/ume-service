@@ -4,6 +4,15 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { BookingCostProviderSkillRequest } from "./bookingCostProviderSkill.request";
+import {
+    IsArray,
+    IsInt,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsUUID,
+} from "class-validator";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Provider skill request",
@@ -14,6 +23,7 @@ export class ProviderSkillRequest {
         required: true,
         example: "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
     })
+    @IsUUID()
     skillId!: string;
 
     @ApiModelProperty({
@@ -21,6 +31,7 @@ export class ProviderSkillRequest {
         required: true,
         example: 8,
     })
+    @IsInt()
     defaultCost!: number;
 
     @ApiModelProperty({
@@ -28,6 +39,8 @@ export class ProviderSkillRequest {
         required: false,
         example: "Play with me :>>",
     })
+    @IsOptional()
+    @IsString()
     description!: string;
 
     @ApiModelProperty({
@@ -43,12 +56,22 @@ export class ProviderSkillRequest {
             },
         ],
     })
+    @IsOptional()
+    @IsArray()
+    @IsObject()
     createBookingCosts!: BookingCostProviderSkillRequest[];
 
     constructor(data: ProviderSkillRequest) {
-        this.createBookingCosts = data.createBookingCosts;
-        this.defaultCost = data.defaultCost;
-        this.description = data.description;
-        this.skillId = data.skillId;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(ProviderSkillRequest, data, [
+                    "skillId",
+                    "defaultCost",
+                    "description",
+                    "createBookingCosts",
+                ])
+            );
+        }
     }
 }

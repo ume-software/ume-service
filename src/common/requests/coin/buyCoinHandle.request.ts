@@ -1,5 +1,7 @@
 import { BuyCoinRequestStatus } from "@prisma/client";
+import { IsEnum, IsOptional, IsString, IsUUID, IsUrl } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Get QR buy coin request",
@@ -7,9 +9,10 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 export class BuyCoinHandleRequest {
     @ApiModelProperty({
         description: "id",
-        required: false,
+        required: true,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
+    @IsUUID()
     public id?: string;
 
     @ApiModelProperty({
@@ -17,6 +20,8 @@ export class BuyCoinHandleRequest {
         required: false,
         example: "url",
     })
+    @IsOptional()
+    @IsUrl()
     public billImageUrl?: string;
 
     @ApiModelProperty({
@@ -24,6 +29,8 @@ export class BuyCoinHandleRequest {
         required: false,
         example: "feedback",
     })
+    @IsOptional()
+    @IsString()
     public feedback?: string;
 
     @ApiModelProperty({
@@ -35,12 +42,20 @@ export class BuyCoinHandleRequest {
         ]),
         example: BuyCoinRequestStatus.APPROVED,
     })
+    @IsEnum(BuyCoinRequestStatus)
     public status!: BuyCoinRequestStatus;
 
     constructor(data: BuyCoinHandleRequest) {
-        this.id = data.id!;
-        this.billImageUrl = data.billImageUrl!;
-        this.feedback = data.feedback!;
-        this.status = data.status;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(BuyCoinHandleRequest, data, [
+                    "id",
+                    "billImageUrl",
+                    "feedback",
+                    "status"
+                ])
+            );
+        }
     }
 }

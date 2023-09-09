@@ -1,8 +1,10 @@
+import { IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Donate provider request",
@@ -14,6 +16,7 @@ export class DonateProviderRequest {
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
         type: SwaggerDefinitionConstant.STRING,
     })
+    @IsUUID()
     providerId!: string;
 
     @ApiModelProperty({
@@ -21,6 +24,7 @@ export class DonateProviderRequest {
         required: true,
         type: SwaggerDefinitionConstant.NUMBER,
     })
+    @IsNumber()
     amount!: number;
 
     @ApiModelProperty({
@@ -30,11 +34,20 @@ export class DonateProviderRequest {
             "Perspiciatis ducimus corporis consectetur quia aspernatur nulla aliquid occaecati. Reprehenderit dolorum illum repellendus non necessitatibus modi. Fugiat iste quisquam molestias accusamus consequuntur quisquam eum doloribus.",
         type: SwaggerDefinitionConstant.STRING,
     })
+    @IsOptional()
+    @IsString()
     message?: string;
 
     constructor(data: DonateProviderRequest) {
-        this.providerId = data.providerId;
-        this.amount = data.amount;
-        this.message = data.message!;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(DonateProviderRequest, data, [
+                    "providerId",
+                    "amount",
+                    "message",
+                ])
+            );
+        }
     }
 }

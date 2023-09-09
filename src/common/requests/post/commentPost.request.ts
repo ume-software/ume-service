@@ -1,8 +1,10 @@
+import { IsOptional, IsString, IsUUID } from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Comment post request",
@@ -15,6 +17,7 @@ export class CommentPostRequest {
             "Perspiciatis ducimus corporis consectetur quia aspernatur nulla aliquid occaecati. Reprehenderit dolorum illum repellendus non necessitatibus modi. Fugiat iste quisquam molestias accusamus consequuntur quisquam eum doloribus.",
         type: SwaggerDefinitionConstant.STRING,
     })
+    @IsString()
     content!: string;
 
     @ApiModelProperty({
@@ -22,10 +25,19 @@ export class CommentPostRequest {
         required: false,
         type: SwaggerDefinitionConstant.STRING,
     })
+    @IsOptional()
+    @IsUUID()
     parentCommentId?: string;
 
     constructor(data: CommentPostRequest) {
-        this.content = data.content;
-        this.parentCommentId = data.parentCommentId!;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(CommentPostRequest, data, [
+                    "content",
+                    "parentCommentId",
+                ])
+            );
+        }
     }
 }

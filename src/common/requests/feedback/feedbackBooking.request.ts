@@ -1,8 +1,10 @@
+import { IsNumber, IsOptional, IsString } from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Feedback booking request",
@@ -14,9 +16,11 @@ export class FeedbackBookingRequest {
 
     @ApiModelProperty({
         description: "content",
-        required: true,
+        required: false,
         example: "Good job",
     })
+    @IsOptional()
+    @IsString()
     content!: string;
 
     @ApiModelProperty({
@@ -25,10 +29,19 @@ export class FeedbackBookingRequest {
         example: 5,
         itemType: SwaggerDefinitionConstant.NUMBER,
     })
+    @IsOptional()
+    @IsNumber()
     amountStar!: number;
 
     constructor(data: FeedbackBookingRequest) {
-        this.content = data.content;
-        this.amountStar = data.amountStar;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(FeedbackBookingRequest, data, [
+                    "content",
+                    "amountStar",
+                ])
+            );
+        }
     }
 }

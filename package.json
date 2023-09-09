@@ -1,6 +1,6 @@
 {
   "name": "ume-service",
-  "version": "1.1.26",
+  "version": "1.1.27",
   "description": "",
   "type": "commonjs",
   "main": "build/index.js",
@@ -86,6 +86,8 @@
     "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
     "child_process": "^1.0.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "cron": "^2.4.3",
     "cross-env": "^7.0.3",

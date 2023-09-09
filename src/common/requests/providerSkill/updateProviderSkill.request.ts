@@ -4,6 +4,16 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { BookingCostProviderSkillRequest } from "./bookingCostProviderSkill.request";
+import {
+    IsArray,
+    IsInt,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsUUID,
+    Min,
+} from "class-validator";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "Update provider skill request",
@@ -14,6 +24,7 @@ export class UpdateProviderSkillRequest {
         required: true,
         example: "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
     })
+    @IsUUID()
     skillId!: string;
 
     @ApiModelProperty({
@@ -21,6 +32,8 @@ export class UpdateProviderSkillRequest {
         required: true,
         example: 8,
     })
+    @Min(1)
+    @IsInt()
     defaultCost!: number;
 
     @ApiModelProperty({
@@ -28,6 +41,8 @@ export class UpdateProviderSkillRequest {
         required: false,
         example: "Play with me :>>",
     })
+    @IsOptional()
+    @IsString()
     description!: string;
 
     @ApiModelProperty({
@@ -43,6 +58,9 @@ export class UpdateProviderSkillRequest {
             },
         ],
     })
+    @IsOptional()
+    @IsArray()
+    @IsObject()
     createBookingCosts!: BookingCostProviderSkillRequest[];
 
     @ApiModelProperty({
@@ -59,6 +77,9 @@ export class UpdateProviderSkillRequest {
             },
         ],
     })
+    @IsOptional()
+    @IsArray()
+    @IsObject()
     updateBookingCosts!: BookingCostProviderSkillRequest[];
 
     @ApiModelProperty({
@@ -68,14 +89,24 @@ export class UpdateProviderSkillRequest {
         itemType: SwaggerDefinitionConstant.STRING,
         example: ["42ac81c2-1815-45f7-b598-412487161e1f"],
     })
+    @IsOptional()
+    @IsArray()
+    @IsObject()
     deleteBookingCosts!: Array<String>;
 
     constructor(data: UpdateProviderSkillRequest) {
-        this.createBookingCosts = data.createBookingCosts;
-        this.defaultCost = data.defaultCost;
-        this.deleteBookingCosts = data.deleteBookingCosts;
-        this.description = data.description;
-        this.skillId = data.skillId;
-        this.updateBookingCosts = data.updateBookingCosts;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(UpdateProviderSkillRequest, data, [
+                    "skillId",
+                    "defaultCost",
+                    "description",
+                    "createBookingCosts",
+                    "updateBookingCosts",
+                    "deleteBookingCosts",
+                ])
+            );
+        }
     }
 }

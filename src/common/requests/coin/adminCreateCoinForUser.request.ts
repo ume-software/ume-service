@@ -1,4 +1,6 @@
+import { IsNumber, IsUUID } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { mappingDataRequest } from "../base";
 
 @ApiModel({
     description: "User registor become provider",
@@ -9,6 +11,7 @@ export class CoinForUserRequest {
         required: true,
         example: 10,
     })
+    @IsNumber()
     amount!: number;
 
     @ApiModelProperty({
@@ -16,9 +19,17 @@ export class CoinForUserRequest {
         required: true,
         example: "7d8c6f10-3eaf-4173-a7c6-f817ebfa71fa",
     })
+    @IsUUID()
     userId!: string;
     constructor(data: CoinForUserRequest) {
-        this.amount = data.amount;
-        this.userId = data.userId;
+        if (data) {
+            Object.assign(
+                this,
+                mappingDataRequest(CoinForUserRequest, data, [
+                    "amount",
+                    "userId",
+                ])
+            );
+        }
     }
 }

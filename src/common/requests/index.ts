@@ -7,3 +7,4 @@ export * from "./provider";
 export * from "./providerSkill";
 export * from "./skill";
 export * from "./voucher";
+export * from "./base";
