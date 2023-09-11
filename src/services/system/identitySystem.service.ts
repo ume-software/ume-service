@@ -93,7 +93,7 @@ export class IdentitySystemService {
     }
 
     async getQr(
-        getQrRequest: GetQrDepositRequest & { tranferContent: string }
+        getQrRequest: GetQrDepositRequest & { transferContent: string }
     ) {
         return (
             await this.fetchIdentityService().post(
