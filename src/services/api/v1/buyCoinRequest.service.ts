@@ -113,12 +113,12 @@ export class BuyCoinRequestService extends BasePrismaService<
                     unitCurrency,
                     platform
                 );
-            const tranferContent = `${transactionCode}`;
+            const transferContent = `${transactionCode}`;
             const { qrString, adminPaymentSystem } =
                 await identitySystemService.getQr({
                     amount: totalMoney,
                     platform,
-                    tranferContent,
+                    transferContent,
                 });
             return await this.repository.create(
                 {
@@ -136,7 +136,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                     handlerId: adminPaymentSystem.adminId,
                     beneficiary: adminPaymentSystem.beneficiary,
                     status: BuyCoinRequestStatus.INIT,
-                    content: tranferContent,
+                    content: transferContent,
                 },
                 tx
             );
