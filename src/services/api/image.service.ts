@@ -68,7 +68,11 @@ export class ImageService {
             const hostname = config.server.host ?? req.headers.host;
             const result = `${req.protocol}://${join(
                 hostname,
-                join(pathApi, encodeURIComponent(newFilename))
+                join(
+                    config.server.prefixPath.value,
+                    pathApi,
+                    encodeURIComponent(newFilename)
+                )
             ).replace(/\\/g, "/")}`;
 
             pathnames.push(result);

@@ -16,6 +16,7 @@ export class FileService {
             let newFilename = filename;
             const hostname = config.server.host ?? req.headers.host;
             const result = `${req.protocol}://${join(
+                config.server.prefixPath.value,
                 hostname,
                 join(pathApi, encodeURIComponent(newFilename))
             ).replace(/\\/g, "/")}`;
