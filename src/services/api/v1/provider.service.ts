@@ -3,9 +3,8 @@ import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.
 import { BecomeProviderRequest } from "@/common/requests/provider/becomeProvider.request";
 import { UpdateProviderProfileRequest } from "@/common/requests/provider/updateProviderProfile.request";
 import { BecomeProviderResponse } from "@/common/responses/provider/becomeProvider.response";
-import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { postRepository, providerRepository } from "@/repositories";
-import { errorService, identitySystemService } from "@/services";
+import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -56,19 +55,7 @@ export class ProviderService extends BasePrismaService<
         return result;
     }
     async getProviderBySlug(userSlug: string) {
-        const result = await this.repository.getByIdOrSlug(userSlug);
-        const { avatarUrl, dob, name, gender, slug } =
-            (await identitySystemService.getInformation(
-                result?.userId!
-            )) as UserInformationResponse;
-        (result as any).user = {
-            avatarUrl,
-            dob,
-            name,
-            slug,
-            gender,
-        };
-        return result;
+        return await this.repository.getByIdOrSlug(userSlug);
     }
     async getPersonalProfileByUserId(userId: string) {
         const result = await this.repository.getByIdOrSlug(userId);
@@ -77,17 +64,6 @@ export class ProviderService extends BasePrismaService<
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }
-        const { avatarUrl, dob, name, gender, slug } =
-            (await identitySystemService.getInformation(
-                userId
-            )) as UserInformationResponse;
-        (result as any).user = {
-            avatarUrl,
-            dob,
-            name,
-            slug,
-            gender,
-        };
         return result;
     }
 

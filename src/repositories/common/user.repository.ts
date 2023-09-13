@@ -1,101 +1,105 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import { BasePrismaRepository, PrismaTransaction } from "../base/basePrisma.repository";
+import {
+    BasePrismaRepository,
+    PrismaTransaction,
+} from "../base/basePrisma.repository";
 import { Prisma, User } from "@prisma/client";
-
 export class UserRepository extends BasePrismaRepository {
-  constructor() {
-    super();
-  }
-
-  async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-    row: User[];
-    count: number;
-  }> {
-    const [row, count] = await this.prisma.$transaction([
-      this.prisma.user.findMany(query),
-      this.prisma.user.count({
-        where: query?.where,
-      }),
-    ]);
-    return {
-      row,
-      count,
-    };
-  }
-  async upsertById(
-    userCreateInput: Prisma.UserCreateInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User> {
-    let user = await tx.user.findFirst({ where: { id: userCreateInput.id!! } });
-    if (!user) {
-      user = await tx.user.create({
-        data: userCreateInput,
-      });
-    } else {
-      user = await tx.user.update({
-        where: {
-          id: userCreateInput.id!!,
-        },
-        data: userCreateInput,
-      });
+    constructor() {
+        super();
     }
-    return user;
-  }
 
-  async updateById(
-    id: string,
-    bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User> {
-    return await tx.user.update({
-      data: bookingCostUpdateInput,
-      where: { id },
-    });
-  }
+    async findMany(query?: ICrudOptionPrisma) {
+        return await this.prisma.user.findMany(query);
+    }
 
-  async updateMany(
-    userUpdateInput: Prisma.UserUpdateInput,
-    query: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
-    return await tx.user.updateMany({
-      data: userUpdateInput,
-      where: query.where,
-    });
-  }
+    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
+        row: User[];
+        count: number;
+    }> {
+        const [row, count] = await this.prisma.$transaction([
+            this.prisma.user.findMany(query),
+            this.prisma.user.count({
+                where: query?.where,
+            }),
+        ]);
+        return {
+            row,
+            count,
+        };
+    }
 
-  async create(
-    userCreateInput: Prisma.UserCreateInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User> {
-    return await tx.user.create({ data: userCreateInput });
-  }
+    async create(
+        userCreateInput: Prisma.UserCreateInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<User> {
+        return await tx.user.create({ data: userCreateInput });
+    }
 
-  async findOne(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User | null> {
-    return await tx.user.findFirst(query);
-  }
+    async findOne(query?: ICrudOptionPrisma): Promise<User | null> {
+        return await this.prisma.user.findFirst(query);
+    }
 
-  async findMany(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User[]> {
-    return await tx.user.findMany(query);
-  }
+    async findByEmail(email: string): Promise<User | null> {
+        return await this.prisma.user.findFirst({ where: { email } });
+    }
 
-  async deleteById(
-    id: string,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<User> {
-    return await tx.user.delete({ where: { id } });
-  }
+    async findByUsername(username: string): Promise<User | null> {
+        return await this.prisma.user.findFirst({ where: { username } });
+    }
 
-  async deleteMany(
-    userWhereInput: Prisma.UserWhereInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Prisma.BatchPayload> {
-    return await tx.user.deleteMany({ where: userWhereInput });
-  }
+    async delete(
+        userWhereInput: Prisma.UserWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.user.deleteMany({ where: userWhereInput });
+    }
+
+    async getByIdOrSlug(slug: string) {
+        return await this.prisma.user.findFirst({
+            where: {
+                OR: [
+                    {
+                        id: slug,
+                    },
+                    {
+                        slug: slug,
+                    },
+                ],
+            },
+            select: {
+                id: true,
+                avatarUrl: true,
+                dob: true,
+                gender: true,
+                name: true,
+                slug: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
+
+    async updateUserProfileById(
+        userId: string,
+        userUpdateInput: Prisma.UserUpdateInput,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.user.update({
+            where: {
+                id: userId,
+            },
+            data: userUpdateInput,
+            select: {
+                id: true,
+                avatarUrl: true,
+                dob: true,
+                gender: true,
+                name: true,
+                slug: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
 }

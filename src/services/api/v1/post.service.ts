@@ -1,6 +1,6 @@
 import { CreateNewPostRequest } from "@/common/requests/post/createNewPost.request";
-import { postRepository } from "@/repositories";
-import { identitySystemService, utilService } from "@/services";
+import { postRepository, userRepository } from "@/repositories";
+import { utilService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -25,10 +25,19 @@ export class PostService extends BasePrismaService<typeof postRepository> {
             result = await this.repository.suggestForAnonymous(query?.take);
         }
         const userIds: string[] = result.row.map((item: any) => item.user_id);
-        let listUsers = [];
-        try {
-            listUsers = await identitySystemService.getListByUserIds(userIds);
-        } catch {}
+        const listUsers = await userRepository.findMany({
+            where: {
+                id: { $in: userIds },
+            },
+            select: {
+                id: true,
+                avatarUrl: true,
+                dob: true,
+                name: true,
+                slug: true,
+                gender: true,
+            },
+        });
         const mappingUser = utilService.convertArrayObjectToObject(
             listUsers,
             "id"
@@ -82,21 +91,11 @@ export class PostService extends BasePrismaService<typeof postRepository> {
     async findById(postId: string) {
         const post = await this.repository.findById(postId);
         if (post) {
-            let listUsers = [];
-            try {
-                listUsers = await identitySystemService.getListByUserIds([
-                    post.userId,
-                ]);
-            } catch {}
-            const mappingUser = utilService.convertArrayObjectToObject(
-                listUsers,
-                "id"
-            );
             return {
                 id: post.id,
                 content: post.id,
                 userId: post.userId,
-                user: mappingUser[post.userId],
+                user: post.user,
                 thumbnails: post.thumbnails,
                 createdAt: post.createdAt,
                 updatedAt: post.updatedAt,

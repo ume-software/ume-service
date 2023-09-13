@@ -1,70 +1,76 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import {
-  BasePrismaRepository,
-  PrismaTransaction,
+    BasePrismaRepository,
+    PrismaTransaction,
 } from "../base/basePrisma.repository";
-import { Prisma, Post } from "@prisma/client";
+import { Prisma, Post, User } from "@prisma/client";
 import { EUrlType } from "@/enums/urlType";
 export type PostAndCountLikeAndCountCommentType = Post & {
-  _count?: {
-    likePosts?: number;
-    commentPosts?: number;
-  };
-}
-export class PostRepository extends BasePrismaRepository {
-  constructor() {
-    super();
-  }
-
-  async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-    row: PostAndCountLikeAndCountCommentType[];
-    count: number;
-  }> {
-    const [row, count] = await this.prisma.$transaction([
-      this.prisma.post.findMany(query),
-      this.prisma.post.count({
-        where: query?.where,
-      }),
-    ]);
-    return {
-      row,
-      count,
+    user?: User;
+    _count?: {
+        likePosts?: number;
+        commentPosts?: number;
     };
-  }
-  async getUrlThumnailsByUserIdAndUrlType(userId: string, urlType: string = EUrlType.IMAGE, limit?: number, offset?: number) {
-    const query = `
+};
+export class PostRepository extends BasePrismaRepository {
+    constructor() {
+        super();
+    }
+
+    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
+        row: PostAndCountLikeAndCountCommentType[];
+        count: number;
+    }> {
+        const [row, count] = await this.prisma.$transaction([
+            this.prisma.post.findMany(query),
+            this.prisma.post.count({
+                where: query?.where,
+            }),
+        ]);
+        return {
+            row,
+            count,
+        };
+    }
+    async getUrlThumnailsByUserIdAndUrlType(
+        userId: string,
+        urlType: string = EUrlType.IMAGE,
+        limit?: number,
+        offset?: number
+    ) {
+        const query = `
       FROM post, LATERAL unnest(post.thumbnails::jsonb[]) AS thumbnail
       WHERE (thumbnail->>'type') = '${urlType}' 
         AND user_id = '${userId}'
         AND deleted_at IS NULL
-    `
-    const row = await this.prisma.$queryRawUnsafe(
-      `
+    `;
+        const row = (await this.prisma.$queryRawUnsafe(
+            `
       SELECT thumbnail->>'url' AS url , id as post_id , created_at , updated_at, deleted_at
       ${query} 
       ORDER BY created_at DESC
       ${limit != undefined ? `LIMIT ${limit}` : ""}
       ${offset != undefined ? `OFFSET ${offset}` : ""}
       `
-    ) as any[]
-    const countResult: any = await this.prisma.$queryRawUnsafe(`
+        )) as any[];
+        const countResult: any = await this.prisma.$queryRawUnsafe(`
       SELECT COUNT(*)::int as count
       ${query} 
     `);
 
-    return {
-      row: row.map(item => ({
-        url: item.url,
-        postId: item.post_id,
-        createdAt: item.created_at,
-        updatedAt: item.updated_at,
-        deletedAt: item.deleted_at,
-      })),
-      count: countResult[0].count
+        return {
+            row: row.map((item) => ({
+                url: item.url,
+                postId: item.post_id,
+                createdAt: item.created_at,
+                updatedAt: item.updated_at,
+                deletedAt: item.deleted_at,
+            })),
+            count: countResult[0].count,
+        };
     }
-  }
-  async suggestForUserId(userId: string, take: number | undefined) {
-    const query = `
+    async suggestForUserId(userId: string, take: number | undefined) {
+        const query = `
     SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
         (
             SELECT COUNT(*) 
@@ -162,22 +168,24 @@ export class PostRepository extends BasePrismaRepository {
       like_post lp ON lp.post_id = p.id AND lp.user_id = '${userId}'
     WHERE p.deleted_at IS NULL
     ORDER BY priority, p.created_at DESC
-    `
-    const row = await this.prisma.$queryRawUnsafe(
-      `
+    `;
+        const row = await this.prisma.$queryRawUnsafe(
+            `
       ${query} 
       ${take != undefined ? `LIMIT ${take}` : ""}
       `
-    )
-    const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int  as count FROM post`)
-    return {
-      row,
-      count: countResult[0].count
+        );
+        const countResult: any = await this.prisma.$queryRawUnsafe(
+            `SELECT COUNT(*)::int  as count FROM post`
+        );
+        return {
+            row,
+            count: countResult[0].count,
+        };
     }
-  }
 
-  async suggestForAnonymous(take: number | undefined) {
-    const query = `
+    async suggestForAnonymous(take: number | undefined) {
+        const query = `
       SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
           (
               SELECT COUNT(*)
@@ -228,88 +236,96 @@ export class PostRepository extends BasePrismaRepository {
       )
       ORDER BY RANDOM();
 
-    `
-    const row = await this.prisma.$queryRawUnsafe(query)
-    const countResult: any = await this.prisma.$queryRawUnsafe(`SELECT COUNT(*)::int as count FROM post`);
+    `;
+        const row = await this.prisma.$queryRawUnsafe(query);
+        const countResult: any = await this.prisma.$queryRawUnsafe(
+            `SELECT COUNT(*)::int as count FROM post`
+        );
 
-    return {
-      row,
-      count: countResult[0].count
+        return {
+            row,
+            count: countResult[0].count,
+        };
     }
-  }
 
-  async updateById(
-    id: string,
-    postUpdateInput: Prisma.PostUpdateInput,
-    tx: PrismaTransaction = this.prisma
-  ) {
-    return await tx.post.update({ data: postUpdateInput, where: { id } });
-  }
+    async updateById(
+        id: string,
+        postUpdateInput: Prisma.PostUpdateInput,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.post.update({ data: postUpdateInput, where: { id } });
+    }
 
-  async update(
-    postUpdateInput: Prisma.PostUpdateInput,
-    query: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ) {
-    return await tx.post.update({
-      data: postUpdateInput,
-      where: query.where,
-    });
-  }
+    async update(
+        postUpdateInput: Prisma.PostUpdateInput,
+        query: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.post.update({
+            data: postUpdateInput,
+            where: query.where,
+        });
+    }
 
-  async create(
-    postCreateInput: Prisma.PostCreateInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Post> {
-    return await tx.post.create({ data: postCreateInput });
-  }
+    async create(
+        postCreateInput: Prisma.PostCreateInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Post> {
+        return await tx.post.create({ data: postCreateInput });
+    }
 
-  async findOne(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Post | null> {
-    return await tx.post.findFirst(query);
-  }
+    async findOne(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Post | null> {
+        return await tx.post.findFirst(query);
+    }
 
+    async findById(postId: string, tx: PrismaTransaction = this.prisma) {
+        return await tx.post.findFirst({
+            where: {
+                id: postId,
+            },
 
-  async findById(
-    postId: string,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<PostAndCountLikeAndCountCommentType | null> {
-    return await tx.post.findFirst({
-      where: {
-        id: postId
-      },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        name: true,
+                        slug: true,
+                        gender: true,
+                    },
+                },
+                _count: {
+                    select: {
+                        commentPosts: true,
+                        likePosts: true,
+                    },
+                },
+            },
+        });
+    }
 
-      include: {
-        _count: {
-          select: {
-            commentPosts: true,
-            likePosts: true
-          }
-        }
-      }
-    });
-  }
+    async findMany(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Post[]> {
+        return await tx.post.findMany(query);
+    }
 
-  async findMany(
-    query?: ICrudOptionPrisma,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Post[]> {
-    return await tx.post.findMany(query);
-  }
+    async deleteById(
+        id: string,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Post> {
+        return await tx.post.delete({ where: { id } });
+    }
 
-  async deleteById(
-    id: string,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Post> {
-    return await tx.post.delete({ where: { id } });
-  }
-
-  async deleteMany(
-    postWhereInput: Prisma.PostWhereInput,
-    tx: PrismaTransaction = this.prisma
-  ): Promise<Prisma.BatchPayload> {
-    return await tx.post.deleteMany({ where: postWhereInput });
-  }
+    async deleteMany(
+        postWhereInput: Prisma.PostWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.post.deleteMany({ where: postWhereInput });
+    }
 }

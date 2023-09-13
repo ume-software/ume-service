@@ -1,6 +1,5 @@
 import { BookingHandleRequest } from "@/common/requests/booking/bookingHandle.request";
 import { BookingProviderRequest } from "@/common/requests/booking/bookingProvider.request";
-import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
@@ -17,11 +16,9 @@ import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.r
 import {
     coinService,
     errorService,
-    identitySystemService,
     noticeService,
     providerService,
     userService,
-    utilService,
 } from "@/services";
 import { BasePrismaService } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
@@ -39,25 +36,6 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             await bookingHistoryRepository.findAllCurrentBookingProvider(
                 userId
             );
-        const bookerIds: Array<string> = [];
-
-        for (let index = 0; index < bookingLists.length; index++) {
-            const booking = bookingLists[index];
-            if (booking && booking.bookerId) bookerIds.push(booking.bookerId);
-        }
-
-        const requestListIds = await identitySystemService.getListByUserIds(
-            bookerIds
-        );
-        const listUserInfo: Array<UserInformationResponse> =
-            requestListIds as Array<UserInformationResponse>;
-        const usersInfo: { [key: string]: UserInformationResponse } =
-            utilService.convertArrayObjectToObject(listUserInfo);
-        bookingLists.forEach((item) => {
-            if (item.bookerId) {
-                (item as any).booker = usersInfo[item.bookerId];
-            }
-        });
         return {
             row: bookingLists,
             count: bookingLists.length,
@@ -82,9 +60,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         if (!booker) {
-            throw errorService.error(
-                ERROR_MESSAGE.BOOKER_DOES_NOT_EXISTED
-            );
+            throw errorService.error(ERROR_MESSAGE.BOOKER_DOES_NOT_EXISTED);
         }
         const nowTimehhmm = moment()
             .utcOffset(config.server.timezone)
@@ -228,7 +204,6 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const { status: oldStatus } = bookingHistory;
         const hasBookingEnded = bookingHistory.createdAt! < fiveMinutesBefore;
         return await prisma.$transaction(async (tx) => {
-          
             if (!status.includes(requestFrom)) {
                 throw errorService.permissionDeny();
             }
@@ -241,9 +216,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     throw errorService.badRequest();
                 }
                 if (hasBookingEnded) {
-                    throw errorService.error(
-                        ERROR_MESSAGE.BOOKING_ENDED
-                    );
+                    throw errorService.error(ERROR_MESSAGE.BOOKING_ENDED);
                 }
                 await coinHistoryRepository.create(
                     {
@@ -290,9 +263,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 (status == PROVIDER_CANCEL || status == USER_CANCEL) &&
                 hasBookingEnded
             ) {
-                throw errorService.error(
-                    ERROR_MESSAGE.BOOKING_ENDED
-                );
+                throw errorService.error(ERROR_MESSAGE.BOOKING_ENDED);
             }
 
             const bookingHistory = await bookingHistoryRepository.updateById(

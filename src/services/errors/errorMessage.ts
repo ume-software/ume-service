@@ -161,7 +161,30 @@ export const ERROR_MESSAGE = {
         description:
             "This error is returned when a login method is not supported by the application, resulting in a 501 Not Implemented status.",
     },
-
+    ACCOUNT_NOT_FOUND: {
+        type: "user_error",
+        message: "This account could not be found.",
+        codeNumber: 20008,
+        statusCode: 404,
+        description:
+            "This error is used when the requested account could not be found, resulting in a 404 Not Found status.",
+    },
+    EACH_USER_CAN_ONLY_UPDATE_THE_SLUG_ONCE: {
+        type: "user_error",
+        message: "Each user can only update the slug once",
+        codeNumber: 30001,
+        statusCode: 409,
+        description:
+            "This error is used when a user attempts to update their slug more than once, which is not allowed, resulting in a 409 Conflict status.",
+    },
+    SLUG_ALREADY_EXISTS: {
+        type: "user_error",
+        message: "Slug already exists.",
+        codeNumber: 30002,
+        statusCode: 409,
+        description:
+            "This error occurs when a user attempts to use a slug that is already in use, resulting in a 409 Conflict status.",
+    },
     BOOKER_DOES_NOT_EXISTED: {
         type: "booking_exception",
         message: "Booker doesn't exist.",

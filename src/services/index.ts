@@ -17,7 +17,6 @@ import { CoinService } from "./api/v1/coin.service";
 import { BookingService } from "./api/v1/booking.service";
 import { FeedbackService } from "./api/v1/feedback.service";
 import { BuyCoinRequestService } from "./api/v1/buyCoinRequest.service";
-import { IdentitySystemService } from "./system/identitySystem.service";
 import { PostService } from "./api/v1/post.service";
 import { CommentPostService } from "./api/v1/commentPost.service";
 import { LikePostService } from "./api/v1/likePost.service";
@@ -27,6 +26,14 @@ import { DonateService } from "./api/v1/donate.service";
 import { VoucherService } from "./api/v1/voucher.service";
 import { VoucherRedeemedBookingService } from "./api/v1/voucherRedeemedBooking.service";
 import { RedisService } from "./common/redis.service";
+import { AdminService } from "./api/v1/admin.service";
+import { AdminPaymentSystemService } from "./api/v1/adminPaymentSystem.service";
+import { AdminRoleService } from "./api/v1/adminRole.service";
+import { AuthService } from "./api/v1/auth.service";
+import { PaymentQrSettingService } from "./api/v1/paymentQrSetting.service";
+import { QrPaymentService } from "./api/v1/qrPayment.service";
+import { GoogleService } from "./common/google.service";
+import { LoginService } from "./common/login.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -37,7 +44,8 @@ const bcryptService = new BcryptService();
 const cryptoService = new CryptoService();
 const errorService = new ErrorService();
 const firebaseService = new FirebaseService();
-
+const loginService = new LoginService();
+const googleService = new GoogleService();
 //=============
 const bookingService = new BookingService();
 const coinService = new CoinService();
@@ -45,9 +53,14 @@ const providerService = new ProviderService();
 const providerSkillService = new ProviderSkillService();
 const skillService = new SkillService();
 const userService = new UserService();
+const adminService = new AdminService();
+const adminPaymentSystemService = new AdminPaymentSystemService();
+const adminRole = new AdminRoleService();
+const authService = new AuthService();
+const paymentQrSettingService = new PaymentQrSettingService();
+const qrPaymentService = new QrPaymentService();
 const feedbackService = new FeedbackService();
 const buyCoinRequestService = new BuyCoinRequestService();
-const identitySystemService = new IdentitySystemService();
 const postService = new PostService();
 const commentPostService = new CommentPostService();
 const likePostService = new LikePostService();
@@ -57,6 +70,7 @@ const donateService = new DonateService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
 const redisService = new RedisService();
+
 export {
     scheduleService,
     errorService,
@@ -67,16 +81,23 @@ export {
     imageService,
     fileService,
     firebaseService,
+    loginService,
+    googleService,
     // CRUD
     bookingService,
     coinService,
     providerService,
     providerSkillService,
     userService,
+    adminService,
+    adminPaymentSystemService,
+    adminRole,
+    authService,
+    paymentQrSettingService,
+    qrPaymentService,
     skillService,
     feedbackService,
     buyCoinRequestService,
-    identitySystemService,
     postService,
     commentPostService,
     likePostService,

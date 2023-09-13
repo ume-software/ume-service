@@ -16,6 +16,12 @@ import { NoticeRepository } from "./common/notice.repository";
 import { DonateProviderRepository } from "./common/donateProvider.repository";
 import { VoucherRepository } from "./common/voucher.repository";
 import { VoucherRedeemedBookingRepository } from "./common/voucherRedeemedBooking.repository";
+import { RefreshTokenUserRepository } from "./common/refreshTokenUser.repository";
+import { RefreshTokenAdminRepository } from "./common/refreshTokenAdmin.repository";
+import { AdminRepository } from "./common/admin.repository";
+import { PaymentQrSettingRepository } from "./common/paymentQrSetting.repository";
+import { AdminPaymentSystemRepository } from "./common/adminPaymentSystem.repository";
+import { AdminRoleRepository } from "./common/adminRole.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -24,6 +30,11 @@ const providerRepository = new ProviderRepository();
 const providerSkillRepository = new ProviderSkillRepository();
 const skillRepository = new SkillRepository();
 const userRepository = new UserRepository();
+const refreshTokenUserRepository = new RefreshTokenUserRepository();
+const adminRepository = new AdminRepository();
+const adminRoleRepository = new AdminRoleRepository();
+const refreshTokenAdminRepository = new RefreshTokenAdminRepository();
+const adminPaymentSystemRepository = new AdminPaymentSystemRepository();
 const feedbackRepository = new FeedbackRepository();
 const buyCoinRequestRepository = new BuyCoinRequestRepository();
 const coinSettingRepository = new CoinSettingRepository();
@@ -34,8 +45,8 @@ const watchedPostRepository = new WatchedPostRepository();
 const noticeRepository = new NoticeRepository();
 const donateProviderRepository = new DonateProviderRepository();
 const voucherRepository = new VoucherRepository();
-
 const voucherRedeemedBookingRepository = new VoucherRedeemedBookingRepository();
+const paymentQrSettingRepository = new PaymentQrSettingRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -44,6 +55,11 @@ export {
     providerSkillRepository,
     skillRepository,
     userRepository,
+    adminRoleRepository,
+    refreshTokenUserRepository,
+    adminRepository,
+    adminPaymentSystemRepository,
+    refreshTokenAdminRepository,
     feedbackRepository,
     buyCoinRequestRepository,
     coinSettingRepository,
@@ -55,4 +71,5 @@ export {
     donateProviderRepository,
     voucherRepository,
     voucherRedeemedBookingRepository,
+    paymentQrSettingRepository,
 };

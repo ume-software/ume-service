@@ -1,62 +1,93 @@
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { Gender, LoginType } from "@prisma/client";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 
 @ApiModel({
-  description: "User Information response",
+    description: "User information reponse",
 })
 export class UserInformationResponse {
-  @ApiModelProperty({
-    description: "User name",
-    required: true,
-    example: "Đỗ Trần Minh Chu",
-  })
-  name!: string;
+    @ApiModelProperty({
+        description: "The username for login",
+        required: true,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public id!: string | null;
 
+    @ApiModelProperty({
+        description: "The username for login",
+        required: true,
+        example: "username",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public username!: string | null;
 
-  @ApiModelProperty({
-    description: "User name",
-    required: true,
-    example: "Đỗ Trần Minh Chu",
-  })
-  username!: string;
+    @ApiModelProperty({
+        description: "Slug",
+        required: true,
+        example: "do-tran-minh-chu",
+    })
+    slug!: string | null;
 
-  @ApiModelProperty({
-    description: "Slug",
-    required: true,
-    example: "do-tran-minh-chu",
-  })
-  slug!: string;
+    @ApiModelProperty({
+        description: "name",
+        required: true,
+        example: "name",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public name!: string | null;
 
-  @ApiModelProperty({
-    description: "Dob timezone 0",
-    required: true,
-    example: "2001-10-12 17:00:00.000",
-  })
-  dob!: string;
+    @ApiModelProperty({
+        description: "gender",
+        required: true,
+        enum: Object.values(Gender),
+        example: "name",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public gender!: Gender;
 
-  @ApiModelProperty({
-    description: "Gender",
-    required: true,
-    example: "MALE",
-  })
-  gender!: string;
+    @ApiModelProperty({
+        description: "day of birth",
+        required: false,
+        example: "2023-02-08T07:25:50.009Z",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public dob?: Date | null;
 
-  @ApiModelProperty({
-    description: "Phone number",
-    example: "0123456789",
-  })
-  phone!: string;
+    @ApiModelProperty({
+        description: "phone",
+        required: false,
+        example: "0123456789",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public phone?: string | null;
 
-  @ApiModelProperty({
-    description: "Email",
-    required: true,
-    example: "dotranminhchu@gmail.com",
-  })
-  email!: string;
+    @ApiModelProperty({
+        description: "email",
+        required: true,
+        example: "email@gmail.com",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public email!: string | null;
 
-  @ApiModelProperty({
-    description: "avatarUrl",
-    required: true,
-    example: "https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg",
-  })
-  avatarUrl!: string;
+    @ApiModelProperty({
+        description: "loginType",
+        required: true,
+        enum: Object.values(LoginType),
+        example: LoginType.GOOGLE,
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public loginType!: LoginType | null;
+
+    @ApiModelProperty({
+        description: "avatar url",
+        required: false,
+        example:
+            "https://lh3.googleusercontent.com/a/AAcHTtfxbwWNIPBNhWJ6V_oTzH_Ea6ocmhgs0uIpo8c6=s96-c",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public avatarUrl!: string | null;
 }

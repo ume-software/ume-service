@@ -8,15 +8,25 @@ datasource db {
 }
 
 model User {
-  id                     String                   @id @default(uuid()) @map("id")
-  createdAt              DateTime?                @default(now()) @map("created_at")
-  updatedAt              DateTime?                @updatedAt @map("updated_at")
-  deletedAt              DateTime?                @map("deleted_at")
-  isOnline               Boolean?                 @default(false) @map("is_online")
-  latestOnline           Boolean?                 @map("latest_online")
-  loginType              LoginType?               @map("login_type")
-  gender                 Gender?                  @map("gender")
-  dob                    DateTime?                @map("dob")
+  id           String            @id @default(uuid()) @map("id")
+  createdAt    DateTime?         @default(now()) @map("created_at")
+  updatedAt    DateTime?         @updatedAt @map("updated_at")
+  deletedAt    DateTime?         @map("deleted_at")
+  slug         String?           @map("slug")
+  name         String?           @map("name") @db.VarChar(80)
+  username     String?           @map("username") @db.VarChar(80)
+  dob          DateTime?         @map("dob")
+  gender       Gender            @default(ORTHER) @map("gender")
+  phone        String?           @map("phone")
+  email        String?           @map("email")
+  password     String?           @map("password")
+  loginType    LoginType         @default(INAPP) @map("login_type")
+  avatarUrl    String?           @map("avatar_url")
+  ipv4         String?           @map("ipv4") @db.Char(40)
+  refreshToken RefreshTokenUser?
+  isOnline     Boolean?          @default(false) @map("is_online")
+  latestOnline Boolean?          @map("latest_online")
+
   provider               Provider?
   coinHistories          CoinHistory[]
   bookingHistories       BookingHistory[]
@@ -30,7 +40,109 @@ model User {
   donateProviders        DonateProvider[]
   voucherRedeemedBooking VoucherRedeemedBooking[]
 
+  userPaymentSystems UserPaymentSystem[]
+
   @@map("user")
+}
+
+model RefreshTokenUser {
+  id           String    @id @default(uuid()) @map("id")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  refreshToken String?   @map("refresh_token")
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    @unique @map("user_id")
+
+  @@map("refresh_token_user")
+}
+
+model Admin {
+  id                  String               @id @default(uuid()) @map("id")
+  createdAt           DateTime?            @default(now()) @map("created_at")
+  updatedAt           DateTime?            @updatedAt @map("updated_at")
+  deletedAt           DateTime?            @map("deleted_at")
+  name                String?              @map("name") @db.VarChar(80)
+  username            String?              @map("username") @db.VarChar(20)
+  dob                 DateTime?            @map("dob")
+  gender              Gender               @default(ORTHER) @map("gender")
+  phone               String?              @map("phone")
+  email               String?              @map("email")
+  password            String?              @map("password")
+  avatarUrl           String?              @map("avatar_url")
+  ipv4                String?              @map("ipv4") @db.Char(20)
+  refreshTokenAdmin   RefreshTokenAdmin?
+  adminRoles          AdminRole[]
+  adminPaymentSystems AdminPaymentSystem[]
+
+  @@map("admin")
+}
+
+model RefreshTokenAdmin {
+  id           String    @id @default(uuid()) @map("id")
+  createdAt    DateTime? @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  refreshToken String?   @map("refresh_token")
+  admin        Admin     @relation(fields: [adminId], references: [id])
+  adminId      String    @unique @map("admin_id")
+
+  @@map("refresh_token_admin")
+}
+
+model AdminRole {
+  id        String        @id @default(uuid()) @map("id")
+  createdAt DateTime?     @default(now()) @map("created_at")
+  updatedAt DateTime?     @updatedAt @map("updated_at")
+  deletedAt DateTime?     @map("deleted_at")
+  admin     Admin         @relation(fields: [adminId], references: [id])
+  adminId   String        @map("admin_id")
+  roleType  AdminRoleType @map("role_type")
+
+  @@map("admin_role")
+}
+
+model AdminPaymentSystem {
+  id               String                   @id @default(uuid()) @map("id")
+  createdAt        DateTime?                @default(now()) @map("created_at")
+  updatedAt        DateTime?                @updatedAt @map("updated_at")
+  deletedAt        DateTime?                @map("deleted_at")
+  admin            Admin                    @relation(fields: [adminId], references: [id])
+  adminId          String                   @map("admin_id")
+  platform         PaymentSystemPlatform    @map("platform")
+  platformAccount  String?                  @map("platform_account")
+  beneficiary      String?                  @map("beneficiary")
+  isCashierAccount Boolean?                 @default(false) @map("is_cashier_account")
+  isReady          Boolean?                 @default(false) @map("is_ready")
+  isDefault        Boolean?                 @default(false) @map("is_default")
+  status           AdminPaymentSystemStatus @default(INIT) @map("status")
+
+  @@map("admin_payment_system")
+}
+
+model UserPaymentSystem {
+  id              String                @id @default(uuid()) @map("id")
+  createdAt       DateTime?             @default(now()) @map("created_at")
+  updatedAt       DateTime?             @updatedAt @map("updated_at")
+  deletedAt       DateTime?             @map("deleted_at")
+  user            User                  @relation(fields: [userId], references: [id])
+  userId          String                @map("user_id")
+  platform        PaymentSystemPlatform @map("platform")
+  platformAccount String?               @map("platform_account")
+  beneficiary     String?               @map("beneficiary")
+
+  @@map("user_payment_system")
+}
+
+model PaymentQrSetting {
+  id        String                 @id @default(uuid()) @map("id")
+  createdAt DateTime?              @default(now()) @map("created_at")
+  updatedAt DateTime?              @updatedAt @map("updated_at")
+  deletedAt DateTime?              @map("deleted_at")
+  regex     String?                @map("regex")
+  platform  PaymentSystemPlatform? @map("system_platform")
+
+  @@map("payemt_qr_setting")
 }
 
 model Provider {
@@ -211,7 +323,7 @@ model BuyCoinRequest {
   coinHistoryId   String?                @unique @map("coin_history_id")
   status          BuyCoinRequestStatus   @default(INIT) @map("status")
   handlerId       String?                @map("handler_id")
-  handlerFeedback  String?                @map("handler_feedback")
+  handlerFeedback String?                @map("handler_feedback")
   billImageUrl    String?                @map("bill_image_url")
   platform        PaymentSystemPlatform? @map("platform")
   transactionCode String?                @unique() @map("transcaction_code")
@@ -222,23 +334,23 @@ model BuyCoinRequest {
 }
 
 model SellCoinRequest {
-  id             String                 @id @default(uuid()) @map("id")
-  createdAt      DateTime?              @default(now()) @map("created_at")
-  updatedAt      DateTime?              @updatedAt @map("updated_at")
-  deletedAt      DateTime?              @map("deleted_at")
-  content        String?                @map("content")
-  amountMoney    Int?                   @map("amount_money")
-  amountCoin     Float?                 @map("amount_coin")
-  unitCurrency   UnitCurrency?          @map("unit_currency")
-  requester      User                   @relation(fields: [requesterId], references: [id])
-  requesterId    String                 @map("requester_id")
-  qrContent      String?                @map("qr_content")
-  coinHistory    CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
-  coinHistoryId  String?                @unique @map("coin_history_id")
-  status         SellCoinRequestStatus? @default(PENDING) @map("status")
-  handlerId      String?                @map("handler_id")
+  id              String                 @id @default(uuid()) @map("id")
+  createdAt       DateTime?              @default(now()) @map("created_at")
+  updatedAt       DateTime?              @updatedAt @map("updated_at")
+  deletedAt       DateTime?              @map("deleted_at")
+  content         String?                @map("content")
+  amountMoney     Int?                   @map("amount_money")
+  amountCoin      Float?                 @map("amount_coin")
+  unitCurrency    UnitCurrency?          @map("unit_currency")
+  requester       User                   @relation(fields: [requesterId], references: [id])
+  requesterId     String                 @map("requester_id")
+  qrContent       String?                @map("qr_content")
+  coinHistory     CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
+  coinHistoryId   String?                @unique @map("coin_history_id")
+  status          SellCoinRequestStatus? @default(PENDING) @map("status")
+  handlerId       String?                @map("handler_id")
   handlerFeedback String?                @map("handler_feedback")
-  billImageUrl   String?                @map("bill_image_url")
+  billImageUrl    String?                @map("bill_image_url")
 
   @@map("withdrawal_request")
 }
@@ -381,6 +493,34 @@ enum LoginType {
   PHONE
 }
 
+enum AdminRoleType {
+  SUPERADMIN
+  ADMIN
+  COLLABORATOR
+  CASHIER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  ORTHER
+  PRIVATE
+}
+
+enum PaymentSystemPlatform {
+  MOMO
+  VNPAY
+  ZALOPAY
+  TPB
+  BIDV
+}
+
+enum AdminPaymentSystemStatus {
+  INIT
+  APPROVED
+  REJECTED
+}
+
 enum BookingStatus {
   INIT
   USER_CANCEL
@@ -416,14 +556,6 @@ enum BannerStatus {
   UNACTIVATED
 }
 
-enum PaymentSystemPlatform {
-  MOMO
-  VNPAY
-  ZALOPAY
-  TPB
-  BIDV
-}
-
 enum CoinSettingType {
   BUY_COIN
   SELL_COIN
@@ -438,13 +570,6 @@ enum NoticeType {
   BOOKING_HAS_BEEN_DECLINED
   BOOKING_HAS_BEEN_SUCCESSED
   SOMEONE_FOLLOWING_YOU
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  ORTHER
-  PRIVATE
 }
 
 enum VoucherType {

@@ -283,7 +283,7 @@ export class ProviderRepository extends BasePrismaRepository {
             count: Number(countResult[0].count),
         };
     }
-    async getByIdOrSlug(slug: string): Promise<Provider | null> {
+    async getByIdOrSlug(slug: string) {
         const nowTimehhmm = moment()
             .utcOffset(config.server.timezone)
             .format("HH:mm");
@@ -323,6 +323,16 @@ export class ProviderRepository extends BasePrismaRepository {
                     },
                     orderBy: {
                         position: "asc",
+                    },
+                },
+                user: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        name: true,
+                        slug: true,
+                        gender: true,
                     },
                 },
             },

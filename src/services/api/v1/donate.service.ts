@@ -10,13 +10,9 @@ import {
     coinSettingRepository,
     donateProviderRepository,
     providerRepository,
+    userRepository,
 } from "@/repositories";
-import {
-    coinService,
-    errorService,
-    identitySystemService,
-    utilService,
-} from "@/services";
+import { coinService, errorService, utilService } from "@/services";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { CoinType } from "@prisma/client";
 
@@ -64,10 +60,20 @@ export class DonateService {
         );
         const userIds = result.map((item) => item.userId);
 
-        const listUsers = (
-            await identitySystemService.getListByUserIds(userIds)
-        );
-        const mappinguser = utilService.convertArrayObjectToObject(
+        const listUsers = await userRepository.findMany({
+            where: {
+                id: { $in: userIds },
+            },
+            select: {
+                id: true,
+                avatarUrl: true,
+                dob: true,
+                name: true,
+                slug: true,
+                gender: true,
+            },
+        });
+        const mappingUser = utilService.convertArrayObjectToObject(
             listUsers,
             "id"
         );
@@ -76,7 +82,7 @@ export class DonateService {
                 totalCoinDonate: item._sum.donateAmount || 0,
                 countDonate: item._count.donateAmount,
                 userId: item.userId,
-                user: mappinguser[item.userId],
+                user: mappingUser[item.userId],
             };
         });
         return { row };

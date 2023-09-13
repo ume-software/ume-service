@@ -1,25 +1,47 @@
-import { Prisma } from "@prisma/client";
 import { BaseController, Request, Response } from "../base/base.controller";
-import { userService } from "@/services";
-import { UserService } from "@/services/api/v1/user.service";
+import { errorService, userService } from "@/services";
 
 export class UserController extends BaseController {
     constructor() {
         super();
-        this.service = userService;
         this.path = "user";
-        this.router.post(
-            "/sync",
-            this.systemsMiddlewares(),
-            this.route(this.sync)
-        );
+        this.router.get("/", this.systemsMiddlewares(), this.route(this.getList));
+        this.router.get("/:userId", this.systemsMiddlewares(), this.route(this.getUserId));
+        this.router.post("/get-list-user-by-ids", this.systemsMiddlewares(), this.route(this.getListUserByIds));
     }
-    service: UserService;
-    async sync(req: Request, res: Response) {
-        const userCreateInput: Prisma.UserCreateInput = {
-            ...req.body,
-        };
-        const result = await userService.upsertById(userCreateInput);
+    async getUserId(req: Request, res: Response) {
+        const { userId } = req.params;
+        if (!userId) {
+            throw errorService.badRequest();
+        }
+        const result = await userService.findOne({
+            where: {
+                id: userId,
+            },
+        });
         this.onSuccess(res, result);
+    }
+    async getList(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma;
+        const results = await userService.findMany(queryInfoPrisma);
+        this.onSuccess(res, { results });
+    }
+
+    async getListUserByIds(req: Request, res: Response) {
+        const { ids } = req.body;
+        const result = await userService.findAndCountAll({
+            where: {
+                id: {
+                    in: ids as Array<String>
+                }
+            },
+            select: {
+                id: true,
+                name: true,
+                slug: true,
+                avatarUrl: true
+            }
+        })
+        this.onSuccessAsList(res,result)
     }
 }

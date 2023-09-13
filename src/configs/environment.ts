@@ -45,6 +45,9 @@ export default {
         username: process.env["REDIS_USERNAME"] ?? "redis",
         password: process.env["REDIS_PASSWORD"] ?? "redis",
     },
+    google: {
+        client_id: process.env["GOOGLE_CLIENT_ID"] || "",
+    },
     service: {
         identity: {
             url: process.env["URL_IDENTITY_SERVICE"] ?? "http://localhost:4000",

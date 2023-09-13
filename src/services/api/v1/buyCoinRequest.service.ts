@@ -14,7 +14,7 @@ import {
     buyCoinRequestRepository,
     coinHistoryRepository,
 } from "@/repositories";
-import { errorService, identitySystemService, utilService } from "@/services";
+import { errorService, qrPaymentService, utilService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -115,7 +115,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                 );
             const transferContent = `${transactionCode}`;
             const { qrString, adminPaymentSystem } =
-                await identitySystemService.getQr({
+                await qrPaymentService.getQrBuyCoin({
                     amount: totalMoney,
                     platform,
                     transferContent,

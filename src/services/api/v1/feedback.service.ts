@@ -1,25 +1,22 @@
-
 import { FeedbackBookingRequest } from "@/common/requests/feedback/feedbackBooking.request";
 import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { bookingHistoryRepository, feedbackRepository } from "@/repositories";
-import { errorService, identitySystemService, utilService } from "@/services";
+import { errorService } from "@/services";
 import {
-    BasePrismaService, ICrudOptionPrisma,
+    BasePrismaService,
+    ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BookingHistory, Feedback } from "@prisma/client";
 
-type FeedbackByProviderSkillType = (
-    Feedback &
-    {
-        booking?: (
-            BookingHistory & {
-                booker?: UserInformationResponse
-            }
-        );
-    }
-)
-export class FeedbackService extends BasePrismaService<typeof feedbackRepository> {
+type FeedbackByProviderSkillType = Feedback & {
+    booking?: BookingHistory & {
+        booker?: UserInformationResponse;
+    };
+};
+export class FeedbackService extends BasePrismaService<
+    typeof feedbackRepository
+> {
     constructor() {
         super(feedbackRepository);
     }
@@ -30,52 +27,53 @@ export class FeedbackService extends BasePrismaService<typeof feedbackRepository
     }> {
         query.include = {
             ...query.include,
-            booking: true
-        }
+            booking: {
+                booker: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        name: true,
+                        slug: true,
+                        gender: true,
+                    },
+                },
+            },
+        };
 
-        const result = await this.repository.findAndCountAll(query);
-        const bookerIds: string[] = result.row.map(item => item.booking?.bookerId) as string[];
-        const requestListIds = await identitySystemService.getListByUserIds(bookerIds)
-        const listUserInfo: Array<UserInformationResponse> = requestListIds as Array<UserInformationResponse>;
-        const usersInfo: { [key: string]: UserInformationResponse } = utilService.convertArrayObjectToObject(listUserInfo);
-
-        result.row.forEach(item => {
-            if (item.booking?.bookerId) {
-                (item.booking as any).booker = usersInfo[item.booking.bookerId];
-            }
-
-        })
-
-        return result;
+        return await this.repository.findAndCountAll(query);
     }
 
     async create(feedbackBookingRequest: FeedbackBookingRequest) {
-        const { amountStar, bookingId, content, bookerId } = feedbackBookingRequest;
+        const { amountStar, bookingId, content, bookerId } =
+            feedbackBookingRequest;
         const checkBookingExisted = await bookingHistoryRepository.findOne({
             where: {
                 id: bookingId,
-                bookerId
-            }
+                bookerId,
+            },
         });
         if (!checkBookingExisted) {
-            throw errorService.error(ERROR_MESSAGE.BOOKING_DOES_NOT_EXISTED)
+            throw errorService.error(ERROR_MESSAGE.BOOKING_DOES_NOT_EXISTED);
         }
         const checkFeedbackExisted = await feedbackRepository.findOne({
             where: {
-                bookingId
-            }
-        })
+                bookingId,
+            },
+        });
         if (checkFeedbackExisted) {
-            throw errorService.error(ERROR_MESSAGE.THIS_BOOKING_HAS_BEEN_FEEDBACK)
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_BOOKING_HAS_BEEN_FEEDBACK
+            );
         }
         return await feedbackRepository.create({
             amountStar,
             content,
             booking: {
                 connect: {
-                    id: bookerId
-                }
-            }
-        })
+                    id: bookerId,
+                },
+            },
+        });
     }
 }
