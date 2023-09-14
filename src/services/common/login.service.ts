@@ -176,7 +176,7 @@ export class LoginService {
         return newRefreshTokenUser.refreshToken!!;
     }
 
-    async userloginSNS(loginSnsRequest: LoginSNSRequest & { ipv4: string }) {
+    async userLoginSNS(loginSnsRequest: LoginSNSRequest & { ipv4: string }) {
         const { loginType, token, ipv4 } = loginSnsRequest;
         let isNewSignup = false;
         let url: string;

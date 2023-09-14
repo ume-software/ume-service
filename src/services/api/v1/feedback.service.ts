@@ -28,19 +28,20 @@ export class FeedbackService extends BasePrismaService<
         query.include = {
             ...query.include,
             booking: {
-                booker: {
-                    select: {
-                        id: true,
-                        avatarUrl: true,
-                        dob: true,
-                        name: true,
-                        slug: true,
-                        gender: true,
+                include: {
+                    booker: {
+                        select: {
+                            id: true,
+                            avatarUrl: true,
+                            dob: true,
+                            name: true,
+                            slug: true,
+                            gender: true,
+                        },
                     },
                 },
             },
         };
-
         return await this.repository.findAndCountAll(query);
     }
 

@@ -22,7 +22,7 @@ export class AuthService {
 
   async userLoginSns(reqLogin: LoginSNSRequest & { ipv4: string }): Promise<LoginResponse> {
 
-    return await loginService.userloginSNS(reqLogin);
+    return await loginService.userLoginSNS(reqLogin);
   }
 
   async adminRegisterAccount(

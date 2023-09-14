@@ -42,7 +42,6 @@ export class PostService extends BasePrismaService<typeof postRepository> {
             listUsers,
             "id"
         );
-        console.log("listUsers ===> ", listUsers);
         result.row = result.row.map((item: any) => {
             return {
                 id: item.id,
