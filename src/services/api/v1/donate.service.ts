@@ -62,7 +62,7 @@ export class DonateService {
 
         const listUsers = await userRepository.findMany({
             where: {
-                id: { $in: userIds },
+                id: { in: userIds },
             },
             select: {
                 id: true,

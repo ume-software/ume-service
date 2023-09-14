@@ -27,7 +27,7 @@ export class PostService extends BasePrismaService<typeof postRepository> {
         const userIds: string[] = result.row.map((item: any) => item.user_id);
         const listUsers = await userRepository.findMany({
             where: {
-                id: { $in: userIds },
+                id: { in: userIds },
             },
             select: {
                 id: true,
