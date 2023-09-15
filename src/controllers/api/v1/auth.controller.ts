@@ -16,7 +16,7 @@ import {
     RenewTokenRequest,
     LoginSNSRequest,
 } from "@/common/requests";
-import { LoginResponse, RenewTokenResponse } from "@/common/responses/auth";
+import { UserLoginResponse, RenewTokenResponse, AdminLoginResponse } from "@/common/responses/auth";
 import { UserInformationResponse } from "@/common/responses";
 import { AdminInformationResponse } from "@/common/responses/admin";
 
@@ -37,7 +37,6 @@ export class AuthController extends BaseController {
         this.router.post("/login", this.route(this.userLoginInApp));
         this.router.post("/register", this.route(this.userRegisterInApp));
         this.router.post("/renew-token", this.route(this.renewToken));
-        // this.router.post("/login_sns", this.route(this.userLoginSns));
         this.router.post("/login-sns", this.route(this.userLoginSns));
         this.router.get(
             "/admin/info",
@@ -97,7 +96,7 @@ export class AuthController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: LoginResponse },
+                        schema: { model: UserLoginResponse },
                     },
                 },
                 description: "Login success",
@@ -109,9 +108,8 @@ export class AuthController extends BaseController {
             ...req.body,
             ipv4: req.ipv4,
         });
-        const loginResponse: LoginResponse = await this.service.userLoginInApp(
-            loginInAppRequest
-        );
+        const loginResponse: UserLoginResponse =
+            await this.service.userLoginInApp(loginInAppRequest);
         this.onSuccess(res, loginResponse);
     }
 
@@ -131,7 +129,7 @@ export class AuthController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: LoginResponse },
+                        schema: { model: UserLoginResponse },
                     },
                 },
                 description: "Register token success",
@@ -198,7 +196,7 @@ export class AuthController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: LoginResponse },
+                        schema: { model: UserLoginResponse },
                     },
                 },
                 description: "Login SNS token success",
@@ -230,7 +228,7 @@ export class AuthController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: LoginResponse },
+                        schema: { model: AdminLoginResponse },
                     },
                 },
                 description: "Register token success",
@@ -264,7 +262,7 @@ export class AuthController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: LoginResponse },
+                        schema: { model: AdminLoginResponse },
                     },
                 },
                 description: "Login success",
@@ -276,7 +274,7 @@ export class AuthController extends BaseController {
             ...req.body,
             ipv4: req.ipv4,
         });
-        const loginResponse: LoginResponse = await this.service.adminLogin(
+        const loginResponse: AdminLoginResponse = await this.service.adminLogin(
             loginInAppRequest
         );
         this.onSuccess(res, loginResponse);

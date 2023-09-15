@@ -22,14 +22,18 @@ import {
     RenewTokenRequest,
     LoginSNSRequest,
 } from "@/common/requests";
-import { LoginResponse, RenewTokenResponse } from "@/common/responses/auth";
+import {
+    UserLoginResponse,
+    RenewTokenResponse,
+    AdminLoginResponse,
+} from "@/common/responses/auth";
 
 export class LoginService {
     constructor() {}
 
     async userRegisterInApp(
         registerRequest: RegisterInAppRequest
-    ): Promise<LoginResponse> {
+    ): Promise<UserLoginResponse> {
         const reqLogin: LoginInAppRequest = {
             ...registerRequest,
         };
@@ -51,7 +55,9 @@ export class LoginService {
         });
     }
 
-    async userLoginInApp(reqLogin: LoginInAppRequest): Promise<LoginResponse> {
+    async userLoginInApp(
+        reqLogin: LoginInAppRequest
+    ): Promise<UserLoginResponse> {
         const { username, password } = reqLogin;
         if (!username || !password) {
             throw errorService.badRequest();
@@ -105,6 +111,7 @@ export class LoginService {
             refreshToken: await this.generateRefreshTokenUser(
                 accessTokenPayload.id
             ),
+            user,
         };
     }
 
@@ -255,13 +262,14 @@ export class LoginService {
             refreshToken: await this.generateRefreshTokenUser(
                 accessTokenPayload.id
             ),
+            user,
             isNewSignup,
         };
     }
 
     async adminRegisterAccount(
         registerRequest: RegisterInAppRequest
-    ): Promise<LoginResponse> {
+    ): Promise<AdminLoginResponse> {
         const reqLogin: LoginInAppRequest = {
             ...registerRequest,
         };
@@ -283,7 +291,7 @@ export class LoginService {
         });
     }
 
-    async adminLogin(reqLogin: LoginInAppRequest): Promise<LoginResponse> {
+    async adminLogin(reqLogin: LoginInAppRequest): Promise<AdminLoginResponse> {
         const { username, password } = reqLogin;
         if (!username || !password) {
             throw errorService.badRequest();
@@ -291,6 +299,9 @@ export class LoginService {
         let admin = await adminRepository.findOne({
             where: {
                 username,
+            },
+            include: {
+                adminRoles: true,
             },
         });
         if (!admin) {
@@ -317,6 +328,7 @@ export class LoginService {
             refreshToken: await this.generateRefreshTokenAdmin(
                 accessTokenPayload.id
             ),
+            admin,
         };
     }
 

@@ -1,55 +1,65 @@
-import { Gender } from "@prisma/client"
-import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
+import { Gender } from "@prisma/client";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { AdminRoleResponse } from "./adminRole.response";
 
 @ApiModel({
-    description: 'User information reponse'
+    description: "User information reponse",
 })
 export class AdminInformationResponse {
     @ApiModelProperty({
-        description: 'The username for login',
+        description: "The username for login",
         required: true,
-        example: 'username',
+        example: "username",
+        type: SwaggerDefinitionConstant.STRING,
     })
     public username!: string | null;
 
     @ApiModelProperty({
-        description: 'name',
+        description: "name",
         required: true,
+        type: SwaggerDefinitionConstant.STRING,
     })
     public name!: string | null;
 
     @ApiModelProperty({
-        description: 'gender',
+        description: "gender",
         required: true,
+        enum: Object.values(Gender),
+        example: Gender.FEMALE,
     })
     public gender!: Gender | null;
 
     @ApiModelProperty({
-        description: 'day of birth',
+        description: "day of birth",
         required: true,
+        type: SwaggerDefinitionConstant.DATE,
     })
     public dob!: Date | null;
 
     @ApiModelProperty({
-        description: 'phone',
+        description: "phone",
         required: true,
+        type: SwaggerDefinitionConstant.STRING,
     })
     public phone!: string | null;
 
     @ApiModelProperty({
-        description: 'email',
+        description: "email",
         required: true,
+        type: SwaggerDefinitionConstant.STRING,
     })
     public email!: string | null;
 
-
     @ApiModelProperty({
-        description: 'avatar url',
+        description: "avatar url",
         required: true,
+        type: SwaggerDefinitionConstant.STRING,
     })
     public avatarUrl!: string | null;
-
 
     @ApiModelProperty({
         description: "adminRoles",
