@@ -1,5 +1,5 @@
 import { BaseController } from "@/controllers/base/base.controller";
-import { adminService, authService, userService } from "@/services";
+import { authService, userService } from "@/services";
 import { Request, Response } from "@/controllers/base/base.controller";
 import { AuthService } from "@/services/api/v1/auth.service";
 import {
@@ -16,9 +16,11 @@ import {
     RenewTokenRequest,
     LoginSNSRequest,
 } from "@/common/requests";
-import { UserLoginResponse, RenewTokenResponse, AdminLoginResponse } from "@/common/responses/auth";
+import {
+    UserLoginResponse,
+    RenewTokenResponse,
+} from "@/common/responses/auth";
 import { UserInformationResponse } from "@/common/responses";
-import { AdminInformationResponse } from "@/common/responses/admin";
 
 @ApiPath({
     path: "/api/v1/auth",
@@ -38,20 +40,6 @@ export class AuthController extends BaseController {
         this.router.post("/register", this.route(this.userRegisterInApp));
         this.router.post("/renew-token", this.route(this.renewToken));
         this.router.post("/login-sns", this.route(this.userLoginSns));
-        this.router.get(
-            "/admin/info",
-            this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.getAdminInfo)
-        );
-        this.router.post("/admin/login", this.route(this.adminLogin));
-        this.router.post(
-            "/admin/register",
-            this.route(this.adminRegisterAccount)
-        );
-        this.router.post(
-            "/admin/renew-token",
-            this.route(this.adminRenewToken)
-        );
     }
     service: AuthService;
 
@@ -209,131 +197,6 @@ export class AuthController extends BaseController {
             ipv4: req.ipv4!,
         });
         const result = await this.service.userLoginSns(loginSnsRequest);
-        this.onSuccess(res, result);
-    }
-
-    @ApiOperationPost({
-        path: "/admin/register",
-        operationId: "adminRegister",
-        description: "Admin register account",
-        summary: "Admin register account",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: RegisterInAppRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminLoginResponse },
-                    },
-                },
-                description: "Register token success",
-            },
-        },
-    })
-    async adminRegisterAccount(req: Request, res: Response) {
-        const registerInAppRequest = new RegisterInAppRequest({
-            ...req.body,
-            ipv4: req.ipv4,
-        });
-        const result = await this.service.adminRegisterAccount(
-            registerInAppRequest
-        );
-        this.onSuccess(res, result);
-    }
-
-    @ApiOperationPost({
-        path: "/admin/login",
-        operationId: "adminLogin",
-        description: "Get seft information for admin",
-        summary: "Get seft information for admin",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: LoginInAppRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminLoginResponse },
-                    },
-                },
-                description: "Login success",
-            },
-        },
-    })
-    async adminLogin(req: Request, res: Response) {
-        const loginInAppRequest = new LoginInAppRequest({
-            ...req.body,
-            ipv4: req.ipv4,
-        });
-        const loginResponse: AdminLoginResponse = await this.service.adminLogin(
-            loginInAppRequest
-        );
-        this.onSuccess(res, loginResponse);
-    }
-
-    @ApiOperationGet({
-        path: "/admin/info",
-        operationId: "getAdminInfo",
-        security: {
-            bearerAuth: [],
-        },
-        description: "Login with username and password",
-        summary: "Login In App",
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminInformationResponse },
-                    },
-                },
-                description: "Renew token success",
-            },
-        },
-    })
-    async getAdminInfo(req: Request, res: Response) {
-        const id = this.getTokenInfo(req).id;
-        const result = await adminService.getInfoByAdminId(id!!);
-        this.onSuccess(res, result);
-    }
-
-    @ApiOperationPost({
-        path: "/admin/renew-token",
-        operationId: "adminRenewToken",
-        description: "Admin Renew Token",
-        summary: "Admin Renew Token",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: RenewTokenRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: RenewTokenResponse },
-                    },
-                },
-                description: "Renew token success",
-            },
-        },
-    })
-    async adminRenewToken(req: Request, res: Response) {
-        const renewTokenRequest = new RenewTokenRequest({
-            ...req.body,
-            ipv4: req.ipv4,
-        });
-        const result = await this.service.renewTokenInApp(renewTokenRequest);
         this.onSuccess(res, result);
     }
 }

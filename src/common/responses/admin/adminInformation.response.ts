@@ -37,6 +37,7 @@ export class AdminInformationResponse {
         description: "day of birth",
         required: true,
         type: SwaggerDefinitionConstant.DATE,
+        example: "2023-02-08T07:25:50.009Z",
     })
     public dob!: Date | null;
 

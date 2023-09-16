@@ -7,7 +7,6 @@ import { BookingStatus, Prisma, Provider } from "@prisma/client";
 import moment from "moment";
 import { config } from "@/configs";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { utilService } from "@/services";
 
 export class ProviderRepository extends BasePrismaRepository {
     constructor() {
@@ -57,12 +56,14 @@ export class ProviderRepository extends BasePrismaRepository {
       )
       SELECT
         id,
-        userId,
+        userId AS userId,
         slug,
         name,
         avatarUrl,
         voiceUrl,
         description,
+        createdAt,
+        updatedAt,
         cost,
         skillId,
         skillName,
@@ -79,6 +80,8 @@ export class ProviderRepository extends BasePrismaRepository {
           p.avatar_url AS avatarUrl,
           p.voice_url AS voiceUrl,
           p.description,
+          p.created_at AS createdAt,
+          p.updated_at AS updatedAt,
           COALESCE(bc.amount, ps.default_cost) AS cost,
           s.id AS skillId,
           s.name AS skillName,
@@ -140,8 +143,8 @@ export class ProviderRepository extends BasePrismaRepository {
             const orderClauses = order.map((orderItem) => {
                 const key = Object.keys(orderItem)[0]!;
                 const value = orderItem[key];
-                const newKey = utilService.camelCaseToSnakeCase(key);
-                return `${newKey} ${value}`;
+                const newKey = key; //utilService.camelCaseToSnakeCase(key);
+                return `${newKey.toLocaleLowerCase()} ${value}`;
             });
             orderQueryRaw = orderClauses.join(", ");
         }

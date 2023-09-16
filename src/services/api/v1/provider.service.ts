@@ -54,9 +54,16 @@ export class ProviderService extends BasePrismaService<
 
         return result;
     }
+
+    async adminFindAndCountAll(query: ICrudOptionPrisma) {
+        const result = await this.repository.findAndCountAll(query);
+
+        return result;
+    }
     async getProviderBySlug(userSlug: string) {
         return await this.repository.getByIdOrSlug(userSlug);
     }
+
     async getPersonalProfileByUserId(userId: string) {
         const result = await this.repository.getByIdOrSlug(userId);
         if (!result) {
@@ -91,6 +98,7 @@ export class ProviderService extends BasePrismaService<
             skip
         );
     }
+
     async becomeProvider(
         userId: string,
         becomeProviderRequest: BecomeProviderRequest
