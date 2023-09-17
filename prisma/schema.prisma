@@ -8,25 +8,24 @@ datasource db {
 }
 
 model User {
-  id           String            @id @default(uuid()) @map("id")
-  createdAt    DateTime?         @default(now()) @map("created_at")
-  updatedAt    DateTime?         @updatedAt @map("updated_at")
-  deletedAt    DateTime?         @map("deleted_at")
-  slug         String?           @map("slug")
-  name         String?           @map("name") @db.VarChar(80)
-  username     String?           @map("username") @db.VarChar(80)
-  dob          DateTime?         @map("dob")
-  gender       Gender            @default(ORTHER) @map("gender")
-  phone        String?           @map("phone")
-  email        String?           @map("email")
-  password     String?           @map("password")
-  loginType    LoginType         @default(INAPP) @map("login_type")
-  avatarUrl    String?           @map("avatar_url")
-  ipv4         String?           @map("ipv4") @db.Char(40)
-  refreshToken RefreshTokenUser?
-  isOnline     Boolean?          @default(false) @map("is_online")
-  latestOnline Boolean?          @map("latest_online")
-
+  id                     String                   @id @default(uuid()) @map("id")
+  createdAt              DateTime?                @default(now()) @map("created_at")
+  updatedAt              DateTime?                @updatedAt @map("updated_at")
+  deletedAt              DateTime?                @map("deleted_at")
+  slug                   String?                  @map("slug")
+  name                   String?                  @map("name") @db.VarChar(80)
+  username               String?                  @map("username") @db.VarChar(80)
+  dob                    DateTime?                @map("dob")
+  gender                 Gender                   @default(ORTHER) @map("gender")
+  phone                  String?                  @map("phone")
+  email                  String?                  @map("email")
+  password               String?                  @map("password")
+  loginType              LoginType                @default(INAPP) @map("login_type")
+  avatarUrl              String?                  @map("avatar_url")
+  ipv4                   String?                  @map("ipv4") @db.Char(40)
+  isOnline               Boolean?                 @default(false) @map("is_online")
+  latestOnline           Boolean?                 @map("latest_online")
+  isBanned               Boolean                  @default(false) @map("is_banned")
   provider               Provider?
   coinHistories          CoinHistory[]
   bookingHistories       BookingHistory[]
@@ -39,8 +38,9 @@ model User {
   watchedPosts           WatchedPost[]
   donateProviders        DonateProvider[]
   voucherRedeemedBooking VoucherRedeemedBooking[]
-
-  userPaymentSystems UserPaymentSystem[]
+  userPaymentSystems     UserPaymentSystem[]
+  providerRequest        RegisterProviderRequest?
+  refreshToken           RefreshTokenUser?
 
   @@map("user")
 }
@@ -58,22 +58,23 @@ model RefreshTokenUser {
 }
 
 model Admin {
-  id                  String               @id @default(uuid()) @map("id")
-  createdAt           DateTime?            @default(now()) @map("created_at")
-  updatedAt           DateTime?            @updatedAt @map("updated_at")
-  deletedAt           DateTime?            @map("deleted_at")
-  name                String?              @map("name") @db.VarChar(80)
-  username            String?              @map("username") @db.VarChar(20)
-  dob                 DateTime?            @map("dob")
-  gender              Gender               @default(ORTHER) @map("gender")
-  phone               String?              @map("phone")
-  email               String?              @map("email")
-  password            String?              @map("password")
-  avatarUrl           String?              @map("avatar_url")
-  ipv4                String?              @map("ipv4") @db.Char(20)
-  refreshTokenAdmin   RefreshTokenAdmin?
-  adminRoles          AdminRole[]
-  adminPaymentSystems AdminPaymentSystem[]
+  id                      String                    @id @default(uuid()) @map("id")
+  createdAt               DateTime?                 @default(now()) @map("created_at")
+  updatedAt               DateTime?                 @updatedAt @map("updated_at")
+  deletedAt               DateTime?                 @map("deleted_at")
+  name                    String?                   @map("name") @db.VarChar(80)
+  username                String?                   @map("username") @db.VarChar(20)
+  dob                     DateTime?                 @map("dob")
+  gender                  Gender                    @default(ORTHER) @map("gender")
+  phone                   String?                   @map("phone")
+  email                   String?                   @map("email")
+  password                String?                   @map("password")
+  avatarUrl               String?                   @map("avatar_url")
+  ipv4                    String?                   @map("ipv4") @db.Char(20)
+  refreshTokenAdmin       RefreshTokenAdmin?
+  adminRoles              AdminRole[]
+  adminPaymentSystems     AdminPaymentSystem[]
+  registerProviderRequest RegisterProviderRequest[]
 
   @@map("admin")
 }
@@ -157,11 +158,34 @@ model Provider {
   avatarUrl       String?          @map("avatar_url")
   voiceUrl        String?          @map("voice_url")
   description     String?          @map("description") @db.Text()
+  status          ProviderStatus?  @default(UNACTIVATED) @map("status")
+  isBanned        Boolean          @default(false) @map("is_banned")
   providerSkills  ProviderSkill[]
   donateProviders DonateProvider[]
   vouchers        Voucher[]
 
   @@map("provider")
+}
+
+model RegisterProviderRequest {
+  id              String                        @id @default(uuid()) @map("id")
+  createdAt       DateTime?                     @default(now()) @map("created_at")
+  updatedAt       DateTime?                     @updatedAt @map("updated_at")
+  deletedAt       DateTime?                     @map("deleted_at")
+  user            User                          @relation(fields: [userId], references: [id])
+  userId          String                        @unique @map("user_id")
+  admin           Admin?                        @relation(fields: [adminId], references: [id])
+  adminId         String?                       @map("admin_id")
+  slug            String?                       @map("slug")
+  name            String?                       @map("name")
+  avatarUrl       String?                       @map("avatar_url")
+  voiceUrl        String?                       @map("voice_url")
+  description     String?                       @map("description") @db.Text()
+  citizenIdImages String[]                      @default([]) @map("citizen_id_image")
+  status          RegisterProviderRequestStatus @default(PENDING) @map("status")
+  adminNoted      String?                       @map("admin_noted") @db.Text()
+
+  @@map("register_provider_request")
 }
 
 model Skill {
@@ -239,8 +263,10 @@ model BookingHistory {
   totalCost               Float                    @map("total_cost")
   bookingPeriod           Int                      @map("booking_period")
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
+  providerReceivedCoin    Boolean                  @default(false) @map("provider_received_coin")
   feedbacks               Feedback[]
   voucherRedeemedBookings VoucherRedeemedBooking[]
+  ReportBooking           ReportBooking[]
 
   @@map("booking_history")
 }
@@ -306,6 +332,19 @@ model Feedback {
   amountStar Int?           @map("amount_star")
 
   @@map("feedback")
+}
+
+model ReportBooking {
+  id         String         @id @default(uuid()) @map("id")
+  createdAt  DateTime?      @default(now()) @map("created_at")
+  updatedAt  DateTime?      @updatedAt @map("updated_at")
+  deletedAt  DateTime?      @map("deleted_at")
+  booking    BookingHistory @relation(fields: [bookingId], references: [id])
+  bookingId  String         @map("booking_id")
+  content    String?        @map("content")
+  amountStar Int?           @map("amount_star")
+
+  @@map("report_booking")
 }
 
 model BuyCoinRequest {
@@ -589,4 +628,17 @@ enum VoucherRecipientType {
   SELECTIVE_BOOKER
   TOP_5_BOOKER
   TOP_10_BOOKER
+}
+
+enum RegisterProviderRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProviderStatus {
+  ACTIVATED
+  UNACTIVATED
+  STOPPED_ACCEPTING_BOOKING
+  BUSY
 }

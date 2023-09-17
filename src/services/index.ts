@@ -34,6 +34,7 @@ import { PaymentQrSettingService } from "./api/v1/paymentQrSetting.service";
 import { QrPaymentService } from "./api/v1/qrPayment.service";
 import { GoogleService } from "./common/google.service";
 import { LoginService } from "./common/login.service";
+import { RegisterProviderRequestService } from "./api/v1/registerProviderRequest.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -46,6 +47,7 @@ const errorService = new ErrorService();
 const firebaseService = new FirebaseService();
 const loginService = new LoginService();
 const googleService = new GoogleService();
+const redisService = new RedisService();
 //=============
 const bookingService = new BookingService();
 const coinService = new CoinService();
@@ -69,7 +71,7 @@ const noticeService = new NoticeService();
 const donateService = new DonateService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
-const redisService = new RedisService();
+const registerProviderRequestService = new RegisterProviderRequestService();
 
 export {
     scheduleService,
@@ -83,6 +85,7 @@ export {
     firebaseService,
     loginService,
     googleService,
+    redisService,
     // CRUD
     bookingService,
     coinService,
@@ -106,5 +109,5 @@ export {
     donateService,
     voucherService,
     voucherRedeemedBookingService,
-    redisService,
+    registerProviderRequestService,
 };

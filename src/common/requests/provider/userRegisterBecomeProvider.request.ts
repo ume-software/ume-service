@@ -1,11 +1,15 @@
 import { IsOptional, IsString, IsUrl } from "class-validator";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "User registor become provider",
+    description: "User register become provider",
 })
-export class BecomeProviderRequest {
+export class UserRegisterBecomeProviderRequest {
     @ApiModelProperty({
         description: "Slug url",
         required: false,
@@ -24,7 +28,7 @@ export class BecomeProviderRequest {
     name!: string;
 
     @ApiModelProperty({
-        description: "Avatart Url of provider",
+        description: "Avatar Url of provider",
         required: true,
         example:
             "https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png",
@@ -49,16 +53,29 @@ export class BecomeProviderRequest {
     @IsString()
     description!: string;
 
-    constructor(data: BecomeProviderRequest) {
+    @ApiModelProperty({
+        description: "Citizen id images",
+        required: true,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: SwaggerDefinitionConstant.STRING,
+        example: [
+            "https://cdnimgen.vietnamplus.vn/t620/uploaded/wbxx/2021_02_24/chip_based_id_cards.jpg",
+            "https://cdnimgen.vietnamplus.vn/t620/uploaded/wbxx/2021_02_24/chip_based_id_cards.jpg",
+        ],
+    })
+    citizenIdImages!: Array<string>;
+
+    constructor(data: UserRegisterBecomeProviderRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(BecomeProviderRequest, data, [
+                mappingDataRequest(UserRegisterBecomeProviderRequest, data, [
                     "slug",
                     "name",
                     "avatarUrl",
                     "voiceUrl",
                     "description",
+                    "citizenIdImages",
                 ])
             );
         }

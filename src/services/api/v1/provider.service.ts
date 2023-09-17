@@ -1,8 +1,6 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { BecomeProviderRequest } from "@/common/requests/provider/becomeProvider.request";
-import { UpdateProviderProfileRequest } from "@/common/requests/provider/updateProviderProfile.request";
-import { BecomeProviderResponse } from "@/common/responses/provider/becomeProvider.response";
+import { UpdateProviderProfileRequest } from "@/common/requests";
 import { postRepository, providerRepository } from "@/repositories";
 import { errorService } from "@/services";
 import {
@@ -97,42 +95,6 @@ export class ProviderService extends BasePrismaService<
             take,
             skip
         );
-    }
-
-    async becomeProvider(
-        userId: string,
-        becomeProviderRequest: BecomeProviderRequest
-    ): Promise<BecomeProviderResponse> {
-        const preExistingProvider = await this.repository.findOne({
-            where: {
-                userId,
-            },
-        });
-        if (preExistingProvider) {
-            throw errorService.error(ERROR_MESSAGE.YOU_ARE_ALREADY_A_PROVIDER);
-        }
-
-        const result = await this.repository.create({
-            user: {
-                connect: {
-                    id: userId,
-                },
-            },
-            ...becomeProviderRequest,
-        });
-        if (becomeProviderRequest.slug) {
-            const checkSlugExisted = await this.repository.findOne({
-                where: {
-                    slug: becomeProviderRequest.slug,
-                },
-            });
-            if (checkSlugExisted) {
-                throw errorService.error(
-                    ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
-                );
-            }
-        }
-        return result as BecomeProviderResponse;
     }
 
     async userUpdateProviderProfile(

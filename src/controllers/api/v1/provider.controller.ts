@@ -1,12 +1,10 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import {
-    BecomeProviderRequest,
     UpdateProviderProfileRequest,
 } from "@/common/requests";
 import {
     AlbumPagingResponse,
-    BecomeProviderResponse,
     FilterProviderPagingResponse,
     GetProfileProviderBySlugResponse,
     ProviderResponse,
@@ -32,7 +30,6 @@ import {
 import {
     ApiOperationGet,
     ApiOperationPatch,
-    ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -63,11 +60,7 @@ export class ProviderController extends BaseController {
             "/:slug/album",
             this.route(this.getAlbumByProviderSlug)
         );
-        this.router.post(
-            "/",
-            this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.becomeProvider)
-        );
+
         this.router.patch(
             "/profile/information",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -250,41 +243,7 @@ export class ProviderController extends BaseController {
         const result = await this.service.getPersonalProfileByUserId(userId);
         this.onSuccess(res, result);
     }
-    @ApiOperationPost({
-        path: "",
-        operationId: "becomeProvider",
-        security: {
-            bearerAuth: [],
-        },
-        description: "Register become provider",
-        summary: "Register become provider",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: BecomeProviderRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BecomeProviderResponse },
-                    },
-                },
-                description: "Register success",
-            },
-        },
-    })
-    async becomeProvider(req: Request, res: Response) {
-        const becomeProviderRequest = new BecomeProviderRequest(req.body);
-        const userId = this.getTokenInfo(req).id;
-        const result = await this.service.becomeProvider(
-            userId,
-            becomeProviderRequest
-        );
-        this.onSuccess(res, result);
-    }
+
 
     @ApiOperationPatch({
         path: "/profile/information",

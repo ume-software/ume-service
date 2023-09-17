@@ -278,10 +278,19 @@ export const ERROR_MESSAGE = {
     THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER: {
         type: "provider_exception",
         message: "This slug already exists at another provider",
-        codeNumber: 20303,
+        codeNumber: 20304,
         statusCode: 409,
         description:
             "This error occurs when a provider attempts to use a slug that is already associated with another provider, resulting in a 409 Conflict status.",
+    },
+
+    YOU_HAVE_A_REQUEST_TO_BECOME_A_SUPPLIER_PENDING_APPROVAL: {
+        type: "provider_exception",
+        message: "You have a request to become a supplier pending approval",
+        codeNumber: 20305,
+        statusCode: 409,
+        description:
+            'This message indicates that a user has submitted a request to become a supplier (or provider), but the request is currently pending approval. In this context, a "supplier" or "provider" typically refers to an individual or entity that offers goods or services. The user who submitted the request is waiting for their application to be reviewed and approved by an administrator or a relevant authority.',
     },
 
     THIS_PROVIDER_SKILL_IS_EXISTED: {

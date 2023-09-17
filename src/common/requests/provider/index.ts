@@ -1,2 +1,2 @@
-export * from "./becomeProvider.request";
+export * from "./userRegisterBecomeProvider.request";
 export * from "./updateProviderProfile.request";
