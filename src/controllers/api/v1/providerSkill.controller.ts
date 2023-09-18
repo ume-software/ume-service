@@ -25,14 +25,14 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/v1/provider_skill",
+    path: "/api/v1/provider-skill",
     name: "ProviderSkill",
 })
 export class ProviderSkillController extends BaseController {
     constructor() {
         super();
         this.service = providerSkillService;
-        this.path = "provider_skill";
+        this.path = "provider-skill";
         this.customRouting();
     }
     service: ProviderSkillService;

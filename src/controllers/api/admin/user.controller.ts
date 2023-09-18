@@ -1,6 +1,6 @@
 import {
-    AdminGetProviderPagingResponse,
-    AdminGetProviderResponse,
+    AdminGetUserPagingResponseResponse,
+    AdminGetUserResponseResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -8,8 +8,8 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { providerService } from "@/services";
-import { ProviderService } from "@/services/api/v1/provider.service";
+import { userService } from "@/services";
+import { UserService } from "@/services/api/v1/user.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -18,37 +18,39 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/admin/provider",
-    name: "AdminManageProvider",
+    path: "/api/admin/user",
+    name: "AdminManageUser",
 })
-export class AdminManageProviderController extends BaseController {
+export class AdminManageUserController extends BaseController {
     constructor() {
         super();
-        this.service = providerService;
-        this.path = "provider";
+        this.service = userService;
+        this.path = "user";
         this.customRouting();
     }
-    service: ProviderService;
+    service: UserService;
+
     customRouting() {
         this.router.get(
             "/",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListProvider)
+            this.route(this.adminGetListUser)
         );
         this.router.get(
             "/:slug",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetProviderBySlug)
+            this.route(this.adminGetUserBySlug)
         );
     }
+
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListProvider",
-        description: "Admin get list provider",
-        summary: "Admin get list provider",
+        operationId: "adminGetListUser",
         security: {
             bearerAuth: [],
         },
+        description: "Get list user",
+        summary: "Get list user",
         parameters: {
             query: queryParameters,
         },
@@ -56,26 +58,25 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderPagingResponse },
+                        schema: { model: AdminGetUserPagingResponseResponse },
                     },
                 },
-                description: "Provider success",
+                description: "Get information success",
             },
         },
     })
-    async adminGetListProvider(req: Request, res: Response) {
-        const queryInfoPrisma = req.queryInfoPrisma || {};
-        const result = await this.service.adminFindAndCountAll(queryInfoPrisma);
+    async adminGetListUser(req: Request, res: Response) {
+        let queryInfoPrisma = req.queryInfoPrisma;
+
+        const result = await userService.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
     }
+
     @ApiOperationGet({
         path: "/{slug}",
-        operationId: "adminGetProviderBySlug",
-        description: "Get Provider by slug or id",
-        summary: "Get Provider by slug or id",
-        security: {
-            bearerAuth: [],
-        },
+        operationId: "adminGetUserBySlug",
+        description: "Get user information",
+        summary: "Get user information",
         parameters: {
             path: {
                 slug: {
@@ -91,14 +92,14 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderResponse },
+                        schema: { model: AdminGetUserResponseResponse },
                     },
                 },
-                description: "Provider success",
+                description: "Get information success",
             },
         },
     })
-    async adminGetProviderBySlug(req: Request, res: Response) {
+    async adminGetUserBySlug(req: Request, res: Response) {
         const { slug } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
         if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
@@ -113,7 +114,7 @@ export class AdminManageProviderController extends BaseController {
             },
         ];
 
-        const result = await this.service.findOne(queryInfoPrisma);
+        const result = await userService.findOne(queryInfoPrisma);
         this.onSuccess(res, result);
     }
 }

@@ -24,8 +24,9 @@ model User {
   avatarUrl              String?                  @map("avatar_url")
   ipv4                   String?                  @map("ipv4") @db.Char(40)
   isOnline               Boolean?                 @default(false) @map("is_online")
-  latestOnline           Boolean?                 @map("latest_online")
+  latestOnline           DateTime?                @map("latest_online")
   isBanned               Boolean                  @default(false) @map("is_banned")
+  isVerified             Boolean                  @default(false) @map("is_verified")
   provider               Provider?
   coinHistories          CoinHistory[]
   bookingHistories       BookingHistory[]

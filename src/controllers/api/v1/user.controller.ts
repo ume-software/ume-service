@@ -1,8 +1,5 @@
 import { UpdateUserProfileRequest } from "@/common/requests";
-import {
-    UserInformationPagingResponse,
-    UserInformationResponse,
-} from "@/common/responses";
+import { UserInformationResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -11,7 +8,6 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
-import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -21,7 +17,7 @@ import {
 
 @ApiPath({
     path: "/api/v1/user",
-    name: "user",
+    name: "User",
 })
 export class UserController extends BaseController {
     constructor() {
@@ -33,46 +29,12 @@ export class UserController extends BaseController {
     service: UserService;
 
     customRouting() {
-        this.router.get(
-            "/",
-            this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.getListUser)
-        );
         this.router.get("/:slug", this.route(this.getUserBySlug));
         this.router.patch(
             "/profile",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.updateUserProfile)
         );
-    }
-
-    @ApiOperationGet({
-        path: "",
-        operationId: "getListUser",
-        security: {
-            bearerAuth: [],
-        },
-        description: "Get list user",
-        summary: "Get list user",
-        parameters: {
-            query: queryParameters,
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UserInformationPagingResponse },
-                    },
-                },
-                description: "Get information success",
-            },
-        },
-    })
-    async getListUser(req: Request, res: Response) {
-        let queryInfoPrisma = req.queryInfoPrisma;
-
-        const result = await userService.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
     }
 
     @ApiOperationGet({
