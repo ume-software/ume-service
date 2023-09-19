@@ -98,7 +98,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             costPerHour = providerSkill.bookingCosts[0]?.amount!;
         }
         const totalCost = bookingPeriod * costPerHour;
-        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserId(
+        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserSlug(
             booker?.id!
         );
 

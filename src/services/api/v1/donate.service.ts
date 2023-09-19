@@ -96,7 +96,7 @@ export class DonateService {
         if (!creatorId || !providerId || !amount) {
             throw errorService.badRequest();
         }
-        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserId(
+        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserSlug(
             creatorId
         );
 

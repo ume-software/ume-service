@@ -2,6 +2,7 @@ import {
     AdminGetUserPagingResponseResponse,
     AdminGetUserResponseResponse,
     CoinHistoryPagingResponse,
+    UserCoinResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -47,6 +48,11 @@ export class AdminManageUserController extends BaseController {
             "/:slug/coin-history",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetUserCoinHistoryBySlug)
+        );
+        this.router.get(
+            "/:slug/coin",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetTotalCoinByUserSlug)
         );
     }
 
@@ -179,6 +185,42 @@ export class AdminManageUserController extends BaseController {
         queryInfoPrisma.where.userId = user.id;
 
         const result = await coinService.findAndCountAll(queryInfoPrisma);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/coin",
+        operationId: "adminGetTotalCoinByUserSlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get user coin by slug",
+        summary: "Admin get user coin by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserCoinResponse },
+                    },
+                },
+                description: "Get information success",
+            },
+        },
+    })
+    async adminGetTotalCoinByUserSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+
+        const result = await coinService.getTotalCoinByUserSlug(slug!);
         this.onSuccess(res, result);
     }
 }

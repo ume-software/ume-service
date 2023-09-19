@@ -102,7 +102,7 @@ export class CoinController extends BaseController {
     })
     async getTotalCoin(req: Request, res: Response) {
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.getTotalCoinByUserId(userId!);
+        const result = await this.service.getTotalCoinByUserSlug(userId!);
         this.onSuccess(res, result);
     }
 

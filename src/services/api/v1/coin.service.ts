@@ -4,8 +4,9 @@ import {
     bookingHistoryRepository,
     coinHistoryRepository,
 } from "@/repositories";
-import { userService } from "@/services";
+import { errorService, userService } from "@/services";
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { CoinHistory, CoinType } from "@prisma/client";
 
 export class CoinService {
@@ -37,7 +38,7 @@ export class CoinService {
             },
         });
         const { totalCoinsAvailable, totalCoin } =
-            await this.getTotalCoinByUserId(userId);
+            await this.getTotalCoinByUserSlug(userId);
 
         return {
             userId: user?.id!!,
@@ -58,17 +59,29 @@ export class CoinService {
         return await coinHistoryRepository.findAndCountAll(queryCoinHistory);
     }
 
-    async getTotalCoinByUserId(userId: string): Promise<UserCoinResponse> {
+    async getTotalCoinByUserSlug(slug: string): Promise<UserCoinResponse> {
         const user = await userService.findOne({
             where: {
-                id: userId,
+                OR: [
+                    {
+                        id: slug,
+                    },
+                    {
+                        slug: slug,
+                    },
+                ],
             },
         });
-        const totalCoin = await this.getTotalCoinUser(user?.id!!);
+        if (!user) {
+            throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+        const totalCoin = await this.getTotalCoinUser(user.id);
         const getTotalCoinFrozen =
-            await bookingHistoryRepository.getTotalCoinFrozenByBookerId(userId);
+            await bookingHistoryRepository.getTotalCoinFrozenByBookerId(
+                user.id
+            );
         return {
-            userId,
+            userId: user.id,
             totalCoinsAvailable: totalCoin - getTotalCoinFrozen,
             totalCoin,
         };
