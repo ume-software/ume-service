@@ -169,6 +169,14 @@ export const ERROR_MESSAGE = {
         description:
             "This error is used when the requested account could not be found, resulting in a 404 Not Found status.",
     },
+    USER_NOT_FOUND: {
+        type: "user_error",
+        message: "This user could not be found.",
+        codeNumber: 20009,
+        statusCode: 404,
+        description:
+            "This error is used when the requested user could not be found, resulting in a 404 Not Found status.",
+    },
     EACH_USER_CAN_ONLY_UPDATE_THE_SLUG_ONCE: {
         type: "user_error",
         message: "Each user can only update the slug once",

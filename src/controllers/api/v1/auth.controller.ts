@@ -16,10 +16,7 @@ import {
     RenewTokenRequest,
     LoginSNSRequest,
 } from "@/common/requests";
-import {
-    UserLoginResponse,
-    RenewTokenResponse,
-} from "@/common/responses/auth";
+import { UserLoginResponse, RenewTokenResponse } from "@/common/responses/auth";
 import { UserInformationResponse } from "@/common/responses";
 
 @ApiPath({
@@ -199,4 +196,5 @@ export class AuthController extends BaseController {
         const result = await this.service.userLoginSns(loginSnsRequest);
         this.onSuccess(res, result);
     }
+    
 }

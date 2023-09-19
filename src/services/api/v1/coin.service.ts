@@ -9,6 +9,9 @@ import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { CoinHistory, CoinType } from "@prisma/client";
 
 export class CoinService {
+    async findAndCountAll(query?: ICrudOptionPrisma) {
+        return await coinHistoryRepository.findAndCountAll(query);
+    }
     async adminCreatePointToUser(
         adminId: string,
         coinForUserRequest: CoinForUserRequest
@@ -27,7 +30,11 @@ export class CoinService {
             },
             amount,
             coinType: CoinType.ADMIN,
-            createdId: adminId,
+            adminCreated: {
+                connect: {
+                    id: adminId,
+                },
+            },
         });
         const { totalCoinsAvailable, totalCoin } =
             await this.getTotalCoinByUserId(userId);
@@ -46,11 +53,8 @@ export class CoinService {
         row: CoinHistory[];
         count: number;
     }> {
-        if (!queryCoinHistory.where) {
-            queryCoinHistory.where = { userId };
-        } else {
-            queryCoinHistory.where.userId = userId;
-        }
+        if (!queryCoinHistory.where) queryCoinHistory.where = {};
+        queryCoinHistory.where.userId = userId;
         return await coinHistoryRepository.findAndCountAll(queryCoinHistory);
     }
 

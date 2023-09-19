@@ -27,7 +27,7 @@ export class FeedbackBookingRequest {
         description: "Amount Star",
         required: false,
         example: 5,
-        itemType: SwaggerDefinitionConstant.NUMBER,
+        type: SwaggerDefinitionConstant.INTEGER,
     })
     @IsOptional()
     @IsNumber()

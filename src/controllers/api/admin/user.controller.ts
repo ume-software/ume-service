@@ -1,6 +1,7 @@
 import {
     AdminGetUserPagingResponseResponse,
     AdminGetUserResponseResponse,
+    CoinHistoryPagingResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -8,8 +9,9 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { userService } from "@/services";
+import { coinService, errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -40,6 +42,11 @@ export class AdminManageUserController extends BaseController {
             "/:slug",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetUserBySlug)
+        );
+        this.router.get(
+            "/:slug/coin-history",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetUserCoinHistoryBySlug)
         );
     }
 
@@ -75,6 +82,9 @@ export class AdminManageUserController extends BaseController {
     @ApiOperationGet({
         path: "/{slug}",
         operationId: "adminGetUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
         description: "Get user information",
         summary: "Get user information",
         parameters: {
@@ -115,6 +125,60 @@ export class AdminManageUserController extends BaseController {
         ];
 
         const result = await userService.findOne(queryInfoPrisma);
+        this.onSuccess(res, result);
+    }
+    @ApiOperationGet({
+        path: "/{slug}/coin-history",
+        operationId: "adminGetUserCoinHistoryBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get user coin history by slug",
+        summary: "Admin get user coin history by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: CoinHistoryPagingResponse },
+                    },
+                },
+                description: "Get information success",
+            },
+        },
+    })
+    async adminGetUserCoinHistoryBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
+        const user = await userService.findOne({
+            where: {
+                OR: [
+                    {
+                        id: slug,
+                    },
+                    {
+                        slug: slug,
+                    },
+                ],
+            },
+        });
+        if (!user) {
+            throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+        queryInfoPrisma.where.userId = user.id;
+
+        const result = await coinService.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
     }
 }

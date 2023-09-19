@@ -39,21 +39,6 @@ export class ProviderService extends BasePrismaService<
         );
     }
     async findAndCountAll(query: ICrudOptionPrisma) {
-        if (!query.include) query.include = {};
-        query.include = {
-            ...query.include,
-            providerSkills: {
-                include: {
-                    bookingCosts: true,
-                },
-            },
-        };
-        const result = await this.repository.findAndCountAll(query);
-
-        return result;
-    }
-
-    async adminFindAndCountAll(query: ICrudOptionPrisma) {
         const result = await this.repository.findAndCountAll(query);
 
         return result;

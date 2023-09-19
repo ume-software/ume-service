@@ -55,8 +55,8 @@ export class CoinController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Get hisotory coins of the user",
-        summary: "Get hisotory coins of the user",
+        description: "Get history coins of the user",
+        summary: "Get history coins of the user",
         parameters: {
             query: queryParameters,
         },

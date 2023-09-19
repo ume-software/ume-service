@@ -225,7 +225,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                                 id: bookerId!,
                             },
                         },
-                        createdId: userRequestId,
+                        booking: {
+                            connect: {
+                                id: bookingHistoryId,
+                            },
+                        },
                         amount: -totalCost,
                         coinType: CoinType.SPEND_BOOKING,
                     },
@@ -238,7 +242,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                                 id: provider.userId,
                             },
                         },
-                        createdId: userRequestId,
+                        booking: {
+                            connect: {
+                                id: bookingHistoryId,
+                            },
+                        },
                         amount: await coinSettingRepository.calculateCoinBookingForProvider(
                             totalCost
                         ),

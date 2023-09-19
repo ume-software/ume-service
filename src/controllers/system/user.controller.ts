@@ -1,13 +1,25 @@
 import { BaseController, Request, Response } from "../base/base.controller";
 import { errorService, userService } from "@/services";
 
-export class UserController extends BaseController {
+export class SystemUserController extends BaseController {
     constructor() {
         super();
         this.path = "user";
-        this.router.get("/", this.systemsMiddlewares(), this.route(this.getList));
-        this.router.get("/:userId", this.systemsMiddlewares(), this.route(this.getUserId));
-        this.router.post("/get-list-user-by-ids", this.systemsMiddlewares(), this.route(this.getListUserByIds));
+        this.router.get(
+            "/",
+            this.systemsMiddlewares(),
+            this.route(this.getList)
+        );
+        this.router.get(
+            "/:userId",
+            this.systemsMiddlewares(),
+            this.route(this.getUserId)
+        );
+        this.router.post(
+            "/get-list-user-by-ids",
+            this.systemsMiddlewares(),
+            this.route(this.getListUserByIds)
+        );
     }
     async getUserId(req: Request, res: Response) {
         const { userId } = req.params;
@@ -32,16 +44,16 @@ export class UserController extends BaseController {
         const result = await userService.findAndCountAll({
             where: {
                 id: {
-                    in: ids as Array<String>
-                }
+                    in: ids as Array<String>,
+                },
             },
             select: {
                 id: true,
                 name: true,
                 slug: true,
-                avatarUrl: true
-            }
-        })
-        this.onSuccessAsList(res,result)
+                avatarUrl: true,
+            },
+        });
+        this.onSuccessAsList(res, result);
     }
 }

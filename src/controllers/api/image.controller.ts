@@ -41,7 +41,11 @@ export class ImageController extends BaseController {
 
         const upload = multer({ storage: storage });
 
-        this.router.get("/:filename", this.route(this.getImage));
+        this.router.get(
+            "/:filename",
+            this.authOrUnAuthMiddlewares(),
+            this.route(this.getImage)
+        );
         this.router.post("/", upload.array("files"), this.route(this.upload));
     }
 

@@ -116,37 +116,11 @@ export class DonateService {
             );
         }
         return await prisma.$transaction(async (tx) => {
-            await coinHistoryRepository.create(
-                {
-                    user: {
-                        connect: {
-                            id: creatorId,
-                        },
-                    },
-                    createdId: creatorId,
-                    amount: -amount,
-                    coinType: CoinType.SPEND_DONATE,
-                },
-                tx
-            );
             const actualReceivingAmount =
                 await coinSettingRepository.calculateCoinDonateForProvider(
                     amount
                 );
-            await coinHistoryRepository.create(
-                {
-                    user: {
-                        connect: {
-                            id: provider.userId,
-                        },
-                    },
-                    createdId: creatorId,
-                    amount: actualReceivingAmount,
-                    coinType: CoinType.GET_DONATE,
-                },
-                tx
-            );
-            return await donateProviderRepository.create(
+            const donate = await donateProviderRepository.create(
                 {
                     provider: {
                         connect: {
@@ -164,6 +138,43 @@ export class DonateService {
                 },
                 tx
             );
+            await coinHistoryRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: creatorId,
+                        },
+                    },
+                    donate: {
+                        connect: {
+                            id: donate.id,
+                        },
+                    },
+                    amount: -amount,
+                    coinType: CoinType.SPEND_DONATE,
+                },
+                tx
+            );
+
+            await coinHistoryRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: provider.userId,
+                        },
+                    },
+                    donate: {
+                        connect: {
+                            id: donate.id,
+                        },
+                    },
+                    amount: actualReceivingAmount,
+                    coinType: CoinType.GET_DONATE,
+                },
+                tx
+            );
+
+            return donate;
         });
     }
 }

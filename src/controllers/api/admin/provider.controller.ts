@@ -65,7 +65,7 @@ export class AdminManageProviderController extends BaseController {
     })
     async adminGetListProvider(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
-        const result = await this.service.adminFindAndCountAll(queryInfoPrisma);
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
     }
     @ApiOperationGet({

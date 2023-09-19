@@ -192,7 +192,11 @@ export class BuyCoinRequestService extends BasePrismaService<
                         },
                         amount: buyCoinRequest?.amountCoin!,
                         coinType: CoinType.BUY_COIN,
-                        createdId: adminId,
+                        adminCreated: {
+                            connect: {
+                                id: adminId,
+                            },
+                        },
                     },
                     tx
                 );
