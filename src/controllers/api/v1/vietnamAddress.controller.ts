@@ -61,7 +61,7 @@ export class VietnamAddressController extends BaseController {
                         schema: { model: ProvincePagingResponse },
                     },
                 },
-                description: "Filter Notice success",
+                description: "Filter success",
             },
         },
     })
@@ -94,8 +94,8 @@ export class VietnamAddressController extends BaseController {
     @ApiOperationGet({
         path: "/district",
         operationId: "getVietnamDistrict",
-        description: "Get All Province",
-        summary: "Get All Province",
+        description: "Get All District",
+        summary: "Get All District",
         parameters: {
             query: {
                 "province-id": {
@@ -124,7 +124,7 @@ export class VietnamAddressController extends BaseController {
                         schema: { model: DistrictPagingResponse },
                     },
                 },
-                description: "Filter Notice success",
+                description: "Filter success",
             },
         },
     })
@@ -159,9 +159,9 @@ export class VietnamAddressController extends BaseController {
 
     @ApiOperationGet({
         path: "/commune",
-        operationId: "getVietnamDistrict",
-        description: "Get All Province",
-        summary: "Get All Province",
+        operationId: "getVietnamCommune",
+        description: "Get All Commune",
+        summary: "Get All Commune",
         parameters: {
             query: {
                 "district-id": {
@@ -190,7 +190,7 @@ export class VietnamAddressController extends BaseController {
                         schema: { model: DistrictPagingResponse },
                     },
                 },
-                description: "Filter Notice success",
+                description: "Filter success",
             },
         },
     })
