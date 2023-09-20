@@ -8,7 +8,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { providerService } from "@/services";
+import { providerService, providerSkillService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
@@ -39,6 +39,11 @@ export class AdminManageProviderController extends BaseController {
             "/:slug",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetProviderBySlug)
+        );
+        this.router.get(
+            "/:slug/provider-skill",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetProviderSkillByProviderSlug)
         );
     }
     @ApiOperationGet({
@@ -114,6 +119,48 @@ export class AdminManageProviderController extends BaseController {
         ];
 
         const result = await this.service.findOne(queryInfoPrisma);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/provider-skill",
+        operationId: "adminGetProviderSkillByProviderSlug",
+        description: "Get Provider by slug or id",
+        summary: "Get Provider by slug or id",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AdminGetProviderResponse },
+                    },
+                },
+                description: "Provider success",
+            },
+        },
+    })
+    async adminGetProviderSkillByProviderSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+
+        const result =
+            await providerSkillService.findAndCountAllProviderSkillByProviderSlug(
+                slug!,
+                queryInfoPrisma
+            );
         this.onSuccess(res, result);
     }
 }

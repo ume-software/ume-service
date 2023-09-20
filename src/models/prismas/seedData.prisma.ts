@@ -344,6 +344,7 @@ async function seed() {
             // Create BookingHistory
             for (let i = 0; i < userDefault.length; i++) {
                 for (let j = 0; j < userDefault.length; j++) {
+                    const totalCoin = faker.number.int({ min: 10, max: 200 });
                     const bookingStatus =
                         Object.values(BookingStatus)[
                             faker.number.int({
@@ -378,11 +379,12 @@ async function seed() {
                                 bookingStatus != BookingStatus.INIT
                                     ? faker.date.recent()
                                     : null,
-                            totalCost: faker.number.int({ min: 10, max: 200 }),
+                            totalCost: totalCoin,
                             bookingPeriod: faker.number.int({
                                 min: 1,
                                 max: 10,
                             }),
+                            providerReceivedCoin: totalCoin * 0.95,
                         },
                     });
                 }

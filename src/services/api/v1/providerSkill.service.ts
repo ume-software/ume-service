@@ -271,4 +271,33 @@ export class ProviderSkillService extends BasePrismaService<
     }> {
         return await this.repository.findAndCountAll(query);
     }
+
+    async findAndCountAllProviderSkillByProviderSlug(
+        providerSlug: string,
+        _query?: ICrudOptionPrisma
+    ) {
+        const provider = providerRepository.getByIdOrSlug(providerSlug);
+        if (!provider) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+        // const result = await this.repository.findAndCountAll(query);
+
+        // const listProviderSkillIds = result.row.map((item) => item.id);
+
+        prisma.bookingHistory.aggregate({
+            _sum: {
+                providerReceivedCoin: true,
+                bookingPeriod: true,
+                totalCost: true,
+            },
+            _count: {
+                bookerId: true,
+            },
+            where: {
+                providerSkillId: "",
+            },
+        });
+    }
 }

@@ -372,7 +372,7 @@ model BookingHistory {
   totalCost               Float                    @map("total_cost")
   bookingPeriod           Int                      @map("booking_period")
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
-  providerReceivedCoin    Boolean                  @default(false) @map("provider_received_coin")
+  providerReceivedCoin    Float?                    @map("provider_received_coin")
   feedbacks               Feedback[]
   voucherRedeemedBookings VoucherRedeemedBooking[]
   ReportBooking           ReportBooking[]
