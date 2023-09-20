@@ -5,9 +5,7 @@ import {
 } from "../base/basePrisma.repository";
 import { Prisma, User } from "@prisma/client";
 export class UserRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findMany(query?: ICrudOptionPrisma) {
         return await this.prisma.user.findMany(query);

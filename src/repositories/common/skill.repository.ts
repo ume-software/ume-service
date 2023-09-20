@@ -8,9 +8,7 @@ import { utilService } from "@/services";
 import moment from "moment";
 
 export class SkillRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: Skill[];

@@ -22,9 +22,7 @@ export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider =
         booker: User | null;
     };
 export class BookingHistoryRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findAllCurrentBookingProvider(
         userId: string,

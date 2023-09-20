@@ -4,9 +4,7 @@ import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { BasePrismaRepository } from "../base/basePrisma.repository";
 
 export class RegisterProviderRequestRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async create(
         registerProviderRequestCreateInput: Prisma.RegisterProviderRequestCreateInput

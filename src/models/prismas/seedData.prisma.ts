@@ -10,7 +10,7 @@ import {
 } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { utilService } from "@/services";
-
+import { vietnamAddress } from "./data-seed/vietnamAddress";
 const userDefault = [
     {
         id: "9985b3de-3963-49a4-a6ac-aa5f273fd2b4",
@@ -515,6 +515,45 @@ async function seed() {
                     });
                 }
             }
+        }
+        if (!(await prisma.province.findFirst())) {
+            await prisma.province.createMany({
+                data: vietnamAddress.province.map((item) => {
+                    return {
+                        id: item.idProvince,
+                        name: item.name,
+                        enName: item.enName,
+                    };
+                }),
+                skipDuplicates: true,
+            });
+        }
+        if (!(await prisma.district.findFirst())) {
+            await prisma.district.createMany({
+                data: vietnamAddress.district.map((item) => {
+                    return {
+                        id: item.idDistrict,
+                        provinceId: item.idProvince,
+                        name: item.name,
+                        enName: item.enName,
+                    };
+                }),
+                skipDuplicates: true,
+            });
+        }
+
+        if (!(await prisma.commune.findFirst())) {
+            await prisma.commune.createMany({
+                data: vietnamAddress.commune.map((item) => {
+                    return {
+                        id: item.idCommune,
+                        districtId: item.idDistrict,
+                        name: item.name,
+                        enName: item.enName,
+                    };
+                }),
+                skipDuplicates: true,
+            });
         }
 
         console.log("Seed data created successfully!");

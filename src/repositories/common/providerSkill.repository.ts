@@ -6,9 +6,7 @@ import {
 import { Prisma, ProviderSkill } from "@prisma/client";
 
 export class ProviderSkillRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: ProviderSkill[];

@@ -23,6 +23,9 @@ import { PaymentQrSettingRepository } from "./common/paymentQrSetting.repository
 import { AdminPaymentSystemRepository } from "./common/adminPaymentSystem.repository";
 import { AdminRoleRepository } from "./common/adminRole.repository";
 import { RegisterProviderRequestRepository } from "./common/registerProviderRequest.repository";
+import { ProvinceRepository } from "./common/province.repository";
+import { DistrictRepository } from "./common/district.repository";
+import { CommuneRepository } from "./common/commune.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -50,6 +53,9 @@ const voucherRedeemedBookingRepository = new VoucherRedeemedBookingRepository();
 const paymentQrSettingRepository = new PaymentQrSettingRepository();
 const registerProviderRequestRepository =
     new RegisterProviderRequestRepository();
+const provinceRepository = new ProvinceRepository();
+const districtRepository = new DistrictRepository();
+const communeRepository = new CommuneRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -76,4 +82,7 @@ export {
     voucherRedeemedBookingRepository,
     paymentQrSettingRepository,
     registerProviderRequestRepository,
+    provinceRepository,
+    districtRepository,
+    communeRepository,
 };

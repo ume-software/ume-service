@@ -3,17 +3,9 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
 export type PrismaTransaction = Omit<
-  PrismaClient<
-    Prisma.PrismaClientOptions,
-    never,
-    DefaultArgs
-
-  >,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 export class BasePrismaRepository {
-  constructor() {
-    this.prisma = prisma;
-  }
-  prisma: PrismaClient;
+    prisma: PrismaClient = prisma;
 }

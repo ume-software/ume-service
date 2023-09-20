@@ -13,9 +13,7 @@ export type PostAndCountLikeAndCountCommentType = Post & {
     };
 };
 export class PostRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: PostAndCountLikeAndCountCommentType[];

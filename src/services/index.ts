@@ -35,6 +35,7 @@ import { QrPaymentService } from "./api/v1/qrPayment.service";
 import { GoogleService } from "./common/google.service";
 import { LoginService } from "./common/login.service";
 import { RegisterProviderRequestService } from "./api/v1/registerProviderRequest.service";
+import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -72,7 +73,7 @@ const donateService = new DonateService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
 const registerProviderRequestService = new RegisterProviderRequestService();
-
+const vietnamAddressService = new VietnamAddressService();
 export {
     scheduleService,
     errorService,
@@ -110,4 +111,5 @@ export {
     voucherService,
     voucherRedeemedBookingService,
     registerProviderRequestService,
+    vietnamAddressService,
 };

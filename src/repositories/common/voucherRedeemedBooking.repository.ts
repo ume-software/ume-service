@@ -6,9 +6,7 @@ import {
 import { Prisma, VoucherRedeemedBooking } from "@prisma/client";
 
 export class VoucherRedeemedBookingRepository extends BasePrismaRepository {
-    constructor() {
-        super();
-    }
+ 
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: VoucherRedeemedBooking[];
