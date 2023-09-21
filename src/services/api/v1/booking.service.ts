@@ -20,7 +20,10 @@ import {
     providerService,
     userService,
 } from "@/services";
-import { BasePrismaService } from "@/services/base/basePrisma.service";
+import {
+    BasePrismaService,
+    ICrudOptionPrisma,
+} from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { socketService } from "@/services/socketIO";
 
@@ -98,9 +101,8 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             costPerHour = providerSkill.bookingCosts[0]?.amount!;
         }
         const totalCost = bookingPeriod * costPerHour;
-        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserSlug(
-            booker?.id!
-        );
+        const { totalCoinsAvailable } =
+            await coinService.getTotalCoinByUserSlug(booker?.id!);
 
         if (totalCoinsAvailable < totalCost) {
             throw errorService.error(
@@ -311,5 +313,23 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             });
             return bookingHistory;
         });
+    }
+
+    async findAndCountAllProviderSkillByProviderSlug(
+        providerSlug: string,
+        query?: ICrudOptionPrisma
+    ) {
+        const provider = await providerRepository.getByIdOrSlug(providerSlug);
+        if (!provider) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+        if (!query) query = {};
+        if (!query.where) query.where = {};
+        query.where.providerId = provider.id;
+        const result = await this.repository.findAndCountAll(query);
+
+        return result;
     }
 }

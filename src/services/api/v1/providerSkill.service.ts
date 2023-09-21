@@ -276,12 +276,15 @@ export class ProviderSkillService extends BasePrismaService<
         providerSlug: string,
         query?: ICrudOptionPrisma
     ) {
-        const provider = providerRepository.getByIdOrSlug(providerSlug);
+        const provider = await providerRepository.getByIdOrSlug(providerSlug);
         if (!provider) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
+        if (!query) query = {};
+        if (!query.where) query.where = {};
+        query.where.providerId = provider.id;
         const result = await this.repository.findAndCountAll(query);
 
         const listProviderSkillIds = result.row.map((item) => item.id);

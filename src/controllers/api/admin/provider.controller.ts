@@ -2,6 +2,7 @@ import {
     AdminGetProviderPagingResponse,
     AdminGetProviderResponse,
     AdminGetProviderSkillPagingResponse,
+    BookingHistoryPagingResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -9,7 +10,11 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { providerService, providerSkillService } from "@/services";
+import {
+    bookingService,
+    providerService,
+    providerSkillService,
+} from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
@@ -45,6 +50,11 @@ export class AdminManageProviderController extends BaseController {
             "/:slug/provider-skill",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetProviderSkillByProviderSlug)
+        );
+        this.router.get(
+            "/:slug/booking-history",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetBookingHistoryByProviderSlug)
         );
     }
     @ApiOperationGet({
@@ -159,6 +169,48 @@ export class AdminManageProviderController extends BaseController {
 
         const result =
             await providerSkillService.findAndCountAllProviderSkillByProviderSlug(
+                slug!,
+                queryInfoPrisma
+            );
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/booking-history",
+        operationId: "adminGetBookingHistoryByProviderSlug",
+        description: "Get booking history by slug or id of provider",
+        summary: "Get booking history by slug or id of provider",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Get list success",
+            },
+        },
+    })
+    async adminGetBookingHistoryByProviderSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+
+        const result =
+            await bookingService.findAndCountAllProviderSkillByProviderSlug(
                 slug!,
                 queryInfoPrisma
             );
