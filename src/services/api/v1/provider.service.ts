@@ -74,7 +74,7 @@ export class ProviderService extends BasePrismaService<
                 ],
             },
         });
-        return await postRepository.getUrlThumnailsByUserIdAndUrlType(
+        return await postRepository.getUrlThumbnailsByUserIdAndUrlType(
             provider?.userId!,
             "IMAGE",
             take,

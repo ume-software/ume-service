@@ -3,19 +3,19 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { ProviderSkillResponse } from "./providerSkill.response";
 import { PaginationResponse } from "../base";
+import { AdminGetProviderSkillResponse } from "./adminGetProviderSkill.response";
 
 @ApiModel({
-    description: "Provider Skill response",
+    description: "Admin get provider Skill response",
 })
-export class ProviderSkillPagingResponse {
+export class AdminGetProviderSkillPagingResponse {
     @ApiModelProperty({
         description: "Row",
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: ProviderSkillResponse,
+        itemType: AdminGetProviderSkillResponse,
     })
-    row!: Array<ProviderSkillResponse>;
+    row!: Array<AdminGetProviderSkillResponse>;
 
     @ApiModelProperty({
         description: "Count",

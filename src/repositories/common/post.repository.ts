@@ -13,8 +13,6 @@ export type PostAndCountLikeAndCountCommentType = Post & {
     };
 };
 export class PostRepository extends BasePrismaRepository {
- 
-
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: PostAndCountLikeAndCountCommentType[];
         count: number;
@@ -30,7 +28,7 @@ export class PostRepository extends BasePrismaRepository {
             count,
         };
     }
-    async getUrlThumnailsByUserIdAndUrlType(
+    async getUrlThumbnailsByUserIdAndUrlType(
         userId: string,
         urlType: string = EUrlType.IMAGE,
         limit?: number,

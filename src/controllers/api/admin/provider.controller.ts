@@ -1,6 +1,7 @@
 import {
     AdminGetProviderPagingResponse,
     AdminGetProviderResponse,
+    AdminGetProviderSkillPagingResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -71,7 +72,7 @@ export class AdminManageProviderController extends BaseController {
     async adminGetListProvider(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
     @ApiOperationGet({
         path: "/{slug}",
@@ -145,7 +146,7 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderResponse },
+                        schema: { model: AdminGetProviderSkillPagingResponse },
                     },
                 },
                 description: "Provider success",
@@ -161,6 +162,6 @@ export class AdminManageProviderController extends BaseController {
                 slug!,
                 queryInfoPrisma
             );
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
 }

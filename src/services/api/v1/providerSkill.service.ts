@@ -13,7 +13,7 @@ import {
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Prisma, ProviderSkill } from "@prisma/client";
+import { BookingStatus, Prisma, ProviderSkill } from "@prisma/client";
 
 export class ProviderSkillService extends BasePrismaService<
     typeof providerSkillRepository
@@ -274,7 +274,7 @@ export class ProviderSkillService extends BasePrismaService<
 
     async findAndCountAllProviderSkillByProviderSlug(
         providerSlug: string,
-        _query?: ICrudOptionPrisma
+        query?: ICrudOptionPrisma
     ) {
         const provider = providerRepository.getByIdOrSlug(providerSlug);
         if (!provider) {
@@ -282,22 +282,48 @@ export class ProviderSkillService extends BasePrismaService<
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-        // const result = await this.repository.findAndCountAll(query);
+        const result = await this.repository.findAndCountAll(query);
 
-        // const listProviderSkillIds = result.row.map((item) => item.id);
+        const listProviderSkillIds = result.row.map((item) => item.id);
 
-        prisma.bookingHistory.aggregate({
-            _sum: {
-                providerReceivedCoin: true,
-                bookingPeriod: true,
-                totalCost: true,
-            },
-            _count: {
-                bookerId: true,
-            },
-            where: {
-                providerSkillId: "",
-            },
+        const listBookingHistoryAggregate = await Promise.all(
+            listProviderSkillIds.map((providerSkillId: string) => {
+                return prisma.bookingHistory.aggregate({
+                    _sum: {
+                        providerReceivedCoin: true,
+                        bookingPeriod: true,
+                        totalCost: true,
+                    },
+                    _count: {
+                        id: true,
+                    },
+                    where: {
+                        providerSkillId,
+                        status: {
+                            in: [
+                                BookingStatus.PROVIDER_ACCEPT,
+                                BookingStatus.PROVIDER_FINISH_SOON,
+                                BookingStatus.USER_FINISH_SOON,
+                            ],
+                        },
+                    },
+                });
+            })
+        );
+        result.row = result.row.map((item, index) => {
+            const bookingHistoryAggregate = listBookingHistoryAggregate[index];
+            if (!bookingHistoryAggregate) return item;
+            const {
+                _count: { id },
+                _sum: { bookingPeriod, providerReceivedCoin, totalCost },
+            } = bookingHistoryAggregate;
+            return Object.assign(item, {
+                totalReceivedCoin: providerReceivedCoin,
+                totalBookingPeriod: bookingPeriod,
+                totalRevenue: totalCost,
+                totalBooking: id,
+            });
         });
+        return result;
     }
 }

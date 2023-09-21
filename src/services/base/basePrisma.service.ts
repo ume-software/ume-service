@@ -15,9 +15,9 @@ export interface ICrudOptionPrisma {
 
 export class BasePrismaService<T extends BasePrismaRepository> {
     constructor(repository: T) {
-        this.repository = repository
+        this.repository = repository;
     }
-    repository: T
+    repository: T;
 
     socketIO(req: Request) {
         return req.app.get(SOCKET_EXPRESS) as ServerSocket;
