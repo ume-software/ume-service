@@ -300,9 +300,6 @@ export class LoginService {
             where: {
                 username,
             },
-            include: {
-                adminRoles: true,
-            },
         });
         if (!admin) {
             throw errorService.error(ERROR_MESSAGE.USERNAME_DOES_NOT_EXIST);

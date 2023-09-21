@@ -327,9 +327,59 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         }
         if (!query) query = {};
         if (!query.where) query.where = {};
-        query.where.providerId = provider.id;
-        const result = await this.repository.findAndCountAll(query);
+        if (!query.where.providerSkill) query.where.providerSkill = {};
+        query.where.providerSkill.providerId = provider.id;
 
-        return result;
+        return await this.repository.findAndCountAll(query);
+    }
+
+    async adminGetBookingStatisticsByProviderSlug(slug: string) {
+        const provider = await providerRepository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: slug,
+                    },
+                    {
+                        slug: slug,
+                    },
+                ],
+            },
+        });
+        if (!provider) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+
+        const bookingHistoryAggregate = await prisma.bookingHistory.aggregate({
+            _count: {
+                bookerId: true,
+            },
+            _sum: {
+                bookingPeriod: true,
+                totalCost: true,
+                providerReceivedCoin: true,
+            },
+            where: {
+                providerSkill: {
+                    providerId: provider.id,
+                },
+                status: {
+                    in: [
+                        BookingStatus.PROVIDER_ACCEPT,
+                        BookingStatus.PROVIDER_FINISH_SOON,
+                        BookingStatus.USER_FINISH_SOON,
+                    ],
+                },
+            },
+        });
+
+        return {
+            totalTime: bookingHistoryAggregate._sum.bookingPeriod,
+            totalRevenue: bookingHistoryAggregate._sum.totalCost,
+            totalProfit: bookingHistoryAggregate._sum.providerReceivedCoin,
+            totalBookingSuccess: bookingHistoryAggregate._count.bookerId,
+        };
     }
 }

@@ -372,8 +372,8 @@ model BookingHistory {
   totalCost               Float                    @map("total_cost")
   bookingPeriod           Int                      @map("booking_period")
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
-  providerReceivedCoin    Float?                    @map("provider_received_coin")
-  feedbacks               Feedback[]
+  providerReceivedCoin    Float?                   @map("provider_received_coin")
+  feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
   ReportBooking           ReportBooking[]
   coinHistory             CoinHistory[]
@@ -437,7 +437,7 @@ model Feedback {
   updatedAt  DateTime?      @updatedAt @map("updated_at")
   deletedAt  DateTime?      @map("deleted_at")
   booking    BookingHistory @relation(fields: [bookingId], references: [id])
-  bookingId  String         @map("booking_id")
+  bookingId  String         @unique @map("booking_id")
   content    String?        @map("content")
   amountStar Int?           @map("amount_star")
 

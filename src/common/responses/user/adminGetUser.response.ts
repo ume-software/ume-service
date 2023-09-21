@@ -4,7 +4,7 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-
+import { ProviderResponse } from "../provider";
 @ApiModel({
     description: "User information reponse",
 })
@@ -139,4 +139,11 @@ export class AdminGetUserResponseResponse {
         type: SwaggerDefinitionConstant.BOOLEAN,
     })
     public isVerified!: Boolean;
+
+    @ApiModelProperty({
+        description: "Provider profile",
+        required: false,
+        model: ProviderResponse,
+    })
+    public provider?: ProviderResponse;
 }

@@ -3,7 +3,9 @@ import {
     AdminGetProviderResponse,
     AdminGetProviderSkillPagingResponse,
     BookingHistoryPagingResponse,
+    UserCoinResponse,
 } from "@/common/responses";
+import { AdminGetBookingStatisticResponse } from "@/common/responses/booking/adminGetBookingStatistic.response";
 import {
     BaseController,
     Request,
@@ -12,6 +14,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import {
     bookingService,
+    coinService,
     providerService,
     providerSkillService,
 } from "@/services";
@@ -55,6 +58,16 @@ export class AdminManageProviderController extends BaseController {
             "/:slug/booking-history",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetBookingHistoryByProviderSlug)
+        );
+        this.router.get(
+            "/:slug/coin",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetTotalCoinByProviderSlug)
+        );
+        this.router.get(
+            "/:slug/booking-statistics",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetBookingStatisticsByProviderSlug)
         );
     }
     @ApiOperationGet({
@@ -215,5 +228,77 @@ export class AdminManageProviderController extends BaseController {
                 queryInfoPrisma
             );
         this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/coin",
+        operationId: "adminGetTotalCoinByProviderSlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get user coin by slug",
+        summary: "Admin get user coin by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserCoinResponse },
+                    },
+                },
+                description: "Get information success",
+            },
+        },
+    })
+    async adminGetTotalCoinByProviderSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+
+        const result = await coinService.getTotalCoinByProviderSlug(slug!);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/booking-statistics",
+        operationId: "adminGetBookingStatisticsByProviderSlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get booking statistics by provider slug",
+        summary: "Admin get booking statistics by provider slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AdminGetBookingStatisticResponse },
+                    },
+                },
+                description: "Get information success",
+            },
+        },
+    })
+    async adminGetBookingStatisticsByProviderSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const result =
+            await bookingService.adminGetBookingStatisticsByProviderSlug(slug!);
+        this.onSuccess(res, result);
     }
 }

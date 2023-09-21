@@ -4,7 +4,6 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-
 @ApiModel({
     description: "User information reponse",
 })
@@ -29,6 +28,7 @@ export class UserInformationResponse {
         description: "Slug",
         required: true,
         example: "do-tran-minh-chu",
+        type: SwaggerDefinitionConstant.STRING,
     })
     slug!: string | null;
 
@@ -90,4 +90,51 @@ export class UserInformationResponse {
         type: SwaggerDefinitionConstant.STRING,
     })
     public avatarUrl!: string | null;
+
+    @ApiModelProperty({
+        description: "IP V4",
+        required: false,
+        example: "0.000.000",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    public ipv4!: string | null;
+
+    @ApiModelProperty({
+        description: "Is online",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isOnline!: boolean | null;
+
+    @ApiModelProperty({
+        description: "Latest time online",
+        required: false,
+        example: "2023-02-08T07:25:50.009Z",
+        type: SwaggerDefinitionConstant.DATE,
+    })
+    public latestOnline!: Date | null;
+
+    @ApiModelProperty({
+        description: "Is banned",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isBanned!: boolean | null;
+
+    @ApiModelProperty({
+        description: "Is verified",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isVerified!: boolean | null;
+
+    // @ApiModelProperty({
+    //     description: "Provider profile",
+    //     required: false,
+    //     model: ProviderResponse,
+    // })
+    // public provider?: ProviderResponse;
 }

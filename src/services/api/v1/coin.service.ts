@@ -86,7 +86,35 @@ export class CoinService {
             totalCoin,
         };
     }
-
+    async getTotalCoinByProviderSlug(slug: string): Promise<UserCoinResponse> {
+        const user = await userService.findOne({
+            where: {
+                provider: {
+                    OR: [
+                        {
+                            id: slug,
+                        },
+                        {
+                            slug: slug,
+                        },
+                    ],
+                },
+            },
+        });
+        if (!user) {
+            throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+        const totalCoin = await this.getTotalCoinUser(user.id);
+        const getTotalCoinFrozen =
+            await bookingHistoryRepository.getTotalCoinFrozenByBookerId(
+                user.id
+            );
+        return {
+            userId: user.id,
+            totalCoinsAvailable: totalCoin - getTotalCoinFrozen,
+            totalCoin,
+        };
+    }
     private async getTotalCoinUser(userId: string) {
         return (
             (await coinHistoryRepository.countByUserIdAndCoinType(

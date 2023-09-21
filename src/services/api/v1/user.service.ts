@@ -1,5 +1,4 @@
 import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfile.request";
-import { UserInformationResponse } from "@/common/responses/user/userInformation.response";
 import { userRepository } from "@/repositories";
 import { errorService, utilService } from "@/services";
 
@@ -31,7 +30,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         return await this.repository.findAndCountAll(query);
     }
 
-    async getInfoByUserId(userId: string): Promise<UserInformationResponse> {
+    async getInfoByUserId(userId: string) {
         const result: User | null = await this.repository.findOne({
             where: {
                 id: userId,
