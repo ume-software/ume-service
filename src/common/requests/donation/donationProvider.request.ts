@@ -9,15 +9,15 @@ import { mappingDataRequest } from "../base";
 @ApiModel({
     description: "Donate provider request",
 })
-export class DonateProviderRequest {
+export class DonationRequest {
     @ApiModelProperty({
-        description: "Provider Id",
+        description: "Recipient Id",
         required: true,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
         type: SwaggerDefinitionConstant.STRING,
     })
     @IsUUID()
-    providerId!: string;
+    recipientId!: string;
 
     @ApiModelProperty({
         description: "Amount",
@@ -38,11 +38,11 @@ export class DonateProviderRequest {
     @IsString()
     message?: string;
 
-    constructor(data: DonateProviderRequest) {
+    constructor(data: DonationRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(DonateProviderRequest, data, [
+                mappingDataRequest(DonationRequest, data, [
                     "providerId",
                     "amount",
                     "message",

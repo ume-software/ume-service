@@ -22,7 +22,7 @@ import { CommentPostService } from "./api/v1/commentPost.service";
 import { LikePostService } from "./api/v1/likePost.service";
 import { WatchedPostService } from "./api/v1/watchedPost.service";
 import { NoticeService } from "./api/v1/notice.service";
-import { DonateService } from "./api/v1/donate.service";
+import { DonationService } from "./api/v1/donation.service";
 import { VoucherService } from "./api/v1/voucher.service";
 import { VoucherRedeemedBookingService } from "./api/v1/voucherRedeemedBooking.service";
 import { RedisService } from "./common/redis.service";
@@ -34,7 +34,6 @@ import { PaymentQrSettingService } from "./api/v1/paymentQrSetting.service";
 import { QrPaymentService } from "./api/v1/qrPayment.service";
 import { GoogleService } from "./common/google.service";
 import { LoginService } from "./common/login.service";
-import { RegisterProviderRequestService } from "./api/v1/registerProviderRequest.service";
 import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 
 const fileService = new FileService();
@@ -69,11 +68,11 @@ const commentPostService = new CommentPostService();
 const likePostService = new LikePostService();
 const watchedPostService = new WatchedPostService();
 const noticeService = new NoticeService();
-const donateService = new DonateService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
-const registerProviderRequestService = new RegisterProviderRequestService();
 const vietnamAddressService = new VietnamAddressService();
+const donationService = new DonationService();
+
 export {
     scheduleService,
     errorService,
@@ -107,9 +106,8 @@ export {
     likePostService,
     watchedPostService,
     noticeService,
-    donateService,
     voucherService,
     voucherRedeemedBookingService,
-    registerProviderRequestService,
     vietnamAddressService,
+    donationService,
 };

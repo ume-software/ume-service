@@ -1,21 +1,21 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
-import {
-    BasePrismaRepository,
-    PrismaTransaction,
-} from "../base/basePrisma.repository";
-import { BookingStatus, Prisma, Provider } from "@prisma/client";
+import { BasePrismaRepository } from "../base/basePrisma.repository";
+import { BookingStatus, User } from "@prisma/client";
 import moment from "moment";
 import { config } from "@/configs";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 
 export class ProviderRepository extends BasePrismaRepository {
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: Provider[];
+        row: User[];
         count: number;
     }> {
+        if (!query) query = {};
+        if (!query.where) query.where = {};
+        query.where.isProvider = true;
         const [row, count] = await this.prisma.$transaction([
-            this.prisma.provider.findMany(query),
-            this.prisma.provider.count({
+            this.prisma.user.findMany(query),
+            this.prisma.user.count({
                 where: query?.where,
             }),
         ]);
@@ -51,73 +51,71 @@ export class ProviderRepository extends BasePrismaRepository {
           amount ASC
       )
       SELECT
-        id,
-        userId AS userId,
-        slug,
-        name,
-        avatarUrl,
-        voiceUrl,
-        description,
-        createdAt,
-        updatedAt,
-        cost,
-        skillId,
-        skillName,
-        skillImageUrl,
-        gender,
-        dob,
-        star
+        pd.id,
+        pd.slug,
+        pd.name,
+        pd.avatarUrl,
+        pd.voiceUrl,
+        pd.description,
+        pd.createdAt,
+        pd.updatedAt,
+        pd.cost,
+        pd.skillId,
+        pd.skillName,
+        pd.skillImageUrl,
+        pd.gender,
+        pd.dob,
+        pd.star
       FROM (
         SELECT DISTINCT ON (p.id)
-          p.id,
-          p.user_id AS userId,
-          p.slug,
-          p.name,
-          p.avatar_url AS avatarUrl,
-          p.voice_url AS voiceUrl,
-          p.description,
-          p.created_at AS createdAt,
-          p.updated_at AS updatedAt,
-          COALESCE(bc.amount, ps.default_cost) AS cost,
-          s.id AS skillId,
-          s.name AS skillName,
-          s.image_url AS skillImageUrl,
-          u.gender AS gender,
-          u.dob AS dob,
-          CASE
-            WHEN  psf.avg_amount_star IS NOT NULL THEN
-              CAST ( psf.avg_amount_star AS FLOAT)
+            p.id,
+            p.slug,
+            p.name,
+            p.avatar_url AS avatarUrl,
+            p.created_at AS createdAt,
+            p.updated_at AS updatedAt,
+            COALESCE(bc.amount, ps.default_cost) AS cost,
+            s.id AS skillId,
+            s.name AS skillName,
+            s.image_url AS skillImageUrl,
+            p.gender AS gender,
+            p.dob AS dob,
+            pc.voice_url AS voiceUrl,
+            pc.description  AS description,
+            CASE
+            WHEN psf.avg_amount_star IS NOT NULL THEN
+                CAST(psf.avg_amount_star AS FLOAT)
             ELSE
-              0
-            END as star
+                0
+            END AS star
         FROM
-          provider AS p
-        INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
-        INNER JOIN "user" AS u ON u.id = p.user_id
-        INNER JOIN skill AS s ON ps.skill_id = s.id
-        LEFT JOIN LATERAL (
-          SELECT amount
-          FROM relevant_booking_costs bc
-          WHERE bc.provider_skill_id = ps.id
-          LIMIT 1
-        ) bc ON true
-        LEFT JOIN (
-          SELECT
-            psfps.id AS providerSkillId,
-            AVG(f.amount_star) AS avg_amount_star
-          FROM provider_skill AS psfps
+          "user" AS p
+          INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
+          INNER JOIN provider_config AS pc ON pc.user_id  = p.id
+          INNER JOIN skill AS s ON ps.skill_id = s.id
+          LEFT JOIN LATERAL (
+            SELECT amount
+            FROM relevant_booking_costs bc
+            WHERE bc.provider_skill_id = ps.id
+            LIMIT 1
+          ) bc ON true
           LEFT JOIN (
             SELECT
-              bh.provider_skill_id,
-              f.amount_star
-            FROM booking_history AS bh
-            LEFT JOIN feedback AS f ON bh.id = f.booking_id
-            WHERE f.amount_star IS NOT NULL
-          ) AS f ON psfps.id = f.provider_skill_id
-          GROUP BY psfps.id
-        ) AS psf ON psf.providerSkillId = ps.id
-        WHERE
-          ps.deleted_at IS NULL
+              psfps.id AS providerSkillId,
+              AVG(f.amount_star) AS avg_amount_star
+            FROM provider_skill AS psfps
+            LEFT JOIN (
+              SELECT
+                bh.provider_skill_id,
+                f.amount_star
+              FROM booking_history AS bh
+              LEFT JOIN feedback AS f ON bh.id = f.booking_id
+              WHERE f.amount_star IS NOT NULL
+            ) AS f ON psfps.id = f.provider_skill_id
+            GROUP BY psfps.id
+          ) AS psf ON psf.providerSkillId = ps.id
+          WHERE
+            ps.deleted_at IS NULL
           ${
               startCost != undefined
                   ? `AND COALESCE(bc.amount, ps.default_cost) >= ${startCost}`
@@ -170,7 +168,7 @@ export class ProviderRepository extends BasePrismaRepository {
       SELECT
       p.id
       FROM
-        provider AS p
+        "user" AS p
         LEFT JOIN provider_skill AS ps ON p.id = ps.provider_id
         LEFT JOIN booking_history AS b ON ps.id = b.provider_skill_id
           AND (b.status = '${BookingStatus.PROVIDER_ACCEPT}' or b.status = '${BookingStatus.PROVIDER_FINISH_SOON}' or b.status = '${BookingStatus.USER_FINISH_SOON}')
@@ -205,20 +203,20 @@ export class ProviderRepository extends BasePrismaRepository {
     FROM (
         SELECT DISTINCT ON (p.id)
             p.id,
-            p.user_id AS userId,
             p.slug,
             p.name,
             p.avatar_url AS avatarUrl,
-            p.voice_url AS voiceUrl,
-            p.description,
             COALESCE(bc.amount, ps.default_cost) AS cost,
             s.id AS skillId,
             s.name AS skillName,
             s.image_url AS skillImageUrl,
+            pc.voice_url AS voiceUrl,
+            pc.description  AS description,
             psf.avg_amount_star AS star
         FROM
-            provider AS p
+            "user" AS p
             INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
+            INNER JOIN provider_config AS pc ON pc.user_id  = p.id
             LEFT JOIN (
                 SELECT
                     provider_skill_id,
@@ -281,116 +279,5 @@ export class ProviderRepository extends BasePrismaRepository {
             row,
             count: Number(countResult[0].count),
         };
-    }
-    async getByIdOrSlug(slug: string) {
-        const nowTimehhmm = moment()
-            .utcOffset(config.server.timezone)
-            .format("HH:mm");
-        return await this.prisma.provider.findFirst({
-            where: {
-                OR: [
-                    {
-                        id: slug,
-                    },
-                    {
-                        slug: slug,
-                    },
-                ],
-            },
-            include: {
-                providerSkills: {
-                    where: {
-                        deletedAt: null,
-                        skill: {
-                            deletedAt: null,
-                        },
-                    },
-                    include: {
-                        bookingCosts: {
-                            where: {
-                                deletedAt: null,
-                                startTimeOfDay: {
-                                    lte: nowTimehhmm,
-                                },
-                                endTimeOfDay: {
-                                    gte: nowTimehhmm,
-                                },
-                            },
-                            take: 1,
-                        },
-                        skill: true,
-                    },
-                    orderBy: {
-                        position: "asc",
-                    },
-                },
-                user: {
-                    select: {
-                        id: true,
-                        avatarUrl: true,
-                        dob: true,
-                        name: true,
-                        slug: true,
-                        gender: true,
-                    },
-                },
-            },
-        });
-    }
-
-    async updateById(
-        id: string,
-        providerUpdateInput: Prisma.ProviderUpdateInput,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Provider> {
-        return await tx.provider.update({
-            data: providerUpdateInput,
-            where: { id },
-        });
-    }
-    async updateMany(
-        providerUpdateInput: Prisma.ProviderUpdateInput,
-        query: ICrudOptionPrisma,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
-        return await tx.provider.updateMany({
-            data: providerUpdateInput,
-            where: query.where,
-        });
-    }
-
-    async create(
-        providerCreateInput: Prisma.ProviderCreateInput,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Provider> {
-        return await tx.provider.create({ data: providerCreateInput });
-    }
-
-    async findOne(
-        query?: ICrudOptionPrisma,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Provider | null> {
-        return await tx.provider.findFirst(query);
-    }
-
-    async findMany(
-        query?: ICrudOptionPrisma,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Provider[]> {
-        return await tx.provider.findMany(query);
-    }
-
-    async deleteById(
-        id: string,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Provider> {
-        return await tx.provider.delete({ where: { id } });
-    }
-
-    async deleteMany(
-        providerWhereInput: Prisma.ProviderWhereInput,
-        tx: PrismaTransaction = this.prisma
-    ): Promise<Prisma.BatchPayload> {
-        return await tx.provider.deleteMany({ where: providerWhereInput });
     }
 }

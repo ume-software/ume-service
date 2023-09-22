@@ -3,8 +3,8 @@ import { UpdateProviderSkillRequest } from "@/common/requests/providerSkill/upda
 import prisma from "@/models/base.prisma";
 import {
     bookingCostRepository,
-    providerRepository,
     providerSkillRepository,
+    userRepository,
 } from "@/repositories";
 import { PrismaTransaction } from "@/repositories/base/basePrisma.repository";
 import { errorService, skillService, utilService } from "@/services";
@@ -29,7 +29,7 @@ export class ProviderSkillService extends BasePrismaService<
             throw errorService.badRequest();
         }
         await skillService.findOne({ where: { id: skillId } });
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 userId,
             },
@@ -139,7 +139,7 @@ export class ProviderSkillService extends BasePrismaService<
         if (!skill) {
             throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
         }
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 userId,
             },
@@ -276,7 +276,7 @@ export class ProviderSkillService extends BasePrismaService<
         providerSlug: string,
         query?: ICrudOptionPrisma
     ) {
-        const provider = await providerRepository.getByIdOrSlug(providerSlug);
+        const provider = await userRepository.getByIdOrSlug(providerSlug);
         if (!provider) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED

@@ -13,7 +13,7 @@ import { CommentPostRepository } from "./common/commentPost.repository";
 import { LikePostRepository } from "./common/likePost.repository";
 import { WatchedPostRepository } from "./common/watchedPost.repository";
 import { NoticeRepository } from "./common/notice.repository";
-import { DonateProviderRepository } from "./common/donateProvider.repository";
+import { DonationRepository } from "./common/donation.repository";
 import { VoucherRepository } from "./common/voucher.repository";
 import { VoucherRedeemedBookingRepository } from "./common/voucherRedeemedBooking.repository";
 import { RefreshTokenUserRepository } from "./common/refreshTokenUser.repository";
@@ -22,7 +22,6 @@ import { AdminRepository } from "./common/admin.repository";
 import { PaymentQrSettingRepository } from "./common/paymentQrSetting.repository";
 import { AdminPaymentSystemRepository } from "./common/adminPaymentSystem.repository";
 import { AdminRoleRepository } from "./common/adminRole.repository";
-import { RegisterProviderRequestRepository } from "./common/registerProviderRequest.repository";
 import { ProvinceRepository } from "./common/province.repository";
 import { DistrictRepository } from "./common/district.repository";
 import { CommuneRepository } from "./common/commune.repository";
@@ -47,15 +46,14 @@ const commentPostRepository = new CommentPostRepository();
 const likePostRepository = new LikePostRepository();
 const watchedPostRepository = new WatchedPostRepository();
 const noticeRepository = new NoticeRepository();
-const donateProviderRepository = new DonateProviderRepository();
+const donationRepository = new DonationRepository();
 const voucherRepository = new VoucherRepository();
 const voucherRedeemedBookingRepository = new VoucherRedeemedBookingRepository();
 const paymentQrSettingRepository = new PaymentQrSettingRepository();
-const registerProviderRequestRepository =
-    new RegisterProviderRequestRepository();
 const provinceRepository = new ProvinceRepository();
 const districtRepository = new DistrictRepository();
 const communeRepository = new CommuneRepository();
+
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -77,11 +75,10 @@ export {
     likePostRepository,
     watchedPostRepository,
     noticeRepository,
-    donateProviderRepository,
+    donationRepository,
     voucherRepository,
     voucherRedeemedBookingRepository,
     paymentQrSettingRepository,
-    registerProviderRequestRepository,
     provinceRepository,
     districtRepository,
     communeRepository,

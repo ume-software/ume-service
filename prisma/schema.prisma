@@ -27,7 +27,8 @@ model User {
   latestOnline           DateTime?                 @map("latest_online")
   isBanned               Boolean                   @default(false) @map("is_banned")
   isVerified             Boolean                   @default(false) @map("is_verified")
-  provider               Provider?
+  isProvider             Boolean                   @default(false) @map("is_provider")
+  providerConfig         ProviderConfig?
   coinHistories          CoinHistory[]
   bookingHistories       BookingHistory[]
   buyCoinRequests        BuyCoinRequest[]
@@ -37,16 +38,32 @@ model User {
   likePosts              LikePost[]
   commentPosts           CommentPost[]
   watchedPosts           WatchedPost[]
-  donateProviders        DonateProvider[]
+  donorDonations         Donation[]                @relation("DonorDonations")
+  recipientDonations     Donation[]                @relation("RecipientDonations")
   voucherRedeemedBooking VoucherRedeemedBooking[]
   paymentSystems         UserPaymentSystem[]
-  providerRequest        RegisterProviderRequest?
   refreshToken           RefreshTokenUser?
   sensitiveInformation   UserSensitiveInformation?
-  verificationRequest    UserVerificationRequest?
+  verificationRequest    UserKYCRequest?
   address                UserAddress?
+  providerSkill          ProviderSkill[]
+  voucher                Voucher[]
 
   @@map("user")
+}
+
+model ProviderConfig {
+  id          String          @id @default(uuid()) @map("id")
+  createdAt   DateTime?       @default(now()) @map("created_at")
+  updatedAt   DateTime?       @updatedAt @map("updated_at")
+  deletedAt   DateTime?       @map("deleted_at")
+  user        User            @relation(fields: [userId], references: [id])
+  userId      String          @unique @map("user_id")
+  voiceUrl    String?         @map("voice_url")
+  description String?         @map("description") @db.Text()
+  status      ProviderStatus? @default(UNACTIVATED) @map("status")
+
+  @@map("provider_config")
 }
 
 model UserAddress {
@@ -131,20 +148,20 @@ model UserSensitiveInformation {
   @@map("user_sensitive_information")
 }
 
-model UserVerificationRequest {
-  id                         Int                @id @default(autoincrement()) @map("id")
-  createdAt                  DateTime           @default(now()) @map("created_at")
-  userId                     String             @unique @map("user_id")
-  user                       User               @relation(fields: [userId], references: [id])
-  frontSideCitizenIdImageUrl String             @map("front_side_citizen_id_image_url")
-  backSideCitizenIdImageUrl  String             @map("back_side_citizen_id_image_url")
-  portraitImageUrl           String             @map("portrait_image_url")
-  adminId                    String?            @map("admin_id")
-  admin                      Admin?             @relation(fields: [adminId], references: [id])
-  lastestHandleTime          DateTime?          @map("last_handle_time")
-  verificationStatus         VerificationStatus @default(PENDING) @map("verification_status")
+model UserKYCRequest {
+  id                         Int           @id @default(autoincrement()) @map("id")
+  createdAt                  DateTime      @default(now()) @map("created_at")
+  userId                     String        @unique @map("user_id")
+  user                       User          @relation(fields: [userId], references: [id])
+  frontSideCitizenIdImageUrl String        @map("front_side_citizen_id_image_url")
+  backSideCitizenIdImageUrl  String        @map("back_side_citizen_id_image_url")
+  portraitImageUrl           String        @map("portrait_image_url")
+  adminId                    String?       @map("admin_id")
+  admin                      Admin?        @relation(fields: [adminId], references: [id])
+  lastestHandleTime          DateTime?     @map("last_handle_time")
+  userKYCStatus              UserKYCStatus @default(PENDING) @map("verification_status")
 
-  @@map("user_verification_request")
+  @@map("user_kyc_request")
 }
 
 model RefreshTokenUser {
@@ -160,24 +177,23 @@ model RefreshTokenUser {
 }
 
 model Admin {
-  id                            String                    @id @default(uuid()) @map("id")
-  createdAt                     DateTime?                 @default(now()) @map("created_at")
-  updatedAt                     DateTime?                 @updatedAt @map("updated_at")
-  deletedAt                     DateTime?                 @map("deleted_at")
-  name                          String?                   @map("name") @db.VarChar(80)
-  username                      String?                   @map("username") @db.VarChar(20)
-  dob                           DateTime?                 @map("dob")
-  gender                        Gender                    @default(ORTHER) @map("gender")
-  phone                         String?                   @map("phone")
-  email                         String?                   @map("email")
-  password                      String?                   @map("password")
-  avatarUrl                     String?                   @map("avatar_url")
-  ipv4                          String?                   @map("ipv4") @db.Char(20)
+  id                            String               @id @default(uuid()) @map("id")
+  createdAt                     DateTime?            @default(now()) @map("created_at")
+  updatedAt                     DateTime?            @updatedAt @map("updated_at")
+  deletedAt                     DateTime?            @map("deleted_at")
+  name                          String?              @map("name") @db.VarChar(80)
+  username                      String?              @map("username") @db.VarChar(20)
+  dob                           DateTime?            @map("dob")
+  gender                        Gender               @default(ORTHER) @map("gender")
+  phone                         String?              @map("phone")
+  email                         String?              @map("email")
+  password                      String?              @map("password")
+  avatarUrl                     String?              @map("avatar_url")
+  ipv4                          String?              @map("ipv4") @db.Char(20)
   refreshTokenAdmin             RefreshTokenAdmin?
   adminRoles                    AdminRole[]
   adminPaymentSystems           AdminPaymentSystem[]
-  registerProviderRequests      RegisterProviderRequest[]
-  userVerificationRequests      UserVerificationRequest[]
+  userVerificationRequests      UserKYCRequest[]
   historyAllocationCoinForUsers CoinHistory[]
 
   @@map("admin")
@@ -250,48 +266,6 @@ model PaymentQrSetting {
   @@map("payemt_qr_setting")
 }
 
-model Provider {
-  id              String           @id @default(uuid()) @map("id")
-  createdAt       DateTime?        @default(now()) @map("created_at")
-  updatedAt       DateTime?        @updatedAt @map("updated_at")
-  deletedAt       DateTime?        @map("deleted_at")
-  user            User             @relation(fields: [userId], references: [id])
-  userId          String           @unique @map("user_id")
-  slug            String?          @map("slug")
-  name            String?          @map("name")
-  avatarUrl       String?          @map("avatar_url")
-  voiceUrl        String?          @map("voice_url")
-  description     String?          @map("description") @db.Text()
-  status          ProviderStatus?  @default(UNACTIVATED) @map("status")
-  isBanned        Boolean          @default(false) @map("is_banned")
-  providerSkills  ProviderSkill[]
-  donateProviders DonateProvider[]
-  vouchers        Voucher[]
-
-  @@map("provider")
-}
-
-model RegisterProviderRequest {
-  id              String                        @id @default(uuid()) @map("id")
-  createdAt       DateTime?                     @default(now()) @map("created_at")
-  updatedAt       DateTime?                     @updatedAt @map("updated_at")
-  deletedAt       DateTime?                     @map("deleted_at")
-  user            User                          @relation(fields: [userId], references: [id])
-  userId          String                        @unique @map("user_id")
-  admin           Admin?                        @relation(fields: [adminId], references: [id])
-  adminId         String?                       @map("admin_id")
-  slug            String?                       @map("slug")
-  name            String?                       @map("name")
-  avatarUrl       String?                       @map("avatar_url")
-  voiceUrl        String?                       @map("voice_url")
-  description     String?                       @map("description") @db.Text()
-  citizenIdImages String[]                      @default([]) @map("citizen_id_image")
-  status          RegisterProviderRequestStatus @default(PENDING) @map("status")
-  adminNoted      String?                       @map("admin_noted") @db.Text()
-
-  @@map("register_provider_request")
-}
-
 model Skill {
   id             String          @id @default(uuid()) @map("id")
   createdAt      DateTime?       @default(now()) @map("created_at")
@@ -310,7 +284,7 @@ model ProviderSkill {
   createdAt        DateTime?        @default(now()) @map("created_at")
   updatedAt        DateTime?        @updatedAt @map("updated_at")
   deletedAt        DateTime?        @map("deleted_at")
-  provider         Provider         @relation(fields: [providerId], references: [id])
+  provider         User             @relation(fields: [providerId], references: [id])
   providerId       String           @map("provider_id")
   skill            Skill            @relation(fields: [skillId], references: [id])
   skillId          String           @map("skill_id")
@@ -350,8 +324,8 @@ model CoinHistory {
   adminIdCreated  String?          @map("admin_id_created")
   bookingId       String?          @map("booking_id")
   booking         BookingHistory?  @relation(fields: [bookingId], references: [id])
-  donateId        String?          @map("donate_id")
-  donate          DonateProvider?  @relation(fields: [donateId], references: [id])
+  donationId      String?          @map("donation_id")
+  donation        Donation?        @relation(fields: [donationId], references: [id])
   buyCoinRequest  BuyCoinRequest?
   sellCoinRequest SellCoinRequest?
 
@@ -403,7 +377,7 @@ model Voucher {
   createdAt                        DateTime?                @default(now()) @map("created_at")
   updatedAt                        DateTime?                @updatedAt @map("updated_at")
   deletedAt                        DateTime?                @map("deleted_at")
-  provider                         Provider?                @relation(fields: [providerId], references: [id])
+  provider                         User?                    @relation(fields: [providerId], references: [id])
   providerId                       String?                  @map("provider_id")
   code                             String?                  @unique @map("code")
   image                            String?                  @map("image")
@@ -604,21 +578,21 @@ model WatchedPost {
   @@map("watched_post")
 }
 
-model DonateProvider {
-  id                    String        @id @default(uuid()) @map("id")
-  createdAt             DateTime?     @default(now()) @map("created_at")
-  updatedAt             DateTime?     @updatedAt @map("updated_at")
-  deletedAt             DateTime?     @map("deleted_at")
-  user                  User          @relation(fields: [userId], references: [id])
-  userId                String        @map("user_id")
-  donateAmount          Float         @map("donate_amount")
-  provider              Provider      @relation(fields: [providerId], references: [id])
-  providerId            String        @map("provider_id")
-  actualReceivingAmount Float         @map("actual_receiving_amount")
-  message               String?       @map("message")
-  CoinHistory           CoinHistory[]
+model Donation {
+  id             String        @id @default(uuid()) @map("id")
+  createdAt      DateTime?     @default(now()) @map("created_at")
+  updatedAt      DateTime?     @updatedAt @map("updated_at")
+  deletedAt      DateTime?     @map("deleted_at")
+  donor          User          @relation("DonorDonations", fields: [donorId], references: [id])
+  donorId        String        @map("donor_id")
+  donatedAmount  Float         @map("donated_amount")
+  recipient      User          @relation("RecipientDonations", fields: [recipientId], references: [id])
+  recipientId    String        @map("recipient_id")
+  receivedAmount Float         @map("received_amount")
+  message        String?       @map("message")
+  coinHistory    CoinHistory[]
 
-  @@map("donate_provider")
+  @@map("donation")
 }
 
 enum CoinType {
@@ -754,7 +728,7 @@ enum ProviderStatus {
   BUSY
 }
 
-enum VerificationStatus {
+enum UserKYCStatus {
   PENDING
   APPROVED
   REJECTED

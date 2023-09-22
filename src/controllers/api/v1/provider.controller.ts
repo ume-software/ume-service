@@ -1,8 +1,6 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import {
-    UpdateProviderProfileRequest,
-} from "@/common/requests";
+import { UpdateProviderProfileRequest } from "@/common/requests";
 import {
     AlbumPagingResponse,
     FilterProviderPagingResponse,
@@ -17,7 +15,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { providerService } from "@/services";
+import { providerService, userService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import {
     filterHotProviderParameters,
@@ -181,7 +179,7 @@ export class ProviderController extends BaseController {
     async getAlbumByProviderSlug(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const { slug } = req.params;
-        const result = await this.service.getAlbumByProviderSlug(
+        const result = await this.service.getAlbumByUserSlug(
             slug!,
             queryInfoPrisma
         );
@@ -216,7 +214,7 @@ export class ProviderController extends BaseController {
     })
     async getProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await this.service.getProviderBySlug(slug!);
+        const result = await userService.getUserBySlug(slug!);
         this.onSuccess(res, result);
     }
     @ApiOperationGet({
@@ -243,7 +241,6 @@ export class ProviderController extends BaseController {
         const result = await this.service.getPersonalProfileByUserId(userId);
         this.onSuccess(res, result);
     }
-
 
     @ApiOperationPatch({
         path: "/profile/information",
@@ -277,7 +274,7 @@ export class ProviderController extends BaseController {
         );
         const userId = this.getTokenInfo(req).id;
         updateProviderProfileRequest.userId = userId;
-        const result = await this.service.userUpdateProviderProfile(
+        const result = await this.service.userUpdateUserProfile(
             updateProviderProfileRequest
         );
         this.onSuccess(res, result);

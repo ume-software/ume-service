@@ -5,92 +5,130 @@ import {
     Gender,
     LoginType,
     PaymentSystemPlatform,
-    PrismaClient,
+    ProviderStatus,
     UnitCurrency,
 } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { utilService } from "@/services";
 import { vietnamAddress } from "./data-seed/vietnamAddress";
+import prisma from "../base.prisma";
 const userDefault = [
     {
         id: "9985b3de-3963-49a4-a6ac-aa5f273fd2b4",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1462729/16717899518529566.jpeg",
+        voiceUrl:
+            "https://playerduo.net/api/upload-service/audio_voices/66f8b716-ee52-4590-aa0a-73bd28590f5f__e1cd3020-803b-11ed-a19f-23a3b10d190e__audio_voice.mp3",
+        name: "Báo đời 🐮",
     },
     {
         id: "b5aa3ace-19da-4112-b41f-f93edb5b8a11",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/367563/16780986636345719.jpeg",
+        voiceUrl:
+            "https://playerduo.net/api/upload-service/audio_voices/3482c1e2-5d2e-4499-8d5c-4819c30b6497__88944a10-cf01-11ed-a19f-23a3b10d190e__audio_voice.mp3",
+        nickname: "Kanhdababiez",
     },
     {
         id: "4fe8aae9-9d63-4683-baad-d3590ced2598",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1974032/16848702165217550.jpeg",
+        voiceUrl:
+            "https://playerduo.net/api/upload-service/audio_voices/852f7007-0d22-4a3a-9d7b-12fed963866f__ec2da9c0-e34b-11eb-9157-1d40c57aa487__audio_voice.mp3",
+        name: "Hà Monn 💕👑",
     },
     {
         id: "802eedc0-2c37-46cb-a857-d311a6251a13",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1605774/16747326300495711.jpeg",
+        voiceUrl: null,
+        name: "Chin ☘",
     },
     {
         id: "1c5dafeb-13b0-4c5a-80ba-ea40b2a460ba",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/157645/16848332689635966.jpeg",
+        voiceUrl: null,
+        name: "🌸 M E O W 🌸",
     },
     {
         id: "3c61af82-187f-449f-9b23-8bca5f2186a2",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1684413/16786883962963700.jpeg",
+        voiceUrl:
+            "https://playerduo.net/api/upload-service/audio_voices/e4ccaedd-f9f2-4148-be15-b5309460be28__43531090-1b68-11ee-a657-a54d6be1d46a__audio_voice.mp3",
+        name: "Baka Hime 👀",
     },
     {
         id: "848f0816-b39a-4b0d-a3a2-cea5d83e21ba",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/376803/16859521050006272.jpeg?",
+        voiceUrl: null,
+        name: "Mâyy",
     },
     {
         id: "dd43d7d8-87e0-4699-b829-89b6f5e2863b",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1462729/16700667856147708.jpeg",
+        voiceUrl: null,
+        name: null,
     },
     {
         id: "2e82b1a6-e878-4bd5-9e08-1fa3d03cd18e",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1973809/16862433098586045.jpeg",
+        voiceUrl: null,
+        name: null,
     },
     {
         id: "eb8728a0-aaeb-4190-b475-519728e532ca",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1684413/1673325015493547.jpeg",
+        voiceUrl: null,
+        name: "Gạo 🍀",
     },
     {
         id: "a47aeac8-a730-4f42-a1aa-c072d1e96ab7",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/376803/16833767097816821.jpeg",
+        voiceUrl: null,
+        name: "❤Yến Munn❤️ 🫶🏻",
     },
     {
         id: "6d1f0910-f53a-4784-969c-69cdefef61e9",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1227048/16605565132718799.jpeg",
+        voiceUrl: null,
+        name: "HimeChan",
     },
     {
         id: "ac124683-8268-49fa-83bf-5180ab3ce980",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1011755/16697279953677315.jpeg",
+        voiceUrl: null,
+        name: "✨ Gấu 🐼 ✨",
     },
     {
         id: "816c1899-c65e-4819-86d0-a3357173848d",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1962700/16850082812127061.jpeg",
+        voiceUrl: null,
+        name: "Vịt Mủ",
     },
     {
         id: "82cfafb0-ea31-45dc-8639-63a673569436",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/655708/16726452431573402.jpeg",
+        voiceUrl: null,
+        name: "Lulii cute siêu cấp zũ trụ",
     },
     {
         id: "7091f5cb-2b63-4aa6-a3c8-17cf8763258f",
         avatarUrl:
             "https://global-oss.epal.gg/data/cover/1009695/1682259562827278.jpeg",
+        voiceUrl:
+            "https://playerduo.net/api/upload-service/audio_voices/d9918033-153e-4386-89fc-9f56c066b60d__7c154860-d340-11ec-a334-4d8c20a0c7ee__audio_voice.mp3",
+        name: "Mẫn Mẫn",
     },
     {
         id: "373f7281-4a4d-4b4e-a60b-771e089800d0",
@@ -210,11 +248,12 @@ const skillsDefault = [
         name: "Genshin Impact",
     },
 ];
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 async function seed() {
     try {
         if (!(await prisma.user.findFirst())) {
             const users: any[] = [];
+
             for (let i = 0; i < userDefault.length; i++) {
                 const name = faker.person.fullName();
                 const user = await prisma.user.create({
@@ -231,32 +270,41 @@ async function seed() {
                                     max: Object.values(Gender).length - 1,
                                 })
                             ] || Gender.ORTHER,
-                        name: name,
-                        slug: utilService.changeToSlug(name, ""),
+                        name: userDefault[i]?.name ?? name,
+                        slug: utilService.changeToSlug(
+                            userDefault[i]?.name ?? name,
+                            ""
+                        ),
                         phone: faker.phone.number(),
+                        isVerified: true,
+                        isProvider: true,
                     },
                 });
                 users.push(user);
             }
-
             // Create providers
-            const providers = [];
+
             for (let i = 0; i < userDefault.length; i++) {
-                const provider = await prisma.provider.create({
+                await prisma.providerConfig.create({
                     data: {
                         user: {
                             connect: {
                                 id: users[i].id,
                             },
                         },
-                        slug: faker.lorem.slug(),
-                        name: faker.person.fullName(),
-                        avatarUrl: userDefault[i]?.avatarUrl!,
-                        voiceUrl: faker.internet.url(),
-                        description: faker.lorem.paragraph(),
+                        voiceUrl: userDefault[i]?.voiceUrl ?? null,
+                        description: faker.person.bio(),
+                        status:
+                            Object.values(ProviderStatus)[
+                                faker.number.int({
+                                    min: 0,
+                                    max:
+                                        Object.values(ProviderStatus).length -
+                                        1,
+                                })
+                            ] || ProviderStatus.ACTIVATED,
                     },
                 });
-                providers.push(provider);
             }
 
             // Create skills
@@ -270,9 +318,8 @@ async function seed() {
                 });
                 skills.push(skill);
             }
-
             // Create provider skills
-            for (const provider of providers) {
+            for (const provider of users) {
                 for (const skill of skills) {
                     await prisma.providerSkill.create({
                         data: {
@@ -294,7 +341,6 @@ async function seed() {
                     });
                 }
             }
-
             // Create booking costs
             for (const providerSkill of await prisma.providerSkill.findMany()) {
                 await prisma.bookingCost.create({
@@ -325,7 +371,6 @@ async function seed() {
                             max: Object.values(CoinType).length - 1,
                         })
                     ] || CoinType.ADMIN;
-
                 await prisma.coinHistory.create({
                     data: {
                         user: {
@@ -340,7 +385,6 @@ async function seed() {
                     },
                 });
             }
-
             // Create BookingHistory
             for (let i = 0; i < userDefault.length; i++) {
                 for (let j = 0; j < userDefault.length; j++) {
@@ -367,7 +411,7 @@ async function seed() {
                                             where: {
                                                 NOT: {
                                                     provider: {
-                                                        userId: users[j].id,
+                                                        id: users[j].id,
                                                     },
                                                 },
                                             },
@@ -389,7 +433,6 @@ async function seed() {
                     });
                 }
             }
-
             // Create Feedback
             for (const bookingHistory of await prisma.bookingHistory.findMany()) {
                 await prisma.feedback.create({
@@ -474,7 +517,6 @@ async function seed() {
                             ],
                         },
                     });
-
                     posts.push(post);
                 }
             }
@@ -543,7 +585,6 @@ async function seed() {
                 skipDuplicates: true,
             });
         }
-
         if (!(await prisma.commune.findFirst())) {
             await prisma.commune.createMany({
                 data: vietnamAddress.commune.map((item) => {
@@ -557,7 +598,6 @@ async function seed() {
                 skipDuplicates: true,
             });
         }
-
         console.log("Seed data created successfully!");
     } catch (error) {
         console.error("Error seeding data:", error);

@@ -1,4 +1,3 @@
-export * from "./becomeProvider.response";
 export * from "./filterProvider.response";
 export * from "./filterProviderPaging.response";
 export * from "./getProfileProviderBySlug.response";

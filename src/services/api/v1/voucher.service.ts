@@ -1,5 +1,5 @@
 import { CreateVoucherRequest } from "@/common/requests";
-import { providerRepository, voucherRepository } from "@/repositories";
+import { userRepository, voucherRepository } from "@/repositories";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
@@ -19,12 +19,12 @@ export class VoucherService extends BasePrismaService<
         userId: string,
         createVoucher: CreateVoucherRequest
     ) {
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 userId,
             },
         });
-        if (!provider || provider.userId != userId) {
+        if (!provider || provider.id != userId) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );

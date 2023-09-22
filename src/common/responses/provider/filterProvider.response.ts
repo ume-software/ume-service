@@ -13,13 +13,6 @@ export class FilterProviderResponse {
     id!: string;
 
     @ApiModelProperty({
-        description: "Id's user",
-        required: true,
-        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
-    })
-    userId!: string;
-
-    @ApiModelProperty({
         description: "Slug url",
         required: true,
         example: "do_tran_minh_chu",

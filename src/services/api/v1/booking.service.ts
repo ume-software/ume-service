@@ -6,20 +6,14 @@ import prisma from "@/models/base.prisma";
 import {
     coinHistoryRepository,
     coinSettingRepository,
-    providerRepository,
+    userRepository,
 } from "@/repositories";
 import {
     bookingHistoryRepository,
     providerSkillRepository,
 } from "@/repositories";
 import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.repository";
-import {
-    coinService,
-    errorService,
-    noticeService,
-    providerService,
-    userService,
-} from "@/services";
+import { coinService, errorService, noticeService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -57,7 +51,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const bookerId = req.tokenInfo?.id;
 
         const { providerSkillId, bookingPeriod } = bookingProviderRequest;
-        const booker = await userService.findOne({
+        const booker = await userRepository.findOne({
             where: {
                 id: bookerId,
             },
@@ -80,7 +74,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
             );
         }
-        const provider = await providerService.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 id: providerSkill?.providerId,
             },
@@ -90,7 +84,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-        if (provider.userId == bookerId) {
+        if (provider.id == bookerId) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_CAN_NOT_BOOKING_YOURSELF
             );
@@ -125,7 +119,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         const socketIO = this.socketIO(req);
-        const userIdOfProvider = bookingHistory.providerSkill?.provider?.userId;
+        const userIdOfProvider = bookingHistory.providerSkill?.provider?.id;
         if (socketIO.connections && userIdOfProvider) {
             const socket = socketIO.connections[userIdOfProvider];
             if (socket) {
@@ -135,7 +129,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         noticeService.create({
             user: {
                 connect: {
-                    id: provider.userId,
+                    id: provider.id,
                 },
             },
             type: NoticeType.HAVE_BOOKING,
@@ -183,7 +177,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             );
         }
         const { providerId } = providerSkill;
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 id: providerId,
             },
@@ -197,7 +191,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const requestFrom =
             userRequestId == bookerId
                 ? "BOOKER"
-                : userRequestId == provider.userId
+                : userRequestId == provider.id
                 ? "PROVIDER"
                 : "OTHER";
         if (requestFrom == "OTHER") {
@@ -241,7 +235,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     {
                         user: {
                             connect: {
-                                id: provider.userId,
+                                id: provider.id,
                             },
                         },
                         booking: {
@@ -305,7 +299,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             noticeService.create({
                 user: {
                     connect: {
-                        id: provider.userId,
+                        id: provider.id,
                     },
                 },
                 type: type!,
@@ -319,7 +313,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         providerSlug: string,
         query?: ICrudOptionPrisma
     ) {
-        const provider = await providerRepository.getByIdOrSlug(providerSlug);
+        const provider = await userRepository.getByIdOrSlug(providerSlug);
         if (!provider) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
@@ -334,7 +328,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
     }
 
     async adminGetBookingStatisticsByProviderSlug(slug: string) {
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 OR: [
                     {

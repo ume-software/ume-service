@@ -8,7 +8,6 @@ import {
     BookingHistory,
     BookingStatus,
     ProviderSkill,
-    Provider,
     User,
 } from "@prisma/client";
 import { config } from "@/configs";
@@ -16,14 +15,12 @@ export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider =
     BookingHistory & {
         providerSkill:
             | (ProviderSkill & {
-                  provider: Provider;
+                  provider: User;
               })
             | null;
         booker: User | null;
     };
 export class BookingHistoryRepository extends BasePrismaRepository {
- 
-
     async findAllCurrentBookingProvider(
         userId: string,
         tx: PrismaTransaction = this.prisma
@@ -35,9 +32,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             where: {
                 providerSkill: {
                     provider: {
-                        user: {
-                            id: userId,
-                        },
+                        id: userId,
                     },
                 },
                 createdAt: {

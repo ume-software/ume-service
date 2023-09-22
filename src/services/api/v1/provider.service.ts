@@ -1,14 +1,19 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { UpdateProviderProfileRequest } from "@/common/requests";
-import { postRepository, providerRepository } from "@/repositories";
+import {
+    UpdateProviderProfileRequest,
+} from "@/common/requests";
+import {
+    postRepository,
+    providerRepository,
+    userRepository,
+} from "@/repositories";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Prisma, Provider } from "@prisma/client";
 
 export class ProviderService extends BasePrismaService<
     typeof providerRepository
@@ -43,12 +48,9 @@ export class ProviderService extends BasePrismaService<
 
         return result;
     }
-    async getProviderBySlug(userSlug: string) {
-        return await this.repository.getByIdOrSlug(userSlug);
-    }
 
     async getPersonalProfileByUserId(userId: string) {
-        const result = await this.repository.getByIdOrSlug(userId);
+        const result = await userRepository.getByIdOrSlug(userId);
         if (!result) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
@@ -57,12 +59,12 @@ export class ProviderService extends BasePrismaService<
         return result;
     }
 
-    async getAlbumByProviderSlug(
+    async getAlbumByUserSlug(
         userSlug: string,
         queryInfoPrisma: ICrudOptionPrisma
     ) {
         const { skip, take } = queryInfoPrisma;
-        const provider = await this.repository.findOne({
+        const provider = await userRepository.findOne({
             where: {
                 OR: [
                     {
@@ -75,19 +77,19 @@ export class ProviderService extends BasePrismaService<
             },
         });
         return await postRepository.getUrlThumbnailsByUserIdAndUrlType(
-            provider?.userId!,
+            provider?.id!,
             "IMAGE",
             take,
             skip
         );
     }
 
-    async userUpdateProviderProfile(
-        updateProviderProfileRequest: UpdateProviderProfileRequest
+    async userUpdateUserProfile(
+        updateUserProfileRequest: UpdateProviderProfileRequest
     ) {
-        const provider = await this.repository.findOne({
+        const provider = await userRepository.findOne({
             where: {
-                userId: updateProviderProfileRequest.userId,
+                userId: "updateUserProfileRequest.userId",
             },
         });
         if (!provider) {
@@ -97,17 +99,17 @@ export class ProviderService extends BasePrismaService<
         }
         if (
             provider.slug &&
-            updateProviderProfileRequest.slug &&
-            updateProviderProfileRequest.slug != provider.slug
+            updateUserProfileRequest.slug &&
+            updateUserProfileRequest.slug != provider.slug
         ) {
             throw errorService.error(
                 ERROR_MESSAGE.EACH_PROVIDER_CAN_ONLY_UPDATE_THE_SLUG_ONCE
             );
         }
-        if (updateProviderProfileRequest.slug) {
-            const checkSlugExisted = await this.repository.findOne({
+        if (updateUserProfileRequest.slug) {
+            const checkSlugExisted = await userRepository.findOne({
                 where: {
-                    slug: updateProviderProfileRequest.slug,
+                    slug: updateUserProfileRequest.slug,
                     id: {
                         not: provider.id,
                     },
@@ -120,45 +122,9 @@ export class ProviderService extends BasePrismaService<
             }
         }
 
-        return await this.repository.updateById(
+        return await userRepository.updateById(
             provider.id,
-            updateProviderProfileRequest
-        );
-    }
-    async create(
-        providerCreateInput: Prisma.ProviderCreateInput
-    ): Promise<Provider> {
-        return await this.repository.create(providerCreateInput);
-    }
-
-    async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
-        return await this.repository.findOne(query);
-    }
-
-    async updateBySlug(
-        slug: string,
-        providerUpdateInput: Prisma.ProviderUpdateInput
-    ) {
-        const provider = await this.repository.findOne({
-            where: {
-                OR: [
-                    {
-                        slug,
-                    },
-                    {
-                        id: slug,
-                    },
-                ],
-            },
-        });
-        if (!provider) {
-            throw errorService.error(
-                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
-            );
-        }
-        return await this.repository.updateById(
-            provider.id,
-            providerUpdateInput
+            updateUserProfileRequest
         );
     }
 }

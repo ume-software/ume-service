@@ -1,20 +1,19 @@
 import {
-  ApiModel,
-  ApiModelProperty,
-  SwaggerDefinitionConstant,
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { TopUserDonateResponse } from "./topUserDonate.response";
-
+import { TopDonationDonorResponse } from "./topDonationDonor.response";
 
 @ApiModel({
-  description: "Top user donate response",
+    description: "Top user donate response",
 })
-export class TopUserDonatePagingResponse {
-  @ApiModelProperty({
-    description: "Row",
+export class TopDonationDonorPagingResponse {
+    @ApiModelProperty({
+        description: "Row",
 
-    type: SwaggerDefinitionConstant.ARRAY,
-    itemType: TopUserDonateResponse,
-  })
-  row!: Array<TopUserDonateResponse>;
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: TopDonationDonorResponse,
+    })
+    row!: Array<TopDonationDonorResponse>;
 }

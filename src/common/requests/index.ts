@@ -3,7 +3,7 @@ export * from "./auth";
 export * from "./base";
 export * from "./booking";
 export * from "./coin";
-export * from "./donate";
+export * from "./donation";
 export * from "./feedback";
 export * from "./post";
 export * from "./provider";

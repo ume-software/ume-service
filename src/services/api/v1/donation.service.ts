@@ -1,68 +1,65 @@
-import { DonateProviderRequest } from "@/common/requests";
+import { DonationRequest } from "@/common/requests";
 import {
-    TopDonateProviderPagingResponse,
-    TopUserDonatePagingResponse,
+    TopDonationDonorPagingResponse,
+    TopDonationRecipientPagingResponse,
 } from "@/common/responses";
-import { ETopDonateDuration } from "@/enums/topDonateDuration.enum";
+
+import { ETopDonationDuration } from "@/enums/topDonationDuration.enum";
 import prisma from "@/models/base.prisma";
 import {
     coinHistoryRepository,
     coinSettingRepository,
-    donateProviderRepository,
-    providerRepository,
+    donationRepository,
     userRepository,
 } from "@/repositories";
 import { coinService, errorService, utilService } from "@/services";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { CoinType } from "@prisma/client";
 
-export class DonateService {
-    async topDonateProvider(
-        duration: ETopDonateDuration,
+export class DonationService {
+    async topDonationRecipient(
+        duration: ETopDonationDuration,
         top: number
-    ): Promise<TopDonateProviderPagingResponse> {
-        let result = await donateProviderRepository.topDonateProvider(
+    ): Promise<TopDonationRecipientPagingResponse> {
+        let result = await donationRepository.topDonationRecipient(
             duration,
             top
         );
-        const providerIds = result.map((item) => item.providerId);
+        const recipientIds = result.map((item) => item.recipientId);
 
-        const listProviders = await providerRepository.findMany({
+        const listRecipients = await userRepository.findMany({
             where: {
                 id: {
-                    in: providerIds,
+                    in: recipientIds,
                 },
             },
         });
 
-        const mappingProvider = utilService.convertArrayObjectToObject(
-            listProviders,
+        const mappingRecipients = utilService.convertArrayObjectToObject(
+            listRecipients,
             "id"
         );
         const row = result.map((item) => {
             return {
-                actualReceivingAmount: item._sum.actualReceivingAmount || 0,
-                countActualReceivingAmount: item._count.actualReceivingAmount,
-                providerId: item.providerId,
-                provider: mappingProvider[item.providerId],
+                totalReceivedAmount: item._sum.receivedAmount || 0,
+                numberDonationsReceived: item._count.receivedAmount,
+                recipientId: item.recipientId,
+                recipient: mappingRecipients[item.recipientId],
             };
         });
         return { row };
     }
 
-    async topUserDonate(
-        duration: ETopDonateDuration,
+    async topDonationDonor(
+        duration: ETopDonationDuration,
         top: number
-    ): Promise<TopUserDonatePagingResponse> {
-        let result = await donateProviderRepository.topUserDonate(
-            duration,
-            top
-        );
-        const userIds = result.map((item) => item.userId);
+    ): Promise<TopDonationDonorPagingResponse> {
+        let result = await donationRepository.topDonationDonor(duration, top);
+        const donorIds = result.map((item) => item.donorId);
 
-        const listUsers = await userRepository.findMany({
+        const listDonors = await userRepository.findMany({
             where: {
-                id: { in: userIds },
+                id: { in: donorIds },
             },
             select: {
                 id: true,
@@ -73,41 +70,40 @@ export class DonateService {
                 gender: true,
             },
         });
-        const mappingUser = utilService.convertArrayObjectToObject(
-            listUsers,
+        const mappingDonors = utilService.convertArrayObjectToObject(
+            listDonors,
             "id"
         );
         const row = result.map((item) => {
             return {
-                totalCoinDonate: item._sum.donateAmount || 0,
-                countDonate: item._count.donateAmount,
-                userId: item.userId,
-                user: mappingUser[item.userId],
+                totalCoinDonated: item._sum.donatedAmount || 0,
+                numberDonated: item._count.donatedAmount,
+                donorId: item.donorId,
+                donor: mappingDonors[item.donorId],
             };
         });
         return { row };
     }
 
-    async donateForProvider(
-        creatorId: string,
-        donateProviderRequest: DonateProviderRequest
+    async donationForRecipient(
+        donorId: string,
+        donateProviderRequest: DonationRequest
     ) {
-        const { amount, message, providerId } = donateProviderRequest;
-        if (!creatorId || !providerId || !amount) {
+        const { amount, message, recipientId } = donateProviderRequest;
+        if (!donorId || !recipientId || !amount) {
             throw errorService.badRequest();
         }
-        const { totalCoinsAvailable } = await coinService.getTotalCoinByUserSlug(
-            creatorId
-        );
+        const { totalCoinsAvailable } =
+            await coinService.getTotalCoinByUserSlug(donorId);
 
         if (totalCoinsAvailable < amount) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
         }
-        const provider = await providerRepository.findOne({
+        const provider = await userRepository.findOne({
             where: {
-                id: providerId,
+                id: recipientId,
             },
         });
         if (!provider) {
@@ -120,18 +116,18 @@ export class DonateService {
                 await coinSettingRepository.calculateCoinDonateForProvider(
                     amount
                 );
-            const donate = await donateProviderRepository.create(
+            const donation = await donationRepository.create(
                 {
-                    provider: {
+                    recipient: {
                         connect: {
-                            id: providerId,
+                            id: recipientId,
                         },
                     },
-                    donateAmount: amount,
-                    actualReceivingAmount,
-                    user: {
+                    donatedAmount: amount,
+                    receivedAmount: actualReceivingAmount,
+                    donor: {
                         connect: {
-                            id: creatorId,
+                            id: donorId,
                         },
                     },
                     message: message!,
@@ -142,12 +138,12 @@ export class DonateService {
                 {
                     user: {
                         connect: {
-                            id: creatorId,
+                            id: donorId,
                         },
                     },
-                    donate: {
+                    donation: {
                         connect: {
-                            id: donate.id,
+                            id: donation.id,
                         },
                     },
                     amount: -amount,
@@ -160,12 +156,12 @@ export class DonateService {
                 {
                     user: {
                         connect: {
-                            id: provider.userId,
+                            id: provider.id,
                         },
                     },
-                    donate: {
+                    donation: {
                         connect: {
-                            id: donate.id,
+                            id: donation.id,
                         },
                     },
                     amount: actualReceivingAmount,
@@ -174,7 +170,7 @@ export class DonateService {
                 tx
             );
 
-            return donate;
+            return donation;
         });
     }
 }

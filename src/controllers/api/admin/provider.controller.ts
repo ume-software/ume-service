@@ -18,6 +18,7 @@ import {
     coinService,
     providerService,
     providerSkillService,
+    userService,
 } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
@@ -154,7 +155,7 @@ export class AdminManageProviderController extends BaseController {
             },
         ];
 
-        const result = await this.service.findOne(queryInfoPrisma);
+        const result = await userService.findOne(queryInfoPrisma);
         this.onSuccess(res, result);
     }
 
@@ -345,7 +346,7 @@ export class AdminManageProviderController extends BaseController {
     })
     async adminBanProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await this.service.updateBySlug(slug!, {
+        const result = await userService.updateBySlug(slug!, {
             isBanned: true,
         });
         this.onSuccess(res, result);
@@ -382,7 +383,7 @@ export class AdminManageProviderController extends BaseController {
     })
     async adminUnBanProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await this.service.updateBySlug(slug!, {
+        const result = await userService.updateBySlug(slug!, {
             isBanned: false,
         });
         this.onSuccess(res, result);
