@@ -1,4 +1,3 @@
-import { readFileSync } from "fs";
 require("@/configs/dotenv.config");
 
 export default {
@@ -48,21 +47,7 @@ export default {
     google: {
         client_id: process.env["GOOGLE_CLIENT_ID"] || "",
     },
-    service: {
-        identity: {
-            url: process.env["URL_IDENTITY_SERVICE"] ?? "http://localhost:4000",
-            path_public_key:
-                process.env["IDENTITY_PATH_PUBLIC_KEY"] ?? "ume_public_key.pem",
-            path_private_key:
-                process.env["IDENTITY_PATH_PRIVATE_KEY"] ??
-                "ume_private_key.pem",
-            public_key:
-                readFileSync(
-                    process.env["IDENTITY_PATH_PUBLIC_KEY"] ??
-                        "ume_public_key.pem"
-                ) ?? "",
-        },
-    },
+    service: {},
     socket: {
         port: process.env["PORT_SOCKET"] ?? 8686,
     },

@@ -1,4 +1,3 @@
-import { config } from "@/configs";
 import axios, { CreateAxiosDefaults } from "axios";
 import * as _ from "lodash";
 import moment from "moment";
@@ -384,7 +383,7 @@ export class UtilService {
     }
 
     fetch(
-        baseURL = config.service.identity.url,
+        baseURL: string,
         configAxios: CreateAxiosDefaults<any> = {
             timeout: 1000,
         }
