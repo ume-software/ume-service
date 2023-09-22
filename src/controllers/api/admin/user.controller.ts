@@ -16,6 +16,7 @@ import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
+    ApiOperationPatch,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -53,6 +54,16 @@ export class AdminManageUserController extends BaseController {
             "/:slug/coin",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetTotalCoinByUserSlug)
+        );
+        this.router.patch(
+            "/:slug/ban",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminBanUserBySlug)
+        );
+        this.router.patch(
+            "/:slug/un-ban",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminUnBanUserBySlug)
         );
     }
 
@@ -221,6 +232,80 @@ export class AdminManageUserController extends BaseController {
         const { slug } = req.params;
 
         const result = await coinService.getTotalCoinByUserSlug(slug!);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPatch({
+        path: "/{slug}/ban",
+        operationId: "adminBanUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin Ban user by slug",
+        summary: "Admin Ban user by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AdminGetUserResponseResponse },
+                    },
+                },
+                description: "Ban success",
+            },
+        },
+    })
+    async adminBanUserBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const result = await this.service.updateBySlug(slug!, {
+            isBanned: true,
+        });
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPatch({
+        path: "/{slug}/un-ban",
+        operationId: "adminUnBanUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin Un Ban user by slug",
+        summary: "Admin Un Ban user by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AdminGetUserResponseResponse },
+                    },
+                },
+                description: "Un ban success",
+            },
+        },
+    })
+    async adminUnBanUserBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const result = await this.service.updateBySlug(slug!, {
+            isBanned: false,
+        });
         this.onSuccess(res, result);
     }
 }

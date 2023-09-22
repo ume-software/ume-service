@@ -134,4 +134,31 @@ export class ProviderService extends BasePrismaService<
     async findOne(query?: ICrudOptionPrisma): Promise<Provider | null> {
         return await this.repository.findOne(query);
     }
+
+    async updateBySlug(
+        slug: string,
+        providerUpdateInput: Prisma.ProviderUpdateInput
+    ) {
+        const provider = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        slug,
+                    },
+                    {
+                        id: slug,
+                    },
+                ],
+            },
+        });
+        if (!provider) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+        return await this.repository.updateById(
+            provider.id,
+            providerUpdateInput
+        );
+    }
 }

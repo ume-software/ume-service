@@ -5,8 +5,6 @@ import {
 } from "../base/basePrisma.repository";
 import { Prisma, User } from "@prisma/client";
 export class UserRepository extends BasePrismaRepository {
- 
-
     async findMany(query?: ICrudOptionPrisma) {
         return await this.prisma.user.findMany(query);
     }
@@ -77,7 +75,18 @@ export class UserRepository extends BasePrismaRepository {
             },
         });
     }
-
+    async updateById(
+        userId: string,
+        userUpdateInput: Prisma.UserUpdateInput,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.user.update({
+            where: {
+                id: userId,
+            },
+            data: userUpdateInput,
+        });
+    }
     async updateUserProfileById(
         userId: string,
         userUpdateInput: Prisma.UserUpdateInput,

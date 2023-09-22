@@ -107,4 +107,31 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             updateUserProfileRequest
         );
     }
+
+    async updateBySlug(
+        slug: string,
+        userUpdateInput: Prisma.UserUpdateInput
+    ) {
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        slug,
+                    },
+                    {
+                        id: slug,
+                    },
+                ],
+            },
+        });
+        if (!user) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+        return await this.repository.updateUserProfileById(
+            user.id,
+            userUpdateInput
+        );
+    }
 }

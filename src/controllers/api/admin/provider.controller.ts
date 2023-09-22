@@ -3,6 +3,7 @@ import {
     AdminGetProviderResponse,
     AdminGetProviderSkillPagingResponse,
     BookingHistoryPagingResponse,
+    ProviderResponse,
     UserCoinResponse,
 } from "@/common/responses";
 import { AdminGetBookingStatisticResponse } from "@/common/responses/booking/adminGetBookingStatistic.response";
@@ -22,6 +23,7 @@ import { ProviderService } from "@/services/api/v1/provider.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
+    ApiOperationPatch,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -68,6 +70,16 @@ export class AdminManageProviderController extends BaseController {
             "/:slug/booking-statistics",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetBookingStatisticsByProviderSlug)
+        );
+        this.router.patch(
+            "/:slug/ban",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminBanProviderBySlug)
+        );
+        this.router.patch(
+            "/:slug/un-ban",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminUnBanProviderBySlug)
         );
     }
     @ApiOperationGet({
@@ -299,6 +311,80 @@ export class AdminManageProviderController extends BaseController {
         const { slug } = req.params;
         const result =
             await bookingService.adminGetBookingStatisticsByProviderSlug(slug!);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPatch({
+        path: "/{slug}/ban",
+        operationId: "adminBanProviderBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin Ban provider by slug",
+        summary: "Admin Ban provider by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderResponse },
+                    },
+                },
+                description: "Ban success",
+            },
+        },
+    })
+    async adminBanProviderBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const result = await this.service.updateBySlug(slug!, {
+            isBanned: true,
+        });
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPatch({
+        path: "/{slug}/un-ban",
+        operationId: "adminUnBanProviderBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin Un Ban provider by slug",
+        summary: "Admin Un Ban provider by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderResponse },
+                    },
+                },
+                description: "Un ban success",
+            },
+        },
+    })
+    async adminUnBanProviderBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        const result = await this.service.updateBySlug(slug!, {
+            isBanned: false,
+        });
         this.onSuccess(res, result);
     }
 }

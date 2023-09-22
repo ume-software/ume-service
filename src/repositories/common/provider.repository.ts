@@ -9,8 +9,6 @@ import { config } from "@/configs";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 
 export class ProviderRepository extends BasePrismaRepository {
- 
-
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: Provider[];
         count: number;
@@ -350,7 +348,6 @@ export class ProviderRepository extends BasePrismaRepository {
             where: { id },
         });
     }
-
     async updateMany(
         providerUpdateInput: Prisma.ProviderUpdateInput,
         query: ICrudOptionPrisma,
