@@ -6,6 +6,7 @@ import prisma from "@/models/base.prisma";
 import {
     coinHistoryRepository,
     coinSettingRepository,
+    noticeRepository,
     userRepository,
 } from "@/repositories";
 import {
@@ -69,6 +70,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 nowTimehhmm
             );
 
+        console.log("providerService ===> ", providerService);
         if (!providerService) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
@@ -84,6 +86,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
+
         if (provider.id == bookerId) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_CAN_NOT_BOOKING_YOURSELF
@@ -103,6 +106,60 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
         }
+
+        const checkHaveBookingWithCurrentProviderPending =
+            await this.repository.findOne({
+                where: {
+                    providerService: {
+                        provider: {
+                            id: provider.id,
+                        },
+                    },
+                    status: BookingStatus.INIT,
+                    createdAt: {
+                        gte: new Date(
+                            new Date().valueOf() -
+                                config.server.bookingExpireTimeMillisecond
+                        ),
+                    },
+                },
+            });
+        if (checkHaveBookingWithCurrentProviderPending) {
+            throw errorService.error(
+                ERROR_MESSAGE.YOU_HAVE_A_TRANSACTION_PENDING_ACCEPT_FROM_THIS_PROVIDER
+            );
+        }
+
+        const nearestBookingProviderAccepted = await this.repository.findOne({
+            where: {
+                providerService: {
+                    provider: {
+                        id: provider.id,
+                    },
+                },
+                status: BookingStatus.PROVIDER_ACCEPT,
+            },
+            orderBy: {
+                acceptedAt: "desc",
+            },
+        });
+
+        console.log(
+            "nearestBookingProviderAccepted ===> ",
+            nearestBookingProviderAccepted
+        );
+        if (nearestBookingProviderAccepted?.acceptedAt) {
+            nearestBookingProviderAccepted.acceptedAt.setHours(
+                nearestBookingProviderAccepted.acceptedAt.getHours() +
+                    nearestBookingProviderAccepted.bookingPeriod
+            );
+            if (nearestBookingProviderAccepted.acceptedAt < new Date()) {
+                throw errorService.error(
+                    ERROR_MESSAGE.PROVIDER_BUSY_WITH_OTHER_BOOKING
+                );
+            }
+        }
+
         const bookingHistory = await bookingHistoryRepository.create({
             bookingPeriod,
             status: BookingStatus.INIT,
@@ -150,9 +207,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             PROVIDER_FINISH_SOON,
             USER_FINISH_SOON,
         } = BookingStatus;
-        const fiveMinutes = 5 * 60 * 1000;
+
         const now = new Date();
-        const fiveMinutesBefore = new Date(now.valueOf() - fiveMinutes);
+        const fiveMinutesBefore = new Date(
+            now.valueOf() - config.server.bookingExpireTimeMillisecond
+        );
         const bookingHistory = await bookingHistoryRepository.findOne({
             where: {
                 id: bookingHistoryId,
@@ -296,7 +355,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     break;
                 }
             }
-            noticeService.create({
+            noticeRepository.create({
                 user: {
                     connect: {
                         id: provider.id,

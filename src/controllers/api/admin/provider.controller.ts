@@ -1,3 +1,4 @@
+import { AdminHandleBanProviderRequest } from "@/common/requests/provider/adminHandleBanProvider.request";
 import {
     AdminGetProviderPagingResponse,
     AdminGetProviderResponse,
@@ -16,6 +17,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import {
     bookingService,
     coinService,
+    errorService,
     providerService,
     providerServiceService,
     userService,
@@ -182,7 +184,9 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderServicePagingResponse },
+                        schema: {
+                            model: AdminGetProviderServicePagingResponse,
+                        },
                     },
                 },
                 description: "Provider success",
@@ -333,6 +337,13 @@ export class AdminManageProviderController extends BaseController {
                 },
             },
         },
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: AdminHandleBanProviderRequest },
+                },
+            },
+        },
         responses: {
             200: {
                 content: {
@@ -346,9 +357,20 @@ export class AdminManageProviderController extends BaseController {
     })
     async adminBanProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await userService.updateBySlug(slug!, {
+        const adminId = this.getTokenInfo(req).id;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const adminBanRequest = new AdminHandleBanProviderRequest({
+            providerId: slug,
+            content: req.body.content,
+            adminId,
             isBanned: true,
         });
+
+        const result = await this.service.adminHandleBanProvider(
+            adminBanRequest
+        );
         this.onSuccess(res, result);
     }
 
@@ -383,9 +405,20 @@ export class AdminManageProviderController extends BaseController {
     })
     async adminUnBanProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await userService.updateBySlug(slug!, {
+        const adminId = this.getTokenInfo(req).id;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const adminBanRequest = new AdminHandleBanProviderRequest({
+            providerId: slug,
+            content: req.body.content,
+            adminId,
             isBanned: false,
         });
+
+        const result = await this.service.adminHandleBanProvider(
+            adminBanRequest
+        );
         this.onSuccess(res, result);
     }
 }

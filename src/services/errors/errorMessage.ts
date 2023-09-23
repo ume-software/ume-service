@@ -237,6 +237,23 @@ export const ERROR_MESSAGE = {
         description:
             "This error is used when a booking has ended and certain actions cannot be performed, resulting in a 400 Bad Request status.",
     },
+    YOU_HAVE_A_TRANSACTION_PENDING_ACCEPT_FROM_THIS_PROVIDER: {
+        type: "booking_exception",
+        message: "You have a transaction pending accept from this provider.",
+        codeNumber: 20105,
+        statusCode: 400,
+        description:
+            "This error is used when a booker continues to booking a provider while a previous lease is still waiting for accept, resulting in a 400 Bad Request status.",
+    },
+    PROVIDER_BUSY_WITH_OTHER_BOOKING: {
+        type: "booking_exception",
+        message:
+            "Unable to make a reservation at this time. The booker is currently engaged in another booking",
+        codeNumber: 20105,
+        statusCode: 400,
+        description:
+            "This error occurs when a user, referred to as the 'booker,' attempts to initiate a new booking with a service provider while they are already in the process of another booking. In such cases, the system prevents additional reservations until the existing booking is completed or canceled. This restriction is in place to ensure a smooth and organized booking process. To proceed, please wait for the ongoing booking to conclude or cancel it if necessary.",
+    },
 
     THIS_SKILL_DOES_NOT_EXISTED: {
         type: "service_exception",
@@ -300,7 +317,31 @@ export const ERROR_MESSAGE = {
         description:
             'This message indicates that a user has submitted a request to become a supplier (or provider), but the request is currently pending approval. In this context, a "supplier" or "provider" typically refers to an individual or entity that offers goods or services. The user who submitted the request is waiting for their application to be reviewed and approved by an administrator or a relevant authority.',
     },
-
+    THIS_IS_NOT_A_PROVIDER: {
+        type: "provider_exception",
+        message: "This is not a provider.",
+        codeNumber: 20301,
+        statusCode: 400,
+        description:
+            "This error is used when this account is not a provider, resulting in a 400 Not Found status.",
+    },
+    THIS_PROVIDER_HAS_BEEN_BANNED_BEFORE: {
+        type: "provider_exception",
+        message: "This provider has been banned before.",
+        codeNumber: 20302,
+        statusCode: 400,
+        description:
+            "This error is used when this provider has been banned before, resulting in a 400 Not Found status.",
+    },
+    THIS_PROVIDER_HAS_BEEN_UN_BANNED_BEFORE_OR_HAS_NEVER_BEEN_BANNED: {
+        type: "provider_exception",
+        message:
+            "This provider has been un-banned before or has never been banned.",
+        codeNumber: 20302,
+        statusCode: 400,
+        description:
+            "This error is used when this provider has been un-banned before or has never been banned, resulting in a 400 Not Found status.",
+    },
     THIS_PROVIDER_SKILL_IS_EXISTED: {
         type: "provider_service_exception",
         message: "This service already exists in the provider's service list.",

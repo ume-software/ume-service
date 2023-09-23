@@ -205,4 +205,6 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             )._sum.totalCost || 0
         );
     }
+
+   
 }

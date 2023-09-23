@@ -25,6 +25,7 @@ import { AdminRoleRepository } from "./common/adminRole.repository";
 import { ProvinceRepository } from "./common/province.repository";
 import { DistrictRepository } from "./common/district.repository";
 import { CommuneRepository } from "./common/commune.repository";
+import { ProviderConfigRepository } from "./common/providerConfig.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -53,7 +54,7 @@ const paymentQrSettingRepository = new PaymentQrSettingRepository();
 const provinceRepository = new ProvinceRepository();
 const districtRepository = new DistrictRepository();
 const communeRepository = new CommuneRepository();
-
+const providerConfigRepository = new ProviderConfigRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -82,4 +83,5 @@ export {
     provinceRepository,
     districtRepository,
     communeRepository,
+    providerConfigRepository
 };

@@ -1,5 +1,9 @@
 import { Gender } from "@prisma/client";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { IsDate, IsEnum, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
@@ -11,6 +15,7 @@ export class UpdateUserProfileRequest {
         description: "name",
         required: false,
         example: "name",
+        type: SwaggerDefinitionConstant.STRING,
     })
     @IsOptional()
     @IsString()
@@ -20,6 +25,7 @@ export class UpdateUserProfileRequest {
         description: "slug",
         required: false,
         example: "slug",
+        type: SwaggerDefinitionConstant.STRING,
     })
     @IsOptional()
     @IsString()
@@ -39,6 +45,7 @@ export class UpdateUserProfileRequest {
         description: "day of birth",
         required: false,
         example: "2023-02-08T07:25:50.009Z",
+        type: SwaggerDefinitionConstant.DATE,
     })
     @Type(() => Date)
     @IsOptional()
@@ -50,6 +57,7 @@ export class UpdateUserProfileRequest {
         required: false,
         example:
             "https://lh3.googleusercontent.com/a/AAcHTtfxbwWNIPBNhWJ6V_oTzH_Ea6ocmhgs0uIpo8c6=s96-c",
+        type: SwaggerDefinitionConstant.STRING,
     })
     @IsOptional()
     @IsString()

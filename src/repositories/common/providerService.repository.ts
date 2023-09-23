@@ -6,8 +6,6 @@ import {
 import { Prisma, ProviderService } from "@prisma/client";
 
 export class ProviderServiceRepository extends BasePrismaRepository {
- 
-
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: ProviderService[];
         count: number;
@@ -78,7 +76,7 @@ export class ProviderServiceRepository extends BasePrismaRepository {
         nowTimehhmm: string,
         tx: PrismaTransaction = this.prisma
     ) {
-        const timeOfDateBookingCostConditon = [
+        const timeOfDateBookingCostCondition = [
             {
                 startTimeOfDay: {
                     lte: nowTimehhmm,
@@ -96,7 +94,7 @@ export class ProviderServiceRepository extends BasePrismaRepository {
                 bookingCosts: {
                     where: {
                         AND: [
-                            ...timeOfDateBookingCostConditon,
+                            ...timeOfDateBookingCostCondition,
                             { deletedAt: null },
                         ],
                     },

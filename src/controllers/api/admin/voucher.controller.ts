@@ -16,10 +16,10 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/v1/voucher",
-    name: "Voucher",
+    path: "/api/admin/voucher",
+    name: "AdminManageVoucher",
 })
-export class VoucherController extends BaseController {
+export class AdminManageVoucherController extends BaseController {
     constructor() {
         super();
         this.service = voucherService;
@@ -30,38 +30,34 @@ export class VoucherController extends BaseController {
     customRouting() {
         this.router.get(
             "",
-            this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.getMyVoucher)
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetAllVoucher)
         );
         this.router.post(
             "",
-            this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.providerCreateVoucher)
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminCreateVoucher)
         );
     }
     @ApiOperationGet({
         path: "",
-        operationId: "getMyVoucher",
+        operationId: "adminGetAllVoucher",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Voucher for provider",
-        summary: "Voucher for provider",
+        description: "Get all voucher",
+        summary: "Get all voucher",
     })
-    async getMyVoucher(req: Request, res: Response) {
-        const userId = this.getTokenInfo(req).id;
-        const result = await this.service.getMyVoucher(
-            userId,
-            req.queryInfoPrisma
-        );
+    async adminGetAllVoucher(req: Request, res: Response) {
+        const result = await this.service.findAndCountAll(req.queryInfoPrisma);
         this.onSuccess(res, { row: result });
     }
     @ApiOperationPost({
         path: "",
-        operationId: "providerCreateVoucher",
+        operationId: "adminCreateVoucher",
         security: {
             bearerAuth: [],
         },
@@ -85,12 +81,12 @@ export class VoucherController extends BaseController {
             },
         },
     })
-    async providerCreateVoucher(req: Request, res: Response) {
-        const providerCreateVoucherRequest = new CreateVoucherRequest(req.body);
-        const userId = this.getTokenInfo(req).id;
-        const result = await this.service.providerCreateVoucher(
-            userId,
-            providerCreateVoucherRequest
+    async adminCreateVoucher(req: Request, res: Response) {
+        const adminCreateVoucherRequest = new CreateVoucherRequest(req.body);
+        const adminId = this.getTokenInfo(req).id;
+        const result = await this.service.adminCreateVoucher(
+            adminId,
+            adminCreateVoucherRequest
         );
         this.onSuccess(res, result);
     }

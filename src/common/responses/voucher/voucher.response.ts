@@ -3,43 +3,49 @@ import {
     VoucherRecipientType,
     VoucherType,
 } from "@prisma/client";
-import { Type } from "class-transformer";
-import {
-    IsArray,
-    IsBoolean,
-    IsDate,
-    IsEnum,
-    IsInt,
-    IsOptional,
-    IsString,
-    IsUppercase,
-    IsUrl,
-    Min,
-} from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { mappingDataRequest } from "../base";
+import { ProviderResponse } from "../provider";
+import { AdminResponse } from "../admin";
 
 @ApiModel({
     description: "Create voucher request",
 })
 export class CreateVoucherRequest {
-    providerId?: string;
-    adminId?: string;
-    provider?: any;
-    admin?: any;
+    @ApiModelProperty({
+        description: "Id's provider",
+        required: true,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+    })
+    id!: string;
+
+    @ApiModelProperty({
+        description: "Created At",
+        example: "2023-05-10T07:08:46.083Z",
+    })
+    createdAt!: Date;
+
+    @ApiModelProperty({
+        description: "Update At",
+        example: "2023-05-10T07:08:46.083Z",
+    })
+    updatedAt!: Date;
+
+    @ApiModelProperty({
+        description: "Deleted At",
+        example: null,
+    })
+    deletedAt!: Date;
+
     @ApiModelProperty({
         description:
             " A unique string representing the voucher code that users can enter to redeem the voucher.",
         required: false,
         example: "SUPPERSALE",
     })
-    @IsOptional()
-    @IsUppercase()
-    @IsString()
     code?: string;
 
     @ApiModelProperty({
@@ -48,8 +54,6 @@ export class CreateVoucherRequest {
         example:
             "https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png",
     })
-    @IsOptional()
-    @IsUrl()
     image?: string;
 
     @ApiModelProperty({
@@ -57,8 +61,6 @@ export class CreateVoucherRequest {
         required: false,
         example: "Get 25% off on your summer bookings!",
     })
-    @IsOptional()
-    @IsString()
     content?: string;
 
     @ApiModelProperty({
@@ -66,8 +68,6 @@ export class CreateVoucherRequest {
         required: false,
         example: "Summer Discount Voucher",
     })
-    @IsOptional()
-    @IsString()
     description?: string;
 
     @ApiModelProperty({
@@ -75,9 +75,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 1000,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     numberIssued?: number;
 
     @ApiModelProperty({
@@ -86,9 +83,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 50,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     dailyNumberIssued?: number;
 
     @ApiModelProperty({
@@ -97,9 +91,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 1,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     numberUsablePerBooker?: number;
 
     @ApiModelProperty({
@@ -107,9 +98,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 1,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     dailyUsageLimitPerBooker?: number;
 
     @ApiModelProperty({
@@ -118,8 +106,6 @@ export class CreateVoucherRequest {
         required: false,
         example: true,
     })
-    @IsOptional()
-    @IsBoolean()
     isActivated!: boolean;
 
     @ApiModelProperty({
@@ -128,7 +114,6 @@ export class CreateVoucherRequest {
         enum: Object.values(VoucherType),
         example: VoucherType.DISCOUNT,
     })
-    @IsEnum(VoucherType)
     type!: VoucherType;
 
     @ApiModelProperty({
@@ -138,7 +123,6 @@ export class CreateVoucherRequest {
         example: DiscountUnit.PERCENT,
         enum: Object.values(DiscountUnit),
     })
-    @IsEnum(DiscountUnit)
     discountUnit!: DiscountUnit;
 
     @ApiModelProperty({
@@ -146,9 +130,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 25,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     discountValue?: number;
 
     @ApiModelProperty({
@@ -156,9 +137,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 100,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     maximumDiscountValue?: number;
 
     @ApiModelProperty({
@@ -167,9 +145,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 120,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     minimumBookingTotalPriceForUsage?: number;
 
     @ApiModelProperty({
@@ -178,9 +153,6 @@ export class CreateVoucherRequest {
         required: false,
         example: 2,
     })
-    @IsOptional()
-    @Min(1)
-    @IsInt()
     minimumBookingDurationForUsage?: number;
 
     @ApiModelProperty({
@@ -188,9 +160,6 @@ export class CreateVoucherRequest {
         required: false,
         example: "2023-09-01T00:00:00Z",
     })
-    @Type(() => Date)
-    @IsOptional()
-    @IsDate()
     startDate?: Date;
 
     @ApiModelProperty({
@@ -199,9 +168,6 @@ export class CreateVoucherRequest {
         required: false,
         example: "2023-10-01T00:00:00Z",
     })
-    @Type(() => Date)
-    @IsOptional()
-    @IsDate()
     endDate?: Date;
 
     @ApiModelProperty({
@@ -212,8 +178,6 @@ export class CreateVoucherRequest {
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: SwaggerDefinitionConstant.INTEGER,
     })
-    @IsArray()
-    @IsInt({ each: true })
     applyISODayOfWeek?: Array<number>;
 
     @ApiModelProperty({
@@ -223,7 +187,6 @@ export class CreateVoucherRequest {
         enum: Object.values(VoucherRecipientType),
         example: VoucherRecipientType.ALL,
     })
-    @IsEnum(VoucherRecipientType)
     recipientType!: VoucherRecipientType;
 
     @ApiModelProperty({
@@ -234,9 +197,6 @@ export class CreateVoucherRequest {
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: SwaggerDefinitionConstant.STRING,
     })
-    @IsOptional()
-    @IsString({ each: true })
-    @IsArray()
     selectiveBookerIds?: Array<string>;
 
     @ApiModelProperty({
@@ -244,35 +204,35 @@ export class CreateVoucherRequest {
         required: true,
         example: false,
     })
-    @IsBoolean()
     isHided!: boolean;
-    constructor(data: CreateVoucherRequest) {
-        if (data) {
-            Object.assign(
-                this,
-                mappingDataRequest(CreateVoucherRequest, data, [
-                    "applyISODayOfWeek",
-                    "code",
-                    "content",
-                    "dailyUsageLimitPerBooker",
-                    "description",
-                    "discountUnit",
-                    "discountValue",
-                    "endDate",
-                    "image",
-                    "isActivated",
-                    "isHided",
-                    "maximumDiscountValue",
-                    "minimumBookingDurationForUsage",
-                    "minimumBookingTotalPriceForUsage",
-                    "numberIssued",
-                    "numberUsablePerBooker",
-                    "recipientType",
-                    "selectiveBookerIds",
-                    "startDate",
-                    "type",
-                ])
-            );
-        }
-    }
+
+    @ApiModelProperty({
+        description: "Provider id.",
+        required: false,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    providerId?: string;
+
+    @ApiModelProperty({
+        description: "Admin id.",
+        required: false,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    adminId?: string;
+
+    @ApiModelProperty({
+        description: "Provider",
+        required: false,
+        model: ProviderResponse,
+    })
+    provider?: ProviderResponse;
+
+    @ApiModelProperty({
+        description: "Admin",
+        required: false,
+        model: AdminResponse,
+    })
+    admin?: AdminResponse;
 }
