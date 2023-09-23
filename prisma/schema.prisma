@@ -46,8 +46,8 @@ model User {
   sensitiveInformation   UserSensitiveInformation?
   verificationRequest    UserKYCRequest?
   address                UserAddress?
-  providerService        ProviderService[]
-  voucher                Voucher[]
+  providerServices       ProviderService[]
+  vouchers               Voucher[]
 
   @@map("user")
 }
