@@ -1,5 +1,9 @@
 import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfile.request";
-import { postRepository, userRepository } from "@/repositories";
+import {
+    likePostRepository,
+    postRepository,
+    userRepository,
+} from "@/repositories";
 import { errorService, utilService } from "@/services";
 
 import {
@@ -151,5 +155,89 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             take,
             skip
         );
+    }
+
+    async getPostsByUserSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        if (!user) {
+            throw errorService.badRequest();
+        }
+
+        const result = await postRepository.findAndCountAll({
+            ...queryInfoPrisma,
+            where: {
+                userId: user.id,
+            },
+            select: {
+                id: true,
+                userId: true,
+                content: true,
+                thumbnails: true,
+                user: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        name: true,
+                        slug: true,
+                    },
+                },
+
+                _count: {
+                    select: {
+                        commentPosts: {
+                            where: {
+                                deletedAt: null,
+                            },
+                        },
+                        likePosts: {
+                            where: {
+                                deletedAt: null,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+        const postIds = result.row.map((item) => item.id);
+        const likePosts = await likePostRepository.findMany({
+            where: {
+                postId: {
+                    in: postIds,
+                },
+                userId: user.id,
+            },
+        });
+        const mappingLikePosts = utilService.convertArrayObjectToObject(
+            likePosts,
+            "id"
+        );
+        return {
+            row: result.row.map((item) => {
+                return {
+                    ...item,
+                    isLike: mappingLikePosts[item.id] ? true : false,
+                    likeCount: item._count?.likePosts ?? 0,
+                    commentCount: item._count?.commentPosts ?? 0,
+                };
+            }),
+            count: result.count,
+        };
     }
 }
