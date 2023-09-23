@@ -78,7 +78,7 @@ export class ProviderService extends BasePrismaService<
                         status: true,
                     },
                 },
-                providerService: {
+                providerServices: {
                     select: {
                         id: true,
                         serviceId: true,
