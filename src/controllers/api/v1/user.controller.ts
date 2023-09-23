@@ -1,5 +1,5 @@
 import { UpdateUserProfileRequest } from "@/common/requests";
-import { UserInformationResponse } from "@/common/responses";
+import { AlbumPagingResponse, UserInformationResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -8,6 +8,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
+import { limitParameter, pageParameter } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -41,6 +42,7 @@ export class UserController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userVerificationRequest)
         );
+        this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
     }
 
     @ApiOperationGet({
@@ -156,5 +158,46 @@ export class UserController extends BaseController {
             updateUserProfileRequest
         );
         this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/album",
+        operationId: "getAlbumByUserSlug",
+        description: "Get User by slug or id",
+        summary: "Get User by slug or id",
+        parameters: {
+            query: {
+                ...limitParameter,
+                ...pageParameter,
+            },
+
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AlbumPagingResponse },
+                    },
+                },
+                description: "Provider success",
+            },
+        },
+    })
+    async getAlbumByUserSlug(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        const { slug } = req.params;
+        const result = await this.service.getAlbumByUserSlug(
+            slug!,
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
     }
 }
