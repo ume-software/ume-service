@@ -269,7 +269,7 @@ async function seed() {
                                     min: 0,
                                     max: Object.values(Gender).length - 1,
                                 })
-                            ] || Gender.ORTHER,
+                            ] || Gender.OTHER,
                         name: userDefault[i]?.name ?? name,
                         slug: utilService.changeToSlug(
                             userDefault[i]?.name ?? name,

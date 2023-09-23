@@ -1,12 +1,8 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { UpdateProviderProfileRequest } from "@/common/requests";
 import {
-    AlbumPagingResponse,
     FilterProviderPagingResponse,
     GetProfileProviderBySlugResponse,
-    ProviderResponse,
-    UpdateProviderProfileResponse,
 } from "@/common/responses";
 
 import {
@@ -14,8 +10,7 @@ import {
     Request,
     Response,
 } from "@/controllers/base/base.controller";
-import { EAccountType } from "@/enums/accountType.enum";
-import { providerService, userService } from "@/services";
+import { providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
 import {
     filterHotProviderParameters,
@@ -27,7 +22,6 @@ import {
 } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
-    ApiOperationPatch,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -49,21 +43,6 @@ export class ProviderController extends BaseController {
         this.router.get("/", this.route(this.getListProvider));
         this.router.get("/hot", this.route(this.getListHotProvider));
         this.router.get("/:slug", this.route(this.getProviderBySlug));
-        this.router.get(
-            "/profile/information",
-            this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.getPersonalProfile)
-        );
-        this.router.get(
-            "/:slug/album",
-            this.route(this.getAlbumByProviderSlug)
-        );
-
-        this.router.patch(
-            "/profile/information",
-            this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.userUpdateProviderProfile)
-        );
     }
     @ApiOperationGet({
         path: "",
@@ -91,18 +70,19 @@ export class ProviderController extends BaseController {
     })
     async getListProvider(req: Request, res: Response) {
         const { queryInfoPrisma } = req;
-        let { start_cost, end_cost, service_id, name, gender } = req.query;
-        start_cost = start_cost?.toString();
+        const { "service-id": serviceId, gender, name, status } = req.query;
+        const start_cost = req.query["start-cost"]?.toString();
         const startCost = start_cost ? +start_cost : undefined;
-        end_cost = end_cost?.toString();
+        const end_cost = req.query["end-cost"]?.toString();
         const endCost = end_cost ? +end_cost : undefined;
         const result = await this.service.filterProvider(
             {
                 startCost,
                 endCost,
-                serviceId: service_id?.toString() || undefined,
+                serviceId: serviceId?.toString() || undefined,
                 name,
                 gender,
+                status,
                 order: queryInfoPrisma?.orderBy,
             } as IOptionFilterProvider,
             queryInfoPrisma!
@@ -146,47 +126,6 @@ export class ProviderController extends BaseController {
     }
 
     @ApiOperationGet({
-        path: "/{slug}/album",
-        operationId: "getAlbumByProviderSlug",
-        description: "Get Provider by slug or id",
-        summary: "Get Provider by slug or id",
-        parameters: {
-            query: {
-                ...limitParameter,
-                ...pageParameter,
-            },
-
-            path: {
-                slug: {
-                    required: true,
-                    schema: {
-                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-                    },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AlbumPagingResponse },
-                    },
-                },
-                description: "Provider success",
-            },
-        },
-    })
-    async getAlbumByProviderSlug(req: Request, res: Response) {
-        const queryInfoPrisma = req.queryInfoPrisma || {};
-        const { slug } = req.params;
-        const result = await this.service.getAlbumByUserSlug(
-            slug!,
-            queryInfoPrisma
-        );
-        this.onSuccessAsList(res, result);
-    }
-
-    @ApiOperationGet({
         path: "/{slug}",
         operationId: "getProviderBySlug",
         description: "Get Provider by slug or id",
@@ -214,69 +153,7 @@ export class ProviderController extends BaseController {
     })
     async getProviderBySlug(req: Request, res: Response) {
         const { slug } = req.params;
-        const result = await userService.getUserBySlug(slug!);
-        this.onSuccess(res, result);
-    }
-    @ApiOperationGet({
-        path: "/profile/information",
-        operationId: "getPersonalProfile",
-        security: {
-            bearerAuth: [],
-        },
-        description: "Get personal profile information",
-        summary: "Get personal profile information",
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderResponse },
-                    },
-                },
-                description: "Get personal profile success.",
-            },
-        },
-    })
-    async getPersonalProfile(req: Request, res: Response) {
-        const userId = this.getTokenInfo(req).id;
-        const result = await this.service.getPersonalProfileByUserId(userId);
-        this.onSuccess(res, result);
-    }
-
-    @ApiOperationPatch({
-        path: "/profile/information",
-        operationId: "userUpdateProviderProfile",
-        security: {
-            bearerAuth: [],
-        },
-        description: "User update provider profile",
-        summary: "User update provider profile",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: UpdateProviderProfileRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UpdateProviderProfileResponse },
-                    },
-                },
-                description: "Update provider profile response",
-            },
-        },
-    })
-    async userUpdateProviderProfile(req: Request, res: Response) {
-        const updateProviderProfileRequest = new UpdateProviderProfileRequest(
-            req.body
-        );
-        const userId = this.getTokenInfo(req).id;
-        updateProviderProfileRequest.userId = userId;
-        const result = await this.service.userUpdateUserProfile(
-            updateProviderProfileRequest
-        );
+        const result = await this.service.getProviderBySlug(slug!);
         this.onSuccess(res, result);
     }
 }

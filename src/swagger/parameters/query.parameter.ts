@@ -1,6 +1,6 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
 import { ETopDonationDuration } from "@/enums/topDonationDuration.enum";
-import { BuyCoinRequestStatus, Gender } from "@prisma/client";
+import { BuyCoinRequestStatus, Gender, ProviderStatus } from "@prisma/client";
 import {
     IApiParameters,
     SwaggerDefinitionConstant,
@@ -93,37 +93,37 @@ export const queryParameters = {
 };
 
 export const filterProviderParameters = {
-    start_cost: {
-        name: "start_cost",
+    "start-cost": {
+        name: "start-cost",
         required: false,
         schema: {
             type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
             default: 5,
         },
         description: `
-        Example : start_cost=5
+        Example : start-cost=5
         `,
     },
-    end_cost: {
-        name: "end_cost",
+    "end-cost": {
+        name: "end-cost",
         required: false,
         schema: {
             type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
             default: 10,
         },
         description: `
-        Example : end_cost=5
+        Example : end-cost=5
         `,
     },
-    service_id: {
-        name: "service_id",
+    "service-id": {
+        name: "service-id",
         required: false,
         schema: {
             type: SwaggerDefinitionConstant.Parameter.Type.STRING,
             default: "14476c02-2846-4097-8f00-b495e8fc77ae",
         },
         description: `
-        Example : service_id=14476c02-2846-4097-8f00-b495e8fc77ae
+        Example : service-id=14476c02-2846-4097-8f00-b495e8fc77ae
         `,
     },
     name: {
@@ -147,6 +147,18 @@ export const filterProviderParameters = {
         },
         description: `
         Example : gender=MALE
+        `,
+    },
+    status: {
+        name: "status",
+        required: false,
+        schema: {
+            enum: Object.values(ProviderStatus),
+            example: ProviderStatus.ACTIVATED,
+            default: ProviderStatus.ACTIVATED,
+        },
+        description: `
+        Example : status=ACTIVATED
         `,
     },
 };

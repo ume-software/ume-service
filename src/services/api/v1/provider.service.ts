@@ -1,19 +1,10 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import {
-    UpdateProviderProfileRequest,
-} from "@/common/requests";
-import {
-    postRepository,
-    providerRepository,
-    userRepository,
-} from "@/repositories";
-import { errorService } from "@/services";
+import { providerRepository, userRepository } from "@/repositories";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
-import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 
 export class ProviderService extends BasePrismaService<
     typeof providerRepository
@@ -49,82 +40,55 @@ export class ProviderService extends BasePrismaService<
         return result;
     }
 
-    async getPersonalProfileByUserId(userId: string) {
-        const result = await userRepository.getByIdOrSlug(userId);
-        if (!result) {
-            throw errorService.error(
-                ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
-            );
-        }
-        return result;
-    }
-
-    async getAlbumByUserSlug(
-        userSlug: string,
-        queryInfoPrisma: ICrudOptionPrisma
-    ) {
-        const { skip, take } = queryInfoPrisma;
-        const provider = await userRepository.findOne({
+    async getProviderBySlug(slug: string) {
+        return await userRepository.findOne({
             where: {
                 OR: [
                     {
-                        id: userSlug,
+                        id: slug,
                     },
                     {
-                        slug: userSlug,
+                        slug: slug,
                     },
                 ],
             },
-        });
-        return await postRepository.getUrlThumbnailsByUserIdAndUrlType(
-            provider?.id!,
-            "IMAGE",
-            take,
-            skip
-        );
-    }
-
-    async userUpdateUserProfile(
-        updateUserProfileRequest: UpdateProviderProfileRequest
-    ) {
-        const provider = await userRepository.findOne({
-            where: {
-                userId: "updateUserProfileRequest.userId",
-            },
-        });
-        if (!provider) {
-            throw errorService.error(
-                ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
-            );
-        }
-        if (
-            provider.slug &&
-            updateUserProfileRequest.slug &&
-            updateUserProfileRequest.slug != provider.slug
-        ) {
-            throw errorService.error(
-                ERROR_MESSAGE.EACH_PROVIDER_CAN_ONLY_UPDATE_THE_SLUG_ONCE
-            );
-        }
-        if (updateUserProfileRequest.slug) {
-            const checkSlugExisted = await userRepository.findOne({
-                where: {
-                    slug: updateUserProfileRequest.slug,
-                    id: {
-                        not: provider.id,
+            select: {
+                id: true,
+                avatarUrl: true,
+                dob: true,
+                gender: true,
+                name: true,
+                slug: true,
+                isOnline: true,
+                isProvider: true,
+                createdAt: true,
+                updatedAt: true,
+                providerConfig: {
+                    select: {
+                        voiceUrl: true,
+                        description: true,
+                        status: true,
                     },
                 },
-            });
-            if (checkSlugExisted) {
-                throw errorService.error(
-                    ERROR_MESSAGE.THIS_SLUG_ALREADY_EXISTS_AT_ANOTHER_PROVIDER
-                );
-            }
-        }
-
-        return await userRepository.updateById(
-            provider.id,
-            updateUserProfileRequest
-        );
+                providerService: {
+                    select: {
+                        id: true,
+                        serviceId: true,
+                        service: true,
+                        defaultCost: true,
+                        description: true,
+                        position: true,
+                        bookingCosts: {
+                            select: {
+                                id: true,
+                                amount: true,
+                                endTimeOfDay: true,
+                                startTimeOfDay: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
     }
 }

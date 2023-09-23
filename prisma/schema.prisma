@@ -16,7 +16,7 @@ model User {
   name                   String?                   @map("name") @db.VarChar(80)
   username               String?                   @map("username") @db.VarChar(80)
   dob                    DateTime?                 @map("dob")
-  gender                 Gender                    @default(ORTHER) @map("gender")
+  gender                 Gender                    @default(OTHER) @map("gender")
   phone                  String?                   @map("phone")
   email                  String?                   @map("email")
   password               String?                   @map("password")
@@ -61,7 +61,7 @@ model ProviderConfig {
   userId      String          @unique @map("user_id")
   voiceUrl    String?         @map("voice_url")
   description String?         @map("description") @db.Text()
-  status      ProviderStatus? @default(UNACTIVATED) @map("status")
+  status      ProviderStatus? @default(UN_ACTIVATED) @map("status")
 
   @@map("provider_config")
 }
@@ -184,7 +184,7 @@ model Admin {
   name                          String?              @map("name") @db.VarChar(80)
   username                      String?              @map("username") @db.VarChar(20)
   dob                           DateTime?            @map("dob")
-  gender                        Gender               @default(ORTHER) @map("gender")
+  gender                        Gender               @default(OTHER) @map("gender")
   phone                         String?              @map("phone")
   email                         String?              @map("email")
   password                      String?              @map("password")
@@ -627,7 +627,7 @@ enum AdminRoleType {
 enum Gender {
   MALE
   FEMALE
-  ORTHER
+  OTHER
   PRIVATE
 }
 
@@ -723,7 +723,7 @@ enum RegisterProviderRequestStatus {
 
 enum ProviderStatus {
   ACTIVATED
-  UNACTIVATED
+  UN_ACTIVATED
   STOPPED_ACCEPTING_BOOKING
   BUSY
 }

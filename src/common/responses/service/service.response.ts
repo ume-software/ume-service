@@ -39,6 +39,7 @@ export class ServiceResponse {
         example: "lien-minh-huyen-thoai",
     })
     slug!: string;
+    
     @ApiModelProperty({
         description: "Image url of service",
         example:

@@ -1,5 +1,5 @@
 import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfile.request";
-import { userRepository } from "@/repositories";
+import { postRepository, userRepository } from "@/repositories";
 import { errorService, utilService } from "@/services";
 
 import {
@@ -37,9 +37,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             },
         });
         if (!result) {
-            throw errorService.error(
-                ERROR_MESSAGE.ACCOUNT_NOT_FOUND
-            );
+            throw errorService.error(ERROR_MESSAGE.ACCOUNT_NOT_FOUND);
         }
 
         return utilService.exclude(result, [
@@ -66,9 +64,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             },
         });
         if (!user) {
-            throw errorService.error(
-                ERROR_MESSAGE.ACCOUNT_NOT_FOUND
-            );
+            throw errorService.error(ERROR_MESSAGE.ACCOUNT_NOT_FOUND);
         }
         const { slug } = updateUserProfileRequest;
 
@@ -108,10 +104,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         );
     }
 
-    async updateBySlug(
-        slug: string,
-        userUpdateInput: Prisma.UserUpdateInput
-    ) {
+    async updateBySlug(slug: string, userUpdateInput: Prisma.UserUpdateInput) {
         const user = await this.repository.findOne({
             where: {
                 OR: [
@@ -132,6 +125,31 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         return await this.repository.updateUserProfileById(
             user.id,
             userUpdateInput
+        );
+    }
+
+    async getAlbumByUserSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const { skip, take } = queryInfoPrisma;
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        return await postRepository.getUrlThumbnailsByUserIdAndUrlType(
+            user?.id!,
+            "IMAGE",
+            take,
+            skip
         );
     }
 }

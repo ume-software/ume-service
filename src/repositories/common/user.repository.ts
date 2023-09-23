@@ -70,6 +70,8 @@ export class UserRepository extends BasePrismaRepository {
                 gender: true,
                 name: true,
                 slug: true,
+                isOnline: true,
+                isProvider: true,
                 createdAt: true,
                 updatedAt: true,
             },

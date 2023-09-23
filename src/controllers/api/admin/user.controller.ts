@@ -1,6 +1,7 @@
 import {
     AdminGetUserPagingResponseResponse,
     AdminGetUserResponseResponse,
+    AlbumPagingResponse,
     CoinHistoryPagingResponse,
     UserCoinResponse,
 } from "@/common/responses";
@@ -13,7 +14,11 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { coinService, errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { queryParameters } from "@/swagger/parameters/query.parameter";
+import {
+    limitParameter,
+    pageParameter,
+    queryParameters,
+} from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -65,6 +70,7 @@ export class AdminManageUserController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminUnBanUserBySlug)
         );
+        this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
     }
 
     @ApiOperationGet({
@@ -307,5 +313,46 @@ export class AdminManageUserController extends BaseController {
             isBanned: false,
         });
         this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/album",
+        operationId: "getAlbumByUserSlug",
+        description: "Get User by slug or id",
+        summary: "Get User by slug or id",
+        parameters: {
+            query: {
+                ...limitParameter,
+                ...pageParameter,
+            },
+
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: AlbumPagingResponse },
+                    },
+                },
+                description: "Provider success",
+            },
+        },
+    })
+    async getAlbumByUserSlug(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        const { slug } = req.params;
+        const result = await this.service.getAlbumByUserSlug(
+            slug!,
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
     }
 }

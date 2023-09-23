@@ -1,10 +1,11 @@
-import { Gender } from "@prisma/client";
+import { Gender, ProviderStatus } from "@prisma/client";
 
 export interface IOptionFilterProvider {
-  startCost: number | undefined;
-  endCost: number | undefined;
-  serviceId: string | undefined;
-  name: string | undefined;
-  gender: Gender | undefined;
-  order: any[] | undefined;
+    startCost: number | undefined;
+    endCost: number | undefined;
+    serviceId: string | undefined;
+    name: string | undefined;
+    gender: Gender | undefined;
+    order: any[] | undefined;
+    status: ProviderStatus;
 }

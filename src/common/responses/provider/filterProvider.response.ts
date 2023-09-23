@@ -1,4 +1,4 @@
-import { Gender } from "@prisma/client";
+import { Gender, ProviderStatus } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
@@ -29,28 +29,30 @@ export class FilterProviderResponse {
     @ApiModelProperty({
         description: "Avatar url",
         required: false,
-        example: "https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png"
+        example:
+            "https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png",
     })
-    avatarurl?: string;
+    avatarUrl?: string;
 
     @ApiModelProperty({
         description: "Avatar url",
         required: false,
-        example: "https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3"
+        example:
+            "https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3",
     })
-    voiceurl?: string;
+    voiceUrl?: string;
 
     @ApiModelProperty({
         description: "Description",
         required: false,
-        example: "This is description about me <3"
+        example: "This is description about me <3",
     })
     description?: string;
 
     @ApiModelProperty({
         description: "Cost",
         required: false,
-        example: 6
+        example: 6,
     })
     cost?: number;
 
@@ -59,27 +61,26 @@ export class FilterProviderResponse {
         required: false,
         example: "45cc1d82-644b-4f7a-b474-7492b2575f10",
     })
-    serviceid?: string;
-
+    serviceId?: string;
 
     @ApiModelProperty({
         description: "Service name",
         required: false,
         example: "Liên Minh Huyền Thoại",
     })
-    servicename?: string;
+    serviceName?: string;
 
     @ApiModelProperty({
         description: "Service image url",
         required: false,
         example: "Liên Minh Huyền Thoại",
     })
-    serviceimageurl?: string;
+    serviceImageUrl?: string;
 
     @ApiModelProperty({
         description: "Gender",
         required: false,
-        example: Gender.ORTHER,
+        example: Gender.OTHER,
     })
     gender?: Gender;
 
@@ -96,4 +97,11 @@ export class FilterProviderResponse {
         example: 4.9,
     })
     star?: number;
+
+    @ApiModelProperty({
+        description: "provider status",
+        required: true,
+        enum: Object.values(ProviderStatus),
+    })
+    providerStatus?: ProviderStatus;
 }
