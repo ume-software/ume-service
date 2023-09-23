@@ -77,6 +77,14 @@ export class GetProfileProviderBySlugResponse {
     isProvider?: boolean;
 
     @ApiModelProperty({
+        description: "isBanned",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    isBanned?: boolean;
+
+    @ApiModelProperty({
         description: "providerServices",
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: ProviderServiceResponse,

@@ -1,4 +1,5 @@
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { ProviderStatus } from "@prisma/client";
+import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
 
 @ApiModel({
     description: "Provider config response",
@@ -37,4 +38,20 @@ export class ProviderConfigResponse {
         example: "This is description about me <3",
     })
     description!: string;
+
+    @ApiModelProperty({
+        description: "Description",
+        required: true,
+        example: ProviderStatus.BUSY,
+        enum: Object.values(ProviderStatus),
+    })
+    status!: ProviderStatus;
+
+    @ApiModelProperty({
+        description: "isBanned",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    isBanned?: boolean;
 }
