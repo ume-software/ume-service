@@ -1,18 +1,18 @@
-import { skillRepository } from "@/repositories";
+import { serviceRepository } from "@/repositories";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Prisma, Skill } from "@prisma/client";
+import { Prisma, Service } from "@prisma/client";
 
-export class SkillService extends BasePrismaService<typeof skillRepository> {
+export class ServiceService extends BasePrismaService<typeof serviceRepository> {
     constructor() {
-        super(skillRepository);
+        super(serviceRepository);
     }
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: Skill[];
+        row: Service[];
         count: number;
     }> {
         const result = await this.repository.findAndCountAll(query);
@@ -24,11 +24,11 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
         return result;
     }
 
-    async create(skillCreateInput: Prisma.SkillCreateInput): Promise<Skill> {
-        return await this.repository.create(skillCreateInput);
+    async create(serviceCreateInput: Prisma.ServiceCreateInput): Promise<Service> {
+        return await this.repository.create(serviceCreateInput);
     }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<Skill> {
+    async findOne(query?: ICrudOptionPrisma): Promise<Service> {
         const result = await this.repository.findOne(query);
         if (!result) {
             throw errorService.error(
@@ -38,22 +38,22 @@ export class SkillService extends BasePrismaService<typeof skillRepository> {
         return result;
     }
 
-    async updateSkillById(
-        skillId: string,
-        skillUpdateInput: Prisma.SkillUpdateInput
+    async updateServiceById(
+        serviceId: string,
+        serviceUpdateInput: Prisma.ServiceUpdateInput
     ) {
-        const skill = await this.repository.findOne({
-            where: { id: skillId },
+        const service = await this.repository.findOne({
+            where: { id: serviceId },
         });
-        if (!skill) {
+        if (!service) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED
             );
         }
-        return await this.repository.updateById(skillId, skillUpdateInput);
+        return await this.repository.updateById(serviceId, serviceUpdateInput);
     }
-    async deleteBySkillId(skillId: string): Promise<Skill> {
-        const result = await this.repository.deleteById(skillId);
+    async deleteByServiceId(serviceId: string): Promise<Service> {
+        const result = await this.repository.deleteById(serviceId);
         if (!result) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED

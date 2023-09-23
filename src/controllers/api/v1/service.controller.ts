@@ -1,15 +1,15 @@
-import { CreateSkillRequest } from "@/common/requests/skill/createSkill.request";
-import { UpdateSkillRequest } from "@/common/requests/skill/updateSkill.request";
-import { SkillResponse } from "@/common/responses";
-import { SkillPagingResponse } from "@/common/responses/skill/skillPaging.response";
+import { CreateServiceRequest } from "@/common/requests/service/createService.request";
+import { UpdateServiceRequest } from "@/common/requests/service/updateService.request";
+import { ServiceResponse } from "@/common/responses";
+import { ServicePagingResponse } from "@/common/responses/service/servicePaging.response";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { errorService, skillService } from "@/services";
-import { SkillService } from "@/services/api/v1/skill.service";
+import { errorService, serviceService } from "@/services";
+import { ServiceService } from "@/services/api/v1/service.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import { MappingErrorResponseSwaggerApi } from "@/swagger/swagger.helper";
@@ -23,38 +23,38 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/v1/skill",
-    name: "Skill",
+    path: "/api/v1/service",
+    name: "Service",
 })
-export class SkillController extends BaseController {
+export class ServiceController extends BaseController {
     constructor() {
         super();
-        this.service = skillService;
-        this.path = "skill";
+        this.service = serviceService;
+        this.path = "service";
         this.customRouting();
     }
 
     customRouting() {
         this.router.get("/", this.route(this.findAndCountAll));
-        this.router.get("/:slug", this.route(this.getSkillBySlug));
+        this.router.get("/:slug", this.route(this.getServiceBySlug));
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.createSkill)
+            this.route(this.createService)
         );
         this.router.patch(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.updateSkillById)
+            this.route(this.updateServiceById)
         );
     }
-    service: SkillService;
+    service: ServiceService;
 
     @ApiOperationGet({
         path: "",
         operationId: "findAndCountAll",
-        description: "Get all skills",
-        summary: "Get all skills",
+        description: "Get all services",
+        summary: "Get all services",
         parameters: {
             query: queryParameters,
         },
@@ -62,10 +62,10 @@ export class SkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: SkillPagingResponse },
+                        schema: { model: ServicePagingResponse },
                     },
                 },
-                description: "Filter Skill success",
+                description: "Filter Service success",
             },
         },
     })
@@ -77,7 +77,7 @@ export class SkillController extends BaseController {
 
     @ApiOperationGet({
         path: "/{slug}",
-        operationId: "getSkillBySlug",
+        operationId: "getServiceBySlug",
         description: "Get Provider by slug or id",
         summary: "Get Provider by slug or id",
         parameters: {
@@ -95,7 +95,7 @@ export class SkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: SkillResponse },
+                        schema: { model: ServiceResponse },
                     },
                 },
                 description: "Provider success",
@@ -105,7 +105,7 @@ export class SkillController extends BaseController {
             ]),
         },
     })
-    async getSkillBySlug(req: Request, res: Response) {
+    async getServiceBySlug(req: Request, res: Response) {
         const { slug } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma ?? {};
         _.set(queryInfoPrisma, "where.OR", [
@@ -122,16 +122,16 @@ export class SkillController extends BaseController {
 
     @ApiOperationPost({
         path: "",
-        operationId: "createSkill",
+        operationId: "createService",
         security: {
             bearerAuth: [],
         },
-        description: "Create Skill",
-        summary: "Create Skill",
+        description: "Create Service",
+        summary: "Create Service",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: CreateSkillRequest },
+                    schema: { model: CreateServiceRequest },
                 },
             },
         },
@@ -139,27 +139,27 @@ export class SkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: SkillResponse },
+                        schema: { model: ServiceResponse },
                     },
                 },
-                description: "Create Skill success",
+                description: "Create Service success",
             },
         },
     })
-    async createSkill(req: Request, res: Response) {
-        const createSkillRequest = new CreateSkillRequest(req.body);
-        const result = await this.service.create(createSkillRequest);
+    async createService(req: Request, res: Response) {
+        const createServiceRequest = new CreateServiceRequest(req.body);
+        const result = await this.service.create(createServiceRequest);
         this.onSuccess(res, result);
     }
 
     @ApiOperationPatch({
         path: "",
-        operationId: "updateSkillById",
+        operationId: "updateServiceById",
         security: {
             bearerAuth: [],
         },
-        description: "Update skill by id",
-        summary: "Update skill by id",
+        description: "Update service by id",
+        summary: "Update service by id",
         parameters: {
             path: {
                 id: {
@@ -173,7 +173,7 @@ export class SkillController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: UpdateSkillRequest },
+                    schema: { model: UpdateServiceRequest },
                 },
             },
         },
@@ -181,22 +181,22 @@ export class SkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: SkillResponse },
+                        schema: { model: ServiceResponse },
                     },
                 },
-                description: "Create Skill success",
+                description: "Create Service success",
             },
         },
     })
-    async updateSkillById(req: Request, res: Response) {
+    async updateServiceById(req: Request, res: Response) {
         const { id } = req.params;
         if (!id) {
             throw errorService.badRequest();
         }
-        const createSkillRequest = new UpdateSkillRequest(req.body);
-        const result = await this.service.updateSkillById(
+        const createServiceRequest = new UpdateServiceRequest(req.body);
+        const result = await this.service.updateServiceById(
             id!,
-            createSkillRequest
+            createServiceRequest
         );
         this.onSuccess(res, result);
     }

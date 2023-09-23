@@ -3,20 +3,20 @@ import {
     BasePrismaRepository,
     PrismaTransaction,
 } from "../base/basePrisma.repository";
-import { Prisma, Skill } from "@prisma/client";
+import { Prisma, Service } from "@prisma/client";
 import { utilService } from "@/services";
 import moment from "moment";
 
-export class SkillRepository extends BasePrismaRepository {
+export class ServiceRepository extends BasePrismaRepository {
  
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: Skill[];
+        row: Service[];
         count: number;
     }> {
         const [row, count] = await this.prisma.$transaction([
-            this.prisma.skill.findMany(query),
-            this.prisma.skill.count({
+            this.prisma.service.findMany(query),
+            this.prisma.service.count({
                 where: query?.where,
             }),
         ]);
@@ -28,87 +28,87 @@ export class SkillRepository extends BasePrismaRepository {
 
     async updateById(
         id: string,
-        skillUpdateInput: Prisma.SkillUpdateInput,
+        serviceUpdateInput: Prisma.ServiceUpdateInput,
         tx: PrismaTransaction = this.prisma
     ) {
-        return await tx.skill.update({ data: skillUpdateInput, where: { id } });
+        return await tx.service.update({ data: serviceUpdateInput, where: { id } });
     }
 
     async update(
-        skillUpdateInput: Prisma.SkillUpdateInput,
+        serviceUpdateInput: Prisma.ServiceUpdateInput,
         query: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
     ) {
-        if (skillUpdateInput.name) {
-            if (!skillUpdateInput.slug)
-                skillUpdateInput.slug = utilService.changeToSlug(
-                    skillUpdateInput.name.toString()
+        if (serviceUpdateInput.name) {
+            if (!serviceUpdateInput.slug)
+                serviceUpdateInput.slug = utilService.changeToSlug(
+                    serviceUpdateInput.name.toString()
                 );
             const checkSlugExisted = await this.findOne({
                 where: {
-                    slug: skillUpdateInput.slug,
+                    slug: serviceUpdateInput.slug,
                 },
             });
             if (checkSlugExisted) {
-                skillUpdateInput.slug = utilService.changeToSlug(
-                    skillUpdateInput.slug.toString(),
+                serviceUpdateInput.slug = utilService.changeToSlug(
+                    serviceUpdateInput.slug.toString(),
                     moment().format("MMDDYYhhmmss")
                 );
             }
         }
-        return await tx.skill.update({
-            data: skillUpdateInput,
+        return await tx.service.update({
+            data: serviceUpdateInput,
             where: query.where,
         });
     }
 
     async create(
-        skillCreateInput: Prisma.SkillCreateInput,
+        serviceCreateInput: Prisma.ServiceCreateInput,
         tx: PrismaTransaction = this.prisma
-    ): Promise<Skill> {
-        if (!skillCreateInput.slug)
-            skillCreateInput.slug = utilService.changeToSlug(
-                skillCreateInput.name
+    ): Promise<Service> {
+        if (!serviceCreateInput.slug)
+            serviceCreateInput.slug = utilService.changeToSlug(
+                serviceCreateInput.name
             );
         const checkSlugExisted = await this.findOne({
             where: {
-                slug: skillCreateInput.slug,
+                slug: serviceCreateInput.slug,
             },
         });
         if (checkSlugExisted) {
-            skillCreateInput.slug = utilService.changeToSlug(
-                skillCreateInput.slug,
+            serviceCreateInput.slug = utilService.changeToSlug(
+                serviceCreateInput.slug,
                 moment().format("MMDDYYhhmmss")
             );
         }
-        return await tx.skill.create({ data: skillCreateInput });
+        return await tx.service.create({ data: serviceCreateInput });
     }
 
     async findOne(
         query?: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
-    ): Promise<Skill | null> {
-        return await tx.skill.findFirst(query);
+    ): Promise<Service | null> {
+        return await tx.service.findFirst(query);
     }
 
     async findMany(
         query?: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
-    ): Promise<Skill[]> {
-        return await tx.skill.findMany(query);
+    ): Promise<Service[]> {
+        return await tx.service.findMany(query);
     }
 
     async deleteById(
         id: string,
         tx: PrismaTransaction = this.prisma
-    ): Promise<Skill> {
-        return await tx.skill.delete({ where: { id } });
+    ): Promise<Service> {
+        return await tx.service.delete({ where: { id } });
     }
 
     async deleteMany(
-        skillWhereInput: Prisma.SkillWhereInput,
+        serviceWhereInput: Prisma.ServiceWhereInput,
         tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.BatchPayload> {
-        return await tx.skill.deleteMany({ where: skillWhereInput });
+        return await tx.service.deleteMany({ where: serviceWhereInput });
     }
 }

@@ -29,10 +29,10 @@ export class BookingCostResponse {
   deletedAt!: Date;
 
   @ApiModelProperty({
-    description: "Provider skill id",
+    description: "Provider service id",
     example: "42ac81c2-1815-45f7-b598-412487161e1f",
   })
-  providerSkillId!: string;
+  providerServiceId!: string;
 
   @ApiModelProperty({
     description: "Start time of day",

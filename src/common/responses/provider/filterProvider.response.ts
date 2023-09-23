@@ -55,26 +55,26 @@ export class FilterProviderResponse {
     cost?: number;
 
     @ApiModelProperty({
-        description: "Skill Id",
+        description: "Service Id",
         required: false,
         example: "45cc1d82-644b-4f7a-b474-7492b2575f10",
     })
-    skillid?: string;
+    serviceid?: string;
 
 
     @ApiModelProperty({
-        description: "Skill name",
+        description: "Service name",
         required: false,
         example: "Liên Minh Huyền Thoại",
     })
-    skillname?: string;
+    servicename?: string;
 
     @ApiModelProperty({
-        description: "Skill image url",
+        description: "Service image url",
         required: false,
         example: "Liên Minh Huyền Thoại",
     })
-    skillimageurl?: string;
+    serviceimageurl?: string;
 
     @ApiModelProperty({
         description: "Gender",

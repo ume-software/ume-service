@@ -1,11 +1,11 @@
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: "Skill response",
+    description: "Service response",
 })
-export class SkillResponse {
+export class ServiceResponse {
     @ApiModelProperty({
-        description: "Id's skill",
+        description: "Id's service",
         example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
     })
     id!: string;
@@ -29,18 +29,18 @@ export class SkillResponse {
     deletedAt!: Date;
 
     @ApiModelProperty({
-        description: "Skill name",
+        description: "Service name",
         example: "Liên Minh Huyền Thoại",
     })
     name!: string;
 
     @ApiModelProperty({
-        description: "Skill name",
+        description: "Service name",
         example: "lien-minh-huyen-thoai",
     })
     slug!: string;
     @ApiModelProperty({
-        description: "Image url of skill",
+        description: "Image url of service",
         example:
             "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
     })

@@ -1,11 +1,11 @@
 import {
-    ProviderSkillRequest,
-    UpdateProviderSkillRequest,
+    ProviderServiceRequest,
+    UpdateProviderServiceRequest,
 } from "@/common/requests";
 import {
     FeedbackPagingResponse,
-    ProviderSkillPagingResponse,
-    ProviderSkillResponse,
+    ProviderServicePagingResponse,
+    ProviderServiceResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -13,8 +13,8 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { feedbackService, providerSkillService } from "@/services";
-import { ProviderSkillService } from "@/services/api/v1/providerSkill.service";
+import { feedbackService, providerServiceService } from "@/services";
+import { ProviderServiceService } from "@/services/api/v1/providerService.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -25,41 +25,41 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/v1/provider-skill",
-    name: "ProviderSkill",
+    path: "/api/v1/provider-service",
+    name: "ProviderService",
 })
-export class ProviderSkillController extends BaseController {
+export class ProviderServiceController extends BaseController {
     constructor() {
         super();
-        this.service = providerSkillService;
-        this.path = "provider-skill";
+        this.service = providerServiceService;
+        this.path = "provider-service";
         this.customRouting();
     }
-    service: ProviderSkillService;
+    service: ProviderServiceService;
 
     customRouting() {
-        this.router.get("/", this.route(this.getProviderSkill));
+        this.router.get("/", this.route(this.getProviderService));
         this.router.get(
             "/:id/feedback",
-            this.route(this.getFeedbackByProviderSkill)
+            this.route(this.getFeedbackByProviderService)
         );
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.createProviderSkill)
+            this.route(this.createProviderService)
         );
         this.router.patch(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.updateProviderSkill)
+            this.route(this.updateProviderService)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "getProviderSkill",
-        description: "Get all skills",
-        summary: "Get all skills",
+        operationId: "getProviderService",
+        description: "Get all services",
+        summary: "Get all services",
         parameters: {
             query: queryParameters,
         },
@@ -67,14 +67,14 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderSkillPagingResponse },
+                        schema: { model: ProviderServicePagingResponse },
                     },
                 },
-                description: "Filter Provider Skill success",
+                description: "Filter Provider Service success",
             },
         },
     })
-    async getProviderSkill(req: Request, res: Response) {
+    async getProviderService(req: Request, res: Response) {
         let queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
@@ -82,9 +82,9 @@ export class ProviderSkillController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}/feedback",
-        operationId: "getFeedbackByProviderSkill",
-        description: "Get all skills",
-        summary: "Get all skills",
+        operationId: "getFeedbackByProviderService",
+        description: "Get all services",
+        summary: "Get all services",
         parameters: {
             path: {
                 id: {
@@ -103,18 +103,18 @@ export class ProviderSkillController extends BaseController {
                         schema: { model: FeedbackPagingResponse },
                     },
                 },
-                description: "Filter Skill success",
+                description: "Filter Service success",
             },
         },
     })
-    async getFeedbackByProviderSkill(req: Request, res: Response) {
-        const { id: providerSkillId } = req.params;
+    async getFeedbackByProviderService(req: Request, res: Response) {
+        const { id: providerServiceId } = req.params;
         let queryInfoPrisma = req.queryInfoPrisma || {};
         if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
         queryInfoPrisma.where.booking = {
-            providerSkillId,
+            providerServiceId,
         };
-        const result = await feedbackService.getFeedbackByProviderSkill(
+        const result = await feedbackService.getFeedbackByProviderService(
             queryInfoPrisma
         );
         this.onSuccessAsList(res, result);
@@ -122,16 +122,16 @@ export class ProviderSkillController extends BaseController {
 
     @ApiOperationPost({
         path: "",
-        operationId: "createProviderSkill",
+        operationId: "createProviderService",
         security: {
             bearerAuth: [],
         },
-        description: "Register become providerSkill",
-        summary: "Register become providerSkill",
+        description: "Register become providerService",
+        summary: "Register become providerService",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: ProviderSkillRequest },
+                    schema: { model: ProviderServiceRequest },
                 },
             },
         },
@@ -139,32 +139,32 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderSkillResponse },
+                        schema: { model: ProviderServiceResponse },
                     },
                 },
                 description: "Register success",
             },
         },
     })
-    async createProviderSkill(req: Request, res: Response) {
-        const providerSkillRequest = new ProviderSkillRequest(req.body);
+    async createProviderService(req: Request, res: Response) {
+        const providerServiceRequest = new ProviderServiceRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.create(userId, providerSkillRequest);
+        const result = await this.service.create(userId, providerServiceRequest);
         this.onSuccess(res, result);
     }
 
     @ApiOperationPatch({
         path: "",
-        operationId: "updateProviderSkill",
+        operationId: "updateProviderService",
         security: {
             bearerAuth: [],
         },
-        description: "Update provider skill",
-        summary: "Update provider skill",
+        description: "Update provider service",
+        summary: "Update provider service",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: UpdateProviderSkillRequest },
+                    schema: { model: UpdateProviderServiceRequest },
                 },
             },
         },
@@ -172,21 +172,21 @@ export class ProviderSkillController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderSkillResponse },
+                        schema: { model: ProviderServiceResponse },
                     },
                 },
                 description: "Register success",
             },
         },
     })
-    async updateProviderSkill(req: Request, res: Response) {
-        const updateProviderSkillRequest = new UpdateProviderSkillRequest(
+    async updateProviderService(req: Request, res: Response) {
+        const updateProviderServiceRequest = new UpdateProviderServiceRequest(
             req.body
         );
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.updateProviderSkill(
+        const result = await this.service.updateProviderService(
             userId,
-            updateProviderSkillRequest
+            updateProviderServiceRequest
         );
         this.onSuccess(res, result);
     }

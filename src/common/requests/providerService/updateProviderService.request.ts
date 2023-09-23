@@ -3,7 +3,7 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { BookingCostProviderSkillRequest } from "./bookingCostProviderSkill.request";
+import { BookingCostProviderServiceRequest } from "./bookingCostProviderService.request";
 import {
     IsArray,
     IsInt,
@@ -16,16 +16,16 @@ import {
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Update provider skill request",
+    description: "Update provider service request",
 })
-export class UpdateProviderSkillRequest {
+export class UpdateProviderServiceRequest {
     @ApiModelProperty({
-        description: "Skill Id",
+        description: "Service Id",
         required: true,
         example: "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
     })
     @IsUUID()
-    skillId!: string;
+    serviceId!: string;
 
     @ApiModelProperty({
         description: "Default cost",
@@ -37,7 +37,7 @@ export class UpdateProviderSkillRequest {
     defaultCost!: number;
 
     @ApiModelProperty({
-        description: "Provider skill description",
+        description: "Provider service description",
         required: false,
         example: "Play with me :>>",
     })
@@ -49,7 +49,7 @@ export class UpdateProviderSkillRequest {
         description: "Create booking cost",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: BookingCostProviderSkillRequest,
+        itemType: BookingCostProviderServiceRequest,
         example: [
             {
                 startTimeOfDay: "09:00",
@@ -61,13 +61,13 @@ export class UpdateProviderSkillRequest {
     @IsOptional()
     @IsArray()
     @IsObject()
-    createBookingCosts!: BookingCostProviderSkillRequest[];
+    createBookingCosts!: BookingCostProviderServiceRequest[];
 
     @ApiModelProperty({
         description: "Update booking cost",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: BookingCostProviderSkillRequest,
+        itemType: BookingCostProviderServiceRequest,
         example: [
             {
                 id: "42ac81c2-1815-45f7-b598-412487161e1f",
@@ -80,7 +80,7 @@ export class UpdateProviderSkillRequest {
     @IsOptional()
     @IsArray()
     @IsObject()
-    updateBookingCosts!: BookingCostProviderSkillRequest[];
+    updateBookingCosts!: BookingCostProviderServiceRequest[];
 
     @ApiModelProperty({
         description: "Create booking cost",
@@ -94,12 +94,12 @@ export class UpdateProviderSkillRequest {
     @IsObject()
     deleteBookingCosts!: Array<String>;
 
-    constructor(data: UpdateProviderSkillRequest) {
+    constructor(data: UpdateProviderServiceRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(UpdateProviderSkillRequest, data, [
-                    "skillId",
+                mappingDataRequest(UpdateProviderServiceRequest, data, [
+                    "serviceId",
                     "defaultCost",
                     "description",
                     "createBookingCosts",

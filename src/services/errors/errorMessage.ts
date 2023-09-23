@@ -239,12 +239,12 @@ export const ERROR_MESSAGE = {
     },
 
     THIS_SKILL_DOES_NOT_EXISTED: {
-        type: "skill_exception",
-        message: "This skill doesn't exist.",
+        type: "service_exception",
+        message: "This service doesn't exist.",
         codeNumber: 20200,
         statusCode: 404,
         description:
-            "This error indicates that a skill does not exist in the system, resulting in a 404 Not Found status.",
+            "This error indicates that a service does not exist in the system, resulting in a 404 Not Found status.",
     },
 
     THIS_PROVIDER_DOES_NOT_EXISTED: {
@@ -302,21 +302,21 @@ export const ERROR_MESSAGE = {
     },
 
     THIS_PROVIDER_SKILL_IS_EXISTED: {
-        type: "provider_skill_exception",
-        message: "This skill already exists in the provider's skill list.",
+        type: "provider_service_exception",
+        message: "This service already exists in the provider's service list.",
         codeNumber: 20400,
         statusCode: 409,
         description:
-            "This error is used when a provider tries to add a skill that already exists in their skill list, resulting in a 409 Conflict status.",
+            "This error is used when a provider tries to add a service that already exists in their service list, resulting in a 409 Conflict status.",
     },
 
     THIS_PROVIDER_SKILL_DOES_NOT_EXISTED: {
-        type: "provider_skill_exception",
-        message: "This skill doesn't exist in the provider's skill list.",
+        type: "provider_service_exception",
+        message: "This service doesn't exist in the provider's service list.",
         codeNumber: 20401,
         statusCode: 404,
         description:
-            "This error is used when a provider attempts to perform actions on a skill that does not exist in their skill list, resulting in a 404 Not Found status.",
+            "This error is used when a provider attempts to perform actions on a service that does not exist in their service list, resulting in a 404 Not Found status.",
     },
 
     YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION: {

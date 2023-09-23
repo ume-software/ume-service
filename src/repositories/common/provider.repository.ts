@@ -30,14 +30,14 @@ export class ProviderRepository extends BasePrismaRepository {
         skip: number | undefined,
         take: number | undefined
     ) {
-        const { endCost, gender, name, skillId, startCost, order } = option;
+        const { endCost, gender, name, serviceId, startCost, order } = option;
         const nowTimehhmm = moment()
             .utcOffset(config.server.timezone)
             .format("HH:mm");
         const query = `
       WITH relevant_booking_costs AS (
         SELECT
-          provider_skill_id,
+          provider_service_id,
           amount
         FROM
           booking_cost
@@ -60,9 +60,9 @@ export class ProviderRepository extends BasePrismaRepository {
         pd.createdAt,
         pd.updatedAt,
         pd.cost,
-        pd.skillId,
-        pd.skillName,
-        pd.skillImageUrl,
+        pd.serviceId,
+        pd.serviceName,
+        pd.serviceImageUrl,
         pd.gender,
         pd.dob,
         pd.star
@@ -75,9 +75,9 @@ export class ProviderRepository extends BasePrismaRepository {
             p.created_at AS createdAt,
             p.updated_at AS updatedAt,
             COALESCE(bc.amount, ps.default_cost) AS cost,
-            s.id AS skillId,
-            s.name AS skillName,
-            s.image_url AS skillImageUrl,
+            s.id AS serviceId,
+            s.name AS serviceName,
+            s.image_url AS serviceImageUrl,
             p.gender AS gender,
             p.dob AS dob,
             pc.voice_url AS voiceUrl,
@@ -90,30 +90,30 @@ export class ProviderRepository extends BasePrismaRepository {
             END AS star
         FROM
           "user" AS p
-          INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
+          INNER JOIN provider_service AS ps ON p.id = ps.provider_id
           INNER JOIN provider_config AS pc ON pc.user_id  = p.id
-          INNER JOIN skill AS s ON ps.skill_id = s.id
+          INNER JOIN service AS s ON ps.service_id = s.id
           LEFT JOIN LATERAL (
             SELECT amount
             FROM relevant_booking_costs bc
-            WHERE bc.provider_skill_id = ps.id
+            WHERE bc.provider_service_id = ps.id
             LIMIT 1
           ) bc ON true
           LEFT JOIN (
             SELECT
-              psfps.id AS providerSkillId,
+              psfps.id AS providerServiceId,
               AVG(f.amount_star) AS avg_amount_star
-            FROM provider_skill AS psfps
+            FROM provider_service AS psfps
             LEFT JOIN (
               SELECT
-                bh.provider_skill_id,
+                bh.provider_service_id,
                 f.amount_star
               FROM booking_history AS bh
               LEFT JOIN feedback AS f ON bh.id = f.booking_id
               WHERE f.amount_star IS NOT NULL
-            ) AS f ON psfps.id = f.provider_skill_id
+            ) AS f ON psfps.id = f.provider_service_id
             GROUP BY psfps.id
-          ) AS psf ON psf.providerSkillId = ps.id
+          ) AS psf ON psf.providerServiceId = ps.id
           WHERE
             ps.deleted_at IS NULL
           ${
@@ -126,7 +126,7 @@ export class ProviderRepository extends BasePrismaRepository {
                   ? `AND COALESCE(bc.amount, ps.default_cost) < ${endCost}`
                   : ""
           }
-          ${skillId != undefined ? `AND s.id = '${skillId}'` : ""}
+          ${serviceId != undefined ? `AND s.id = '${serviceId}'` : ""}
           ${name != undefined ? `AND p.name like '%${name}%'` : ""}
           ${gender != undefined ? `AND u.gender = '${gender}'` : ""}
           AND bc.amount IS NULL
@@ -169,8 +169,8 @@ export class ProviderRepository extends BasePrismaRepository {
       p.id
       FROM
         "user" AS p
-        LEFT JOIN provider_skill AS ps ON p.id = ps.provider_id
-        LEFT JOIN booking_history AS b ON ps.id = b.provider_skill_id
+        LEFT JOIN provider_service AS ps ON p.id = ps.provider_id
+        LEFT JOIN booking_history AS b ON ps.id = b.provider_service_id
           AND (b.status = '${BookingStatus.PROVIDER_ACCEPT}' or b.status = '${BookingStatus.PROVIDER_FINISH_SOON}' or b.status = '${BookingStatus.USER_FINISH_SOON}')
           AND b.created_at >= NOW() - INTERVAL '${intervalDays} days'
       GROUP BY
@@ -207,19 +207,19 @@ export class ProviderRepository extends BasePrismaRepository {
             p.name,
             p.avatar_url AS avatarUrl,
             COALESCE(bc.amount, ps.default_cost) AS cost,
-            s.id AS skillId,
-            s.name AS skillName,
-            s.image_url AS skillImageUrl,
+            s.id AS serviceId,
+            s.name AS serviceName,
+            s.image_url AS serviceImageUrl,
             pc.voice_url AS voiceUrl,
             pc.description  AS description,
             psf.avg_amount_star AS star
         FROM
             "user" AS p
-            INNER JOIN provider_skill AS ps ON p.id = ps.provider_id
+            INNER JOIN provider_service AS ps ON p.id = ps.provider_id
             INNER JOIN provider_config AS pc ON pc.user_id  = p.id
             LEFT JOIN (
                 SELECT
-                    provider_skill_id,
+                    provider_service_id,
                     amount
                 FROM
                     booking_cost
@@ -229,23 +229,23 @@ export class ProviderRepository extends BasePrismaRepository {
                     AND end_time_of_day >= '${nowTimehhmm}'
                 ORDER BY
                     amount ASC
-            ) AS bc ON bc.provider_skill_id = ps.id
-            INNER JOIN skill AS s ON ps.skill_id = s.id
+            ) AS bc ON bc.provider_service_id = ps.id
+            INNER JOIN service AS s ON ps.service_id = s.id
             LEFT JOIN (
               SELECT
-                  psfps.id AS providerSkillId,
+                  psfps.id AS providerServiceId,
                   AVG(f.amount_star) AS avg_amount_star
-              FROM provider_skill AS psfps
+              FROM provider_service AS psfps
               LEFT JOIN (
                   SELECT
-                      bh.provider_skill_id,
+                      bh.provider_service_id,
                       f.amount_star
                   FROM booking_history AS bh
                   LEFT JOIN feedback AS f ON bh.id = f.booking_id
                   WHERE f.amount_star IS NOT null
-              ) AS f ON psfps.id = f.provider_skill_id
+              ) AS f ON psfps.id = f.provider_service_id
               GROUP BY psfps.id
-          ) AS psf ON psf.providerSkillId = ps.id
+          ) AS psf ON psf.providerServiceId = ps.id
         WHERE
             ps.deleted_at IS NULL
             AND p.id IN (
@@ -256,10 +256,10 @@ export class ProviderRepository extends BasePrismaRepository {
                     CASE
                         WHEN (
                             SELECT COUNT(*)
-                            FROM provider_skill AS psp
-                            LEFT JOIN booking_cost AS bcp ON bcp.provider_skill_id = psp.id
+                            FROM provider_service AS psp
+                            LEFT JOIN booking_cost AS bcp ON bcp.provider_service_id = psp.id
                             WHERE psp.provider_id = p.id
-                            AND bcp.provider_skill_id IS NOT NULL
+                            AND bcp.provider_service_id IS NOT NULL
                             AND bcp.start_time_of_day <= '${nowTimehhmm}'
                             AND bcp.end_time_of_day >= '${nowTimehhmm}'
                         ) > 0 THEN TRUE

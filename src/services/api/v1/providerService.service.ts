@@ -1,34 +1,34 @@
-import { ProviderSkillRequest } from "@/common/requests/providerSkill/providerSkill.request";
-import { UpdateProviderSkillRequest } from "@/common/requests/providerSkill/updateProviderSkill.request";
+import { ProviderServiceRequest } from "@/common/requests/providerService/providerService.request";
+import { UpdateProviderServiceRequest } from "@/common/requests/providerService/updateProviderService.request";
 import prisma from "@/models/base.prisma";
 import {
     bookingCostRepository,
-    providerSkillRepository,
+    providerServiceRepository,
     userRepository,
 } from "@/repositories";
 import { PrismaTransaction } from "@/repositories/base/basePrisma.repository";
-import { errorService, skillService, utilService } from "@/services";
+import { errorService, serviceService, utilService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { BookingStatus, Prisma, ProviderSkill } from "@prisma/client";
+import { BookingStatus, Prisma, ProviderService } from "@prisma/client";
 
-export class ProviderSkillService extends BasePrismaService<
-    typeof providerSkillRepository
+export class ProviderServiceService extends BasePrismaService<
+    typeof providerServiceRepository
 > {
     constructor() {
-        super(providerSkillRepository);
+        super(providerServiceRepository);
     }
 
-    async create(userId: string, providerSkillRequest: ProviderSkillRequest) {
-        const { skillId, defaultCost, description, createBookingCosts } =
-            providerSkillRequest;
+    async create(userId: string, providerServiceRequest: ProviderServiceRequest) {
+        const { serviceId, defaultCost, description, createBookingCosts } =
+            providerServiceRequest;
         if (this.checkOverlapTime(createBookingCosts)) {
             throw errorService.badRequest();
         }
-        await skillService.findOne({ where: { id: skillId } });
+        await serviceService.findOne({ where: { id: serviceId } });
         const provider = await userRepository.findOne({
             where: {
                 userId,
@@ -40,28 +40,28 @@ export class ProviderSkillService extends BasePrismaService<
             );
         }
 
-        // if (preExistingProviderSkill) {
+        // if (preExistingProviderService) {
         //   throw errorService.error(
         //     ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
         //   );
         // }
-        const countSkillProvider = await this.repository.countByProviderId(
+        const countServiceProvider = await this.repository.countByProviderId(
             provider.id
         );
-        const position = countSkillProvider + 1;
+        const position = countServiceProvider + 1;
         return await prisma.$transaction(async (tx: PrismaTransaction) => {
-            let providerSkill = await this.repository.findOne({
+            let providerService = await this.repository.findOne({
                 where: {
                     providerId: provider.id,
-                    skillId,
+                    serviceId,
                 },
             });
-            if (!providerSkill) {
-                providerSkill = await this.repository.create(
+            if (!providerService) {
+                providerService = await this.repository.create(
                     {
-                        skill: {
+                        service: {
                             connect: {
-                                id: skillId,
+                                id: serviceId,
                             },
                         },
                         provider: {
@@ -76,11 +76,11 @@ export class ProviderSkillService extends BasePrismaService<
                     tx
                 );
             }
-            const providerSkillId = providerSkill?.id!;
+            const providerServiceId = providerService?.id!;
             const preExistingBookingCosts =
                 await bookingCostRepository.findMany({
                     where: {
-                        providerSkillId,
+                        providerServiceId,
                     },
                 });
             if (
@@ -94,7 +94,7 @@ export class ProviderSkillService extends BasePrismaService<
 
             const bookingCostCreateManyInput = createBookingCosts.map(
                 (item) => ({
-                    providerSkillId,
+                    providerServiceId,
                     ...item,
                 })
             );
@@ -106,7 +106,7 @@ export class ProviderSkillService extends BasePrismaService<
             return await this.repository.findOne(
                 {
                     where: {
-                        id: providerSkill.id,
+                        id: providerService.id,
                     },
                     include: {
                         bookingCosts: true,
@@ -116,17 +116,17 @@ export class ProviderSkillService extends BasePrismaService<
             );
         });
     }
-    async updateProviderSkill(
+    async updateProviderService(
         userId: string,
-        updateProviderSkillRequest: UpdateProviderSkillRequest
+        updateProviderServiceRequest: UpdateProviderServiceRequest
     ) {
         const {
-            skillId,
+            serviceId,
             defaultCost,
             description,
             createBookingCosts,
             updateBookingCosts,
-        } = updateProviderSkillRequest;
+        } = updateProviderServiceRequest;
         if (
             this.checkOverlapTime([
                 ...createBookingCosts,
@@ -135,8 +135,8 @@ export class ProviderSkillService extends BasePrismaService<
         ) {
             throw errorService.badRequest();
         }
-        const skill = await skillService.findOne({ where: { id: skillId } });
-        if (!skill) {
+        const service = await serviceService.findOne({ where: { id: serviceId } });
+        if (!service) {
             throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
         }
         const provider = await userRepository.findOne({
@@ -149,32 +149,32 @@ export class ProviderSkillService extends BasePrismaService<
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-        const preExistingProviderSkill = await this.repository.findOne({
+        const preExistingProviderService = await this.repository.findOne({
             where: {
-                skillId,
+                serviceId,
                 providerId: provider.id,
             },
         });
-        if (!preExistingProviderSkill) {
-            return await this.create(userId, updateProviderSkillRequest);
+        if (!preExistingProviderService) {
+            return await this.create(userId, updateProviderServiceRequest);
         }
-        const countSkillProvider = await this.repository.countByProviderId(
+        const countServiceProvider = await this.repository.countByProviderId(
             provider.id
         );
-        const position = countSkillProvider + 1;
+        const position = countServiceProvider + 1;
         return await prisma.$transaction(async (tx: PrismaTransaction) => {
-            let providerSkill = await this.repository.findOne({
+            let providerService = await this.repository.findOne({
                 where: {
                     providerId: provider.id,
-                    skillId,
+                    serviceId,
                 },
             });
-            if (!providerSkill) {
-                providerSkill = await this.repository.create(
+            if (!providerService) {
+                providerService = await this.repository.create(
                     {
-                        skill: {
+                        service: {
                             connect: {
-                                id: skillId,
+                                id: serviceId,
                             },
                         },
                         provider: {
@@ -189,11 +189,11 @@ export class ProviderSkillService extends BasePrismaService<
                     tx
                 );
             }
-            const providerSkillId = providerSkill?.id!;
+            const providerServiceId = providerService?.id!;
             const preExistingBookingCosts =
                 await bookingCostRepository.findMany({
                     where: {
-                        providerSkillId,
+                        providerServiceId,
                     },
                 });
             if (
@@ -207,7 +207,7 @@ export class ProviderSkillService extends BasePrismaService<
 
             const bookingCostCreateManyInput = createBookingCosts.map(
                 (item) => ({
-                    providerSkillId,
+                    providerServiceId,
                     ...item,
                 })
             );
@@ -219,7 +219,7 @@ export class ProviderSkillService extends BasePrismaService<
             return await this.repository.findOne(
                 {
                     where: {
-                        id: providerSkill.id,
+                        id: providerService.id,
                     },
                     include: {
                         bookingCosts: true,
@@ -261,18 +261,18 @@ export class ProviderSkillService extends BasePrismaService<
         return false;
     }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<ProviderSkill | null> {
+    async findOne(query?: ICrudOptionPrisma): Promise<ProviderService | null> {
         return await this.repository.findOne(query);
     }
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: ProviderSkill[];
+        row: ProviderService[];
         count: number;
     }> {
         return await this.repository.findAndCountAll(query);
     }
 
-    async findAndCountAllProviderSkillByProviderSlug(
+    async findAndCountAllProviderServiceByProviderSlug(
         providerSlug: string,
         query?: ICrudOptionPrisma
     ) {
@@ -287,10 +287,10 @@ export class ProviderSkillService extends BasePrismaService<
         query.where.providerId = provider.id;
         const result = await this.repository.findAndCountAll(query);
 
-        const listProviderSkillIds = result.row.map((item) => item.id);
+        const listProviderServiceIds = result.row.map((item) => item.id);
 
         const listBookingHistoryAggregate = await Promise.all(
-            listProviderSkillIds.map((providerSkillId: string) => {
+            listProviderServiceIds.map((providerServiceId: string) => {
                 return prisma.bookingHistory.aggregate({
                     _sum: {
                         providerReceivedCoin: true,
@@ -301,7 +301,7 @@ export class ProviderSkillService extends BasePrismaService<
                         id: true,
                     },
                     where: {
-                        providerSkillId,
+                        providerServiceId,
                         status: {
                             in: [
                                 BookingStatus.PROVIDER_ACCEPT,

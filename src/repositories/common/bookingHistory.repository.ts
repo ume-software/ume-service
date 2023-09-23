@@ -7,14 +7,14 @@ import {
     Prisma,
     BookingHistory,
     BookingStatus,
-    ProviderSkill,
+    ProviderService,
     User,
 } from "@prisma/client";
 import { config } from "@/configs";
-export type BookingHistoryIncludeBookerAndProviderSkillIncludeProvider =
+export type BookingHistoryIncludeBookerAndProviderServiceIncludeProvider =
     BookingHistory & {
-        providerSkill:
-            | (ProviderSkill & {
+        providerService:
+            | (ProviderService & {
                   provider: User;
               })
             | null;
@@ -30,7 +30,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         );
         return await tx.bookingHistory.findMany({
             where: {
-                providerSkill: {
+                providerService: {
                     provider: {
                         id: userId,
                     },
@@ -51,9 +51,9 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                         gender: true,
                     },
                 },
-                providerSkill: {
+                providerService: {
                     include: {
-                        skill: true,
+                        service: true,
                     },
                 },
             },
@@ -78,9 +78,9 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                 status: BookingStatus.INIT,
             },
             include: {
-                providerSkill: {
+                providerService: {
                     include: {
-                        skill: true,
+                        service: true,
                         provider: {
                             select: {
                                 id: true,
@@ -115,13 +115,13 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         id: string,
         bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
         tx: PrismaTransaction = this.prisma
-    ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
+    ): Promise<BookingHistoryIncludeBookerAndProviderServiceIncludeProvider> {
         return await tx.bookingHistory.update({
             data: bookingCostUpdateInput,
             where: { id },
             include: {
                 booker: true,
-                providerSkill: {
+                providerService: {
                     include: {
                         provider: true,
                     },
@@ -144,12 +144,12 @@ export class BookingHistoryRepository extends BasePrismaRepository {
     async create(
         bookingHistoryCreateInput: Prisma.BookingHistoryCreateInput,
         tx: PrismaTransaction = this.prisma
-    ): Promise<BookingHistoryIncludeBookerAndProviderSkillIncludeProvider> {
+    ): Promise<BookingHistoryIncludeBookerAndProviderServiceIncludeProvider> {
         return await tx.bookingHistory.create({
             data: bookingHistoryCreateInput,
             include: {
                 booker: true,
-                providerSkill: {
+                providerService: {
                     include: {
                         provider: true,
                     },

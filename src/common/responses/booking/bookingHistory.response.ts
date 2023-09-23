@@ -1,7 +1,7 @@
 import { BookingStatus } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { UserInformationResponse } from "../user/userInformation.response";
-import { ProviderSkillResponse } from "../providerSkill/providerSkill.response";
+import { ProviderServiceResponse } from "../providerService/providerService.response";
 @ApiModel({
     description: "Booking History response",
 })
@@ -61,14 +61,14 @@ export class BookingHistoryResponse {
     booker?: UserInformationResponse;
 
     @ApiModelProperty({
-        description: "Id's skill of provider",
+        description: "Id's service of provider",
         required: true,
         example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
     })
-    providerSkillId!: string;
+    providerServiceId!: string;
 
     @ApiModelProperty({
-        description: "Total cost (bookingPeriod * skillCost)",
+        description: "Total cost (bookingPeriod * serviceCost)",
         required: false,
         example: 16,
     })
@@ -82,11 +82,11 @@ export class BookingHistoryResponse {
     bookingPeriod?: number;
 
     @ApiModelProperty({
-        description: "Provider skill",
+        description: "Provider service",
         required: false,
-        model: ProviderSkillResponse,
+        model: ProviderServiceResponse,
     })
-    providerSkill?: ProviderSkillResponse;
+    providerService?: ProviderServiceResponse;
 
     // @ApiModelProperty({
     //     description: "Feedback",

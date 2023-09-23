@@ -10,9 +10,9 @@ import { FileService } from "./api/file.service";
 import { BcryptService } from "./common/bcrypt.service";
 import { FirebaseService } from "./common/firebase.service";
 import { CryptoService } from "./common/crypto.service";
-import { SkillService } from "./api/v1/skill.service";
+import { ServiceService } from "./api/v1/service.service";
 import { ProviderService } from "./api/v1/provider.service";
-import { ProviderSkillService } from "./api/v1/providerSkill.service";
+import { ProviderServiceService } from "./api/v1/providerService.service";
 import { CoinService } from "./api/v1/coin.service";
 import { BookingService } from "./api/v1/booking.service";
 import { FeedbackService } from "./api/v1/feedback.service";
@@ -52,8 +52,8 @@ const redisService = new RedisService();
 const bookingService = new BookingService();
 const coinService = new CoinService();
 const providerService = new ProviderService();
-const providerSkillService = new ProviderSkillService();
-const skillService = new SkillService();
+const providerServiceService = new ProviderServiceService();
+const serviceService = new ServiceService();
 const userService = new UserService();
 const adminService = new AdminService();
 const adminPaymentSystemService = new AdminPaymentSystemService();
@@ -90,7 +90,7 @@ export {
     bookingService,
     coinService,
     providerService,
-    providerSkillService,
+    providerServiceService,
     userService,
     adminService,
     adminPaymentSystemService,
@@ -98,7 +98,7 @@ export {
     authService,
     paymentQrSettingService,
     qrPaymentService,
-    skillService,
+    serviceService,
     feedbackService,
     buyCoinRequestService,
     postService,

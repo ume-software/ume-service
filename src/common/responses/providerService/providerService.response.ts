@@ -4,12 +4,12 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { BookingCostResponse } from "../bookingCost/bookingCost.response";
-import { SkillResponse } from "../skill";
+import { ServiceResponse } from "../service";
 
 @ApiModel({
-    description: "Admin get provider skill response",
+    description: "Provider service response",
 })
-export class AdminGetProviderSkillResponse {
+export class ProviderServiceResponse {
     @ApiModelProperty({
         description: "Id's provider",
         example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
@@ -35,16 +35,16 @@ export class AdminGetProviderSkillResponse {
     deletedAt!: Date;
 
     @ApiModelProperty({
-        description: "Provider skill name",
+        description: "Provider service name",
         example: "0c261207-3e82-4d56-a261-32175b797a78",
     })
     providerId!: string;
 
     @ApiModelProperty({
-        description: "Skill id",
+        description: "Service id",
         example: "4624fdb2-3d58-4112-b3e4-f86fda9a833f",
     })
-    skillId!: string;
+    serviceId!: string;
 
     @ApiModelProperty({
         description: "Default cost",
@@ -59,31 +59,10 @@ export class AdminGetProviderSkillResponse {
     position!: number;
 
     @ApiModelProperty({
-        description: "Description about provider skill",
+        description: "Description about provider service",
         example: "This is description",
     })
     description!: string;
-
-    @ApiModelProperty({
-        description: "Total coin provider received",
-        example: 1074.45,
-        type: SwaggerDefinitionConstant.NUMBER,
-    })
-    totalReceivedCoin!: number;
-
-    @ApiModelProperty({
-        description: "Total revenue",
-        example: 1131,
-        type: SwaggerDefinitionConstant.NUMBER,
-    })
-    totalRevenue!: number;
-
-    @ApiModelProperty({
-        description: "Total booking transaction",
-        example: 13,
-        type: SwaggerDefinitionConstant.INTEGER,
-    })
-    totalBooking!: number;
 
     @ApiModelProperty({
         description: "Position",
@@ -93,8 +72,14 @@ export class AdminGetProviderSkillResponse {
     bookingCosts!: Array<BookingCostResponse>;
 
     @ApiModelProperty({
-        description: "Skill",
-        model: SkillResponse,
+        description: "Service",
+        model: ServiceResponse,
     })
-    skill!: SkillResponse;
+    service!: ServiceResponse;
+
+    // @ApiModelProperty({
+    //   description: "provider",
+    //   model: ProviderResponse
+    // })
+    // provider!: ProviderResponse;
 }

@@ -3,18 +3,18 @@ import {
     BasePrismaRepository,
     PrismaTransaction,
 } from "../base/basePrisma.repository";
-import { Prisma, ProviderSkill } from "@prisma/client";
+import { Prisma, ProviderService } from "@prisma/client";
 
-export class ProviderSkillRepository extends BasePrismaRepository {
+export class ProviderServiceRepository extends BasePrismaRepository {
  
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: ProviderSkill[];
+        row: ProviderService[];
         count: number;
     }> {
         const [row, count] = await this.prisma.$transaction([
-            this.prisma.providerSkill.findMany(query),
-            this.prisma.providerSkill.count({
+            this.prisma.providerService.findMany(query),
+            this.prisma.providerService.count({
                 where: query?.where,
             }),
         ]);
@@ -28,30 +28,30 @@ export class ProviderSkillRepository extends BasePrismaRepository {
         id: string,
         bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
         tx: PrismaTransaction = this.prisma
-    ): Promise<ProviderSkill> {
-        return await tx.providerSkill.update({
+    ): Promise<ProviderService> {
+        return await tx.providerService.update({
             data: bookingCostUpdateInput,
             where: { id },
         });
     }
 
     async updateMany(
-        providerSkillUpdateInput: Prisma.ProviderSkillUpdateInput,
+        providerServiceUpdateInput: Prisma.ProviderServiceUpdateInput,
         query: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.PrismaPromise<Prisma.BatchPayload>> {
-        return await tx.providerSkill.updateMany({
-            data: providerSkillUpdateInput,
+        return await tx.providerService.updateMany({
+            data: providerServiceUpdateInput,
             where: query.where,
         });
     }
 
     async create(
-        providerSkillCreateInput: Prisma.ProviderSkillCreateInput,
+        providerServiceCreateInput: Prisma.ProviderServiceCreateInput,
         tx: PrismaTransaction = this.prisma
-    ): Promise<ProviderSkill> {
-        return await tx.providerSkill.create({
-            data: providerSkillCreateInput,
+    ): Promise<ProviderService> {
+        return await tx.providerService.create({
+            data: providerServiceCreateInput,
         });
     }
 
@@ -59,7 +59,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
         providerId: string,
         tx: PrismaTransaction = this.prisma
     ): Promise<number> {
-        return await tx.providerSkill.count({
+        return await tx.providerService.count({
             where: {
                 providerId,
             },
@@ -69,8 +69,8 @@ export class ProviderSkillRepository extends BasePrismaRepository {
     async findOne(
         query?: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
-    ): Promise<ProviderSkill | null> {
-        return await tx.providerSkill.findFirst(query);
+    ): Promise<ProviderService | null> {
+        return await tx.providerService.findFirst(query);
     }
 
     async findOneIncludeBookingCostInSpecialTime(
@@ -90,7 +90,7 @@ export class ProviderSkillRepository extends BasePrismaRepository {
                 },
             },
         ];
-        return await tx.providerSkill.findFirst({
+        return await tx.providerService.findFirst({
             where,
             include: {
                 bookingCosts: {
@@ -102,30 +102,30 @@ export class ProviderSkillRepository extends BasePrismaRepository {
                     },
                     take: 1,
                 },
-                skill: true,
+                service: true,
             },
         });
     }
     async findMany(
         query?: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
-    ): Promise<ProviderSkill[]> {
-        return await tx.providerSkill.findMany(query);
+    ): Promise<ProviderService[]> {
+        return await tx.providerService.findMany(query);
     }
 
     async deleteById(
         id: string,
         tx: PrismaTransaction = this.prisma
-    ): Promise<ProviderSkill> {
-        return await tx.providerSkill.delete({ where: { id } });
+    ): Promise<ProviderService> {
+        return await tx.providerService.delete({ where: { id } });
     }
 
     async deleteMany(
-        providerSkillWhereInput: Prisma.ProviderSkillWhereInput,
+        providerServiceWhereInput: Prisma.ProviderServiceWhereInput,
         tx: PrismaTransaction = this.prisma
     ): Promise<Prisma.BatchPayload> {
-        return await tx.providerSkill.deleteMany({
-            where: providerSkillWhereInput,
+        return await tx.providerService.deleteMany({
+            where: providerServiceWhereInput,
         });
     }
 }

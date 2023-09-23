@@ -3,11 +3,11 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 const timeOfDayRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 @ApiModel({
-    description: "Booking cost provider skill request",
+    description: "Booking cost provider service request",
 })
-export class BookingCostProviderSkillRequest {
+export class BookingCostProviderServiceRequest {
     @ApiModelProperty({
-        description: "Id Booking cost provider skill",
+        description: "Id Booking cost provider service",
         required: true,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
@@ -39,11 +39,11 @@ export class BookingCostProviderSkillRequest {
     @IsNumber()
     amount!: number;
 
-    constructor(data: BookingCostProviderSkillRequest) {
+    constructor(data: BookingCostProviderServiceRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(BookingCostProviderSkillRequest, data, [
+                mappingDataRequest(BookingCostProviderServiceRequest, data, [
                     "id",
                     "startTimeOfDay",
                     "endTimeOfDay",

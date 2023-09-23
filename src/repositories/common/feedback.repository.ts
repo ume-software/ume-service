@@ -94,19 +94,19 @@ export class FeedbackRepository extends BasePrismaRepository {
 
 
 
-  async getByListByProviderSkillId(providerSkillId: string) {
+  async getByListByProviderServiceId(providerServiceId: string) {
     const [row, count] = await this.prisma.$transaction([
       this.prisma.feedback.findMany({
         where: {
           booking: {
-            providerSkillId
+            providerServiceId
           }
         }
       }),
       this.prisma.feedback.findMany({
         where: {
           booking: {
-            providerSkillId
+            providerServiceId
           }
         }
       })

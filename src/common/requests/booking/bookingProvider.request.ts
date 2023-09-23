@@ -15,16 +15,16 @@ import {
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Booking cost provider skill request",
+    description: "Booking cost provider service request",
 })
 export class BookingProviderRequest {
     @ApiModelProperty({
-        description: "Provider Skill Id",
+        description: "Provider Service Id",
         required: true,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
     @IsUUID()
-    providerSkillId!: string;
+    providerServiceId!: string;
 
     @ApiModelProperty({
         description: "Booking peroid",
@@ -53,7 +53,7 @@ export class BookingProviderRequest {
             Object.assign(
                 this,
                 mappingDataRequest(BookingProviderRequest, data, [
-                    "providerSkillId",
+                    "providerServiceId",
                     "bookingPeriod",
                     "voucherIds",
                 ])

@@ -206,7 +206,7 @@ const userDefault = [
             "https://global-oss.epal.gg/data/cover/1921263/16872142620374880.jpeg",
     },
 ];
-const skillsDefault = [
+const servicesDefault = [
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_LeagueofLegends.png",
         name: "League of Legends",
@@ -307,30 +307,33 @@ async function seed() {
                 });
             }
 
-            // Create skills
-            const skills = [];
+            // Create services
+            const services = [];
             for (let i = 0; i < 10; i++) {
-                const skill = await prisma.skill.create({
+                const service = await prisma.service.create({
                     data: {
-                        name: skillsDefault[i]?.name!,
-                        imageUrl: skillsDefault[i]?.url!,
+                        name: servicesDefault[i]?.name!,
+                        imageUrl: servicesDefault[i]?.url!,
+                        slug: utilService.changeToSlug(
+                            servicesDefault[i]?.name!
+                        ),
                     },
                 });
-                skills.push(skill);
+                services.push(service);
             }
-            // Create provider skills
+            // Create provider services
             for (const provider of users) {
-                for (const skill of skills) {
-                    await prisma.providerSkill.create({
+                for (const service of services) {
+                    await prisma.providerService.create({
                         data: {
                             provider: {
                                 connect: {
                                     id: provider.id,
                                 },
                             },
-                            skill: {
+                            service: {
                                 connect: {
-                                    id: skill.id!,
+                                    id: service.id!,
                                 },
                             },
                             defaultCost:
@@ -342,12 +345,12 @@ async function seed() {
                 }
             }
             // Create booking costs
-            for (const providerSkill of await prisma.providerSkill.findMany()) {
+            for (const providerService of await prisma.providerService.findMany()) {
                 await prisma.bookingCost.create({
                     data: {
-                        providerSkill: {
+                        providerService: {
                             connect: {
-                                id: providerSkill.id,
+                                id: providerService.id,
                             },
                         },
                         startTimeOfDay:
@@ -404,10 +407,10 @@ async function seed() {
                                     id: users[j].id,
                                 },
                             },
-                            providerSkill: {
+                            providerService: {
                                 connect: {
                                     id: (
-                                        await prisma.providerSkill.findMany({
+                                        await prisma.providerService.findMany({
                                             where: {
                                                 NOT: {
                                                     provider: {

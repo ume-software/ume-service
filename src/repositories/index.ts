@@ -2,8 +2,8 @@ import { BookingCostRepository } from "./common/bookingCost.repository";
 import { BookingHistoryRepository } from "./common/bookingHistory.repository";
 import { CoinHistoryRepository } from "./common/coinHistory.repository";
 import { ProviderRepository } from "./common/provider.repository";
-import { ProviderSkillRepository } from "./common/providerSkill.repository";
-import { SkillRepository } from "./common/skill.repository";
+import { ProviderServiceRepository } from "./common/providerService.repository";
+import { ServiceRepository } from "./common/service.repository";
 import { UserRepository } from "./common/user.repository";
 import { FeedbackRepository } from "./common/feedback.repository";
 import { BuyCoinRequestRepository } from "./common/buyCoinRequest.repository";
@@ -30,8 +30,8 @@ const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
 const coinHistoryRepository = new CoinHistoryRepository();
 const providerRepository = new ProviderRepository();
-const providerSkillRepository = new ProviderSkillRepository();
-const skillRepository = new SkillRepository();
+const providerServiceRepository = new ProviderServiceRepository();
+const serviceRepository = new ServiceRepository();
 const userRepository = new UserRepository();
 const refreshTokenUserRepository = new RefreshTokenUserRepository();
 const adminRepository = new AdminRepository();
@@ -59,8 +59,8 @@ export {
     bookingHistoryRepository,
     coinHistoryRepository,
     providerRepository,
-    providerSkillRepository,
-    skillRepository,
+    providerServiceRepository,
+    serviceRepository,
     userRepository,
     adminRoleRepository,
     refreshTokenUserRepository,

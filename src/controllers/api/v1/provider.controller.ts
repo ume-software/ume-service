@@ -91,7 +91,7 @@ export class ProviderController extends BaseController {
     })
     async getListProvider(req: Request, res: Response) {
         const { queryInfoPrisma } = req;
-        let { start_cost, end_cost, skill_id, name, gender } = req.query;
+        let { start_cost, end_cost, service_id, name, gender } = req.query;
         start_cost = start_cost?.toString();
         const startCost = start_cost ? +start_cost : undefined;
         end_cost = end_cost?.toString();
@@ -100,7 +100,7 @@ export class ProviderController extends BaseController {
             {
                 startCost,
                 endCost,
-                skillId: skill_id?.toString() || undefined,
+                serviceId: service_id?.toString() || undefined,
                 name,
                 gender,
                 order: queryInfoPrisma?.orderBy,

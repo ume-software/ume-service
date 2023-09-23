@@ -4,14 +4,14 @@ import {
   SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 
-import { SkillResponse } from "./skill.response";
+import { ServiceResponse } from "./service.response";
 import { PaginationResponse } from "../base";
 
 
 @ApiModel({
-  description: "Skill Paging response",
+  description: "Service Paging response",
 })
-export class SkillPagingResponse {
+export class ServicePagingResponse {
   @ApiModelProperty({
     description: "Row",
     example: [
@@ -41,9 +41,9 @@ export class SkillPagingResponse {
       }
     ],
     type: SwaggerDefinitionConstant.ARRAY,
-    itemType: SkillResponse,
+    itemType: ServiceResponse,
   })
-  row!: Array<SkillResponse>;
+  row!: Array<ServiceResponse>;
 
   @ApiModelProperty({
     description: "Count",

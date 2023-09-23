@@ -1,7 +1,7 @@
 import {
     AdminGetProviderPagingResponse,
     AdminGetProviderResponse,
-    AdminGetProviderSkillPagingResponse,
+    AdminGetProviderServicePagingResponse,
     BookingHistoryPagingResponse,
     ProviderResponse,
     UserCoinResponse,
@@ -17,7 +17,7 @@ import {
     bookingService,
     coinService,
     providerService,
-    providerSkillService,
+    providerServiceService,
     userService,
 } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
@@ -53,9 +53,9 @@ export class AdminManageProviderController extends BaseController {
             this.route(this.adminGetProviderBySlug)
         );
         this.router.get(
-            "/:slug/provider-skill",
+            "/:slug/provider-service",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetProviderSkillByProviderSlug)
+            this.route(this.adminGetProviderServiceByProviderSlug)
         );
         this.router.get(
             "/:slug/booking-history",
@@ -160,8 +160,8 @@ export class AdminManageProviderController extends BaseController {
     }
 
     @ApiOperationGet({
-        path: "/{slug}/provider-skill",
-        operationId: "adminGetProviderSkillByProviderSlug",
+        path: "/{slug}/provider-service",
+        operationId: "adminGetProviderServiceByProviderSlug",
         description: "Get Provider by slug or id",
         summary: "Get Provider by slug or id",
         security: {
@@ -182,19 +182,19 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderSkillPagingResponse },
+                        schema: { model: AdminGetProviderServicePagingResponse },
                     },
                 },
                 description: "Provider success",
             },
         },
     })
-    async adminGetProviderSkillByProviderSlug(req: Request, res: Response) {
+    async adminGetProviderServiceByProviderSlug(req: Request, res: Response) {
         const { slug } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
 
         const result =
-            await providerSkillService.findAndCountAllProviderSkillByProviderSlug(
+            await providerServiceService.findAndCountAllProviderServiceByProviderSlug(
                 slug!,
                 queryInfoPrisma
             );
@@ -236,7 +236,7 @@ export class AdminManageProviderController extends BaseController {
         const queryInfoPrisma = req.queryInfoPrisma || {};
 
         const result =
-            await bookingService.findAndCountAllProviderSkillByProviderSlug(
+            await bookingService.findAndCountAllProviderServiceByProviderSlug(
                 slug!,
                 queryInfoPrisma
             );

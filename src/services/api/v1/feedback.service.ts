@@ -9,7 +9,7 @@ import {
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BookingHistory, Feedback } from "@prisma/client";
 
-type FeedbackByProviderSkillType = Feedback & {
+type FeedbackByProviderServiceType = Feedback & {
     booking?: BookingHistory & {
         booker?: UserInformationResponse;
     };
@@ -21,8 +21,8 @@ export class FeedbackService extends BasePrismaService<
         super(feedbackRepository);
     }
 
-    async getFeedbackByProviderSkill(query: ICrudOptionPrisma): Promise<{
-        row: FeedbackByProviderSkillType[];
+    async getFeedbackByProviderService(query: ICrudOptionPrisma): Promise<{
+        row: FeedbackByProviderServiceType[];
         count: number;
     }> {
         query.include = {

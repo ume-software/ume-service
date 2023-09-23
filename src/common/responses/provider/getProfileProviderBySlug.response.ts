@@ -1,5 +1,5 @@
 import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
-import { ProviderSkillResponse } from "../providerSkill";
+import { ProviderServiceResponse } from "../providerService";
 import { UserInformationResponse } from "../user";
 
 
@@ -64,7 +64,7 @@ export class GetProfileProviderBySlugResponse {
   cost?: number;
 
   @ApiModelProperty({
-    description: "providerSkills",
+    description: "providerServices",
     example: [
       {
         id: "0c261207-3e82-4d56-a261-32175b797a78",
@@ -79,14 +79,14 @@ export class GetProfileProviderBySlugResponse {
         voiceUrl:
           "https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3",
         description: "This is description about me <3",
-        providerSkills: [
+        providerServices: [
           {
             id: "42ac81c2-1815-45f7-b598-412487161e1f",
             createdAt: "2023-05-12T07:31:19.794Z",
             updatedAt: "2023-05-12T07:31:19.794Z",
             deletedAt: null,
             providerId: "0c261207-3e82-4d56-a261-32175b797a78",
-            skillId: "4624fdb2-3d58-4112-b3e4-f86fda9a833f",
+            serviceId: "4624fdb2-3d58-4112-b3e4-f86fda9a833f",
             defaultCost: 8,
             position: 1,
             bookingCosts: [
@@ -95,13 +95,13 @@ export class GetProfileProviderBySlugResponse {
                 createdAt: "2023-05-29T17:23:02.528Z",
                 updatedAt: "2023-05-29T17:23:02.528Z",
                 deletedAt: null,
-                providerSkillId: "cdd1d441-0002-4c8f-ac64-d83d723c9656",
+                providerServiceId: "cdd1d441-0002-4c8f-ac64-d83d723c9656",
                 startTimeOfDay: "00:00",
                 endTimeOfDay: "12:00",
                 amount: 64
               }
             ],
-            skill: {
+            service: {
               id: "4624fdb2-3d58-4112-b3e4-f86fda9a833f",
               createdAt: "2023-05-12T07:18:27.100Z",
               updatedAt: "2023-05-12T07:18:27.100Z",
@@ -115,12 +115,12 @@ export class GetProfileProviderBySlugResponse {
       },
     ],
     type: SwaggerDefinitionConstant.ARRAY,
-    itemType: ProviderSkillResponse,
+    itemType: ProviderServiceResponse,
   })
-  providerSkills!: Array<ProviderSkillResponse>;
+  providerServices!: Array<ProviderServiceResponse>;
 
   @ApiModelProperty({
-    description: "providerSkills",
+    description: "providerServices",
     example: {
       "dob": "2023-04-06T23:18:06.604Z",
       "name": "Christine Gutmann",

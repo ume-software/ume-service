@@ -1,32 +1,35 @@
-import { IsString, IsUrl } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
+import { IsOptional, IsString, IsUrl } from "class-validator";
 
 @ApiModel({
-    description: "Create skill request",
+    description: "Update service request",
 })
-export class CreateSkillRequest {
+export class UpdateServiceRequest {
     @ApiModelProperty({
-        description: "Skill name",
-        required: true,
+        description: "Service name",
+        required: false,
         example: "Liên Minh Huyền Thoại",
     })
+    @IsOptional()
     @IsString()
     name!: string;
 
     @ApiModelProperty({
-        description: "Image url of skill",
-        required: true,
+        description: "Image url of service",
+        required: false,
         example:
             "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
     })
+    @IsOptional()
     @IsUrl()
     imageUrl!: string;
-    constructor(data: CreateSkillRequest) {
+
+    constructor(data: UpdateServiceRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(CreateSkillRequest, data, [
+                mappingDataRequest(UpdateServiceRequest, data, [
                     "name",
                     "imageUrl",
                 ])

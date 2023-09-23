@@ -3,7 +3,7 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { BookingCostProviderSkillRequest } from "./bookingCostProviderSkill.request";
+import { BookingCostProviderServiceRequest } from "./bookingCostProviderService.request";
 import {
     IsArray,
     IsInt,
@@ -15,16 +15,16 @@ import {
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Provider skill request",
+    description: "Provider service request",
 })
-export class ProviderSkillRequest {
+export class ProviderServiceRequest {
     @ApiModelProperty({
-        description: "Skill Id",
+        description: "Service Id",
         required: true,
         example: "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
     })
     @IsUUID()
-    skillId!: string;
+    serviceId!: string;
 
     @ApiModelProperty({
         description: "Default cost",
@@ -35,7 +35,7 @@ export class ProviderSkillRequest {
     defaultCost!: number;
 
     @ApiModelProperty({
-        description: "Provider skill description",
+        description: "Provider service description",
         required: false,
         example: "Play with me :>>",
     })
@@ -47,7 +47,7 @@ export class ProviderSkillRequest {
         description: "Booking Cost",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: BookingCostProviderSkillRequest,
+        itemType: BookingCostProviderServiceRequest,
         example: [
             {
                 startTimeOfDay: "09:00",
@@ -59,14 +59,14 @@ export class ProviderSkillRequest {
     @IsOptional()
     @IsArray()
     @IsObject()
-    createBookingCosts!: BookingCostProviderSkillRequest[];
+    createBookingCosts!: BookingCostProviderServiceRequest[];
 
-    constructor(data: ProviderSkillRequest) {
+    constructor(data: ProviderServiceRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(ProviderSkillRequest, data, [
-                    "skillId",
+                mappingDataRequest(ProviderServiceRequest, data, [
+                    "serviceId",
                     "defaultCost",
                     "description",
                     "createBookingCosts",

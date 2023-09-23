@@ -115,15 +115,15 @@ export const filterProviderParameters = {
         Example : end_cost=5
         `,
     },
-    skill_id: {
-        name: "skill_id",
+    service_id: {
+        name: "service_id",
         required: false,
         schema: {
             type: SwaggerDefinitionConstant.Parameter.Type.STRING,
             default: "14476c02-2846-4097-8f00-b495e8fc77ae",
         },
         description: `
-        Example : skill_id=14476c02-2846-4097-8f00-b495e8fc77ae
+        Example : service_id=14476c02-2846-4097-8f00-b495e8fc77ae
         `,
     },
     name: {

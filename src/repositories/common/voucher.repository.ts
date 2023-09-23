@@ -162,9 +162,9 @@ export class VoucherRepository extends BasePrismaRepository {
                   FROM booking_history BH
                   WHERE BH.booker_id = ${bookerId}
                     AND BH.status IN ('PROVIDER_ACCEPT', 'PROVIDER_FINISH_SOON', 'USER_FINISH_SOON')
-                    AND BH.provider_skill_id IN (
+                    AND BH.provider_service_id IN (
                       SELECT PS.id
-                      FROM provider_skill PS
+                      FROM provider_service PS
                       WHERE PS.provider_id = V.provider_id
                     )
                     AND BH.deleted_at IS NULL -- Check if the booking history is not deleted
@@ -177,9 +177,9 @@ export class VoucherRepository extends BasePrismaRepository {
                   FROM booking_history BH
                   WHERE BH.booker_id = ${bookerId}
                     AND BH.status IN ('PROVIDER_ACCEPT', 'PROVIDER_FINISH_SOON', 'USER_FINISH_SOON')
-                    AND BH.provider_skill_id IN (
+                    AND BH.provider_service_id IN (
                       SELECT PS.id
-                      FROM provider_skill PS
+                      FROM provider_service PS
                       WHERE PS.provider_id = V.provider_id
                     )
                     AND BH.deleted_at IS NULL -- Check if the booking history is not deleted
