@@ -1,18 +1,20 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import { AdminHandleBanProviderRequest } from "@/common/requests/provider/adminHandleBanProvider.request";
+import prisma from "@/models/base.prisma";
 import {
+    noticeRepository,
     providerConfigRepository,
     providerRepository,
     userRepository,
 } from "@/repositories";
-import { errorService, noticeService } from "@/services";
+import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { NoticeType } from "@prisma/client";
+import { NoticeType, ProviderConfig, User } from "@prisma/client";
 
 export class ProviderService extends BasePrismaService<
     typeof providerRepository
@@ -103,22 +105,34 @@ export class ProviderService extends BasePrismaService<
     async adminHandleBanProvider(
         adminHandleBanProviderRequest: AdminHandleBanProviderRequest
     ) {
-        const provider = await userRepository.findOne({
+        const provider = (await userRepository.findOne({
             where: {
-                id: adminHandleBanProviderRequest.providerId,
+                OR: [
+                    {
+                        id: adminHandleBanProviderRequest.providerId,
+                    },
+                    {
+                        slug: adminHandleBanProviderRequest.providerId,
+                    },
+                ],
             },
-        });
+            include: {
+                providerConfig: true,
+            },
+        })) as User & { providerConfig: ProviderConfig };
+
         if (!provider) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-        if (!provider.isProvider) {
+        if (!provider.isProvider || !provider.providerConfig) {
             throw errorService.error(ERROR_MESSAGE.THIS_IS_NOT_A_PROVIDER);
         }
+
         switch (adminHandleBanProviderRequest.isBanned) {
             case true: {
-                if (provider.isBanned) {
+                if (provider.providerConfig.isBanned) {
                     throw errorService.error(
                         ERROR_MESSAGE.THIS_PROVIDER_HAS_BEEN_BANNED_BEFORE
                     );
@@ -126,7 +140,7 @@ export class ProviderService extends BasePrismaService<
                 break;
             }
             case false: {
-                if (!provider.isBanned) {
+                if (!provider.providerConfig.isBanned) {
                     throw errorService.error(
                         ERROR_MESSAGE.THIS_PROVIDER_HAS_BEEN_UN_BANNED_BEFORE_OR_HAS_NEVER_BEEN_BANNED
                     );
@@ -134,27 +148,45 @@ export class ProviderService extends BasePrismaService<
                 break;
             }
         }
-
-        noticeService.create({
-            user: {
-                connect: {
-                    id: provider.id,
+        return await prisma.$transaction(async (tx) => {
+            await noticeRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: provider.id,
+                        },
+                    },
+                    type: adminHandleBanProviderRequest.isBanned
+                        ? NoticeType.ADMIN_HAS_BANNED_PROVIDER
+                        : NoticeType.ADMIN_HAS_UN_BANNED_PROVIDER,
+                    data: JSON.parse(
+                        JSON.stringify(adminHandleBanProviderRequest)
+                    ),
                 },
-            },
-            type: adminHandleBanProviderRequest.isBanned
-                ? NoticeType.ADMIN_HAS_BANNED_PROVIDER
-                : NoticeType.ADMIN_HAS_UN_BANNED_PROVIDER,
-            data: JSON.parse(JSON.stringify(adminHandleBanProviderRequest)),
+                tx
+            );
+            await providerConfigRepository.update(
+                {
+                    isBanned: adminHandleBanProviderRequest.isBanned,
+                },
+                {
+                    where: {
+                        userId: provider.id,
+                    },
+                },
+                tx
+            );
+            return userRepository.findOne(
+                {
+                    where: {
+                        id: provider.id,
+                    },
+                    include: {
+                        providerConfig: true,
+                    },
+                },
+                tx
+            );
         });
-        return await providerConfigRepository.update(
-            {
-                isBanned: adminHandleBanProviderRequest.isBanned,
-            },
-            {
-                where: {
-                    providerId: provider.id,
-                },
-            }
-        );
     }
 }

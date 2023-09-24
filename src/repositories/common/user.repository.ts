@@ -32,8 +32,11 @@ export class UserRepository extends BasePrismaRepository {
         return await tx.user.create({ data: userCreateInput });
     }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<User | null> {
-        return await this.prisma.user.findFirst(query);
+    async findOne(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<User | null> {
+        return await tx.user.findFirst(query);
     }
 
     async findByEmail(email: string): Promise<User | null> {
