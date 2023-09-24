@@ -4,7 +4,8 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import { ProviderResponse } from "../provider";
+import { ProviderServiceResponse } from "../providerService";
+import { ProviderConfigResponse } from "../providerConfig";
 @ApiModel({
     description: "User information reponse",
 })
@@ -141,9 +142,15 @@ export class AdminGetUserResponseResponse {
     public isVerified!: Boolean;
 
     @ApiModelProperty({
-        description: "Provider profile",
-        required: false,
-        model: ProviderResponse,
+        description: "providerServices",
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: ProviderServiceResponse,
     })
-    public provider?: ProviderResponse;
+    providerServices!: Array<ProviderServiceResponse>;
+
+    @ApiModelProperty({
+        description: "providerServices",
+        model: ProviderConfigResponse,
+    })
+    providerConfig!: ProviderConfigResponse;
 }

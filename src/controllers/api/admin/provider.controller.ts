@@ -1,8 +1,8 @@
 import { AdminHandleBanProviderRequest } from "@/common/requests/provider/adminHandleBanProvider.request";
 import {
-    AdminGetProviderPagingResponse,
-    AdminGetProviderResponse,
     AdminGetProviderServicePagingResponse,
+    AdminGetUserPagingResponseResponse,
+    AdminGetUserResponseResponse,
     BookingHistoryPagingResponse,
     ProviderResponse,
     UserCoinResponse,
@@ -100,7 +100,7 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderPagingResponse },
+                        schema: { model: AdminGetUserPagingResponseResponse },
                     },
                 },
                 description: "Provider success",
@@ -135,7 +135,7 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminGetProviderResponse },
+                        schema: { model: AdminGetUserResponseResponse },
                     },
                 },
                 description: "Provider success",
