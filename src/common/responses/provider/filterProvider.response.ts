@@ -55,6 +55,12 @@ export class FilterProviderResponse {
         example: 6,
     })
     cost?: number;
+    @ApiModelProperty({
+        description: "Provider service Id",
+        required: false,
+        example: "45cc1d82-644b-4f7a-b474-7492b2575f10",
+    })
+    providerServiceId?: string;
 
     @ApiModelProperty({
         description: "Service Id",
@@ -62,6 +68,13 @@ export class FilterProviderResponse {
         example: "45cc1d82-644b-4f7a-b474-7492b2575f10",
     })
     serviceId?: string;
+
+    @ApiModelProperty({
+        description: "Service slug",
+        required: false,
+        example: "lien-minh-huyen-thoai",
+    })
+    serviceSlug?: string;
 
     @ApiModelProperty({
         description: "Service name",
