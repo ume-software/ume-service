@@ -75,8 +75,36 @@ export class UserRepository extends BasePrismaRepository {
                 slug: true,
                 isOnline: true,
                 isProvider: true,
+                isBanned: true,
+                latestOnline:true,
                 createdAt: true,
                 updatedAt: true,
+                providerConfig: {
+                    select: {
+                        voiceUrl: true,
+                        description: true,
+                        status: true,
+                        isBanned: true,
+                    },
+                },
+                providerServices: {
+                    select: {
+                        id: true,
+                        serviceId: true,
+                        service: true,
+                        defaultCost: true,
+                        description: true,
+                        position: true,
+                        bookingCosts: {
+                            select: {
+                                id: true,
+                                amount: true,
+                                endTimeOfDay: true,
+                                startTimeOfDay: true,
+                            },
+                        },
+                    },
+                },
             },
         });
     }

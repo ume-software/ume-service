@@ -2,7 +2,6 @@ import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotPro
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
 import {
     FilterProviderPagingResponse,
-    GetProfileProviderBySlugResponse,
 } from "@/common/responses";
 
 import {
@@ -42,7 +41,6 @@ export class ProviderController extends BaseController {
     customRouting() {
         this.router.get("/", this.route(this.getListProvider));
         this.router.get("/hot", this.route(this.getListHotProvider));
-        this.router.get("/:slug", this.route(this.getProviderBySlug));
     }
     @ApiOperationGet({
         path: "",
@@ -123,37 +121,5 @@ export class ProviderController extends BaseController {
             queryInfoPrisma!
         );
         this.onSuccessAsList(res, result);
-    }
-
-    @ApiOperationGet({
-        path: "/{slug}",
-        operationId: "getProviderBySlug",
-        description: "Get Provider by slug or id",
-        summary: "Get Provider by slug or id",
-        parameters: {
-            path: {
-                slug: {
-                    required: true,
-                    schema: {
-                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-                    },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: GetProfileProviderBySlugResponse },
-                    },
-                },
-                description: "Provider success",
-            },
-        },
-    })
-    async getProviderBySlug(req: Request, res: Response) {
-        const { slug } = req.params;
-        const result = await this.service.getProviderBySlug(slug!);
-        this.onSuccess(res, result);
     }
 }

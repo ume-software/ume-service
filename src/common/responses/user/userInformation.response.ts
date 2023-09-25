@@ -4,6 +4,9 @@ import {
     ApiModelProperty,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import { ProviderServiceResponse } from "../providerService";
+import { ProviderConfigResponse } from "../providerConfig";
+import { CreateVoucherResponse } from "../voucher/voucher.response";
 @ApiModel({
     description: "User information reponse",
 })
@@ -131,10 +134,25 @@ export class UserInformationResponse {
     })
     public isVerified!: boolean | null;
 
-    // @ApiModelProperty({
-    //     description: "Provider profile",
-    //     required: false,
-    //     model: ProviderResponse,
-    // })
-    // public provider?: ProviderResponse;
+    @ApiModelProperty({
+        description: "providerServices",
+        type: SwaggerDefinitionConstant.ARRAY,
+        required: false,
+        itemType: ProviderServiceResponse,
+    })
+    providerServices?: Array<ProviderServiceResponse>;
+
+    @ApiModelProperty({
+        description: "providerServices",
+        required: false,
+        model: ProviderConfigResponse,
+    })
+    providerConfig?: ProviderConfigResponse;
+
+    @ApiModelProperty({
+        description: "providerVouchers",
+        required: false,
+        model: CreateVoucherResponse,
+    })
+    vouchers?: CreateVoucherResponse;
 }
