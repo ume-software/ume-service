@@ -11,6 +11,7 @@ import { VoucherService } from "@/services/api/v1/voucher.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
+    ApiOperationPatch,
     ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
@@ -102,7 +103,7 @@ export class VoucherController extends BaseController {
         this.onSuccess(res, result);
     }
 
-    @ApiOperationPost({
+    @ApiOperationPatch({
         path: "/{id}",
         operationId: "providerUpdateVoucher",
         security: {
