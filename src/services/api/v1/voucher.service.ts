@@ -1,4 +1,4 @@
-import { CreateVoucherRequest } from "@/common/requests";
+import { CreateVoucherRequest, UpdateVoucherRequest } from "@/common/requests";
 import {
     adminRepository,
     userRepository,
@@ -10,7 +10,7 @@ import {
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Voucher } from "@prisma/client";
+import { Voucher, VoucherStatus } from "@prisma/client";
 export class VoucherService extends BasePrismaService<
     typeof voucherRepository
 > {
@@ -41,10 +41,42 @@ export class VoucherService extends BasePrismaService<
             );
         }
         createVoucher.providerId = provider.id;
-
+        createVoucher.isActivated = false;
+        createVoucher.status = VoucherStatus.PENDING;
         return await this.repository.create(createVoucher);
     }
+    async providerUpdateVoucher(
+        userId: string,
+        updateVoucherRequest: UpdateVoucherRequest
+    ) {
+        const provider = await userRepository.findOne({
+            where: {
+                userId,
+            },
+        });
+        if (!provider || provider.id != userId) {
+            throw errorService.error(
+                ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
+            );
+        }
+        const voucher = await this.repository.findOne({
+            where: {
+                id: updateVoucherRequest.id,
+                providerId: provider.id,
+            },
+        });
+        if (!voucher) {
+            throw errorService.recordNotFound();
+        }
+        updateVoucherRequest.providerId = provider.id;
+        updateVoucherRequest.isActivated = false;
+        updateVoucherRequest.status = VoucherStatus.PENDING;
 
+        return await this.repository.updateById(
+            updateVoucherRequest.id,
+            updateVoucherRequest
+        );
+    }
     async adminCreateVoucher(
         adminId: string,
         createVoucher: CreateVoucherRequest
@@ -62,6 +94,7 @@ export class VoucherService extends BasePrismaService<
                 id: admin.id,
             },
         };
+        createVoucher.status = VoucherStatus.APPROVED;
         return await this.repository.create(createVoucher);
     }
 }

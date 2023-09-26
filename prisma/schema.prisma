@@ -404,6 +404,7 @@ model Voucher {
   recipientType                    VoucherRecipientType     @default(ALL) @map("recipient_type")
   selectiveBookerIds               String[]                 @default([]) @map("selective_booker_id")
   isHided                          Boolean                  @default(false) @map("is_hided")
+  status                           VoucherStatus            @default(PENDING) @map("status")
   voucherRedeemedBookings          VoucherRedeemedBooking[]
 
   @@map("voucher")
@@ -735,6 +736,12 @@ enum ProviderStatus {
 }
 
 enum UserKYCStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VoucherStatus {
   PENDING
   APPROVED
   REJECTED

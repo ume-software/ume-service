@@ -98,7 +98,11 @@ export class ProviderRepository extends BasePrismaRepository {
               ) AS psf ON psf.providerServiceId = ps.id
             WHERE
               ps.deleted_at IS NULL
-              ${serviceId != undefined ? `AND s.id = '${serviceId}'` : ""}
+              ${
+                  serviceId != undefined
+                      ? `AND (s.id = '${serviceId}' OR s.slug = '${serviceId}')`
+                      : ""
+              }
               ${name != undefined ? `AND p.name like '%${name}%'` : ""}
               ${gender != undefined ? `AND p.gender = '${gender}'` : ""}
           )

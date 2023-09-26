@@ -53,7 +53,7 @@ export class AdminManageVoucherController extends BaseController {
     })
     async adminGetAllVoucher(req: Request, res: Response) {
         const result = await this.service.findAndCountAll(req.queryInfoPrisma);
-        this.onSuccess(res, { row: result });
+        this.onSuccessAsList(res, result);
     }
     @ApiOperationPost({
         path: "",

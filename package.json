@@ -1,6 +1,6 @@
 {
   "name": "ume-service",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "",
   "type": "commonjs",
   "main": "build/index.js",

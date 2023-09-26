@@ -13,7 +13,6 @@ import {
     IsInt,
     IsOptional,
     IsString,
-    IsUppercase,
     IsUrl,
     Min,
 } from "class-validator";
@@ -27,22 +26,14 @@ import { mappingDataRequest } from "../base";
 @ApiModel({
     description: "Create voucher request",
 })
-export class CreateVoucherRequest {
+export class UpdateVoucherRequest {
+    id!: string;
     providerId?: string;
     adminId?: string;
     provider?: any;
     admin?: any;
     status?: VoucherStatus;
-    @ApiModelProperty({
-        description:
-            " A unique string representing the voucher code that users can enter to redeem the voucher.",
-        required: false,
-        example: "SUPPERSALE",
-    })
-    @IsOptional()
-    @IsUppercase()
-    @IsString()
-    code?: string;
+    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "A URL pointing to an image associated with the voucher.",
@@ -113,16 +104,6 @@ export class CreateVoucherRequest {
     @Min(1)
     @IsInt()
     dailyUsageLimitPerBooker?: number;
-
-    @ApiModelProperty({
-        description:
-            "A boolean indicating whether the voucher is activated or not.",
-        required: false,
-        example: true,
-    })
-    @IsOptional()
-    @IsBoolean()
-    isActivated!: boolean;
 
     @ApiModelProperty({
         description: 'The type of the voucher, like "DISCOUNT" in this case.',
@@ -248,13 +229,12 @@ export class CreateVoucherRequest {
     })
     @IsBoolean()
     isHided!: boolean;
-    constructor(data: CreateVoucherRequest) {
+    constructor(data: UpdateVoucherRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(CreateVoucherRequest, data, [
+                mappingDataRequest(UpdateVoucherRequest, data, [
                     "applyISODayOfWeek",
-                    "code",
                     "content",
                     "dailyUsageLimitPerBooker",
                     "description",

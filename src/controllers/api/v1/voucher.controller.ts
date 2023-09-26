@@ -1,3 +1,4 @@
+import { UpdateVoucherRequest } from "@/common/requests";
 import { CreateVoucherRequest } from "@/common/requests/voucher/createVoucher.request";
 import {
     BaseController,
@@ -5,7 +6,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { voucherService } from "@/services";
+import { errorService, voucherService } from "@/services";
 import { VoucherService } from "@/services/api/v1/voucher.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
@@ -38,6 +39,11 @@ export class VoucherController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.providerCreateVoucher)
         );
+        this.router.patch(
+            "/:id",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.providerUpdateVoucher)
+        );
     }
     @ApiOperationGet({
         path: "",
@@ -59,6 +65,7 @@ export class VoucherController extends BaseController {
         );
         this.onSuccess(res, { row: result });
     }
+
     @ApiOperationPost({
         path: "",
         operationId: "providerCreateVoucher",
@@ -91,6 +98,47 @@ export class VoucherController extends BaseController {
         const result = await this.service.providerCreateVoucher(
             userId,
             providerCreateVoucherRequest
+        );
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPost({
+        path: "/{id}",
+        operationId: "providerUpdateVoucher",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Voucher for provider",
+        summary: "Voucher for provider",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: UpdateVoucherRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UpdateVoucherRequest },
+                    },
+                },
+                description: "Voucher provider success",
+            },
+        },
+    })
+    async providerUpdateVoucher(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) {
+            throw errorService.badRequest();
+        }
+        const providerUpdateVoucherRequest = new UpdateVoucherRequest(req.body);
+        const userId = this.getTokenInfo(req).id;
+        providerUpdateVoucherRequest.id = id;
+        const result = await this.service.providerUpdateVoucher(
+            userId,
+            providerUpdateVoucherRequest
         );
         this.onSuccess(res, result);
     }
