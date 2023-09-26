@@ -109,6 +109,16 @@ export class VoucherController extends BaseController {
         security: {
             bearerAuth: [],
         },
+        parameters: {
+            path: {
+                id: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
         description: "Voucher for provider",
         summary: "Voucher for provider",
         requestBody: {
