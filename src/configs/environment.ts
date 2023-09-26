@@ -84,4 +84,11 @@ export default {
     test: {
         user_token: process.env["USER_TOKEN_TEST"] ?? "",
     },
+    vnpay: {
+        tmnCode: process.env["VNPAY_TMN_CODE"],
+        hashSecret: process.env["VNPAY_HASH_SECRET"],
+        url: process.env["VNPAY_URL"],
+        api: process.env["VNPAY_API"],
+        returnUrl: process.env["VNPAY_RETURN_URL"],
+    },
 };

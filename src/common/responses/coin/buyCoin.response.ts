@@ -1,9 +1,13 @@
-
-import { BuyCoinRequestStatus, PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
+import {
+    BuyCoinRequestDataStringType,
+    BuyCoinRequestStatus,
+    PaymentSystemPlatform,
+    UnitCurrency,
+} from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: 'Get Qr BuyCoin response'
+    description: "Get Qr BuyCoin response",
 })
 export class BuyCoinResponse {
     @ApiModelProperty({
@@ -33,7 +37,6 @@ export class BuyCoinResponse {
         example: "2023-05-10T07:08:46.083Z",
     })
     deletedAt!: Date;
-
 
     @ApiModelProperty({
         description: "Amount money",
@@ -65,16 +68,24 @@ export class BuyCoinResponse {
     requesterId!: string;
 
     @ApiModelProperty({
+        description: "data string",
+        required: true,
+        example:
+            "2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023|transfer_myqr",
+    })
+    dataString!: string;
+
+    @ApiModelProperty({
         description: "QR string",
         required: true,
-        example: "2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023|transfer_myqr",
+        example: BuyCoinRequestDataStringType.QR,
     })
-    qrString!: string;
+    dataStringType!: BuyCoinRequestDataStringType;
 
     @ApiModelProperty({
         description: "Coin history Id",
         required: false,
-        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d"
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d",
     })
     coinHistoryId?: string;
 
@@ -82,55 +93,50 @@ export class BuyCoinResponse {
         description: "Status",
         required: true,
         enum: Object.values(BuyCoinRequestStatus),
-        example: BuyCoinRequestStatus.INIT
+        example: BuyCoinRequestStatus.INIT,
     })
     status!: BuyCoinRequestStatus;
-
 
     @ApiModelProperty({
         description: "Hander id (admin)",
         required: true,
-        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f"
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
     })
     handlerId!: string;
 
     @ApiModelProperty({
         description: "Handler feedback",
         required: false,
-        example: "Done"
+        example: "Done",
     })
     handlerFeedback?: string;
 
     @ApiModelProperty({
         description: "Bill image url",
         required: false,
-        example: "url"
+        example: "url",
     })
     billImageUrl?: string;
-
 
     @ApiModelProperty({
         description: "Platform",
         required: true,
         enum: Object.values(PaymentSystemPlatform),
-        example: PaymentSystemPlatform.MOMO
+        example: PaymentSystemPlatform.MOMO,
     })
     platform!: PaymentSystemPlatform;
 
     @ApiModelProperty({
         description: "Transaction code",
         required: true,
-        example: "1LUDPOFOF507062023105048841"
+        example: "1LUDPOFOF507062023105048841",
     })
     transactionCode!: string;
 
     @ApiModelProperty({
         description: "Content",
         required: true,
-        example: "1LUDPOFOF507062023105048841"
-
+        example: "1LUDPOFOF507062023105048841",
     })
     content!: string;
-
 }
-

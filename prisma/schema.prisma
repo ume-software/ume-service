@@ -197,6 +197,7 @@ model Admin {
   userVerificationRequests      UserKYCRequest[]
   historyAllocationCoinForUsers CoinHistory[]
   voucher                       Voucher[]
+  buyCoinRequest                BuyCoinRequest[]
 
   @@map("admin")
 }
@@ -437,26 +438,28 @@ model ReportBooking {
 }
 
 model BuyCoinRequest {
-  id              String                 @id @default(uuid()) @map("id")
-  createdAt       DateTime?              @default(now()) @map("created_at")
-  updatedAt       DateTime?              @updatedAt @map("updated_at")
-  deletedAt       DateTime?              @map("deleted_at")
-  amountMoney     Int?                   @map("amount_money")
-  amountCoin      Float?                 @map("amount_coin")
-  unitCurrency    UnitCurrency?          @map("unit_currency")
-  requester       User                   @relation(fields: [requesterId], references: [id])
-  requesterId     String                 @map("requester_id")
-  qrString        String?                @map("qr_string")
-  coinHistory     CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
-  coinHistoryId   String?                @unique @map("coin_history_id")
-  status          BuyCoinRequestStatus   @default(INIT) @map("status")
-  handlerId       String?                @map("handler_id")
-  handlerFeedback String?                @map("handler_feedback")
-  billImageUrl    String?                @map("bill_image_url")
-  platform        PaymentSystemPlatform? @map("platform")
-  transactionCode String?                @unique() @map("transcaction_code")
-  content         String?                @map("content")
-  beneficiary     String?                @map("beneficiary")
+  id              String                       @id @default(uuid()) @map("id")
+  createdAt       DateTime?                    @default(now()) @map("created_at")
+  updatedAt       DateTime?                    @updatedAt @map("updated_at")
+  deletedAt       DateTime?                    @map("deleted_at")
+  amountMoney     Int?                         @map("amount_money")
+  amountCoin      Float?                       @map("amount_coin")
+  unitCurrency    UnitCurrency?                @map("unit_currency")
+  requester       User                         @relation(fields: [requesterId], references: [id])
+  requesterId     String                       @map("requester_id")
+  dataString      String?                      @map("data_string")
+  dataStringType  BuyCoinRequestDataStringType @map("data_string_type")
+  coinHistory     CoinHistory?                 @relation(fields: [coinHistoryId], references: [id])
+  coinHistoryId   String?                      @unique @map("coin_history_id")
+  status          BuyCoinRequestStatus         @default(INIT) @map("status")
+  handlerId       String?                      @map("handler_id")
+  handler         Admin?                       @relation(fields: [handlerId], references: [id])
+  handlerFeedback String?                      @map("handler_feedback")
+  billImageUrl    String?                      @map("bill_image_url")
+  platform        PaymentSystemPlatform?       @map("platform")
+  transactionCode String?                      @unique() @map("transaction_code")
+  content         String?                      @map("content")
+  beneficiary     String?                      @map("beneficiary")
 
   @@map("buy_coin_request")
 }
@@ -745,4 +748,9 @@ enum VoucherStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum BuyCoinRequestDataStringType {
+  QR
+  REDIRECT_URL
 }

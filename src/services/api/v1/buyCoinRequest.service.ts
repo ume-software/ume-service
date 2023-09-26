@@ -14,15 +14,22 @@ import {
     buyCoinRequestRepository,
     coinHistoryRepository,
 } from "@/repositories";
-import { errorService, qrPaymentService, utilService } from "@/services";
+import {
+    errorService,
+    qrPaymentService,
+    utilService,
+    vnpayService,
+} from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import {
+    BuyCoinRequestDataStringType,
     BuyCoinRequestStatus,
     CoinType,
+    PaymentSystemPlatform,
     Prisma,
     UnitCurrency,
 } from "@prisma/client";
@@ -93,6 +100,13 @@ export class BuyCoinRequestService extends BasePrismaService<
         if (!amountCoin || !platform || !unitCurrency) {
             throw errorService.badRequest();
         }
+        const { totalMoney } =
+            await coinSettingRepository.convertCoinToMoneyForBuyCoin(
+                amountCoin,
+                unitCurrency,
+                platform
+            );
+
         return await prisma.$transaction(async (tx) => {
             let transactionCode = "";
             do {
@@ -107,39 +121,73 @@ export class BuyCoinRequestService extends BasePrismaService<
                     transactionCode = "";
                 }
             } while (!transactionCode);
-            const { totalMoney } =
-                await coinSettingRepository.convertCoinToMoneyForBuyCoin(
-                    amountCoin,
-                    unitCurrency,
-                    platform
-                );
+
             const transferContent = `${transactionCode}`;
-            const { qrString, adminPaymentSystem } =
-                await qrPaymentService.getQrBuyCoin({
-                    amount: totalMoney,
-                    platform,
-                    transferContent,
-                });
-            return await this.repository.create(
-                {
-                    requester: {
-                        connect: {
-                            id: requesterId,
+
+            switch (platform) {
+                case PaymentSystemPlatform.VNPAY: {
+                    return await this.repository.create(
+                        {
+                            requester: {
+                                connect: {
+                                    id: requesterId,
+                                },
+                            },
+                            unitCurrency: UnitCurrency.VND,
+                            amountMoney: totalMoney,
+                            amountCoin,
+                            dataString: vnpayService.createPaymentUrl({
+                                amount: totalMoney,
+                                orderId: transferContent,
+                                bankCode: "",
+                                locale: "vn",
+                            }),
+                            dataStringType:
+                                BuyCoinRequestDataStringType.REDIRECT_URL,
+                            transactionCode,
+                            platform,
+                            status: BuyCoinRequestStatus.INIT,
+                            content: transferContent,
                         },
-                    },
-                    unitCurrency: UnitCurrency.VND,
-                    amountMoney: totalMoney,
-                    amountCoin,
-                    qrString,
-                    transactionCode,
-                    platform,
-                    handlerId: adminPaymentSystem.adminId,
-                    beneficiary: adminPaymentSystem.beneficiary,
-                    status: BuyCoinRequestStatus.INIT,
-                    content: transferContent,
-                },
-                tx
-            );
+                        tx
+                    );
+                    break;
+                }
+                default: {
+                    const { qrString, adminPaymentSystem } =
+                        await qrPaymentService.getQrBuyCoin({
+                            amount: totalMoney,
+                            platform,
+                            transferContent,
+                        });
+
+                    return await this.repository.create(
+                        {
+                            requester: {
+                                connect: {
+                                    id: requesterId,
+                                },
+                            },
+                            unitCurrency: UnitCurrency.VND,
+                            amountMoney: totalMoney,
+                            amountCoin,
+                            dataString: qrString,
+                            dataStringType: BuyCoinRequestDataStringType.QR,
+                            transactionCode,
+                            platform,
+                            handler: {
+                                connect: {
+                                    id: adminPaymentSystem.adminId,
+                                },
+                            },
+                            beneficiary: adminPaymentSystem.beneficiary,
+                            status: BuyCoinRequestStatus.INIT,
+                            content: transferContent,
+                        },
+                        tx
+                    );
+                }
+            }
         });
     }
 
