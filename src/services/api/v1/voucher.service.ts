@@ -97,4 +97,23 @@ export class VoucherService extends BasePrismaService<
         createVoucher.status = VoucherStatus.APPROVED;
         return await this.repository.create(createVoucher);
     }
+
+    async adminUpdateVoucher(
+        adminId: string,
+        voucherId: string,
+        updateVoucherRequest: UpdateVoucherRequest
+    ) {
+        const admin = await adminRepository.findOne({
+            where: {
+                id: adminId,
+            },
+        });
+        if (!admin) {
+            throw errorService.error(ERROR_MESSAGE.ACCOUNT_NOT_FOUND);
+        }
+
+        return await this.repository.update(updateVoucherRequest, {
+            where: { id: voucherId },
+        });
+    }
 }

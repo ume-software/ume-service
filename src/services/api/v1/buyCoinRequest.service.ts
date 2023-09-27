@@ -16,6 +16,7 @@ import {
 } from "@/repositories";
 import {
     errorService,
+    momoService,
     qrPaymentService,
     utilService,
     vnpayService,
@@ -141,6 +142,32 @@ export class BuyCoinRequestService extends BasePrismaService<
                                 orderId: transferContent,
                                 bankCode: "",
                                 locale: "vn",
+                            }),
+                            dataStringType:
+                                BuyCoinRequestDataStringType.REDIRECT_URL,
+                            transactionCode,
+                            platform,
+                            status: BuyCoinRequestStatus.INIT,
+                            content: transferContent,
+                        },
+                        tx
+                    );
+                    break;
+                }
+                case PaymentSystemPlatform.MOMO: {
+                    return await this.repository.create(
+                        {
+                            requester: {
+                                connect: {
+                                    id: requesterId,
+                                },
+                            },
+                            unitCurrency: UnitCurrency.VND,
+                            amountMoney: totalMoney,
+                            amountCoin,
+                            dataString: await momoService.createPaymentUrl({
+                                amount: totalMoney,
+                                orderId: transferContent,
                             }),
                             dataStringType:
                                 BuyCoinRequestDataStringType.REDIRECT_URL,

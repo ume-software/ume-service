@@ -14,7 +14,7 @@ import { AdminResponse } from "../admin";
 @ApiModel({
     description: "Create voucher request",
 })
-export class CreateVoucherResponse {
+export class VoucherResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,

@@ -36,6 +36,7 @@ import { GoogleService } from "./common/google.service";
 import { LoginService } from "./common/login.service";
 import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 import { VNPayService } from "./api/v1/vnpay.service";
+import { MomoService } from "./api/v1/momo.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -74,6 +75,7 @@ const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
 const vietnamAddressService = new VietnamAddressService();
 const donationService = new DonationService();
 const vnpayService = new VNPayService();
+const momoService = new MomoService();
 export {
     scheduleService,
     errorService,
@@ -112,4 +114,5 @@ export {
     vietnamAddressService,
     donationService,
     vnpayService,
+    momoService,
 };

@@ -91,4 +91,12 @@ export default {
         api: process.env["VNPAY_API"],
         returnUrl: process.env["VNPAY_RETURN_URL"],
     },
+    momo: {
+        partnerCode: process.env["MOMO_PARTNER_CODE"],
+        accessKey: process.env["MOMO_ACCESS_KEY"],
+        secretKey: process.env["MOMO_SECRET_KEY"],
+        redirectUrl: process.env["MOMO_REDIRECT_URL"],
+        inpUrl: process.env["MOMO_IPN_URL"],
+        api: process.env["MOMO_API"],
+    },
 };

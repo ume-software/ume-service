@@ -6,7 +6,8 @@ import {
 } from "express-swagger-typescript";
 import { ProviderServiceResponse } from "../providerService";
 import { ProviderConfigResponse } from "../providerConfig";
-import { CreateVoucherResponse } from "../voucher/voucher.response";
+import { VoucherResponse } from "../voucher";
+
 @ApiModel({
     description: "User information reponse",
 })
@@ -152,7 +153,7 @@ export class UserInformationResponse {
     @ApiModelProperty({
         description: "providerVouchers",
         required: false,
-        model: CreateVoucherResponse,
+        model: VoucherResponse,
     })
-    vouchers?: CreateVoucherResponse;
+    vouchers?: VoucherResponse;
 }
