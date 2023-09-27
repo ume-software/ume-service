@@ -109,7 +109,7 @@ export class AdminManageVoucherController extends BaseController {
     }
     @ApiOperationPatch({
         path: "/{id}",
-        operationId: "adminCreateVoucher",
+        operationId: "adminUpdateVoucher",
         security: {
             bearerAuth: [],
         },
