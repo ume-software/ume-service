@@ -106,44 +106,47 @@ export class VNPayWebhookController extends BaseController {
         let signData = querystring.stringify(vnp_Params, { encode: false });
         let crypto = require("crypto");
         let hmac = crypto.createHmac("sha512", secretKey);
-        let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-        console.log("signed ===> ", signed);
+        hmac.update(new Buffer(signData, "utf-8")).digest("hex");
         const vnp_TxnRef = vnp_Params["vnp_TxnRef"];
         let buyCoinRequest = await buyCoinRequestRepository.findOne({
             where: {
                 transactionCode: vnp_TxnRef,
             },
         });
-        if (vnp_Params["vnp_ResponseCode"] == "07") {
-            await prisma.$transaction(async (tx) => {
-                await coinHistoryRepository.create(
-                    {
-                        user: {
-                            connect: {
-                                id: buyCoinRequest?.requesterId!,
-                            },
-                        },
-                        amount: buyCoinRequest?.amountCoin!,
-                        coinType: CoinType.BUY_COIN,
-                    },
-                    tx
-                );
 
-                buyCoinRequest = await buyCoinRequestRepository.update(
-                    {
-                        status: "APPROVED",
-                    },
-                    {
-                        where: {
-                            id: buyCoinRequest?.id,
+        await prisma.$transaction(async (tx) => {
+            await coinHistoryRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: buyCoinRequest?.requesterId!,
                         },
                     },
-                    tx
-                );
-                return buyCoinRequest;
-            });
-        }
+                    amount: buyCoinRequest?.amountCoin!,
+                    coinType: CoinType.BUY_COIN,
+                },
+                tx
+            );
 
-        this.onSuccess(res, {});
+            buyCoinRequest = await buyCoinRequestRepository.update(
+                {
+                    status:
+                        vnp_Params["vnp_ResponseCode"] == "07"
+                            ? "APPROVED"
+                            : "REJECTED",
+                },
+                {
+                    where: {
+                        id: buyCoinRequest?.id,
+                    },
+                },
+                tx
+            );
+            return buyCoinRequest;
+        });
+
+        res.send(
+            '<script>window.open("", "_blank", "");window.close();</script>'
+        );
     }
 }
