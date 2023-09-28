@@ -9,15 +9,11 @@ import {
 import { BuyCoinRequestStatus, CoinType } from "@prisma/client";
 import crypto from "crypto";
 export class MomoService {
-    async createPaymentUrl(data: {
-        amount: number;
-        orderId: string;
-        userId: string;
-    }) {
+    async createPaymentUrl(data: { amount: number; orderId: string }) {
         const partnerCode = config.momo.partnerCode!;
         const accessKey = config.momo.accessKey!;
         const secretKey = config.momo.secretKey!;
-        const orderInfo = `Momo - ${data.amount}`;
+        const orderInfo = `Momo - UME`;
         const redirectUrl = config.momo.redirectUrl!;
         const ipnUrl = config.momo.inpUrl!;
         const requestType = "captureWallet";
@@ -27,9 +23,7 @@ export class MomoService {
             "&amount=" +
             data.amount +
             "&extraData=" +
-            JSON.stringify({
-                userId: data.userId,
-            }) +
+            data.orderId +
             "&ipnUrl=" +
             ipnUrl +
             "&orderId=" +
@@ -61,7 +55,7 @@ export class MomoService {
             extraData: data.orderId,
             requestType: requestType,
             signature: signature,
-            lang: "en",
+            lang: "vi",
         };
 
         const response = await axios.post(

@@ -167,8 +167,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                             amountCoin,
                             dataString: await momoService.createPaymentUrl({
                                 amount: totalMoney,
-                                orderId: transferContent,
-                                userId: requesterId,
+                                orderId: transferContent
                             }),
                             dataStringType:
                                 BuyCoinRequestDataStringType.REDIRECT_URL,
