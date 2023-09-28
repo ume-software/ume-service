@@ -210,14 +210,160 @@ const servicesDefault = [
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_LeagueofLegends.png",
         name: "League of Legends",
+        attributes: [
+            {
+                name: "Rank",
+                enName: "Hạng",
+                values: [
+                    {
+                        value: "Sắt",
+                        enValue: "Iron",
+                    },
+                    {
+                        value: "Đồng",
+                        enValue: "Bronze",
+                    },
+                    {
+                        value: "Bạc",
+                        enValue: "Silver",
+                    },
+                    {
+                        value: "Vàng",
+                        enValue: "Gold",
+                    },
+                    {
+                        value: "Bạch Kim",
+                        enValue: "Platinum",
+                    },
+                    {
+                        value: "Kim cương",
+                        enValue: "Diamond",
+                    },
+                    {
+                        value: "Cao thủ",
+                        enValue: "Master",
+                    },
+                    {
+                        value: "Đại cao thủ",
+                        enValue: "Grandmaster",
+                    },
+                    {
+                        value: "Thách đấu",
+                        enValue: "Challenger",
+                    },
+                ],
+            },
+            {
+                name: "Vị trí",
+                enName: "Lance",
+                values: [
+                    {
+                        value: "Hỗ trợ",
+                        enValue: "Support",
+                    },
+                    {
+                        value: "Xạ thủ",
+                        enValue: "ADC",
+                    },
+                    {
+                        value: "Đừng trên",
+                        enValue: "Top",
+                    },
+                    {
+                        value: "Đừng giữa",
+                        enValue: "Mid",
+                    },
+                    {
+                        value: "Rừng",
+                        enValue: "Jungle",
+                    },
+                ],
+            },
+        ],
     },
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Valorant.png",
         name: "Valorant",
+        attributes: [
+            {
+                name: "Rank",
+                enName: "Hạng",
+                values: [
+                    {
+                        value: "Sắt",
+                        enValue: "Iron",
+                    },
+                    {
+                        value: "Đồng",
+                        enValue: "Bronze",
+                    },
+                    {
+                        value: "Bạc",
+                        enValue: "Silver",
+                    },
+                    {
+                        value: "Vàng",
+                        enValue: "Gold",
+                    },
+                    {
+                        value: "Bạch Kim",
+                        enValue: "Platinum",
+                    },
+                    {
+                        value: "Kim cương",
+                        enValue: "Diamond",
+                    },
+                    {
+                        value: "Bất diệt",
+                        enValue: "Immortal",
+                    },
+                ],
+            },
+        ],
     },
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Overwatch2.png",
         name: "Overwatch",
+        attributes: [
+            {
+                name: "Rank",
+                enName: "Hạng",
+                values: [
+                    {
+                        value: "Đồng",
+                        enValue: "Bronze",
+                    },
+                    {
+                        value: "Bạc",
+                        enValue: "Silver",
+                    },
+                    {
+                        value: "Vàng",
+                        enValue: "Gold",
+                    },
+                    {
+                        value: "Bạch Kim",
+                        enValue: "Platinum",
+                    },
+                    {
+                        value: "Kim cương",
+                        enValue: "Diamond",
+                    },
+                    {
+                        value: "Cao thủ",
+                        enValue: "Master",
+                    },
+                    {
+                        value: "Đại cao thủ",
+                        enValue: "Grandmaster",
+                    },
+                    {
+                        value: "Top500",
+                        enValue: "Top500",
+                    },
+                ],
+            },
+        ],
     },
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Fortnite.png",
@@ -319,6 +465,7 @@ async function seed() {
                         ),
                     },
                 });
+
                 services.push(service);
             }
             // Create provider services
