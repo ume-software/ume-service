@@ -19,7 +19,7 @@ export class AdminService extends BasePrismaService<typeof adminRepository> {
     }
 
     async adminCreateAccount(_adminId: string, adminCreateInput: CreateAdminAccountRequest): Promise<AdminIncludeAdminRoleAndAdminPaymentSystem> {
-        adminCreateInput.password = await bcryptService.hashData(adminCreateInput.password);
+        adminCreateInput.password =bcryptService.hashData(adminCreateInput.password);
         return await this.repository.adminCreateAccount(adminCreateInput);
 
     }

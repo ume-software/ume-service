@@ -44,7 +44,7 @@ export class LoginService {
         if (existedUser) {
             throw errorService.error(ERROR_MESSAGE.USERNAME_ALREADY_REGISTERED);
         }
-        reqLogin.password = await bcryptService.hashData(
+        reqLogin.password =bcryptService.hashData(
             registerRequest.password
         );
         await userRepository.create(reqLogin);
@@ -280,7 +280,7 @@ export class LoginService {
         if (existedAdmin) {
             throw errorService.error(ERROR_MESSAGE.USERNAME_ALREADY_REGISTERED);
         }
-        reqLogin.password = await bcryptService.hashData(
+        reqLogin.password =bcryptService.hashData(
             registerRequest.password
         );
         await adminRepository.create(reqLogin);

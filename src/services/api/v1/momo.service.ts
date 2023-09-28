@@ -8,6 +8,7 @@ import {
 } from "@/repositories";
 import { BuyCoinRequestStatus, CoinType } from "@prisma/client";
 import crypto from "crypto";
+import { bcryptService } from "@/services";
 export class MomoService {
     async createPaymentUrl(data: { amount: number; orderId: string }) {
         const partnerCode = config.momo.partnerCode!;
@@ -17,13 +18,14 @@ export class MomoService {
         const redirectUrl = config.momo.redirectUrl!;
         const ipnUrl = config.momo.inpUrl!;
         const requestType = "captureWallet";
+        const extraData = bcryptService.hashData(data.orderId);
         const rawSignature =
             "accessKey=" +
             accessKey +
             "&amount=" +
             data.amount +
             "&extraData=" +
-            data.orderId +
+            extraData +
             "&ipnUrl=" +
             ipnUrl +
             "&orderId=" +
@@ -72,50 +74,11 @@ export class MomoService {
 
     async handleWebhook(req: Request) {
         let {
-            partnerCode,
             orderId,
-            requestId,
-            amount,
-            orderInfo,
-            // orderType,
-            // transId,
-            // resultCode,
-            // message,
-            // payType,
-            // responseTime,
+            resultCode,
+            message,
             extraData,
-            signature,
         } = req.query as { [key: string]: string };
-        const accessKey = config.momo.accessKey!;
-        const secretkey = config.momo.secretKey!;
-        const redirectUrl = config.momo.redirectUrl!;
-        const ipnUrl = config.momo.inpUrl!;
-        const requestType = "captureWallet";
-        const rawSignature =
-            "accessKey=" +
-            accessKey +
-            "&amount=" +
-            amount +
-            "&extraData=" +
-            extraData +
-            "&ipnUrl=" +
-            ipnUrl +
-            "&orderId=" +
-            orderId +
-            "&orderInfo=" +
-            orderInfo +
-            "&partnerCode=" +
-            partnerCode +
-            "&redirectUrl=" +
-            redirectUrl +
-            "&requestId=" +
-            requestId +
-            "&requestType=" +
-            requestType;
-        const signatureCheck = crypto
-            .createHmac("sha256", secretkey)
-            .update(rawSignature)
-            .digest("hex");
 
         const buyCoinRequest = await buyCoinRequestRepository.findOne({
             where: {
@@ -123,13 +86,14 @@ export class MomoService {
             },
         });
         if (
-            signatureCheck == signature &&
-            buyCoinRequest &&
+            ((await bcryptService.compareDataWithHash(orderId!, extraData!)) &&
+                buyCoinRequest &&
+                resultCode == "0",
             [
                 BuyCoinRequestStatus.INIT,
                 BuyCoinRequestStatus.PENDING,
                 BuyCoinRequestStatus.USER_NOTICES_PAID,
-            ].includes(buyCoinRequest.status as any)
+            ].includes(buyCoinRequest?.status as any))
         )
             await prisma.$transaction(async (tx) => {
                 await coinHistoryRepository.create(
@@ -159,9 +123,8 @@ export class MomoService {
             });
 
         return {
-            signatureCheck,
-            signature,
-            rawSignature,
+            message,
+            resultCode,
         };
     }
 }
