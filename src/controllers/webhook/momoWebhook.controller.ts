@@ -18,7 +18,9 @@ export class MomoWebhookController extends BaseController {
     }
 
     async momoWebhook(req: Request, res: Response) {
-        const result = await this.service.handleWebhook(req);
-        this.onSuccess(res, result);
+        await this.service.handleWebhook(req);
+        res.send(
+            '<script>window.open("", "_blank", "");window.close();</script>'
+        );
     }
 }

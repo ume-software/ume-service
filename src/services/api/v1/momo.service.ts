@@ -19,6 +19,7 @@ export class MomoService {
         const ipnUrl = config.momo.inpUrl!;
         const requestType = "captureWallet";
         const extraData = bcryptService.hashData(data.orderId);
+        
         const rawSignature =
             "accessKey=" +
             accessKey +
@@ -54,7 +55,7 @@ export class MomoService {
             orderInfo: orderInfo,
             redirectUrl: redirectUrl,
             ipnUrl: ipnUrl,
-            extraData: data.orderId,
+            extraData: extraData,
             requestType: requestType,
             signature: signature,
             lang: "vi",
@@ -73,12 +74,9 @@ export class MomoService {
     }
 
     async handleWebhook(req: Request) {
-        let {
-            orderId,
-            resultCode,
-            message,
-            extraData,
-        } = req.query as { [key: string]: string };
+        let { orderId, resultCode, message, extraData } = req.query as {
+            [key: string]: string;
+        };
 
         const buyCoinRequest = await buyCoinRequestRepository.findOne({
             where: {
