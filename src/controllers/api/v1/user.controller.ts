@@ -1,9 +1,11 @@
-import { UpdateUserProfileRequest } from "@/common/requests";
+import { UpdateUserProfileRequest, UserSendKYCRequest } from "@/common/requests";
 import {
     AlbumPagingResponse,
     PostPagingResponse,
     UserInformationResponse,
 } from "@/common/responses";
+import { UserKYCRequestResponse } from "@/common/responses/kycRequest";
+
 import {
     BaseController,
     Request,
@@ -48,6 +50,11 @@ export class UserController extends BaseController {
             "/verification-request",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userVerificationRequest)
+        );
+        this.router.post(
+            "/kyc-request",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.userSendKYCRequest)
         );
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
         this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
@@ -168,6 +175,45 @@ export class UserController extends BaseController {
         this.onSuccess(res, result);
     }
 
+    @ApiOperationPost({
+        path: "/kyc-request",
+        operationId: "userSendKYCRequest",
+        security: {
+            bearerAuth: [],
+        },
+        description: "User create verification request",
+        summary: "User create verification request",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: UserSendKYCRequest },
+                },
+            },
+            description: "User create verification request request",
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserKYCRequestResponse },
+                    },
+                },
+                description: "Update user profile success",
+            },
+        },
+    })
+    async userSendKYCRequest(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const userKYCRequest = new UserSendKYCRequest(req.body);
+        if (!userId) {
+            throw errorService.badToken();
+        }
+        const result = await userService.userSendKYCRequest(
+            userId,
+            userKYCRequest
+        );
+        this.onSuccess(res, result);
+    }
     @ApiOperationGet({
         path: "/{slug}/album",
         operationId: "getAlbumByUserSlug",

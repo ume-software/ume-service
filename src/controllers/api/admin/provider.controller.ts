@@ -1,4 +1,5 @@
-import { AdminHandleBanProviderRequest } from "@/common/requests/provider/adminHandleBanProvider.request";
+
+import { AdminHandleBanProviderRequest } from "@/common/requests";
 import {
     AdminGetProviderServicePagingResponse,
     AdminGetUserPagingResponseResponse,

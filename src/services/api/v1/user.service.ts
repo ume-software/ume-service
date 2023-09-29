@@ -1,7 +1,14 @@
+import {
+    AdminHandleUserKYCRequestRequest,
+    UserSendKYCRequest,
+} from "@/common/requests";
 import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfile.request";
+import prisma from "@/models/base.prisma";
 import {
     likePostRepository,
+    noticeRepository,
     postRepository,
+    userKYCRequestRepository,
     userRepository,
 } from "@/repositories";
 import { errorService, utilService } from "@/services";
@@ -11,7 +18,7 @@ import {
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Prisma, User } from "@prisma/client";
+import { NoticeType, Prisma, User, UserKYCStatus } from "@prisma/client";
 
 export class UserService extends BasePrismaService<typeof userRepository> {
     constructor() {
@@ -33,7 +40,13 @@ export class UserService extends BasePrismaService<typeof userRepository> {
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
     }
+    async adminGetListUserKYCRequest(query?: ICrudOptionPrisma) {
+        return await userKYCRequestRepository.findAndCountAll(query);
+    }
 
+    async adminGetUserKYCRequest(query?: ICrudOptionPrisma) {
+        return await userKYCRequestRepository.findOne(query);
+    }
     async getInfoByUserId(userId: string) {
         const result: User | null = await this.repository.findOne({
             where: {
@@ -239,5 +252,101 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             }),
             count: result.count,
         };
+    }
+
+    async userSendKYCRequest(
+        userId: string,
+        userKYCRequest: UserSendKYCRequest
+    ) {
+        const userKYCRequestExisted = await userKYCRequestRepository.findOne({
+            where: {
+                userId,
+            },
+        });
+        if (!userKYCRequestExisted) {
+            return await userKYCRequestRepository.create({
+                ...userKYCRequest,
+                user: {
+                    connect: {
+                        id: userId,
+                    },
+                },
+            });
+        }
+        return await prisma.$transaction(async (tx) => {
+            await userRepository.updateById(userId, { isVerified: false }, tx);
+            return await userKYCRequestRepository.update(
+                {
+                    ...userKYCRequest,
+                    user: {
+                        connect: {
+                            id: userId,
+                        },
+                    },
+                },
+                { where: { id: userKYCRequestExisted.id } }
+            );
+        });
+    }
+
+    async adminHandleUserKYCRequest(
+        adminHandleUserKYCRequestRequest: AdminHandleUserKYCRequestRequest
+    ) {
+        const userKYCRequest = await userKYCRequestRepository.findOne({
+            where: {
+                id: adminHandleUserKYCRequestRequest.id,
+            },
+        });
+
+        if (!userKYCRequest) {
+            throw errorService.recordNotFound();
+        }
+        if (userKYCRequest.userKYCStatus != UserKYCStatus.PENDING) {
+            throw errorService.badRequest();
+        }
+
+        return await prisma.$transaction(async (tx) => {
+            await noticeRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: userKYCRequest.userId,
+                        },
+                    },
+                    type:
+                        adminHandleUserKYCRequestRequest.userKYCStatus ==
+                        UserKYCStatus.APPROVED
+                            ? NoticeType.ADMIN_HAS_APPROVED_KYC_REQUEST
+                            : NoticeType.ADMIN_HAS_REJECTED_KYC_REQUEST,
+                    data: JSON.parse(
+                        JSON.stringify(adminHandleUserKYCRequestRequest)
+                    ),
+                },
+                tx
+            );
+            await userRepository.updateById(
+                userKYCRequest.userId,
+                {
+                    isVerified:
+                        adminHandleUserKYCRequestRequest.userKYCStatus ==
+                        UserKYCStatus.APPROVED
+                            ? true
+                            : false,
+                },
+                tx
+            );
+            return await userKYCRequestRepository.update(
+                {
+                    userKYCStatus:
+                        adminHandleUserKYCRequestRequest.userKYCStatus,
+                },
+                {
+                    where: {
+                        id: userKYCRequest.id,
+                    },
+                },
+                tx
+            );
+        });
     }
 }

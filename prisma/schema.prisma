@@ -127,7 +127,7 @@ model Commune {
 }
 
 model UserSensitiveInformation {
-  id                         Int       @id @default(autoincrement()) @map("id")
+  id                         String    @id @default(uuid()) @map("id")
   createdAt                  DateTime  @default(now()) @map("created_at")
   updatedAt                  DateTime? @updatedAt @map("updated_at")
   deletedAt                  DateTime? @map("deleted_at")
@@ -150,8 +150,10 @@ model UserSensitiveInformation {
 }
 
 model UserKYCRequest {
-  id                         Int           @id @default(autoincrement()) @map("id")
+  id                         String        @id @default(uuid()) @map("id")
   createdAt                  DateTime      @default(now()) @map("created_at")
+  updatedAt                  DateTime?     @updatedAt @map("updated_at")
+  deletedAt                  DateTime?     @map("deleted_at")
   userId                     String        @unique @map("user_id")
   user                       User          @relation(fields: [userId], references: [id])
   frontSideCitizenIdImageUrl String        @map("front_side_citizen_id_image_url")
@@ -747,6 +749,8 @@ enum NoticeType {
   SOMEONE_FOLLOWING_YOU
   ADMIN_HAS_BANNED_PROVIDER
   ADMIN_HAS_UN_BANNED_PROVIDER
+  ADMIN_HAS_APPROVED_KYC_REQUEST
+  ADMIN_HAS_REJECTED_KYC_REQUEST
 }
 
 enum VoucherType {

@@ -1,6 +1,6 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { AdminHandleBanProviderRequest } from "@/common/requests/provider/adminHandleBanProvider.request";
+import { AdminHandleBanProviderRequest } from "@/common/requests";
 import prisma from "@/models/base.prisma";
 import {
     noticeRepository,

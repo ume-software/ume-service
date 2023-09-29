@@ -7,7 +7,7 @@ import {
 import { AdminRoleResponse } from "./adminRole.response";
 
 @ApiModel({
-    description: "User reponse",
+    description: "Admin response",
 })
 export class AdminResponse {
     @ApiModelProperty({
