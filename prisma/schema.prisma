@@ -272,13 +272,16 @@ model PaymentQrSetting {
 }
 
 model Service {
-  id                String             @id @default(uuid()) @map("id")
-  createdAt         DateTime?          @default(now()) @map("created_at")
-  updatedAt         DateTime?          @updatedAt @map("updated_at")
-  deletedAt         DateTime?          @map("deleted_at")
-  name              String             @map("name")
-  imageUrl          String?            @map("image_url")
-  slug              String?            @map("slug")
+  id          String    @id @default(uuid()) @map("id")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  name        String    @map("name")
+  viName      String?   @map("vi_name")
+  imageUrl    String?   @map("image_url")
+  slug        String?   @map("slug")
+  isActivated Boolean   @default(true) @map("is_activated")
+
   providerServices  ProviderService[]
   serviceAttributes ServiceAttribute[]
 
@@ -292,8 +295,9 @@ model ServiceAttribute {
   deletedAt             DateTime?               @map("deleted_at")
   service               Service                 @relation(fields: [serviceId], references: [id])
   serviceId             String                  @map("service_id")
-  name                  String                  @map("name")
-  enName                String?                 @map("en_name")
+  attribute             String                  @map("attribute")
+  viAttribute           String?                 @map("vi_attribute")
+  isActivated           Boolean                 @default(true) @map("is_activated")
   serviceAttributeValue ServiceAttributeValue[]
 
   @@map("service_attribute")
@@ -304,10 +308,11 @@ model ServiceAttributeValue {
   createdAt                DateTime?                  @default(now()) @map("created_at")
   updatedAt                DateTime?                  @updatedAt @map("updated_at")
   deletedAt                DateTime?                  @map("deleted_at")
-  service                  ServiceAttribute           @relation(fields: [serviceAttributeId], references: [id])
+  serviceAttribute         ServiceAttribute           @relation(fields: [serviceAttributeId], references: [id])
   serviceAttributeId       String                     @map("service_attribute_id")
   value                    String                     @map("value")
-  enValue                  String?                    @map("en_value")
+  viValue                  String?                    @map("vi_value")
+  isActivated              Boolean                    @default(true) @map("is_activated")
   providerServiceAttribute ProviderServiceAttribute[]
 
   @@map("service_attribute_value")

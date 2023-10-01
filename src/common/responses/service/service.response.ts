@@ -1,4 +1,9 @@
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
+import { ServiceAttributeResponse } from "./serviceAttribute.response";
 
 @ApiModel({
     description: "Service response",
@@ -39,11 +44,19 @@ export class ServiceResponse {
         example: "lien-minh-huyen-thoai",
     })
     slug!: string;
-    
+
     @ApiModelProperty({
         description: "Image url of service",
         example:
             "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
     })
     imageUrl!: string;
+
+    @ApiModelProperty({
+        description: "Service Attribute Value Request",
+        required: false,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: ServiceAttributeResponse,
+    })
+    serviceAttributes!: Array<ServiceAttributeResponse>;
 }

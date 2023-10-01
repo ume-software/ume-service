@@ -27,6 +27,8 @@ import { DistrictRepository } from "./common/district.repository";
 import { CommuneRepository } from "./common/commune.repository";
 import { ProviderConfigRepository } from "./common/providerConfig.repository";
 import { UserKYCRequestRepository } from "./common/userKYCRequest.repository";
+import { ServiceAttributeRepository } from "./common/serviceAttribute.repository";
+import { ServiceAttributeValueRepository } from "./common/serviceAttributeValue.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -57,7 +59,8 @@ const districtRepository = new DistrictRepository();
 const communeRepository = new CommuneRepository();
 const providerConfigRepository = new ProviderConfigRepository();
 const userKYCRequestRepository = new UserKYCRequestRepository();
-
+const serviceAttributeRepository = new ServiceAttributeRepository();
+const serviceAttributeValueRepository = new ServiceAttributeValueRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -88,4 +91,6 @@ export {
     communeRepository,
     providerConfigRepository,
     userKYCRequestRepository,
+    serviceAttributeRepository,
+    serviceAttributeValueRepository,
 };
