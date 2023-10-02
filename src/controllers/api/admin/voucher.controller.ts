@@ -16,6 +16,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/admin/voucher",
@@ -34,6 +35,11 @@ export class AdminManageVoucherController extends BaseController {
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetAllVoucher)
+        );
+        this.router.get(
+            "/:id",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetVoucherDetail)
         );
         this.router.post(
             "",
@@ -72,6 +78,48 @@ export class AdminManageVoucherController extends BaseController {
         const result = await this.service.findAndCountAll(req.queryInfoPrisma);
         this.onSuccessAsList(res, result);
     }
+
+    @ApiOperationGet({
+        path: "/{id}",
+        operationId: "adminGetVoucherDetail",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Voucher",
+        summary: "Voucher",
+        parameters: {
+            path: {
+                id: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: VoucherResponse },
+                    },
+                },
+                description: "Voucher success",
+            },
+        },
+    })
+    async adminGetVoucherDetail(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) {
+            throw errorService.badRequest();
+        }
+        _.set(req, "queryInfoPrisma.where.id", id);
+        const result = await this.service.findOne(req.queryInfoPrisma);
+
+        this.onSuccess(res, result);
+    }
+
     @ApiOperationPost({
         path: "",
         operationId: "adminCreateVoucher",

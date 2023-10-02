@@ -1,6 +1,7 @@
 import {
     DiscountUnit,
     VoucherRecipientType,
+    VoucherStatus,
     VoucherType,
 } from "@prisma/client";
 import {
@@ -235,4 +236,11 @@ export class VoucherResponse {
         model: AdminResponse,
     })
     admin?: AdminResponse;
+
+    @ApiModelProperty({
+        description: "Voucher status",
+        required: true,
+        model: VoucherStatus,
+    })
+    status!: VoucherStatus;
 }
