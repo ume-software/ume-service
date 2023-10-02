@@ -240,7 +240,7 @@ export class VoucherResponse {
     @ApiModelProperty({
         description: "Voucher status",
         required: true,
-        model: VoucherStatus,
+        enum: Object.values(VoucherStatus),
     })
     status!: VoucherStatus;
 }
