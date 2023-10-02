@@ -52,7 +52,7 @@ export class UpdateVoucherRequest {
     })
     @IsOptional()
     @IsString()
-    content?: string;
+    name?: string;
 
     @ApiModelProperty({
         description: "A short description of the voucher.",
@@ -235,7 +235,7 @@ export class UpdateVoucherRequest {
                 this,
                 mappingDataRequest(UpdateVoucherRequest, data, [
                     "applyISODayOfWeek",
-                    "content",
+                    "name",
                     "dailyUsageLimitPerBooker",
                     "description",
                     "discountUnit",

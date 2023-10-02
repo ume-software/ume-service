@@ -436,7 +436,7 @@ model Voucher {
   adminId                          String?                  @map("admin_id")
   code                             String?                  @unique @map("code")
   image                            String?                  @map("image")
-  content                          String?                  @map("content")
+  name                             String?                  @map("name")
   description                      String?                  @map("description")
   numberIssued                     Int?                     @map("number_issued")
   dailyNumberIssued                Int?                     @map("daily_number_issued")

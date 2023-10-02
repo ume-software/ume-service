@@ -55,13 +55,13 @@ export class CreateVoucherRequest {
     image?: string;
 
     @ApiModelProperty({
-        description: "A description or message associated with the voucher.",
-        required: false,
+        description: "Name of the voucher.",
+        required: true,
         example: "Get 25% off on your summer bookings!",
     })
     @IsOptional()
     @IsString()
-    content?: string;
+    name?: string;
 
     @ApiModelProperty({
         description: "A short description of the voucher.",
@@ -243,9 +243,10 @@ export class CreateVoucherRequest {
 
     @ApiModelProperty({
         description: " A boolean indicating whether the voucher is hidden.",
-        required: true,
+        required: false,
         example: false,
     })
+    @IsOptional()
     @IsBoolean()
     isHided!: boolean;
     constructor(data: CreateVoucherRequest) {
@@ -255,7 +256,7 @@ export class CreateVoucherRequest {
                 mappingDataRequest(CreateVoucherRequest, data, [
                     "applyISODayOfWeek",
                     "code",
-                    "content",
+                    "name",
                     "dailyUsageLimitPerBooker",
                     "description",
                     "discountUnit",
