@@ -8,7 +8,7 @@ export class RedisService {
 
     constructor() {
         this.client = createClient({
-            url: this.getRedisUrl()
+            url: this.getRedisUrl(),
         });
 
         this.client.on("error", (err: any) =>
@@ -28,7 +28,7 @@ export class RedisService {
         return url;
     }
 
-    public async connect(): Promise<void> {
+    public async connect() {
         try {
             return await this.client.connect();
         } catch (e) {}
