@@ -25,7 +25,7 @@ import { NoticeService } from "./api/v1/notice.service";
 import { DonationService } from "./api/v1/donation.service";
 import { VoucherService } from "./api/v1/voucher.service";
 import { VoucherRedeemedBookingService } from "./api/v1/voucherRedeemedBooking.service";
-import { RedisService } from "./common/redis.service";
+// import { RedisService } from "./common/redis.service";
 import { AdminService } from "./api/v1/admin.service";
 import { AdminPaymentSystemService } from "./api/v1/adminPaymentSystem.service";
 import { AdminRoleService } from "./api/v1/adminRole.service";
@@ -49,7 +49,7 @@ const errorService = new ErrorService();
 const firebaseService = new FirebaseService();
 const loginService = new LoginService();
 const googleService = new GoogleService();
-const redisService = new RedisService();
+// const redisService = new RedisService();
 //=============
 const bookingService = new BookingService();
 const coinService = new CoinService();
@@ -88,7 +88,7 @@ export {
     firebaseService,
     loginService,
     googleService,
-    redisService,
+    // redisService,
     // CRUD
     bookingService,
     coinService,
