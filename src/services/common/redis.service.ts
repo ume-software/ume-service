@@ -30,7 +30,7 @@ export class RedisService {
 
     public async connect() {
         try {
-            return await this.client.connect();
+            await this.client.connect();
         } catch (e) {}
     }
 
@@ -51,9 +51,9 @@ export class RedisService {
         return await this.client.get(key);
     }
 
-    public async disconnect(): Promise<void> {
+    public async disconnect() {
         try {
-            return await this.client.disconnect();
+            await this.client.disconnect();
         } catch (e) {}
     }
 
