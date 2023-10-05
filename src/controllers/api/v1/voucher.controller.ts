@@ -110,7 +110,7 @@ export class VoucherController extends BaseController {
         const queryInfoPrisma = req.queryInfoPrisma ?? {};
         _.set(queryInfoPrisma, "where.providerId", userId);
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationPost({
