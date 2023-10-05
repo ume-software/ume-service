@@ -136,6 +136,14 @@ export class UserInformationResponse {
     public isVerified!: boolean | null;
 
     @ApiModelProperty({
+        description: "Is provider",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isProvider!: boolean | null;
+
+    @ApiModelProperty({
         description: "providerServices",
         type: SwaggerDefinitionConstant.ARRAY,
         required: false,

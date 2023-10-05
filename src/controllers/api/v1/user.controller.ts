@@ -1,4 +1,7 @@
-import { UpdateUserProfileRequest, UserSendKYCRequest } from "@/common/requests";
+import {
+    UpdateUserProfileRequest,
+    UserSendKYCRequest,
+} from "@/common/requests";
 import {
     AlbumPagingResponse,
     PostPagingResponse,
@@ -41,6 +44,8 @@ export class UserController extends BaseController {
 
     customRouting() {
         this.router.get("/:slug", this.route(this.getUserBySlug));
+        this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
+        this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
         this.router.patch(
             "/profile",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -56,8 +61,11 @@ export class UserController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userSendKYCRequest)
         );
-        this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
-        this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
+        this.router.post(
+            "/become-provider",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.userBecomeProvider)
+        );
     }
 
     @ApiOperationGet({
@@ -214,6 +222,31 @@ export class UserController extends BaseController {
         );
         this.onSuccess(res, result);
     }
+    @ApiOperationPost({
+        path: "/become-provider",
+        operationId: "userBecomeProvider",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Become provider",
+        summary: "Become provider",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserInformationResponse },
+                    },
+                },
+                description: "Update user profile success",
+            },
+        },
+    })
+    async userBecomeProvider(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const result = await userService.userBecomeProvider(userId);
+        this.onSuccess(res, result);
+    }
+
     @ApiOperationGet({
         path: "/{slug}/album",
         operationId: "getAlbumByUserSlug",

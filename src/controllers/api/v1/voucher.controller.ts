@@ -1,5 +1,5 @@
-import { UpdateVoucherRequest } from "@/common/requests";
-import { CreateVoucherRequest } from "@/common/requests/voucher/createVoucher.request";
+import { UpdateVoucherRequest, CreateVoucherRequest } from "@/common/requests";
+import { VoucherPagingResponse, VoucherResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -16,6 +16,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/voucher",
@@ -34,6 +35,11 @@ export class VoucherController extends BaseController {
             "",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getMyVoucher)
+        );
+        this.router.get(
+            "/provider",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.providerGetSelfVoucher)
         );
         this.router.post(
             "",
@@ -55,16 +61,56 @@ export class VoucherController extends BaseController {
         parameters: {
             query: queryParameters,
         },
-        description: "Voucher for provider",
-        summary: "Voucher for provider",
+        description: "Get My voucher",
+        summary: "Get My voucher",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: VoucherPagingResponse },
+                    },
+                },
+                description: "Voucher response success",
+            },
+        },
     })
     async getMyVoucher(req: Request, res: Response) {
         const userId = this.getTokenInfo(req).id;
         const result = await this.service.getMyVoucher(
             userId,
-            req.queryInfoPrisma
+            req.queryInfoPrisma!
         );
-        this.onSuccess(res, { row: result });
+        this.onSuccess(res, { row: result, count: result.length });
+    }
+
+    @ApiOperationGet({
+        path: "/provider",
+        operationId: "providerGetSelfVoucher",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Voucher for provider",
+        summary: "Voucher for provider",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: VoucherPagingResponse },
+                    },
+                },
+                description: "Voucher response success",
+            },
+        },
+    })
+    async providerGetSelfVoucher(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(queryInfoPrisma, "where.providerId", userId);
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccess(res, result);
     }
 
     @ApiOperationPost({
@@ -86,10 +132,10 @@ export class VoucherController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: CreateVoucherRequest },
+                        schema: { model: VoucherResponse },
                     },
                 },
-                description: "Voucher provider success",
+                description: "Voucher response success",
             },
         },
     })
@@ -132,10 +178,10 @@ export class VoucherController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UpdateVoucherRequest },
+                        schema: { model: VoucherResponse },
                     },
                 },
-                description: "Voucher provider success",
+                description: "Voucher response success",
             },
         },
     })

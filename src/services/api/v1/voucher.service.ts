@@ -27,8 +27,13 @@ export class VoucherService extends BasePrismaService<
         return await this.repository.findOne(query);
     }
 
-    async getMyVoucher(userId: string, _query?: ICrudOptionPrisma) {
-        return await this.repository.findVoucherByBookerId(userId);
+    async getMyVoucher(userId: string, query: ICrudOptionPrisma) {
+        return await this.repository.findVoucherByBookerId(
+            userId,
+            undefined,
+            query.select,
+            query.skip
+        );
     }
     async providerCreateVoucher(
         userId: string,

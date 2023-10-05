@@ -193,6 +193,14 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user attempts to use a slug that is already in use, resulting in a 409 Conflict status.",
     },
+    USER_NEED_VERIFY_ACCOUNT_BEFORE_BECOME_PROVIDER: {
+        type: "user_error",
+        message: "User need verify account before become provider.",
+        codeNumber: 30003,
+        statusCode: 409,
+        description:
+            "This error occurs when the user has not verified their account, resulting in a 409 Conflict status.",
+    },
     BOOKER_DOES_NOT_EXISTED: {
         type: "booking_exception",
         message: "Booker doesn't exist.",

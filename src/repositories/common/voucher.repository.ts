@@ -6,8 +6,6 @@ import {
 import { Prisma, Voucher } from "@prisma/client";
 
 export class VoucherRepository extends BasePrismaRepository {
- 
-
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: Voucher[];
         count: number;
@@ -100,13 +98,11 @@ export class VoucherRepository extends BasePrismaRepository {
         limit?: number,
         skip?: number,
         tx: PrismaTransaction = this.prisma
-    ) {
-        const result = await tx.$queryRaw<Voucher>`
+    ): Promise<Array<Voucher>> {
+        const result = await tx.$queryRaw<Array<any>>`
           SELECT V.*
           FROM voucher V
-          WHERE (${providerId ?? null} IS NULL OR V.provider_id = ${
-            providerId ?? null
-        })
+          WHERE (V.provider_id IS NULL OR V.provider_id = ${providerId ?? null})
             AND V.start_date <= NOW() -- Check if the voucher is valid (start_date)
             AND (V.end_date IS NULL OR V.end_date >= NOW()) -- Check if the voucher is valid (end_date)
             AND V.deleted_at IS NULL -- Check if the voucher is not deleted
@@ -216,6 +212,37 @@ export class VoucherRepository extends BasePrismaRepository {
           OFFSET ${skip ?? null};
       `;
 
-        return result;
+        return result.map((item) => ({
+            id: item.id,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            deletedAt: item.deleted_at,
+            providerId: item.provider_id,
+            adminId: item.admin_id,
+            code: item.code,
+            image: item.image,
+            name: item.name,
+            description: item.description,
+            numberIssued: item.number_issued,
+            dailyNumberIssued: item.daily_number_issued,
+            numberUsablePerBooker: item.number_usable_per_booker,
+            dailyUsageLimitPerBooker: item.daily_usage_limit_per_booker,
+            isActivated: item.is_activated,
+            type: item.type,
+            discountUnit: item.discount_unit,
+            discountValue: item.discount_value,
+            maximumDiscountValue: item.maximum_discount_value,
+            minimumBookingTotalPriceForUsage:
+                item.minimum_booking_total_price_for_usage,
+            minimumBookingDurationForUsage:
+                item.minimum_booking_duration_for_usage,
+            startDate: item.start_date,
+            endDate: item.end_date,
+            applyISODayOfWeek: item.apply_iso_day_of_week,
+            recipientType: item.recipient_type,
+            selectiveBookerIds: item.selective_booker_ids,
+            isHided: item.is_hided,
+            status: item.status,
+        }));
     }
 }

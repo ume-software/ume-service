@@ -288,7 +288,22 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             );
         });
     }
+    async userBecomeProvider(userId: string) {
+        const user = await userRepository.findOne({
+            where: {
+                id: userId,
+            },
+        });
+        if (!user?.isVerified) {
+            throw errorService.error(
+                ERROR_MESSAGE.USER_NEED_VERIFY_ACCOUNT_BEFORE_BECOME_PROVIDER
+            );
+        }
 
+        return await userRepository.updateById(userId, {
+            isProvider: true,
+        });
+    }
     async adminHandleUserKYCRequest(
         adminHandleUserKYCRequestRequest: AdminHandleUserKYCRequestRequest
     ) {
