@@ -8,7 +8,10 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { errorService, voucherService } from "@/services";
 import { VoucherService } from "@/services/api/v1/voucher.service";
-import { queryParameters } from "@/swagger/parameters/query.parameter";
+import {
+    queryParameters,
+    selectParameter,
+} from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -96,7 +99,9 @@ export class AdminManageVoucherController extends BaseController {
                     },
                 },
             },
-            query: queryParameters,
+            query: {
+                ...selectParameter,
+            },
         },
         responses: {
             200: {

@@ -62,7 +62,7 @@ export class VoucherResponse {
         required: false,
         example: "Get 25% off on your summer bookings!",
     })
-    content?: string;
+    name?: string;
 
     @ApiModelProperty({
         description: "A short description of the voucher.",

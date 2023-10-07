@@ -32,8 +32,6 @@ export class UpdateVoucherRequest {
     adminId?: string;
     provider?: any;
     admin?: any;
-    status?: VoucherStatus;
-    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "A URL pointing to an image associated with the voucher.",
@@ -111,8 +109,9 @@ export class UpdateVoucherRequest {
         enum: Object.values(VoucherType),
         example: VoucherType.DISCOUNT,
     })
+    @IsOptional()
     @IsEnum(VoucherType)
-    type!: VoucherType;
+    type?: VoucherType;
 
     @ApiModelProperty({
         description:
@@ -121,8 +120,9 @@ export class UpdateVoucherRequest {
         example: DiscountUnit.PERCENT,
         enum: Object.values(DiscountUnit),
     })
+    @IsOptional()
     @IsEnum(DiscountUnit)
-    discountUnit!: DiscountUnit;
+    discountUnit?: DiscountUnit;
 
     @ApiModelProperty({
         description: "The value of the discount (e.g., 25 for a 25% discount).",
@@ -195,6 +195,7 @@ export class UpdateVoucherRequest {
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: SwaggerDefinitionConstant.INTEGER,
     })
+    @IsOptional()
     @IsArray()
     @IsInt({ each: true })
     applyISODayOfWeek?: Array<number>;
@@ -206,8 +207,9 @@ export class UpdateVoucherRequest {
         enum: Object.values(VoucherRecipientType),
         example: VoucherRecipientType.ALL,
     })
+    @IsOptional()
     @IsEnum(VoucherRecipientType)
-    recipientType!: VoucherRecipientType;
+    recipientType?: VoucherRecipientType;
 
     @ApiModelProperty({
         description:
@@ -227,8 +229,27 @@ export class UpdateVoucherRequest {
         required: true,
         example: false,
     })
+    @IsOptional()
     @IsBoolean()
-    isHided!: boolean;
+    isHided?: boolean;
+
+    @ApiModelProperty({
+        description: "Voucher status.",
+        required: true,
+        example: false,
+    })
+    @IsOptional()
+    @IsEnum(VoucherStatus)
+    status?: VoucherStatus;
+
+    @ApiModelProperty({
+        description: " A boolean indicating whether the voucher is activated.",
+        required: true,
+        example: false,
+    })
+    @IsOptional()
+    @IsBoolean()
+    isActivated?: boolean;
     constructor(data: UpdateVoucherRequest) {
         if (data) {
             Object.assign(
@@ -253,6 +274,8 @@ export class UpdateVoucherRequest {
                     "selectiveBookerIds",
                     "startDate",
                     "type",
+                    "status",
+                    "isActivated",
                 ])
             );
         }
