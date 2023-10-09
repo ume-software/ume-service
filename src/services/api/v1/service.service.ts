@@ -12,6 +12,7 @@ import {
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { Prisma, Service } from "@prisma/client";
+import _ from "lodash";
 
 export class ServiceService extends BasePrismaService<
     typeof serviceRepository
@@ -25,7 +26,7 @@ export class ServiceService extends BasePrismaService<
     }> {
         const result = await this.repository.findAndCountAll(query);
         if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
+            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
         }
         return result;
     }
@@ -87,7 +88,7 @@ export class ServiceService extends BasePrismaService<
     async findOne(query?: ICrudOptionPrisma): Promise<Service> {
         const result = await this.repository.findOne(query);
         if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
+            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
         }
         return result;
     }
@@ -100,15 +101,33 @@ export class ServiceService extends BasePrismaService<
             where: { id: serviceId },
         });
         if (!service) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
+            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
         }
         return await this.repository.updateById(serviceId, serviceUpdateInput);
     }
     async deleteByServiceId(serviceId: string): Promise<Service> {
         const result = await this.repository.deleteById(serviceId);
         if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
+            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
         }
         return result;
+    }
+
+    async getServiceAttributeByServiceSlug(
+        slug: string,
+        query: ICrudOptionPrisma
+    ) {
+        const service = await serviceRepository.findOne({
+            where: {
+                OR: [{ slug }, { id: slug }],
+            },
+        });
+        if (!service) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
+        }
+        _.set(query, "where.serviceId", service.id);
+        return await serviceAttributeRepository.findAndCountAll(query);
     }
 }

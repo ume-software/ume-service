@@ -258,6 +258,7 @@ export class CreateVoucherRequest {
                     "code",
                     "name",
                     "dailyUsageLimitPerBooker",
+                    "dailyNumberIssued",
                     "description",
                     "discountUnit",
                     "discountValue",

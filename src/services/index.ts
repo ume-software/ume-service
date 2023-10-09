@@ -37,6 +37,7 @@ import { LoginService } from "./common/login.service";
 import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 import { VNPayService } from "./api/v1/vnpay.service";
 import { MomoService } from "./api/v1/momo.service";
+import { ServiceAttributeService } from "./api/v1/serviceAttribute.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -76,6 +77,7 @@ const vietnamAddressService = new VietnamAddressService();
 const donationService = new DonationService();
 const vnpayService = new VNPayService();
 const momoService = new MomoService();
+const serviceAttributeService = new ServiceAttributeService();
 export {
     scheduleService,
     errorService,
@@ -115,4 +117,5 @@ export {
     donationService,
     vnpayService,
     momoService,
+    serviceAttributeService
 };

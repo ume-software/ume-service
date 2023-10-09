@@ -115,7 +115,7 @@ export class AdminManageServiceController extends BaseController {
                 description: "Provider success",
             },
             ...MappingErrorResponseSwaggerApi([
-                ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED,
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED,
             ]),
         },
     })

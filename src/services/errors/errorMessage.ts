@@ -263,7 +263,7 @@ export const ERROR_MESSAGE = {
             "This error occurs when a user, referred to as the 'booker,' attempts to initiate a new booking with a service provider while they are already in the process of another booking. In such cases, the system prevents additional reservations until the existing booking is completed or canceled. This restriction is in place to ensure a smooth and organized booking process. To proceed, please wait for the ongoing booking to conclude or cancel it if necessary.",
     },
 
-    THIS_SKILL_DOES_NOT_EXISTED: {
+    THIS_SERVICE_DOES_NOT_EXISTED: {
         type: "service_exception",
         message: "This service doesn't exist.",
         codeNumber: 20200,
@@ -350,7 +350,7 @@ export const ERROR_MESSAGE = {
         description:
             "This error is used when this provider has been un-banned before or has never been banned, resulting in a 400 Not Found status.",
     },
-    THIS_PROVIDER_SKILL_IS_EXISTED: {
+    THIS_PROVIDER_SERVICE_IS_EXISTED: {
         type: "provider_service_exception",
         message: "This service already exists in the provider's service list.",
         codeNumber: 20400,
@@ -359,7 +359,7 @@ export const ERROR_MESSAGE = {
             "This error is used when a provider tries to add a service that already exists in their service list, resulting in a 409 Conflict status.",
     },
 
-    THIS_PROVIDER_SKILL_DOES_NOT_EXISTED: {
+    THIS_PROVIDER_SERVICE_DOES_NOT_EXISTED: {
         type: "provider_service_exception",
         message: "This service doesn't exist in the provider's service list.",
         codeNumber: 20401,

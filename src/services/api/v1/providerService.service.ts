@@ -42,7 +42,7 @@ export class ProviderServiceService extends BasePrismaService<
 
         // if (preExistingProviderService) {
         //   throw errorService.error(
-        //     ERROR_MESSAGE.THIS_PROVIDER_SKILL_IS_EXISTED
+        //     ERROR_MESSAGE.THIS_PROVIDER_SERVICE_IS_EXISTED
         //   );
         // }
         const countServiceProvider = await this.repository.countByProviderId(
@@ -137,7 +137,7 @@ export class ProviderServiceService extends BasePrismaService<
         }
         const service = await serviceService.findOne({ where: { id: serviceId } });
         if (!service) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SKILL_DOES_NOT_EXISTED);
+            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
         }
         const provider = await userRepository.findOne({
             where: {

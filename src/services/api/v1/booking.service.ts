@@ -73,7 +73,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         console.log("providerService ===> ", providerService);
         if (!providerService) {
             throw errorService.error(
-                ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
+                ERROR_MESSAGE.THIS_PROVIDER_SERVICE_DOES_NOT_EXISTED
             );
         }
         const provider = await userRepository.findOne({
@@ -232,7 +232,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         });
         if (!providerService) {
             throw errorService.error(
-                ERROR_MESSAGE.THIS_PROVIDER_SKILL_DOES_NOT_EXISTED
+                ERROR_MESSAGE.THIS_PROVIDER_SERVICE_DOES_NOT_EXISTED
             );
         }
         const { providerId } = providerService;

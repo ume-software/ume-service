@@ -4,7 +4,6 @@ import {
 } from "@/common/requests";
 import {
     FeedbackPagingResponse,
-    ProviderServicePagingResponse,
     ProviderServiceResponse,
 } from "@/common/responses";
 import {
@@ -38,7 +37,6 @@ export class ProviderServiceController extends BaseController {
     service: ProviderServiceService;
 
     customRouting() {
-        this.router.get("/", this.route(this.getProviderService));
         this.router.get(
             "/:id/feedback",
             this.route(this.getFeedbackByProviderService)
@@ -53,31 +51,6 @@ export class ProviderServiceController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.updateProviderService)
         );
-    }
-
-    @ApiOperationGet({
-        path: "",
-        operationId: "getProviderService",
-        description: "Get all services",
-        summary: "Get all services",
-        parameters: {
-            query: queryParameters,
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ProviderServicePagingResponse },
-                    },
-                },
-                description: "Filter Provider Service success",
-            },
-        },
-    })
-    async getProviderService(req: Request, res: Response) {
-        let queryInfoPrisma = req.queryInfoPrisma || {};
-        const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationGet({
@@ -149,7 +122,10 @@ export class ProviderServiceController extends BaseController {
     async createProviderService(req: Request, res: Response) {
         const providerServiceRequest = new ProviderServiceRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.create(userId, providerServiceRequest);
+        const result = await this.service.create(
+            userId,
+            providerServiceRequest
+        );
         this.onSuccess(res, result);
     }
 

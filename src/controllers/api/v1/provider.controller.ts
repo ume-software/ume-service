@@ -1,8 +1,6 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import {
-    FilterProviderPagingResponse,
-} from "@/common/responses";
+import { FilterProviderPagingResponse } from "@/common/responses";
 
 import {
     BaseController,
