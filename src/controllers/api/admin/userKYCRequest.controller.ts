@@ -1,6 +1,8 @@
 import { AdminHandleUserKYCRequestRequest } from "@/common/requests";
-import { AdminGetProviderServicePagingResponse } from "@/common/responses";
-import { UserKYCRequestResponse } from "@/common/responses/kycRequest";
+import {
+    UserKYCRequestResponse,
+    UserKYCRequestResponsePagingResponse,
+} from "@/common/responses/kycRequest";
 import {
     BaseController,
     Request,
@@ -182,7 +184,7 @@ export class AdminManageUserKYCRequestController extends BaseController {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
                         schema: {
-                            model: AdminGetProviderServicePagingResponse,
+                            model: UserKYCRequestResponsePagingResponse,
                         },
                     },
                 },
@@ -222,7 +224,7 @@ export class AdminManageUserKYCRequestController extends BaseController {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
                         schema: {
-                            model: AdminGetProviderServicePagingResponse,
+                            model: UserKYCRequestResponse,
                         },
                     },
                 },

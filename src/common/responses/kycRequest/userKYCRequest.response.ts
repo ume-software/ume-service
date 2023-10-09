@@ -1,7 +1,8 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { AdminResponse } from "../admin";
 import { UserInformationResponse } from "../user";
+import { UserKYCStatus } from "@prisma/client";
 
 @ApiModel({
     description: "User Send KYC Request Response",
@@ -66,4 +67,13 @@ export class UserKYCRequestResponse {
     @IsOptional()
     @IsString()
     user!: UserInformationResponse;
+
+    @ApiModelProperty({
+        description: "User KYC status",
+        required: true,
+        example: UserKYCStatus.APPROVED,
+        enum: Object.values(UserKYCStatus),
+    })
+    @IsEnum(UserKYCStatus)
+    userKYCStatus!: UserKYCStatus;
 }

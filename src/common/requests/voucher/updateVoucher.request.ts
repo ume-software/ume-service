@@ -105,7 +105,7 @@ export class UpdateVoucherRequest {
 
     @ApiModelProperty({
         description: 'The type of the voucher, like "DISCOUNT" in this case.',
-        required: true,
+        required: false,
         enum: Object.values(VoucherType),
         example: VoucherType.DISCOUNT,
     })
@@ -116,7 +116,7 @@ export class UpdateVoucherRequest {
     @ApiModelProperty({
         description:
             'The unit of discount, such as "PERCENT" or other options.',
-        required: true,
+        required: false,
         example: DiscountUnit.PERCENT,
         enum: Object.values(DiscountUnit),
     })
@@ -203,7 +203,7 @@ export class UpdateVoucherRequest {
     @ApiModelProperty({
         description:
             'The type of recipients the voucher is meant for, like "ALL".',
-        required: true,
+        required: false,
         enum: Object.values(VoucherRecipientType),
         example: VoucherRecipientType.ALL,
     })
@@ -226,7 +226,7 @@ export class UpdateVoucherRequest {
 
     @ApiModelProperty({
         description: " A boolean indicating whether the voucher is hidden.",
-        required: true,
+        required: false,
         example: false,
     })
     @IsOptional()
@@ -235,7 +235,7 @@ export class UpdateVoucherRequest {
 
     @ApiModelProperty({
         description: "Voucher status.",
-        required: true,
+        required: false,
         example: false,
     })
     @IsOptional()
@@ -244,7 +244,7 @@ export class UpdateVoucherRequest {
 
     @ApiModelProperty({
         description: " A boolean indicating whether the voucher is activated.",
-        required: true,
+        required: false,
         example: false,
     })
     @IsOptional()
