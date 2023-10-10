@@ -3,6 +3,8 @@ import { UpdateProviderServiceRequest } from "@/common/requests/providerService/
 import prisma from "@/models/base.prisma";
 import {
     bookingCostRepository,
+    providerServiceAttributeRepository,
+    providerServiceAttributeValueRepository,
     providerServiceRepository,
     userRepository,
 } from "@/repositories";
@@ -26,8 +28,13 @@ export class ProviderServiceService extends BasePrismaService<
         userId: string,
         providerServiceRequest: ProviderServiceRequest
     ) {
-        const { serviceId, defaultCost, description, createBookingCosts } =
-            providerServiceRequest;
+        const {
+            serviceId,
+            defaultCost,
+            description,
+            createBookingCosts,
+            createServiceAttributes,
+        } = providerServiceRequest;
 
         if (createBookingCosts && this.checkOverlapTime(createBookingCosts)) {
             throw errorService.badRequest();
@@ -110,7 +117,45 @@ export class ProviderServiceService extends BasePrismaService<
                 false,
                 tx
             );
-            // Craeat Provider service Attribute
+            // Create Provider service Attribute
+            if (createServiceAttributes?.length) {
+                for (const serviceAttribute of createServiceAttributes) {
+                    const providerServiceAttribute =
+                        await providerServiceAttributeRepository.create(
+                            {
+                                providerService: {
+                                    connect: {
+                                        id: providerService.id,
+                                    },
+                                },
+                                serviceAttribute: {
+                                    connect: {
+                                        id: serviceAttribute.id,
+                                    },
+                                },
+                            },
+                            tx
+                        );
+                    for (const serviceAttributeValueId of serviceAttribute.serviceAttributeValueIds ??
+                        []) {
+                        providerServiceAttributeValueRepository.create(
+                            {
+                                providerServiceAttribute: {
+                                    connect: {
+                                        id: providerServiceAttribute.id,
+                                    },
+                                },
+                                serviceAttributeValue: {
+                                    connect: {
+                                        id: serviceAttributeValueId,
+                                    },
+                                },
+                            },
+                            tx
+                        );
+                    }
+                }
+            }
             return await this.repository.findOne(
                 {
                     where: {

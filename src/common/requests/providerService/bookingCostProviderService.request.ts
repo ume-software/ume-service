@@ -1,4 +1,4 @@
-import { IsNumber, IsUUID, Matches, Min } from "class-validator";
+import { IsNumber, Matches, Min } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 const timeOfDayRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
@@ -6,13 +6,13 @@ const timeOfDayRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
     description: "Booking cost provider service request",
 })
 export class BookingCostProviderServiceRequest {
-    @ApiModelProperty({
-        description: "Id Booking cost provider service",
-        required: true,
-        example: "42ac81c2-1815-45f7-b598-412487161e1f",
-    })
-    @IsUUID()
-    id!: string;
+    // @ApiModelProperty({
+    //     description: "Id Booking cost provider service",
+    //     required: true,
+    //     example: "42ac81c2-1815-45f7-b598-412487161e1f",
+    // })
+    // @IsUUID()
+    // id!: string;
 
     @ApiModelProperty({
         description: "The start time that this charge is in effect",
@@ -44,7 +44,7 @@ export class BookingCostProviderServiceRequest {
             Object.assign(
                 this,
                 mappingDataRequest(BookingCostProviderServiceRequest, data, [
-                    "id",
+                    // "id",
                     "startTimeOfDay",
                     "endTimeOfDay",
                     "amount",

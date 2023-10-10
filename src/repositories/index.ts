@@ -29,6 +29,8 @@ import { ProviderConfigRepository } from "./common/providerConfig.repository";
 import { UserKYCRequestRepository } from "./common/userKYCRequest.repository";
 import { ServiceAttributeRepository } from "./common/serviceAttribute.repository";
 import { ServiceAttributeValueRepository } from "./common/serviceAttributeValue.repository";
+import { ProviderServiceAttributeRepository } from "./common/providerServiceAttribute.repository";
+import { ProviderServiceAttributeValueRepository } from "./common/providerServiceAttributeValue.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -61,6 +63,10 @@ const providerConfigRepository = new ProviderConfigRepository();
 const userKYCRequestRepository = new UserKYCRequestRepository();
 const serviceAttributeRepository = new ServiceAttributeRepository();
 const serviceAttributeValueRepository = new ServiceAttributeValueRepository();
+const providerServiceAttributeRepository =
+    new ProviderServiceAttributeRepository();
+const providerServiceAttributeValueRepository =
+    new ProviderServiceAttributeValueRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -93,4 +99,6 @@ export {
     userKYCRequestRepository,
     serviceAttributeRepository,
     serviceAttributeValueRepository,
+    providerServiceAttributeRepository,
+    providerServiceAttributeValueRepository,
 };
