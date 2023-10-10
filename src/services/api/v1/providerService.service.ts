@@ -22,13 +22,24 @@ export class ProviderServiceService extends BasePrismaService<
         super(providerServiceRepository);
     }
 
-    async create(userId: string, providerServiceRequest: ProviderServiceRequest) {
+    async create(
+        userId: string,
+        providerServiceRequest: ProviderServiceRequest
+    ) {
         const { serviceId, defaultCost, description, createBookingCosts } =
             providerServiceRequest;
-        if (this.checkOverlapTime(createBookingCosts)) {
+
+        if (createBookingCosts && this.checkOverlapTime(createBookingCosts)) {
             throw errorService.badRequest();
         }
-        await serviceService.findOne({ where: { id: serviceId } });
+        const service = await serviceService.findOne({
+            where: { id: serviceId },
+        });
+        if (!service) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
+        }
         const provider = await userRepository.findOne({
             where: {
                 userId,
@@ -40,11 +51,6 @@ export class ProviderServiceService extends BasePrismaService<
             );
         }
 
-        // if (preExistingProviderService) {
-        //   throw errorService.error(
-        //     ERROR_MESSAGE.THIS_PROVIDER_SERVICE_IS_EXISTED
-        //   );
-        // }
         const countServiceProvider = await this.repository.countByProviderId(
             provider.id
         );
@@ -84,6 +90,7 @@ export class ProviderServiceService extends BasePrismaService<
                     },
                 });
             if (
+                createBookingCosts &&
                 this.checkOverlapTime([
                     ...createBookingCosts,
                     ...preExistingBookingCosts,
@@ -92,7 +99,7 @@ export class ProviderServiceService extends BasePrismaService<
                 throw errorService.badRequest();
             }
 
-            const bookingCostCreateManyInput = createBookingCosts.map(
+            const bookingCostCreateManyInput = (createBookingCosts ?? []).map(
                 (item) => ({
                     providerServiceId,
                     ...item,
@@ -103,6 +110,7 @@ export class ProviderServiceService extends BasePrismaService<
                 false,
                 tx
             );
+            // Craeat Provider service Attribute
             return await this.repository.findOne(
                 {
                     where: {
@@ -135,9 +143,13 @@ export class ProviderServiceService extends BasePrismaService<
         ) {
             throw errorService.badRequest();
         }
-        const service = await serviceService.findOne({ where: { id: serviceId } });
+        const service = await serviceService.findOne({
+            where: { id: serviceId },
+        });
         if (!service) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
         }
         const provider = await userRepository.findOne({
             where: {

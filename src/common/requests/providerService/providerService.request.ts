@@ -13,6 +13,7 @@ import {
     IsUUID,
 } from "class-validator";
 import { mappingDataRequest } from "../base";
+import { CreateProviderServiceAttributeRequest } from "../service/createProviderServiceAttribute.request";
 
 @ApiModel({
     description: "Provider service request",
@@ -48,18 +49,22 @@ export class ProviderServiceRequest {
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: BookingCostProviderServiceRequest,
-        example: [
-            {
-                startTimeOfDay: "09:00",
-                endTimeOfDay: "15:00",
-                amount: 10,
-            },
-        ],
     })
     @IsOptional()
     @IsArray()
     @IsObject()
-    createBookingCosts!: BookingCostProviderServiceRequest[];
+    createBookingCosts?: BookingCostProviderServiceRequest[];
+
+    @ApiModelProperty({
+        description: "Create Provider Service Attribute Request",
+        required: false,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: CreateProviderServiceAttributeRequest,
+    })
+    @IsOptional()
+    @IsArray()
+    @IsObject()
+    createServiceAttributes?: CreateProviderServiceAttributeRequest[];
 
     constructor(data: ProviderServiceRequest) {
         if (data) {
@@ -70,6 +75,7 @@ export class ProviderServiceRequest {
                     "defaultCost",
                     "description",
                     "createBookingCosts",
+                    "createServiceAttributes",
                 ])
             );
         }

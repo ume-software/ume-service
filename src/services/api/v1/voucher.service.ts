@@ -41,7 +41,7 @@ export class VoucherService extends BasePrismaService<
     ) {
         const provider = await userRepository.findOne({
             where: {
-                userId,
+                id: userId,
             },
         });
         if (!provider || provider.id != userId) {
@@ -60,7 +60,7 @@ export class VoucherService extends BasePrismaService<
     ) {
         const provider = await userRepository.findOne({
             where: {
-                userId,
+                id: userId,
             },
         });
         if (!provider || provider.id != userId) {

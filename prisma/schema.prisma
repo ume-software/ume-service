@@ -289,65 +289,80 @@ model Service {
 }
 
 model ServiceAttribute {
-  id                     String                  @id @default(uuid()) @map("id")
-  createdAt              DateTime?               @default(now()) @map("created_at")
-  updatedAt              DateTime?               @updatedAt @map("updated_at")
-  deletedAt              DateTime?               @map("deleted_at")
-  service                Service                 @relation(fields: [serviceId], references: [id])
-  serviceId              String                  @map("service_id")
-  attribute              String                  @map("attribute")
-  viAttribute            String?                 @map("vi_attribute")
-  isActivated            Boolean                 @default(true) @map("is_activated")
-  serviceAttributeValues ServiceAttributeValue[]
+  id                       String                     @id @default(uuid()) @map("id")
+  createdAt                DateTime?                  @default(now()) @map("created_at")
+  updatedAt                DateTime?                  @updatedAt @map("updated_at")
+  deletedAt                DateTime?                  @map("deleted_at")
+  service                  Service                    @relation(fields: [serviceId], references: [id])
+  serviceId                String                     @map("service_id")
+  attribute                String                     @map("attribute")
+  viAttribute              String?                    @map("vi_attribute")
+  isActivated              Boolean                    @default(true) @map("is_activated")
+  serviceAttributeValues   ServiceAttributeValue[]
+  ProviderServiceAttribute ProviderServiceAttribute[]
 
   @@map("service_attribute")
 }
 
 model ServiceAttributeValue {
-  id                       String                     @id @default(uuid()) @map("id")
-  createdAt                DateTime?                  @default(now()) @map("created_at")
-  updatedAt                DateTime?                  @updatedAt @map("updated_at")
-  deletedAt                DateTime?                  @map("deleted_at")
-  serviceAttribute         ServiceAttribute           @relation(fields: [serviceAttributeId], references: [id])
-  serviceAttributeId       String                     @map("service_attribute_id")
-  value                    String                     @map("value")
-  viValue                  String?                    @map("vi_value")
-  isActivated              Boolean                    @default(true) @map("is_activated")
-  providerServiceAttribute ProviderServiceAttribute[]
+  id                             String                          @id @default(uuid()) @map("id")
+  createdAt                      DateTime?                       @default(now()) @map("created_at")
+  updatedAt                      DateTime?                       @updatedAt @map("updated_at")
+  deletedAt                      DateTime?                       @map("deleted_at")
+  serviceAttribute               ServiceAttribute                @relation(fields: [serviceAttributeId], references: [id])
+  serviceAttributeId             String                          @map("service_attribute_id")
+  value                          String                          @map("value")
+  viValue                        String?                         @map("vi_value")
+  isActivated                    Boolean                         @default(true) @map("is_activated")
+  providerServiceAttributeValues ProviderServiceAttributeValue[]
 
   @@map("service_attribute_value")
 }
 
 model ProviderService {
-  id                       String                     @id @default(uuid()) @map("id")
-  createdAt                DateTime?                  @default(now()) @map("created_at")
-  updatedAt                DateTime?                  @updatedAt @map("updated_at")
-  deletedAt                DateTime?                  @map("deleted_at")
-  provider                 User                       @relation(fields: [providerId], references: [id])
-  providerId               String                     @map("provider_id")
-  service                  Service                    @relation(fields: [serviceId], references: [id])
-  serviceId                String                     @map("service_id")
-  defaultCost              Float                      @map("default_cost")
-  description              String?                    @map("description") @db.Text()
-  position                 Int                        @map("position")
-  bookingCosts             BookingCost[]
-  bookingHistories         BookingHistory[]
-  providerServiceAttribute ProviderServiceAttribute[]
+  id                        String                     @id @default(uuid()) @map("id")
+  createdAt                 DateTime?                  @default(now()) @map("created_at")
+  updatedAt                 DateTime?                  @updatedAt @map("updated_at")
+  deletedAt                 DateTime?                  @map("deleted_at")
+  provider                  User                       @relation(fields: [providerId], references: [id])
+  providerId                String                     @map("provider_id")
+  service                   Service                    @relation(fields: [serviceId], references: [id])
+  serviceId                 String                     @map("service_id")
+  defaultCost               Float                      @map("default_cost")
+  description               String?                    @map("description") @db.Text()
+  position                  Int                        @map("position")
+  bookingCosts              BookingCost[]
+  bookingHistories          BookingHistory[]
+  providerServiceAttributes ProviderServiceAttribute[]
 
   @@map("provider_service")
 }
 
 model ProviderServiceAttribute {
-  id                      String                @id @default(uuid()) @map("id")
-  createdAt               DateTime?             @default(now()) @map("created_at")
-  updatedAt               DateTime?             @updatedAt @map("updated_at")
-  deletedAt               DateTime?             @map("deleted_at")
-  providerService         ProviderService       @relation(fields: [providerServiceId], references: [id])
-  providerServiceId       String                @map("provider_service_id")
-  serviceAttributeValue   ServiceAttributeValue @relation(fields: [serviceAttributeValueId], references: [id])
-  serviceAttributeValueId String                @map("service_attribute_value_id")
+  id                             String                          @id @default(uuid()) @map("id")
+  createdAt                      DateTime?                       @default(now()) @map("created_at")
+  updatedAt                      DateTime?                       @updatedAt @map("updated_at")
+  deletedAt                      DateTime?                       @map("deleted_at")
+  providerService                ProviderService                 @relation(fields: [providerServiceId], references: [id])
+  providerServiceId              String                          @map("provider_service_id")
+  serviceAttribute               ServiceAttribute                @relation(fields: [serviceAttributeId], references: [id])
+  serviceAttributeId             String                          @map("service_attribute_id")
+  providerServiceAttributeValues ProviderServiceAttributeValue[]
 
   @@map("provider_service_attribute")
+}
+
+model ProviderServiceAttributeValue {
+  id                         String                   @id @default(uuid()) @map("id")
+  createdAt                  DateTime?                @default(now()) @map("created_at")
+  updatedAt                  DateTime?                @updatedAt @map("updated_at")
+  deletedAt                  DateTime?                @map("deleted_at")
+  providerServiceAttribute   ProviderServiceAttribute @relation(fields: [providerServiceAttributeId], references: [id])
+  providerServiceAttributeId String                   @map("provider_service_id")
+  serviceAttributeValue      ServiceAttributeValue    @relation(fields: [serviceAttributeValueId], references: [id])
+  serviceAttributeValueId    String                   @map("service_attribute_value_id")
+
+  @@map("provider_service_attribute_value")
 }
 
 model BookingCost {
