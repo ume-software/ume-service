@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { AdminResponse } from "../admin";
 import { UserInformationResponse } from "../user";
@@ -8,6 +8,14 @@ import { UserKYCStatus } from "@prisma/client";
     description: "User Send KYC Request Response",
 })
 export class UserKYCRequestResponse {
+    @ApiModelProperty({
+        description: "Id",
+        required: true,
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d",
+    })
+    @IsUUID()
+    id!: string;
+
     @ApiModelProperty({
         description: "frontSideCitizenIdImageUrl",
         required: true,
