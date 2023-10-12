@@ -1,6 +1,7 @@
 import { CreateServiceRequest } from "@/common/requests";
 import prisma from "@/models/base.prisma";
 import {
+    providerServiceRepository,
     serviceAttributeRepository,
     serviceAttributeValueRepository,
     serviceRepository,
@@ -25,12 +26,55 @@ export class ServiceService extends BasePrismaService<
         count: number;
     }> {
         const result = await this.repository.findAndCountAll(query);
-        if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
-        }
+
         return result;
     }
 
+    async providerGetServiceHaveNotRegistered(
+        userId: string,
+        query?: ICrudOptionPrisma
+    ): Promise<{
+        row: Service[];
+        count: number;
+    }> {
+        const serviceIds = (
+            await providerServiceRepository.findMany({
+                where: {
+                    providerId: userId,
+                },
+                select: {
+                    id: true,
+                },
+            })
+        ).map((item) => item.serviceId);
+        if (!query) query = {};
+        _.set(query, "where.NOT.0.id.in", serviceIds);
+        const result = await this.repository.findAndCountAll(query);
+        return result;
+    }
+
+    async providerGetServiceHaveRegistered(
+        userId: string,
+        query?: ICrudOptionPrisma
+    ): Promise<{
+        row: Service[];
+        count: number;
+    }> {
+        const serviceIds = (
+            await providerServiceRepository.findMany({
+                where: {
+                    providerId: userId,
+                },
+                select: {
+                    id: true,
+                },
+            })
+        ).map((item) => item.serviceId);
+        if (!query) query = {};
+        _.set(query, "where.id.in", serviceIds);
+        const result = await this.repository.findAndCountAll(query);
+        return result;
+    }
     async create(serviceCreateInput: CreateServiceRequest) {
         const service = await prisma.$transaction(async (tx) => {
             const { serviceAttributes, ...serviceCreateData } =
@@ -88,7 +132,9 @@ export class ServiceService extends BasePrismaService<
     async findOne(query?: ICrudOptionPrisma): Promise<Service> {
         const result = await this.repository.findOne(query);
         if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
         }
         return result;
     }
@@ -101,14 +147,18 @@ export class ServiceService extends BasePrismaService<
             where: { id: serviceId },
         });
         if (!service) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
         }
         return await this.repository.updateById(serviceId, serviceUpdateInput);
     }
     async deleteByServiceId(serviceId: string): Promise<Service> {
         const result = await this.repository.deleteById(serviceId);
         if (!result) {
-            throw errorService.error(ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED);
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
         }
         return result;
     }

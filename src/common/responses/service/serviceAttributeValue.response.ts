@@ -5,6 +5,13 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 })
 export class ServiceAttributeValueResponse {
     @ApiModelProperty({
+        description: "Id",
+        required: true,
+        example: "42ac81c2-1815-45f7-b598-412487161e1f",
+    })
+    id!: string;
+
+    @ApiModelProperty({
         description: "Service attribute value",
         required: true,
         example: "Iron",
@@ -29,4 +36,11 @@ export class ServiceAttributeValueResponse {
     @IsOptional()
     @IsBoolean()
     isActivated?: boolean;
+
+    @ApiModelProperty({
+        description: "Service Attribute Id",
+        required: true,
+        example: "42ac81c2-1815-45f7-b598-412487161e1f",
+    })
+    serviceAttributeId!: string;
 }
