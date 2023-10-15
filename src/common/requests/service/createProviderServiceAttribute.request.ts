@@ -1,5 +1,9 @@
 import { IsArray, IsUUID } from "class-validator";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
@@ -21,9 +25,11 @@ export class CreateProviderServiceAttributeRequest {
             "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
             "9fa9f3c5-640a-407f-b64f-12ff6f55e15c",
         ],
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: SwaggerDefinitionConstant.STRING,
     })
     @IsArray()
-    serviceAttributeValueIds!: string;
+    serviceAttributeValueIds!: Array<string>;
 
     constructor(data: CreateProviderServiceAttributeRequest) {
         if (data) {

@@ -4,6 +4,7 @@ import {
 } from "@/common/requests";
 import {
     FeedbackPagingResponse,
+    ProviderServicePagingResponse,
     ProviderServiceResponse,
 } from "@/common/responses";
 import {
@@ -22,6 +23,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/provider-service",
@@ -38,6 +40,11 @@ export class ProviderServiceController extends BaseController {
 
     customRouting() {
         this.router.get(
+            "",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.providerGetOwnServices)
+        );
+        this.router.get(
             "/:id/feedback",
             this.route(this.getFeedbackByProviderService)
         );
@@ -52,7 +59,41 @@ export class ProviderServiceController extends BaseController {
             this.route(this.updateProviderService)
         );
     }
+    @ApiOperationGet({
+        path: "",
+        operationId: "providerGetOwnServices",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Get all services",
+        summary: "Get all services",
+        parameters: {
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderServicePagingResponse },
+                    },
+                },
+                description: "Filter Service success",
+            },
+        },
+    })
+    async providerGetOwnServices(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
 
+        let queryInfoPrisma = req.queryInfoPrisma || {};
+        _.set(queryInfoPrisma, "where.providerId", userId);
+        _.set(
+            queryInfoPrisma,
+            "include.providerServiceAttributes.include.providerServiceAttributeValues",
+            true
+        );
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccessAsList(res, result);
+    }
     @ApiOperationGet({
         path: "/{id}/feedback",
         operationId: "getFeedbackByProviderService",

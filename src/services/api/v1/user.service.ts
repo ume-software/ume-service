@@ -312,7 +312,6 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 id: adminHandleUserKYCRequestRequest.id,
             },
         });
-
         if (!userKYCRequest) {
             throw errorService.recordNotFound();
         }

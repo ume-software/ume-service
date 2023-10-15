@@ -110,6 +110,14 @@ export class VoucherResponse {
     isActivated!: boolean;
 
     @ApiModelProperty({
+        description:
+            "A boolean indicating whether the voucher is published or not.",
+        required: true,
+        example: true,
+    })
+    isPublished!: boolean;
+
+    @ApiModelProperty({
         description: 'The type of the voucher, like "DISCOUNT" in this case.',
         required: true,
         enum: Object.values(VoucherType),

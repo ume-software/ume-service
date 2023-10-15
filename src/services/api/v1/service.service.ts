@@ -76,7 +76,7 @@ export class ServiceService extends BasePrismaService<
         return result;
     }
     async create(serviceCreateInput: CreateServiceRequest) {
-        const service = await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx) => {
             const { serviceAttributes, ...serviceCreateData } =
                 serviceCreateInput;
             const service = await this.repository.create(serviceCreateData, tx);
@@ -112,20 +112,22 @@ export class ServiceService extends BasePrismaService<
                     );
                 }
             }
-            return service;
-        });
 
-        return await this.repository.findOne({
-            where: {
-                id: service.id,
-            },
-            include: {
-                serviceAttributes: {
+            return await this.repository.findOne(
+                {
+                    where: {
+                        id: service.id,
+                    },
                     include: {
-                        serviceAttributeValue: true,
+                        serviceAttributes: {
+                            include: {
+                                serviceAttributeValues: true,
+                            },
+                        },
                     },
                 },
-            },
+                tx
+            );
         });
     }
 

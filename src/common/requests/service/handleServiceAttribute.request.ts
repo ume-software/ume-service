@@ -6,6 +6,7 @@ import {
 } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { EHandleType } from "@/enums/handleType.enum";
+import { HandleServiceAttributeValueRequest } from "./handleServiceAttributeValue.request";
 
 @ApiModel({
     description: "Handle service attribute request",
@@ -61,7 +62,7 @@ export class HandleServiceAttributeRequest {
         itemType: HandleServiceAttributeRequest,
     })
     @IsOptional()
-    serviceAttributeValues?: Array<HandleServiceAttributeRequest>;
+    serviceAttributeValues?: Array<HandleServiceAttributeValueRequest>;
 
     constructor(data: HandleServiceAttributeRequest) {
         if (data) {

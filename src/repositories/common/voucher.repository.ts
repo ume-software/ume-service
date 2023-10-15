@@ -243,6 +243,7 @@ export class VoucherRepository extends BasePrismaRepository {
             selectiveBookerIds: item.selective_booker_ids,
             isHided: item.is_hided,
             status: item.status,
+            isPublished: item.is_published,
         }));
     }
 }

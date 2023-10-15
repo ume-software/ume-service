@@ -68,6 +68,7 @@ export class VoucherService extends BasePrismaService<
                 ERROR_MESSAGE.YOU_HAVE_NOT_BECOME_A_PROVIDER
             );
         }
+
         const voucher = await this.repository.findOne({
             where: {
                 id: updateVoucherRequest.id,
@@ -77,9 +78,16 @@ export class VoucherService extends BasePrismaService<
         if (!voucher) {
             throw errorService.recordNotFound();
         }
+        if (voucher.status == VoucherStatus.APPROVED) {
+            throw errorService.badRequest(
+                ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
+            );
+        }
+
+        if (updateVoucherRequest.isActivated == true) {
+            updateVoucherRequest.isPublished = true;
+        }
         updateVoucherRequest.providerId = provider.id;
-        updateVoucherRequest.isActivated = false;
-        updateVoucherRequest.status = VoucherStatus.PENDING;
 
         return await this.repository.updateById(
             updateVoucherRequest.id,
@@ -120,9 +128,58 @@ export class VoucherService extends BasePrismaService<
         if (!admin) {
             throw errorService.error(ERROR_MESSAGE.ACCOUNT_NOT_FOUND);
         }
-
-        return await this.repository.update(updateVoucherRequest, {
-            where: { id: voucherId },
+        const voucher = await this.repository.findOne({
+            where: {
+                id: updateVoucherRequest.id,
+            },
         });
+        if (!voucher) {
+            throw errorService.recordNotFound();
+        }
+
+        const voucherType = voucher.providerId
+            ? "PROVIDER_VOUCHER"
+            : "ADMIN_VOUCHER";
+        switch (voucherType) {
+            case "PROVIDER_VOUCHER": {
+                if (updateVoucherRequest.status) {
+                    if (voucher.status == VoucherStatus.APPROVED) {
+                        throw errorService.badRequest(
+                            ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
+                        );
+                    }
+                    return await this.repository.update(
+                        {
+                            isActivated: false,
+                            isPublished: false,
+                            status: updateVoucherRequest.status,
+                        },
+                        {
+                            where: { id: voucherId },
+                        }
+                    );
+                }
+
+                return voucher;
+                break;
+            }
+            case "ADMIN_VOUCHER": {
+                if (
+                    voucher.isPublished &&
+                    !(Object.keys(voucher).length === 1 && "status" in voucher)
+                ) {
+                    throw errorService.badRequest(
+                        ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNPUBLISHED_VOUCHER
+                    );
+                }
+                if (updateVoucherRequest.isActivated) {
+                    updateVoucherRequest.isPublished = true;
+                }
+                return await this.repository.update(updateVoucherRequest, {
+                    where: { id: voucherId },
+                });
+                break;
+            }
+        }
     }
 }

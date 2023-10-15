@@ -35,9 +35,15 @@ export class ServiceResponse {
 
     @ApiModelProperty({
         description: "Service name",
-        example: "Liên Minh Huyền Thoại",
+        example: "League of Legends",
     })
     name!: string;
+
+    @ApiModelProperty({
+        description: "Service name",
+        example: "Liên Minh Huyền Thoại",
+    })
+    viName!: string;
 
     @ApiModelProperty({
         description: "Service name",
@@ -51,6 +57,12 @@ export class ServiceResponse {
             "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
     })
     imageUrl!: string;
+
+    @ApiModelProperty({
+        description: "Is activated",
+        example: true,
+    })
+    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "Service Attribute Value Request",

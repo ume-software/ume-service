@@ -406,10 +406,26 @@ export const ERROR_MESSAGE = {
 
     THIS_BOOKING_HAS_BEEN_FEEDBACK: {
         type: "feedback_exception",
-        message: "this booking has been feedback",
+        message: "This booking has been feedback",
         codeNumber: 20800,
         statusCode: 400,
         description:
             "This error occurs when a user attempts to provide feedback for a booking that has already received feedback, resulting in a 400 Bad Request status.",
+    },
+    YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER: {
+        type: "voucher_exception",
+        message: "You can only update unapproved voucher",
+        codeNumber: 20900,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries to update the information of a voucher that has already been approved, resulting in a 400 Bad Request status.",
+    },
+    YOU_CAN_ONLY_UPDATE_UNPUBLISHED_VOUCHER: {
+        type: "voucher_exception",
+        message: "You can only update unpublished voucher",
+        codeNumber: 20901,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries to update the information of a voucher that has already been published, resulting in a 400 Bad Request status.",
     },
 };

@@ -32,7 +32,7 @@ export class UpdateVoucherRequest {
     adminId?: string;
     provider?: any;
     admin?: any;
-
+    isPublished?: boolean;
     @ApiModelProperty({
         description: "A URL pointing to an image associated with the voucher.",
         required: false,
