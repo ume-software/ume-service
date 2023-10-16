@@ -55,7 +55,6 @@ export class UpdateServiceRequest {
         itemType: HandleServiceAttributeRequest,
     })
     @IsOptional()
-    @IsBoolean()
     serviceAttributes!: Array<HandleServiceAttributeRequest>;
 
     constructor(data: UpdateServiceRequest) {
