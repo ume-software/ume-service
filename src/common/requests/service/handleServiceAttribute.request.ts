@@ -19,6 +19,7 @@ export class HandleServiceAttributeRequest {
     })
     @IsUUID()
     @IsString()
+    @IsOptional()
     id?: string;
 
     @ApiModelProperty({
@@ -27,6 +28,7 @@ export class HandleServiceAttributeRequest {
         example: "Rank",
     })
     @IsString()
+    @IsOptional()
     attribute!: string;
 
     @ApiModelProperty({

@@ -14,6 +14,7 @@ export class HandleServiceAttributeValueRequest {
     })
     @IsUUID()
     @IsString()
+    @IsOptional()
     id?: string;
 
     @ApiModelProperty({
@@ -22,6 +23,7 @@ export class HandleServiceAttributeValueRequest {
         example: "Hạng 1",
     })
     @IsString()
+    @IsOptional()
     value!: string;
 
     @ApiModelProperty({

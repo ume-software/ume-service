@@ -13,9 +13,10 @@ import { HandleServiceAttributeRequest } from "./handleServiceAttribute.request"
 export class UpdateServiceRequest {
     @ApiModelProperty({
         description: "Service name",
-        required: true,
+        required: false,
         example: "Identity V",
     })
+    @IsOptional()
     @IsString()
     name!: string;
 
@@ -30,10 +31,11 @@ export class UpdateServiceRequest {
 
     @ApiModelProperty({
         description: "Image url of service",
-        required: true,
+        required: false,
         example:
             "https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg",
     })
+    @IsOptional()
     @IsUrl()
     imageUrl!: string;
 
