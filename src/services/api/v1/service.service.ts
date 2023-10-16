@@ -1,4 +1,9 @@
-import { CreateServiceRequest } from "@/common/requests";
+import {
+    CreateServiceRequest,
+    HandleServiceAttributeValueRequest,
+    UpdateServiceRequest,
+} from "@/common/requests";
+import { EHandleType } from "@/enums/handleType.enum";
 import prisma from "@/models/base.prisma";
 import {
     providerServiceRepository,
@@ -6,6 +11,7 @@ import {
     serviceAttributeValueRepository,
     serviceRepository,
 } from "@/repositories";
+import { PrismaTransaction } from "@/repositories/base/basePrisma.repository";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
@@ -83,12 +89,12 @@ export class ServiceService extends BasePrismaService<
             for (const serviceAttributeData of serviceAttributes) {
                 const {
                     serviceAttributeValues,
-                    ...serviceAttributeCreateDate
+                    ...serviceAttributeCreateData
                 } = serviceAttributeData;
                 const serviceAttribute =
                     await serviceAttributeRepository.create(
                         {
-                            ...serviceAttributeCreateDate,
+                            ...serviceAttributeCreateData,
                             service: {
                                 connect: {
                                     id: service.id,
@@ -155,6 +161,153 @@ export class ServiceService extends BasePrismaService<
         }
         return await this.repository.updateById(serviceId, serviceUpdateInput);
     }
+    async adminUpdateServiceById(
+        serviceId: string,
+        serviceUpdateInput: UpdateServiceRequest
+    ) {
+        const service = await this.repository.findOne({
+            where: { id: serviceId },
+        });
+        if (!service) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
+        }
+        return await prisma.$transaction(async (tx) => {
+            const { serviceAttributes, ...serviceCreateData } =
+                serviceUpdateInput;
+            const service = await this.repository.create(serviceCreateData, tx);
+            if (serviceAttributes) {
+                for (const serviceAttributeData of serviceAttributes) {
+                    const {
+                        serviceAttributeValues,
+                        ...serviceAttributeCreateData
+                    } = serviceAttributeData;
+                    const {
+                        handleType,
+                        id: serviceAttributeHandleId,
+                        ...serviceAttributeHandleData
+                    } = serviceAttributeCreateData;
+                    switch (handleType) {
+                        case EHandleType.CREATE: {
+                            const newServiceAttribute =
+                                await serviceAttributeRepository.create(
+                                    {
+                                        ...serviceAttributeHandleData,
+                                        service: {
+                                            connect: {
+                                                id: service.id,
+                                            },
+                                        },
+                                    },
+                                    tx
+                                );
+
+                            await this.handleServiceAttributeValues(
+                                newServiceAttribute.id,
+                                serviceAttributeValues,
+                                tx
+                            );
+                            break;
+                        }
+                        case EHandleType.UPDATE: {
+                            await serviceAttributeRepository.updateById(
+                                serviceAttributeHandleId!,
+                                {
+                                    ...serviceAttributeHandleData,
+                                    service: {
+                                        connect: {
+                                            id: service.id,
+                                        },
+                                    },
+                                },
+                                tx
+                            );
+                            await this.handleServiceAttributeValues(
+                                serviceAttributeHandleId!,
+                                serviceAttributeValues,
+                                tx
+                            );
+                            break;
+                        }
+                        case EHandleType.DELETE: {
+                            await serviceAttributeRepository.deleteById(
+                                serviceAttributeHandleId!,
+                                tx
+                            );
+                            await serviceAttributeValueRepository.deleteMany({
+                                serviceAttributeId: serviceAttributeHandleId!,
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return await this.repository.findOne(
+                {
+                    where: {
+                        id: service.id,
+                    },
+                    include: {
+                        serviceAttributes: {
+                            include: {
+                                serviceAttributeValues: true,
+                            },
+                        },
+                    },
+                },
+                tx
+            );
+        });
+    }
+
+    private async handleServiceAttributeValues(
+        serviceAttributeId: string,
+        serviceAttributeValues: Array<HandleServiceAttributeValueRequest>,
+        tx: PrismaTransaction = prisma
+    ) {
+        for (const serviceAttributeValueData of serviceAttributeValues) {
+            const { handleType, id, ...serviceAttributeValueHandleData } =
+                serviceAttributeValueData;
+            switch (handleType) {
+                case EHandleType.CREATE: {
+                    await serviceAttributeValueRepository.create(
+                        {
+                            ...serviceAttributeValueHandleData,
+                            serviceAttribute: {
+                                connect: {
+                                    id: serviceAttributeId,
+                                },
+                            },
+                        },
+                        tx
+                    );
+                    break;
+                }
+                case EHandleType.UPDATE: {
+                    await serviceAttributeValueRepository.updateById(
+                        id!,
+                        {
+                            ...serviceAttributeValueHandleData,
+                        },
+                        tx
+                    );
+                    break;
+                }
+                case EHandleType.DELETE: {
+                    await serviceAttributeValueRepository.deleteMany(
+                        {
+                            serviceAttributeId: id!,
+                        },
+                        tx
+                    );
+                    break;
+                }
+            }
+        }
+    }
+
     async deleteByServiceId(serviceId: string): Promise<Service> {
         const result = await this.repository.deleteById(serviceId);
         if (!result) {

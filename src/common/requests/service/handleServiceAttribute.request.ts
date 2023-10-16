@@ -27,7 +27,7 @@ export class HandleServiceAttributeRequest {
         example: "Rank",
     })
     @IsString()
-    attribute?: string;
+    attribute!: string;
 
     @ApiModelProperty({
         description: "Service attribute (VI)",
@@ -36,7 +36,7 @@ export class HandleServiceAttributeRequest {
     })
     @IsOptional()
     @IsString()
-    viAttribute?: string;
+    viAttribute!: string;
 
     @ApiModelProperty({
         description: "Is activated",
@@ -45,7 +45,7 @@ export class HandleServiceAttributeRequest {
     })
     @IsOptional()
     @IsBoolean()
-    isActivated?: boolean;
+    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "Handle Type",
@@ -59,17 +59,17 @@ export class HandleServiceAttributeRequest {
         description: "Create Service Attribute Value Request",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: HandleServiceAttributeRequest,
+        itemType: HandleServiceAttributeValueRequest,
     })
     @IsOptional()
-    serviceAttributeValues?: Array<HandleServiceAttributeValueRequest>;
+    serviceAttributeValues!: Array<HandleServiceAttributeValueRequest>;
 
     constructor(data: HandleServiceAttributeRequest) {
         if (data) {
             if (!data.serviceAttributeValues) data.serviceAttributeValues = [];
             data.serviceAttributeValues = data.serviceAttributeValues.map(
-                (serviceAttributeValue: HandleServiceAttributeRequest) => {
-                    return new HandleServiceAttributeRequest(
+                (serviceAttributeValue: HandleServiceAttributeValueRequest) => {
+                    return new HandleServiceAttributeValueRequest(
                         serviceAttributeValue
                     );
                 }

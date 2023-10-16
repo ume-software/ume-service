@@ -44,7 +44,7 @@ export class UpdateServiceRequest {
     })
     @IsOptional()
     @IsBoolean()
-    isActivated?: boolean;
+    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "Create Service Attribute Request",
@@ -54,7 +54,7 @@ export class UpdateServiceRequest {
     })
     @IsOptional()
     @IsBoolean()
-    serviceAttributes?: Array<HandleServiceAttributeRequest>;
+    serviceAttributes!: Array<HandleServiceAttributeRequest>;
 
     constructor(data: UpdateServiceRequest) {
         if (data) {

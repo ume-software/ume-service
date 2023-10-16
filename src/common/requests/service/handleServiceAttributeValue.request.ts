@@ -22,7 +22,7 @@ export class HandleServiceAttributeValueRequest {
         example: "Hạng 1",
     })
     @IsString()
-    value?: string;
+    value!: string;
 
     @ApiModelProperty({
         description: "Service attribute value (VI)",
@@ -31,7 +31,7 @@ export class HandleServiceAttributeValueRequest {
     })
     @IsOptional()
     @IsString()
-    viValue?: string;
+    viValue!: string;
 
     @ApiModelProperty({
         description: "Is activated",
@@ -40,7 +40,7 @@ export class HandleServiceAttributeValueRequest {
     })
     @IsOptional()
     @IsBoolean()
-    isActivated?: boolean;
+    isActivated!: boolean;
 
     @ApiModelProperty({
         description: "Handle Type",

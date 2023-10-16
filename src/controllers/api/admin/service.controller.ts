@@ -167,7 +167,7 @@ export class AdminManageServiceController extends BaseController {
     }
 
     @ApiOperationPatch({
-        path: "",
+        path: "/{id}",
         operationId: "adminUpdateServiceById",
         security: {
             bearerAuth: [],
@@ -207,12 +207,11 @@ export class AdminManageServiceController extends BaseController {
         if (!id) {
             throw errorService.badRequest();
         }
-        const createServiceRequest = new UpdateServiceRequest(req.body);
-        const result = createServiceRequest;
-        // await this.service.updateServiceById(
-        //     id!,
-        //     createServiceRequest
-        // );
+        const updateServiceRequest = new UpdateServiceRequest(req.body);
+        const result = await this.service.adminUpdateServiceById(
+            id!,
+            updateServiceRequest
+        );
         this.onSuccess(res, result);
     }
 }
