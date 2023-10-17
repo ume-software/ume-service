@@ -142,17 +142,15 @@ export class VoucherService extends BasePrismaService<
             : "ADMIN_VOUCHER";
         switch (voucherType) {
             case "PROVIDER_VOUCHER": {
-                if (updateVoucherRequest.status) {
-                    if (voucher.status == VoucherStatus.APPROVED) {
-                        throw errorService.badRequest(
-                            ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
-                        );
-                    }
+                if (
+                    !(
+                        Object.keys(updateVoucherRequest).length === 1 &&
+                        "isActivated" in updateVoucherRequest
+                    )
+                ) {
                     return await this.repository.update(
                         {
-                            isActivated: false,
-                            isPublished: false,
-                            status: updateVoucherRequest.status,
+                            isActivated: updateVoucherRequest.isActivated!,
                         },
                         {
                             where: { id: voucherId },
@@ -160,7 +158,16 @@ export class VoucherService extends BasePrismaService<
                     );
                 }
 
-                return voucher;
+                if (voucher.status == VoucherStatus.APPROVED) {
+                    throw errorService.badRequest(
+                        ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
+                    );
+                }
+                delete updateVoucherRequest.status;
+                return await this.repository.update(updateVoucherRequest, {
+                    where: { id: voucherId },
+                });
+
                 break;
             }
             case "ADMIN_VOUCHER": {
