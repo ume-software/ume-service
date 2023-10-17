@@ -65,6 +65,12 @@ export class ServiceResponse {
     isActivated!: boolean;
 
     @ApiModelProperty({
+        description: "countProviderUsed",
+        example: 100,
+    })
+    countProviderUsed!: number;
+
+    @ApiModelProperty({
         description: "Service Attribute Value Request",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,

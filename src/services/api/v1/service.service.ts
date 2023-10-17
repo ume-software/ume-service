@@ -27,13 +27,22 @@ export class ServiceService extends BasePrismaService<
     constructor() {
         super(serviceRepository);
     }
-    async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
-        row: Service[];
-        count: number;
-    }> {
+    async findAndCountAll(query?: ICrudOptionPrisma) {
         const result = await this.repository.findAndCountAll(query);
 
-        return result;
+        return {
+            row: await Promise.all(
+                result.row.map(async (service) => {
+                    return Object.assign(service, {
+                        countProviderUsed:
+                            await providerServiceRepository.countByServiceId(
+                                service.id
+                            ),
+                    });
+                })
+            ),
+            count: result.count,
+        };
     }
 
     async providerGetServiceHaveNotRegistered(
@@ -144,7 +153,12 @@ export class ServiceService extends BasePrismaService<
                 ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
             );
         }
-        return result;
+
+        return Object.assign(result, {
+            countProviderUsed: await providerServiceRepository.countByServiceId(
+                result.id
+            ),
+        });
     }
 
     async updateServiceById(

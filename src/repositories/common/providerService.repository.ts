@@ -63,6 +63,16 @@ export class ProviderServiceRepository extends BasePrismaRepository {
             },
         });
     }
+    async countByServiceId(
+        serviceId: string,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<number> {
+        return await tx.providerService.count({
+            where: {
+                serviceId,
+            },
+        });
+    }
 
     async findOne(
         query?: ICrudOptionPrisma,
