@@ -5,6 +5,7 @@ import {
 } from "express-swagger-typescript";
 import { BookingCostResponse } from "../bookingCost/bookingCost.response";
 import { ServiceResponse } from "../service";
+import { ProviderServiceAttributeResponse } from "./providerServiceAttribute.response";
 
 @ApiModel({
     description: "Provider service response",
@@ -77,9 +78,10 @@ export class ProviderServiceResponse {
     })
     service!: ServiceResponse;
 
-    // @ApiModelProperty({
-    //   description: "provider",
-    //   model: ProviderResponse
-    // })
-    // provider!: ProviderResponse;
+    @ApiModelProperty({
+        description: "providerServiceAttributes",
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: ProviderServiceAttributeResponse,
+    })
+    providerServiceAttributes!: Array<ProviderServiceAttributeResponse>;
 }

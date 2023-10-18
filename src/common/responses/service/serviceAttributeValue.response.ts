@@ -43,4 +43,11 @@ export class ServiceAttributeValueResponse {
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
     serviceAttributeId!: string;
+
+    // @ApiModelProperty({
+    //     description: "serviceAttribute",
+    //     required: false,
+    //     model: ServiceAttributeResponse,
+    // })
+    // serviceAttribute!: ServiceAttributeResponse;
 }

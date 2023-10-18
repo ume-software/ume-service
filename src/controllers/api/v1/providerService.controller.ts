@@ -86,11 +86,21 @@ export class ProviderServiceController extends BaseController {
 
         let queryInfoPrisma = req.queryInfoPrisma || {};
         _.set(queryInfoPrisma, "where.providerId", userId);
-        _.set(
-            queryInfoPrisma,
-            "include.providerServiceAttributes.include.providerServiceAttributeValues",
-            true
-        );
+        queryInfoPrisma.include = {
+            bookingCosts: true,
+            service: true,
+            providerServiceAttributes: {
+                include: {
+                    serviceAttribute: true,
+                    providerServiceAttributeValues: {
+                        include: {
+                            serviceAttributeValue: true,
+                        },
+                    },
+                },
+            },
+        };
+
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
     }
