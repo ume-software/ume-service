@@ -76,9 +76,9 @@ export class UpdateProviderServiceRequest {
     handleProviderServiceAttributes!: HandleProviderServiceAttributeRequest[];
 
     constructor(data: UpdateProviderServiceRequest) {
-        if (!data.handleProviderServiceAttributes)
-            data.handleProviderServiceAttributes = [];
         if (data) {
+            if (!data.handleProviderServiceAttributes)
+                data.handleProviderServiceAttributes = [];
             Object.assign(
                 this,
                 mappingDataRequest(UpdateProviderServiceRequest, data, [
@@ -86,6 +86,7 @@ export class UpdateProviderServiceRequest {
                     "defaultCost",
                     "description",
                     "handleBookingCosts",
+                    "handleProviderServiceAttributes",
                 ])
             );
         }

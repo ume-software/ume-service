@@ -180,6 +180,10 @@ export class ProviderServiceService extends BasePrismaService<
             // createBookingCosts,
             handleProviderServiceAttributes,
         } = updateProviderServiceRequest;
+        console.log(
+            "updateProviderServiceRequest ===> ",
+            updateProviderServiceRequest
+        );
         // if (
         //     this.checkOverlapTime([
         //         ...createBookingCosts,
@@ -256,7 +260,6 @@ export class ProviderServiceService extends BasePrismaService<
             const removeServiceAttributeIds = oldServiceAttributeIds.filter(
                 (item) => !handleServiceAttributeIds.includes(item)
             );
-
             for (const handleProviderServiceAttribute of handleProviderServiceAttributes) {
                 const {
                     id: serviceAttributeId,
@@ -373,6 +376,16 @@ export class ProviderServiceService extends BasePrismaService<
             //     tx
             // );
 
+            await tx.providerService.update({
+                where: {
+                    id: preExistingProviderService.id,
+                },
+                data: {
+                    defaultCost,
+                    position,
+                    description,
+                },
+            });
             return await this.repository.findOne(
                 {
                     where: {

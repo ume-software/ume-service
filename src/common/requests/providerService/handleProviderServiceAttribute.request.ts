@@ -32,9 +32,9 @@ export class HandleProviderServiceAttributeRequest {
     handleServiceAttributeValueIds!: Array<string>;
 
     constructor(data: HandleProviderServiceAttributeRequest) {
-        if (!data.handleServiceAttributeValueIds)
-            data.handleServiceAttributeValueIds = [];
         if (data) {
+            if (!data.handleServiceAttributeValueIds)
+                data.handleServiceAttributeValueIds = [];
             Object.assign(
                 this,
                 mappingDataRequest(
