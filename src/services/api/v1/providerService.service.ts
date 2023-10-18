@@ -177,17 +177,18 @@ export class ProviderServiceService extends BasePrismaService<
             serviceId,
             defaultCost,
             description,
-            createBookingCosts,
-            updateBookingCosts,
+            // createBookingCosts,
+            // updateBookingCosts,
+            
         } = updateProviderServiceRequest;
-        if (
-            this.checkOverlapTime([
-                ...createBookingCosts,
-                ...updateBookingCosts,
-            ])
-        ) {
-            throw errorService.badRequest();
-        }
+        // if (
+        //     this.checkOverlapTime([
+        //         ...createBookingCosts,
+        //         ...updateBookingCosts,
+        //     ])
+        // ) {
+        //     throw errorService.badRequest();
+        // }
         const service = await serviceService.findOne({
             where: { id: serviceId },
         });
@@ -198,7 +199,7 @@ export class ProviderServiceService extends BasePrismaService<
         }
         const provider = await userRepository.findOne({
             where: {
-                userId,
+                id: userId,
             },
         });
         if (!provider) {
@@ -206,12 +207,16 @@ export class ProviderServiceService extends BasePrismaService<
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-        const preExistingProviderService = await this.repository.findOne({
+        let preExistingProviderService = await this.repository.findOne({
             where: {
                 serviceId,
                 providerId: provider.id,
             },
         });
+        console.log(
+            "preExistingProviderService ===> ",
+            preExistingProviderService
+        );
         if (!preExistingProviderService) {
             return await this.create(userId, updateProviderServiceRequest);
         }
@@ -220,14 +225,8 @@ export class ProviderServiceService extends BasePrismaService<
         );
         const position = countServiceProvider + 1;
         return await prisma.$transaction(async (tx: PrismaTransaction) => {
-            let providerService = await this.repository.findOne({
-                where: {
-                    providerId: provider.id,
-                    serviceId,
-                },
-            });
-            if (!providerService) {
-                providerService = await this.repository.create(
+            if (!preExistingProviderService) {
+                preExistingProviderService = await this.repository.create(
                     {
                         service: {
                             connect: {
@@ -246,37 +245,38 @@ export class ProviderServiceService extends BasePrismaService<
                     tx
                 );
             }
-            const providerServiceId = providerService?.id!;
-            const preExistingBookingCosts =
-                await bookingCostRepository.findMany({
-                    where: {
-                        providerServiceId,
-                    },
-                });
-            if (
-                this.checkOverlapTime([
-                    ...createBookingCosts,
-                    ...preExistingBookingCosts,
-                ])
-            ) {
-                throw errorService.badRequest();
-            }
+            //const providerServiceId = providerService?.id!;
+            // const preExistingBookingCosts =
+            //     await bookingCostRepository.findMany({
+            //         where: {
+            //             providerServiceId,
+            //         },
+            //     });
+            // if (
+            //     this.checkOverlapTime([
+            //         ...createBookingCosts,
+            //         ...preExistingBookingCosts,
+            //     ])
+            // ) {
+            //     throw errorService.badRequest();
+            // }
 
-            const bookingCostCreateManyInput = createBookingCosts.map(
-                (item) => ({
-                    providerServiceId,
-                    ...item,
-                })
-            );
-            await bookingCostRepository.createMany(
-                bookingCostCreateManyInput,
-                false,
-                tx
-            );
+            // const bookingCostCreateManyInput = createBookingCosts.map(
+            //     (item) => ({
+            //         providerServiceId,
+            //         ...item,
+            //     })
+            // );
+            // await bookingCostRepository.createMany(
+            //     bookingCostCreateManyInput,
+            //     false,
+            //     tx
+            // );
+
             return await this.repository.findOne(
                 {
                     where: {
-                        id: providerService.id,
+                        id: preExistingProviderService.id,
                     },
                     include: {
                         bookingCosts: true,

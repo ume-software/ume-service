@@ -92,7 +92,7 @@ export class PostService extends BasePrismaService<typeof postRepository> {
         if (post) {
             return {
                 id: post.id,
-                content: post.id,
+                content: post.content,
                 userId: post.userId,
                 user: post.user,
                 thumbnails: post.thumbnails,

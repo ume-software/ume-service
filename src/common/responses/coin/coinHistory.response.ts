@@ -40,6 +40,7 @@ export class CoinHistoryResponse {
     @ApiModelProperty({
         description: "Slug url",
         required: true,
+        enum: Object.values(CoinType),
         example: CoinType.BUY_COIN,
     })
     coinType!: CoinType;

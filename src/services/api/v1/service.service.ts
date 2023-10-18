@@ -190,7 +190,11 @@ export class ServiceService extends BasePrismaService<
         return await prisma.$transaction(async (tx) => {
             const { serviceAttributes, ...serviceCreateData } =
                 serviceUpdateInput;
-            const service = await this.repository.create(serviceCreateData, tx);
+            const service = await this.repository.updateById(
+                serviceId,
+                serviceCreateData,
+                tx
+            );
             if (serviceAttributes) {
                 for (const serviceAttributeData of serviceAttributes) {
                     const {

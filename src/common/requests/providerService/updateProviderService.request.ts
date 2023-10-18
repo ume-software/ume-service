@@ -14,6 +14,7 @@ import {
     Min,
 } from "class-validator";
 import { mappingDataRequest } from "../base";
+import { HandleProviderServiceAttributeRequest } from "./handleProviderServiceAttribute.request";
 
 @ApiModel({
     description: "Update provider service request",
@@ -60,41 +61,23 @@ export class UpdateProviderServiceRequest {
     })
     @IsOptional()
     @IsArray()
-    @IsObject()
-    createBookingCosts!: BookingCostProviderServiceRequest[];
+    @IsObject({ each: true })
+    handleBookingCosts!: BookingCostProviderServiceRequest[];
 
     @ApiModelProperty({
-        description: "Update booking cost",
+        description: "Handle Provider Service Attributes",
         required: false,
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: BookingCostProviderServiceRequest,
-        example: [
-            {
-                id: "42ac81c2-1815-45f7-b598-412487161e1f",
-                startTimeOfDay: "09:00",
-                endTimeOfDay: "15:00",
-                amount: 10,
-            },
-        ],
+        itemType: HandleProviderServiceAttributeRequest,
     })
     @IsOptional()
     @IsArray()
-    @IsObject()
-    updateBookingCosts!: BookingCostProviderServiceRequest[];
-
-    @ApiModelProperty({
-        description: "Create booking cost",
-        required: false,
-        type: SwaggerDefinitionConstant.ARRAY,
-        itemType: SwaggerDefinitionConstant.STRING,
-        example: ["42ac81c2-1815-45f7-b598-412487161e1f"],
-    })
-    @IsOptional()
-    @IsArray()
-    @IsObject()
-    deleteBookingCosts!: Array<String>;
+    @IsObject({ each: true })
+    handleProviderServiceAttributes!: HandleProviderServiceAttributeRequest[];
 
     constructor(data: UpdateProviderServiceRequest) {
+        if (!data.handleProviderServiceAttributes)
+            data.handleProviderServiceAttributes = [];
         if (data) {
             Object.assign(
                 this,
@@ -102,9 +85,7 @@ export class UpdateProviderServiceRequest {
                     "serviceId",
                     "defaultCost",
                     "description",
-                    "createBookingCosts",
-                    "updateBookingCosts",
-                    "deleteBookingCosts",
+                    "handleBookingCosts",
                 ])
             );
         }
