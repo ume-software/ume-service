@@ -143,10 +143,8 @@ export class VoucherService extends BasePrismaService<
         switch (voucherType) {
             case "PROVIDER_VOUCHER": {
                 if (
-                    !(
-                        Object.keys(updateVoucherRequest).length === 1 &&
-                        "isActivated" in updateVoucherRequest
-                    )
+                    Object.keys(updateVoucherRequest).length === 1 &&
+                    "isActivated" in updateVoucherRequest
                 ) {
                     return await this.repository.update(
                         {
