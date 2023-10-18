@@ -52,7 +52,7 @@ export class ProviderServiceRequest {
     })
     @IsOptional()
     @IsArray()
-    @IsObject()
+    @IsObject({ each: true })
     createBookingCosts?: BookingCostProviderServiceRequest[];
 
     @ApiModelProperty({
@@ -63,7 +63,7 @@ export class ProviderServiceRequest {
     })
     @IsOptional()
     @IsArray()
-    @IsObject()
+    @IsObject({ each: true })
     createServiceAttributes?: CreateProviderServiceAttributeRequest[];
 
     constructor(data: ProviderServiceRequest) {
