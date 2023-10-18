@@ -49,7 +49,7 @@ export class ProviderServiceService extends BasePrismaService<
         }
         const provider = await userRepository.findOne({
             where: {
-                userId,
+                id: userId,
             },
         });
         if (!provider) {
