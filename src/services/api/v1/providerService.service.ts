@@ -178,8 +178,7 @@ export class ProviderServiceService extends BasePrismaService<
             defaultCost,
             description,
             // createBookingCosts,
-            // updateBookingCosts,
-            
+            handleProviderServiceAttributes,
         } = updateProviderServiceRequest;
         // if (
         //     this.checkOverlapTime([
@@ -213,10 +212,7 @@ export class ProviderServiceService extends BasePrismaService<
                 providerId: provider.id,
             },
         });
-        console.log(
-            "preExistingProviderService ===> ",
-            preExistingProviderService
-        );
+
         if (!preExistingProviderService) {
             return await this.create(userId, updateProviderServiceRequest);
         }
@@ -244,6 +240,110 @@ export class ProviderServiceService extends BasePrismaService<
                     },
                     tx
                 );
+            }
+            const oldServiceAttributeIds = (
+                await tx.providerServiceAttribute.findMany({
+                    where: {
+                        providerServiceId: preExistingProviderService.id,
+                    },
+                    select: {
+                        serviceAttributeId: true,
+                    },
+                })
+            ).map((item) => item.serviceAttributeId);
+            const handleServiceAttributeIds =
+                handleProviderServiceAttributes.map((item) => item.id);
+            const removeServiceAttributeIds = oldServiceAttributeIds.filter(
+                (item) => !handleServiceAttributeIds.includes(item)
+            );
+
+            for (const handleProviderServiceAttribute of handleProviderServiceAttributes) {
+                const {
+                    id: serviceAttributeId,
+                    handleServiceAttributeValueIds,
+                } = handleProviderServiceAttribute;
+                let providerServiceAttribute =
+                    await tx.providerServiceAttribute.findFirst({
+                        where: {
+                            serviceAttributeId,
+                            providerServiceId: preExistingProviderService.id,
+                        },
+                    });
+                if (!providerServiceAttribute) {
+                    providerServiceAttribute =
+                        await tx.providerServiceAttribute.create({
+                            data: {
+                                providerServiceId:
+                                    preExistingProviderService.id,
+                                serviceAttributeId,
+                            },
+                        });
+                }
+
+                const oldServiceAttributeValueIds = (
+                    await tx.providerServiceAttributeValue.findMany({
+                        where: {
+                            providerServiceAttributeId:
+                                providerServiceAttribute.id,
+                        },
+                        select: {
+                            serviceAttributeValueId: true,
+                        },
+                    })
+                ).map((item) => item.serviceAttributeValueId);
+                const removeServiceAttributeValueIds =
+                    oldServiceAttributeValueIds.filter(
+                        (item) => !handleServiceAttributeValueIds.includes(item)
+                    );
+
+                // Find items in new but not in old
+                const createServiceAttributeValueIds =
+                    handleServiceAttributeValueIds.filter(
+                        (item) => !oldServiceAttributeValueIds.includes(item)
+                    );
+                await tx.providerServiceAttributeValue.deleteMany({
+                    where: {
+                        serviceAttributeValueId: {
+                            in: removeServiceAttributeValueIds,
+                        },
+                        providerServiceAttributeId: providerServiceAttribute.id,
+                    },
+                });
+                await tx.providerServiceAttributeValue.createMany({
+                    data: createServiceAttributeValueIds.map(
+                        (serviceAttributeValueId: string) => ({
+                            providerServiceAttributeId:
+                                providerServiceAttribute?.id!,
+                            serviceAttributeValueId,
+                        })
+                    ),
+                });
+            }
+            for (const removeServiceAttributeId of removeServiceAttributeIds) {
+                const providerServiceAttributesWillRemove =
+                    await tx.providerServiceAttribute.findMany({
+                        where: {
+                            serviceAttributeId: removeServiceAttributeId,
+                            providerServiceId: preExistingProviderService.id,
+                        },
+                    });
+                const providerServiceAttributeIdsWillRemove =
+                    providerServiceAttributesWillRemove.map((item) => item.id);
+                await tx.providerServiceAttribute.deleteMany({
+                    where: {
+                        id: {
+                            in: providerServiceAttributeIdsWillRemove,
+                        },
+                    },
+                });
+                await tx.providerServiceAttributeValue.deleteMany({
+                    where: {
+                        serviceAttributeValueId: {
+                            in: providerServiceAttributeIdsWillRemove,
+                        },
+                        providerServiceAttributeId: removeServiceAttributeId,
+                    },
+                });
             }
             //const providerServiceId = providerService?.id!;
             // const preExistingBookingCosts =
