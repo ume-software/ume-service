@@ -78,8 +78,22 @@ export class VoucherService extends BasePrismaService<
         if (!voucher) {
             throw errorService.recordNotFound();
         }
+
+        if (
+            Object.keys(updateVoucherRequest).length === 2 &&
+            "isActivated" in updateVoucherRequest
+        ) {
+            return await this.repository.update(
+                {
+                    isActivated: updateVoucherRequest.isActivated!,
+                },
+                {
+                    where: { id: voucher.id },
+                }
+            );
+        }
         if (voucher.status == VoucherStatus.APPROVED) {
-            throw errorService.badRequest(
+            throw errorService.error(
                 ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
             );
         }
