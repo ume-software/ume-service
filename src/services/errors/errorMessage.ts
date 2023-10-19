@@ -428,4 +428,12 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to update the information of a voucher that has already been published, resulting in a 400 Bad Request status.",
     },
+    SPECIAL_TIME_PERIODS_CANNOT_OVERLAP: {
+        type: "booking_cost_exception",
+        message: "Special time periods cannot overlap.",
+        codeNumber: 21000,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries to update the booking cost of a service that has overlap, resulting in a 400 Bad Request status.",
+    },
 };

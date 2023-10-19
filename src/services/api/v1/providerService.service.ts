@@ -177,17 +177,14 @@ export class ProviderServiceService extends BasePrismaService<
             serviceId,
             defaultCost,
             description,
-            // createBookingCosts,
+            handleBookingCosts,
             handleProviderServiceAttributes,
         } = updateProviderServiceRequest;
-        // if (
-        //     this.checkOverlapTime([
-        //         ...createBookingCosts,
-        //         ...updateBookingCosts,
-        //     ])
-        // ) {
-        //     throw errorService.badRequest();
-        // }
+        if (this.checkOverlapTime([...handleBookingCosts])) {
+            throw errorService.error(
+                ERROR_MESSAGE.SPECIAL_TIME_PERIODS_CANNOT_OVERLAP
+            );
+        }
         const service = await serviceService.findOne({
             where: { id: serviceId },
         });
@@ -241,6 +238,54 @@ export class ProviderServiceService extends BasePrismaService<
                     tx
                 );
             }
+
+            const preExistingBookingCosts =
+                await bookingCostRepository.findMany({
+                    where: {
+                        providerServiceId: preExistingProviderService.id,
+                    },
+                });
+            const handleBookingCostIds = handleBookingCosts
+                .filter((item) => item.id)
+                .map((item) => item.id);
+            const removeBookingCosts = preExistingBookingCosts.filter(
+                (item) => !handleBookingCostIds.includes(item.id)
+            );
+            for (const handleBookingCost of handleBookingCosts) {
+                const { id: handleBookingCostId, ...handleBookingCostData } =
+                    handleBookingCost;
+                if (handleBookingCostId) {
+                    await bookingCostRepository.updateById(
+                        handleBookingCostId,
+                        handleBookingCostData,
+                        tx
+                    );
+                } else {
+                    await bookingCostRepository.create(
+                        {
+                            ...handleBookingCostData,
+                            providerService: {
+                                connect: {
+                                    id: preExistingProviderService.id,
+                                },
+                            },
+                        },
+                        tx
+                    );
+                }
+            }
+            if (removeBookingCosts.length) {
+                await bookingCostRepository.deleteMany(
+                    {
+                        providerServiceId: preExistingProviderService.id,
+                        id: {
+                            in: removeBookingCosts.map((item) => item.id),
+                        },
+                    },
+                    tx
+                );
+            }
+            //-------------
             const oldServiceAttributeIds = (
                 await tx.providerServiceAttribute.findMany({
                     where: {
@@ -261,6 +306,7 @@ export class ProviderServiceService extends BasePrismaService<
                     id: serviceAttributeId,
                     handleServiceAttributeValueIds,
                 } = handleProviderServiceAttribute;
+
                 let providerServiceAttribute =
                     await tx.providerServiceAttribute.findFirst({
                         where: {
@@ -300,10 +346,7 @@ export class ProviderServiceService extends BasePrismaService<
                     handleServiceAttributeValueIds.filter(
                         (item) => !oldServiceAttributeValueIds.includes(item)
                     );
-                console.log(
-                    "removeServiceAttributeValueIds ===> ",
-                    removeServiceAttributeValueIds
-                );
+
                 await tx.providerServiceAttributeValue.deleteMany({
                     where: {
                         serviceAttributeValueId: {
@@ -347,33 +390,6 @@ export class ProviderServiceService extends BasePrismaService<
                     },
                 });
             }
-            //const providerServiceId = providerService?.id!;
-            // const preExistingBookingCosts =
-            //     await bookingCostRepository.findMany({
-            //         where: {
-            //             providerServiceId,
-            //         },
-            //     });
-            // if (
-            //     this.checkOverlapTime([
-            //         ...createBookingCosts,
-            //         ...preExistingBookingCosts,
-            //     ])
-            // ) {
-            //     throw errorService.badRequest();
-            // }
-
-            // const bookingCostCreateManyInput = createBookingCosts.map(
-            //     (item) => ({
-            //         providerServiceId,
-            //         ...item,
-            //     })
-            // );
-            // await bookingCostRepository.createMany(
-            //     bookingCostCreateManyInput,
-            //     false,
-            //     tx
-            // );
 
             await tx.providerService.update({
                 where: {
@@ -381,10 +397,11 @@ export class ProviderServiceService extends BasePrismaService<
                 },
                 data: {
                     defaultCost,
-                    position,
+                    //   position,
                     description,
                 },
             });
+
             return await tx.providerService.findFirst(
                 {
                     where: {
