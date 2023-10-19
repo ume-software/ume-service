@@ -276,6 +276,7 @@ export class UpdateVoucherRequest {
                     "type",
                     "status",
                     "isActivated",
+                    "dailyNumberIssued",
                 ])
             );
         }

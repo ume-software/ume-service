@@ -4,6 +4,20 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 })
 export class AdminGetBookingStatisticResponse {
     @ApiModelProperty({
+        description: "Star",
+        required: false,
+        example: 4.5,
+    })
+    star?: number;
+
+    @ApiModelProperty({
+        description: "Total feedback",
+        required: false,
+        example: 100,
+    })
+    totalFeedback?: number;
+
+    @ApiModelProperty({
         description: "Total time",
         required: false,
         example: 16,

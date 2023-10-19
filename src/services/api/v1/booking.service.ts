@@ -427,8 +427,33 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 },
             },
         });
-
+        const totalFeedback = await prisma.feedback.count({
+            where: {
+                booking: {
+                    providerService: {
+                        providerId: provider.id,
+                    },
+                },
+                deletedAt: null,
+            },
+        });
+        const starAggregate = await prisma.feedback.aggregate({
+            _avg: {
+                amountStar: true,
+            },
+            where: {
+                booking: {
+                    providerService: {
+                        providerId: provider.id,
+                    },
+                },
+                amountStar: { not: null },
+                deletedAt: null,
+            },
+        });
         return {
+            star: starAggregate._avg,
+            totalFeedback,
             totalTime: bookingHistoryAggregate._sum.bookingPeriod,
             totalRevenue: bookingHistoryAggregate._sum.totalCost,
             totalProfit: bookingHistoryAggregate._sum.providerReceivedCoin,
