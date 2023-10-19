@@ -185,7 +185,7 @@ export class VoucherService extends BasePrismaService<
             case "ADMIN_VOUCHER": {
                 if (
                     voucher.isPublished &&
-                    !(Object.keys(voucher).length === 1 && "status" in voucher)
+                    !(Object.keys(updateVoucherRequest).length === 1 && "status" in updateVoucherRequest)
                 ) {
                     throw errorService.badRequest(
                         ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNPUBLISHED_VOUCHER
