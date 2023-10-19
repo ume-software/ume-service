@@ -180,10 +180,6 @@ export class ProviderServiceService extends BasePrismaService<
             // createBookingCosts,
             handleProviderServiceAttributes,
         } = updateProviderServiceRequest;
-        console.log(
-            "updateProviderServiceRequest ===> ",
-            updateProviderServiceRequest
-        );
         // if (
         //     this.checkOverlapTime([
         //         ...createBookingCosts,
@@ -304,6 +300,10 @@ export class ProviderServiceService extends BasePrismaService<
                     handleServiceAttributeValueIds.filter(
                         (item) => !oldServiceAttributeValueIds.includes(item)
                     );
+                console.log(
+                    "removeServiceAttributeValueIds ===> ",
+                    removeServiceAttributeValueIds
+                );
                 await tx.providerServiceAttributeValue.deleteMany({
                     where: {
                         serviceAttributeValueId: {
@@ -341,10 +341,9 @@ export class ProviderServiceService extends BasePrismaService<
                 });
                 await tx.providerServiceAttributeValue.deleteMany({
                     where: {
-                        serviceAttributeValueId: {
+                        providerServiceAttributeId: {
                             in: providerServiceAttributeIdsWillRemove,
                         },
-                        providerServiceAttributeId: removeServiceAttributeId,
                     },
                 });
             }
@@ -386,16 +385,33 @@ export class ProviderServiceService extends BasePrismaService<
                     description,
                 },
             });
-            return await this.repository.findOne(
+            return await tx.providerService.findFirst(
                 {
                     where: {
                         id: preExistingProviderService.id,
                     },
                     include: {
                         bookingCosts: true,
+                        service: true,
+                        providerServiceAttributes: {
+                            include: {
+                                serviceAttribute: true,
+                                providerServiceAttributeValues: {
+                                    include: {
+                                        serviceAttributeValue: true,
+                                    },
+                                    where: {
+                                        deletedAt: null,
+                                    },
+                                },
+                            },
+                            where: {
+                                deletedAt: null,
+                            },
+                        },
                     },
-                },
-                tx
+                }
+                // tx
             );
         });
     }

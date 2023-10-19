@@ -96,11 +96,17 @@ export class ProviderServiceController extends BaseController {
                         include: {
                             serviceAttributeValue: true,
                         },
+                        where: {
+                            deletedAt: null,
+                        },
                     },
                 },
             },
+            where: {
+                deletedAt: null,
+            },
         };
-
+      
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
     }

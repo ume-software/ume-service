@@ -358,7 +358,7 @@ model ProviderServiceAttributeValue {
   updatedAt                  DateTime?                @updatedAt @map("updated_at")
   deletedAt                  DateTime?                @map("deleted_at")
   providerServiceAttribute   ProviderServiceAttribute @relation(fields: [providerServiceAttributeId], references: [id])
-  providerServiceAttributeId String                   @map("provider_service_id")
+  providerServiceAttributeId String                   @map("provider_service_attribute_id")
   serviceAttributeValue      ServiceAttributeValue    @relation(fields: [serviceAttributeValueId], references: [id])
   serviceAttributeValueId    String                   @map("service_attribute_value_id")
 
