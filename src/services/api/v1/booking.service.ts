@@ -452,7 +452,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
         return {
-            star: starAggregate._avg,
+            star: starAggregate._avg.amountStar,
             totalFeedback,
             totalTime: bookingHistoryAggregate._sum.bookingPeriod,
             totalRevenue: bookingHistoryAggregate._sum.totalCost,
