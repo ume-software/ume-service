@@ -187,7 +187,8 @@ export class VoucherService extends BasePrismaService<
                     voucher.isPublished &&
                     !(
                         Object.keys(updateVoucherRequest).length === 1 &&
-                        "status" in updateVoucherRequest
+                        ("status" in updateVoucherRequest ||
+                            "isActivated" in updateVoucherRequest)
                     )
                 ) {
                     throw errorService.badRequest(

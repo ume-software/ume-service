@@ -88,7 +88,11 @@ export class ProviderServiceController extends BaseController {
         _.set(queryInfoPrisma, "where.providerId", userId);
 
         queryInfoPrisma.include = {
-            bookingCosts: true,
+            bookingCosts: {
+                where: {
+                    deletedAt: null,
+                },
+            },
             service: true,
             providerServiceAttributes: {
                 include: {

@@ -1,17 +1,32 @@
 import { BaseMiddleware } from "./base.middleware";
-import * as express from 'express';
-import * as _ from 'lodash'
+import * as express from "express";
+import * as _ from "lodash";
 import { Request, Response } from "@/controllers/base/base.controller";
 import { config } from "@/configs";
-export const UNLIMITED = 'unlimited'
+export const UNLIMITED = "unlimited";
 export class QueryPrismaMiddleware extends BaseMiddleware {
-    override async use(req: Request, _res: Response, next: express.NextFunction) {
+    override async use(
+        req: Request,
+        _res: Response,
+        next: express.NextFunction
+    ) {
         const where = this._parsewhere(req);
         const orderBy = this._parseOrder(req);
-        const page = typeof req?.query["page"] == "string" ? Number.parseInt(req?.query["page"]) : 1
-        const take = req.query['limit'] == UNLIMITED ? UNLIMITED : typeof req.query['limit'] == "string" ? Number.parseInt(req.query['limit']) : config.database.defaultPageSize
+        const page =
+            typeof req?.query["page"] == "string"
+                ? Number.parseInt(req?.query["page"])
+                : 1;
+        const take =
+            req.query["limit"] == UNLIMITED
+                ? UNLIMITED
+                : typeof req.query["limit"] == "string"
+                ? Number.parseInt(req.query["limit"])
+                : config.database.defaultPageSize;
 
-        const skip = take == UNLIMITED ? undefined : parseInt(`${req.query['offset']}`) || (page - 1) * take;
+        const skip =
+            take == UNLIMITED
+                ? undefined
+                : parseInt(`${req.query["offset"]}`) || (page - 1) * take;
         const select = this._parseSelects(req);
 
         // if (fields.attributes != undefined) {
@@ -22,7 +37,7 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
                 where,
                 orderBy,
                 take: take == UNLIMITED ? undefined : take,
-                skip
+                skip,
             },
             select
         );
@@ -33,7 +48,7 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
      * Format: [[key, operator, value], [key, operator, value]]
      */
     _parsewhere(req: any): any {
-        let where = req.query['where'];
+        let where = req.query["where"];
         try {
             where = JSON.parse(where);
         } catch (ignore) {
@@ -47,7 +62,7 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
      */
 
     _parseWhere(req: any): any {
-        let where = req.query['where'];
+        let where = req.query["where"];
 
         try {
             where = JSON.parse(where);
@@ -60,16 +75,16 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
      * Format: [[key, order], [key, order]]
      */
     _parseOrder(req: any): any {
-        let order = req.query['order'];
+        let order = req.query["order"];
         try {
             order = JSON.parse(order);
         } catch (ignore) {
             order = undefined;
         }
-        return order || [{ 'updatedAt': 'asc' }];
+        return order || [{ updatedAt: "asc" }];
     }
     _parseSelects(req: any): any {
-        let select = req.query['select'];
+        let select = req.query["select"];
         try {
             select = JSON.parse(select);
         } catch (ignore) {
@@ -82,53 +97,48 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
         }
     }
     _parseAttribute(attrs: any) {
-        if (typeof attrs == 'string')
-            attrs = JSON.parse(attrs)
-        let select: any = { 'id': true, 'createdAt': true, 'updatedAt': true }
+        if (typeof attrs == "string") attrs = JSON.parse(attrs);
+        let select: any = { id: true, createdAt: true, updatedAt: true };
         const includes: any = [];
         let isGetAll = false;
         let isSetParanoid = false;
-        let where: any = undefined;
+        let where: any = {
+            deletedAt: null,
+        };
         _.forEach(attrs, (f) => {
-
-            if (typeof f === 'string') {
+            if (typeof f === "string") {
                 switch (f) {
-                    case '$all':
+                    case "$all":
                         isGetAll = true;
                         select = undefined;
                         break;
-                    case '$paranoid':
+                    case "$paranoid":
                         isSetParanoid = true;
                         break;
                     default:
                         select[f] = true;
                 }
-
-
-            } else if (typeof f === 'object' && !Array.isArray(f)) {
+            } else if (typeof f === "object" && !Array.isArray(f)) {
                 _.forEach(
                     f,
                     ((value: any, name: string) => {
                         switch (name) {
-                            case '$where':
+                            case "$where":
                                 where = _.merge({}, where, value);
                                 break;
                             default:
                                 includes.push({
                                     [name]: value,
                                 });
-
                         }
-
-
                     }).bind(this)
                 );
             }
         });
         let include = this._parseInclude(includes);
-        include = Object.keys(include).length === 0 ? undefined : include
+        include = Object.keys(include).length === 0 ? undefined : include;
         const result: any = {
-            include: include
+            include: include,
         };
         if (where) result.where = where;
         if (!isGetAll) {
@@ -156,17 +166,13 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
                     i,
                     ((attrs: any, name: string) => {
                         const att = this._parseAttribute(attrs);
-                        const associate = Object.assign(
-                            {
-
-                                [name]: { ...att }
-
-                            }
-                        );
+                        const associate = Object.assign({
+                            [name]: { ...att },
+                        });
                         include = {
                             ...include,
-                            ...associate
-                        }
+                            ...associate,
+                        };
                     }).bind(this)
                 );
             }).bind(this)
