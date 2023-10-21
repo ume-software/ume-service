@@ -43,7 +43,7 @@ export class DonationRequest {
             Object.assign(
                 this,
                 mappingDataRequest(DonationRequest, data, [
-                    "providerId",
+                    "recipientId",
                     "amount",
                     "message",
                 ])

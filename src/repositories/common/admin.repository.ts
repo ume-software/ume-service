@@ -81,18 +81,6 @@ export class AdminRepository extends BasePrismaRepository {
         return await tx.admin.deleteMany({ where: AdminWhereInput })
     }
 
-    // async syncDataAdmin(AdminCreateInput: Prisma.AdminCreateInput) {
-    //     const bodyRequest = {
-    //         id: AdminCreateInput.id,
-    //         createdAt: AdminCreateInput.createdAt,
-    //         updatedAt: AdminCreateInput.updatedAt,
-    //         deletedAt: AdminCreateInput.deletedAt
-    //     }
-    //     return await utilService.fetch(config.service.ume.url).post("system/admin/sync", {
-    //         data: cryptoService.encryptStringWithRsaPublicKey(bodyRequest, config.service.ume.path_public_key)
-    //     })
-    // }
-
     async updateById(id: string, adminUpdateInput: Prisma.AdminUpdateInput, tx: PrismaTransaction = this.prisma) {
         return await tx.admin.update({ data: adminUpdateInput, where: { id } })
     }
