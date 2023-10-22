@@ -84,6 +84,7 @@ export class HandleServiceAttributeRequest {
                     "viAttribute",
                     "isActivated",
                     "serviceAttributeValues",
+                    "handleType"
                 ])
             );
         }

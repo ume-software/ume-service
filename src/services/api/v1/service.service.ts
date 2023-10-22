@@ -195,7 +195,7 @@ export class ServiceService extends BasePrismaService<
                 serviceCreateData,
                 tx
             );
-            if (serviceAttributes) {
+            if (serviceAttributes?.length) {
                 for (const serviceAttributeData of serviceAttributes) {
                     const {
                         serviceAttributeValues,
@@ -304,22 +304,22 @@ export class ServiceService extends BasePrismaService<
                     break;
                 }
                 case EHandleType.UPDATE: {
-                    await serviceAttributeValueRepository.updateById(
-                        id!,
-                        {
-                            ...serviceAttributeValueHandleData,
-                        },
-                        tx
-                    );
+                    if (id)
+                        await serviceAttributeValueRepository.updateById(
+                            id,
+                            {
+                                ...serviceAttributeValueHandleData,
+                            },
+                            tx
+                        );
                     break;
                 }
                 case EHandleType.DELETE: {
-                    await serviceAttributeValueRepository.deleteMany(
-                        {
-                            serviceAttributeId: id!,
-                        },
-                        tx
-                    );
+                    if (id)
+                        await serviceAttributeValueRepository.deleteById(
+                            id,
+                            tx
+                        );
                     break;
                 }
             }
