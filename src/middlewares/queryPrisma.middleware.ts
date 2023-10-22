@@ -102,9 +102,7 @@ export class QueryPrismaMiddleware extends BaseMiddleware {
         const includes: any = [];
         let isGetAll = false;
         let isSetParanoid = false;
-        let where: any = {
-            deletedAt: null,
-        };
+        let where: any = undefined;
         _.forEach(attrs, (f) => {
             if (typeof f === "string") {
                 switch (f) {

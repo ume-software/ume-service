@@ -46,7 +46,6 @@ export class ProviderService extends BasePrismaService<
     }
     async findAndCountAll(query: ICrudOptionPrisma) {
         const result = await this.repository.findAndCountAll(query);
-
         return result;
     }
 
