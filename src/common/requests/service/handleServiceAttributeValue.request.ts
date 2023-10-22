@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { EHandleType } from "@/enums/handleType.enum";
@@ -12,7 +12,6 @@ export class HandleServiceAttributeValueRequest {
         required: false,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
-    @IsUUID()
     @IsString()
     @IsOptional()
     id?: string;

@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
@@ -17,7 +17,7 @@ export class HandleServiceAttributeRequest {
         required: false,
         example: "42ac81c2-1815-45f7-b598-412487161e1f",
     })
-    @IsUUID()
+    // @IsUUID()
     @IsString()
     @IsOptional()
     id?: string;
