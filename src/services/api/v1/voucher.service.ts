@@ -183,7 +183,7 @@ export class VoucherService extends BasePrismaService<
                         ERROR_MESSAGE.YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER
                     );
                 }
-                delete updateVoucherRequest.status;
+                // delete updateVoucherRequest.status;
                 return await this.repository.update(updateVoucherRequest, {
                     where: { id: voucherId },
                 });

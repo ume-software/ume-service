@@ -29,6 +29,12 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
     constructor() {
         super(bookingHistoryRepository);
     }
+    async findAndCountAll(query?: ICrudOptionPrisma) {
+        return await this.repository.findAndCountAll(query);
+    }
+    async findOne(query?: ICrudOptionPrisma) {
+        return await this.repository.findOne(query);
+    }
     async getCurrentBookingForProvider(userId: string) {
         const bookingLists =
             await bookingHistoryRepository.findAllCurrentBookingProvider(

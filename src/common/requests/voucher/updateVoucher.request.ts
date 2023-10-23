@@ -13,6 +13,7 @@ import {
     IsInt,
     IsOptional,
     IsString,
+    IsUppercase,
     IsUrl,
     Min,
 } from "class-validator";
@@ -33,6 +34,16 @@ export class UpdateVoucherRequest {
     provider?: any;
     admin?: any;
     isPublished?: boolean;
+    @ApiModelProperty({
+        description:
+            " A unique string representing the voucher code that users can enter to redeem the voucher.",
+        required: false,
+        example: "SUPPERSALE",
+    })
+    @IsOptional()
+    @IsUppercase()
+    @IsString()
+    code?: string;
     @ApiModelProperty({
         description: "A URL pointing to an image associated with the voucher.",
         required: false,
@@ -255,6 +266,7 @@ export class UpdateVoucherRequest {
             Object.assign(
                 this,
                 mappingDataRequest(UpdateVoucherRequest, data, [
+                    "code",
                     "applyISODayOfWeek",
                     "name",
                     "dailyUsageLimitPerBooker",
