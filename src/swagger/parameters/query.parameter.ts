@@ -126,6 +126,20 @@ export const filterProviderParameters = {
         Example : service-id=14476c02-2846-4097-8f00-b495e8fc77ae
         `,
     },
+    "service-attribute-value-ids": {
+        name: "service-attribute-value-ids",
+        required: false,
+        schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.ARRAY,
+            items: {
+                type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+            },
+            // default: "14476c02-2846-4097-8f00-b495e8fc77ae",
+        },
+        description: `
+        Example : service-attribute-value-id=14476c02-2846-4097-8f00-b495e8fc77ae
+        `,
+    },
     name: {
         name: "name",
         required: false,

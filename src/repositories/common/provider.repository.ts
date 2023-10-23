@@ -30,8 +30,16 @@ export class ProviderRepository extends BasePrismaRepository {
         skip: number | undefined,
         take: number | undefined
     ) {
-        const { endCost, gender, name, serviceId, startCost, order, status } =
-            option;
+        const {
+            endCost,
+            gender,
+            name,
+            serviceId,
+            startCost,
+            order,
+            status,
+            serviceAttributeValueIds,
+        } = option;
         const nowTimehhmm = moment()
             .utcOffset(config.server.timezone)
             .format("HH:mm");
@@ -96,6 +104,14 @@ export class ProviderRepository extends BasePrismaRepository {
                 ) AS f ON psfps.id = f.provider_service_id
                 GROUP BY psfps.id
               ) AS psf ON psf.providerServiceId = ps.id
+              ${
+                  serviceAttributeValueIds != undefined
+                      ? `
+              INNER JOIN provider_service_attribute AS psa ON ps.id = psa.provider_service_id
+              INNER JOIN provider_service_attribute_value AS psav ON psa.id = psav.provider_service_attribute_id 
+              `
+                      : ""
+              }
             WHERE
               ps.deleted_at IS NULL
               ${
@@ -105,6 +121,13 @@ export class ProviderRepository extends BasePrismaRepository {
               }
               ${name != undefined ? `AND p.name like '%${name}%'` : ""}
               ${gender != undefined ? `AND p.gender = '${gender}'` : ""}
+              ${
+                  serviceAttributeValueIds != undefined
+                      ? `AND (psav.service_attribute_value_id IN (${serviceAttributeValueIds
+                            .map((item) => `'${item}'`)
+                            .join(", ")}))`
+                      : ""
+              }
           )
           SELECT
             pd.id,
@@ -143,7 +166,6 @@ export class ProviderRepository extends BasePrismaRepository {
             });
             orderQueryRaw = orderClauses.join(", ");
         }
-
         const row: any[] = await this.prisma.$queryRawUnsafe(`
         ${querySql}
         ${orderQueryRaw ? `ORDER BY ${orderQueryRaw}` : ""}

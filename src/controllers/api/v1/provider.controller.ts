@@ -66,13 +66,26 @@ export class ProviderController extends BaseController {
     })
     async getListProvider(req: Request, res: Response) {
         const { queryInfoPrisma } = req;
-        const { "service-id": serviceId, gender, name, status } = req.query;
+        const {
+            "service-id": serviceId,
+            "service-attribute-value-ids": serviceAttributeValueId,
+            gender,
+            name,
+            status,
+        } = req.query;
+        let serviceAttributeValueIds = undefined;
+        if (typeof serviceAttributeValueId == "string") {
+            serviceAttributeValueIds = [serviceAttributeValueId];
+        } else if (serviceAttributeValueId?.length) {
+            serviceAttributeValueIds = serviceAttributeValueId;
+        }
         const start_cost = req.query["start-cost"]?.toString();
         const startCost = start_cost ? +start_cost : undefined;
         const end_cost = req.query["end-cost"]?.toString();
         const endCost = end_cost ? +end_cost : undefined;
         const result = await this.service.filterProvider(
             {
+                serviceAttributeValueIds,
                 startCost,
                 endCost,
                 serviceId: serviceId?.toString() || undefined,
