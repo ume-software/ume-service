@@ -4,6 +4,7 @@ import {
 } from "@/common/requests";
 import {
     AlbumPagingResponse,
+    CheckExistedResponse,
     PostPagingResponse,
     UserInformationResponse,
 } from "@/common/responses";
@@ -46,6 +47,11 @@ export class UserController extends BaseController {
         this.router.get("/:slug", this.route(this.getUserBySlug));
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
         this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
+        this.router.get(
+            "/check-slug/:slug",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.checkSlugUserExisted)
+        );
         this.router.patch(
             "/profile",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -327,5 +333,40 @@ export class UserController extends BaseController {
             queryInfoPrisma
         );
         this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/check-slug/{slug}",
+        operationId: "checkSlugUserExisted",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        description: "Check Voucher Code",
+        summary: "Check Voucher Code",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: CheckExistedResponse },
+                    },
+                },
+                description: "Check voucher slug success",
+            },
+        },
+    })
+    async checkSlugUserExisted(req: Request, res: Response) {
+        const { slug } = req.params;
+        const isExisted = await this.service.checkSlugUserExisted(slug!);
+        this.onSuccess(res, { isExisted });
     }
 }

@@ -1,5 +1,9 @@
 import { UpdateVoucherRequest, CreateVoucherRequest } from "@/common/requests";
-import { VoucherPagingResponse, VoucherResponse } from "@/common/responses";
+import {
+    CheckExistedResponse,
+    VoucherPagingResponse,
+    VoucherResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -40,6 +44,11 @@ export class VoucherController extends BaseController {
             "/provider",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.providerGetSelfVoucher)
+        );
+        this.router.get(
+            "/check-code/:code",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.checkVoucherCodeExisted)
         );
         this.router.post(
             "",
@@ -111,6 +120,41 @@ export class VoucherController extends BaseController {
         _.set(queryInfoPrisma, "where.providerId", userId);
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/check-code/{code}",
+        operationId: "checkVoucherCodeExisted",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                code: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        description: "Check Voucher Code",
+        summary: "Check Voucher Code",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: CheckExistedResponse },
+                    },
+                },
+                description: "Check voucher code success",
+            },
+        },
+    })
+    async checkVoucherCodeExisted(req: Request, res: Response) {
+        const { code } = req.params;
+        const isExisted = await this.service.checkVoucherCodeExisted(code!);
+        this.onSuccess(res, { isExisted });
     }
 
     @ApiOperationPost({

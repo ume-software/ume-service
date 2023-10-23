@@ -24,7 +24,14 @@ export class UserService extends BasePrismaService<typeof userRepository> {
     constructor() {
         super(userRepository);
     }
-
+    async checkSlugUserExisted(slug:string){
+        if (!slug) return false;
+        return !!(await this.repository.findOne({
+            where: {
+                slug,
+            },
+        }));
+    }
     async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
         return await this.repository.create(userCreateInput);
     }

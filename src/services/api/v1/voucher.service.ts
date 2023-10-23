@@ -17,6 +17,14 @@ export class VoucherService extends BasePrismaService<
     constructor() {
         super(voucherRepository);
     }
+    async checkVoucherCodeExisted(code: string) {
+        if (!code) return false;
+        return !!(await this.repository.findOne({
+            where: {
+                code,
+            },
+        }));
+    }
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: Voucher[];
         count: number;

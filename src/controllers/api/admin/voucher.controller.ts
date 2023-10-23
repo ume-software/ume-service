@@ -1,5 +1,9 @@
 import { CreateVoucherRequest, UpdateVoucherRequest } from "@/common/requests";
-import { VoucherPagingResponse, VoucherResponse } from "@/common/responses";
+import {
+    CheckExistedResponse,
+    VoucherPagingResponse,
+    VoucherResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -44,17 +48,58 @@ export class AdminManageVoucherController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetVoucherDetail)
         );
+        this.router.get(
+            "/check-code/:code",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminCheckVoucherCodeExisted)
+        );
         this.router.post(
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminCreateVoucher)
         );
+
         this.router.patch(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminUpdateVoucher)
         );
     }
+    @ApiOperationGet({
+        path: "/check-code/{code}",
+        operationId: "adminCheckVoucherCodeExisted",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                code: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        description: "Check Voucher Code",
+        summary: "Check Voucher Code",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: CheckExistedResponse },
+                    },
+                },
+                description: "Check voucher code success",
+            },
+        },
+    })
+    async adminCheckVoucherCodeExisted(req: Request, res: Response) {
+        const { code } = req.params;
+        const isExisted = await this.service.checkVoucherCodeExisted(code!);
+        this.onSuccess(res, { isExisted });
+    }
+
     @ApiOperationGet({
         path: "",
         operationId: "adminGetAllVoucher",
