@@ -44,6 +44,9 @@ export class BuyCoinRequestService extends BasePrismaService<
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
     }
+    async findOne(query?: ICrudOptionPrisma) {
+        return await this.repository.findOne(query);
+    }
 
     async buyCoinCalculate(
         buyCoinCalculateRequest: BuyCoinCalculateRequest

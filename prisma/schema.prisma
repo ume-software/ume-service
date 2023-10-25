@@ -48,6 +48,8 @@ model User {
   address                UserAddress?
   providerServices       ProviderService[]
   vouchers               Voucher[]
+  reportingUsers         ReportUser[]              @relation("ReportingUsers")
+  ReportedUsers          ReportUser[]              @relation("ReportedUsers")
 
   @@map("user")
 }
@@ -417,7 +419,6 @@ model BookingHistory {
   providerReceivedCoin    Float?                   @map("provider_received_coin")
   feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
-  reportBooking           ReportBooking[]
   coinHistory             CoinHistory[]
 
   @@map("booking_history")
@@ -491,16 +492,19 @@ model Feedback {
   @@map("feedback")
 }
 
-model ReportBooking {
-  id         String         @id @default(uuid()) @map("id")
-  createdAt  DateTime?      @default(now()) @map("created_at")
-  updatedAt  DateTime?      @updatedAt @map("updated_at")
-  deletedAt  DateTime?      @map("deleted_at")
-  booking    BookingHistory @relation(fields: [bookingId], references: [id])
-  bookingId  String         @map("booking_id")
-  content    String?        @map("content")
+model ReportUser {
+  id              String           @id @default(uuid()) @map("id")
+  createdAt       DateTime?        @default(now()) @map("created_at")
+  updatedAt       DateTime?        @updatedAt @map("updated_at")
+  deletedAt       DateTime?        @map("deleted_at")
+  reportingUser   User             @relation("ReportingUsers", fields: [reportingUserId], references: [id])
+  reportingUserId String           @map("reporting_user_id")
+  reportedUser    User             @relation("ReportedUsers", fields: [reportedUserId], references: [id])
+  reportedUserId  String           @map("reported_user_id")
+  resonseType     ReportResoneType @default(OTHER) @map("resone_type")
+  content         String?          @map("content")
 
-  @@map("report_booking")
+  @@map("report_user")
 }
 
 model BuyCoinRequest {
@@ -822,3 +826,22 @@ enum BuyCoinRequestDataStringType {
   QR
   REDIRECT_URL
 }
+
+enum ReportResoneType {
+  ABUSIVE_LANGUAGE
+  CHEATING
+  SPAM_OR_HARASSMENT
+  INAPPROPRIATE_CONTENT
+  VIOLENT_OR_DISCRIMINATORY_BEHAVIOR
+  FAKE_ACCOUNT_OR_SCAM
+  ILLEGAL_TRANSACTIONS
+  OTHER
+}
+
+// ABUSIVE_LANGUAGE = "Lạm dụng ngôn ngữ và hành vi gây khó chịu"
+//     CHEATING = "Gian lận"
+//     SPAM_OR_HARASSMENT = "Spam hoặc quấy rối"
+//     INAPPROPRIATE_CONTENT = "Hình ảnh không phù hợp hoặc vi phạm đạo đức"
+//     VIOLENT_OR_DISCRIMINATORY_BEHAVIOR = "Hành vi bạo lực hoặc kỳ thị"
+//     FAKE_ACCOUNT_OR_SCAM = "Tài khoản giả mạo hoặc lừa đảo"
+//     ILLEGAL_TRANSACTIONS = "Tham gia vào giao dịch bất hợp pháp hoặc trao đổi thông tin cá nhân không an toàn"
