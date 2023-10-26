@@ -5,3 +5,5 @@ export * from "./coinHistory.response";
 export * from "./coinHistoryPaging.response";
 export * from "./userCoin.response";
 export * from "./buyCoinPaging.response";
+export * from "./withdrawRequest.response";
+export * from "./sellCoinPaging.response";

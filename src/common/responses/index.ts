@@ -14,3 +14,4 @@ export * from "./upload";
 export * from "./user";
 export * from "./voucher";
 export * from "./common";
+export * from "./userPaymentSystem";

@@ -1,6 +1,7 @@
-import { CoinForUserRequest } from "@/common/requests";
+import { CoinForUserRequest, CreateWithdrawRequest } from "@/common/requests";
 import {
     CoinHistoryPagingResponse,
+    WithdrawRequestResponse,
     UserCoinResponse,
 } from "@/common/responses";
 import {
@@ -9,7 +10,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { coinService } from "@/services";
+import { coinService, errorService, withdrawRequestService } from "@/services";
 import { CoinService } from "@/services/api/v1/coin.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
@@ -47,6 +48,16 @@ export class CoinController extends BaseController {
             "/admin",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminCreatePointForUser)
+        );
+        this.router.post(
+            "/withdrawal-request",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.createWithdrawRequest)
+        );
+        this.router.patch(
+            "/cancel-withdrawal-request/:withdrawal-request-id",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.createWithdrawRequest)
         );
     }
     @ApiOperationGet({
@@ -139,6 +150,84 @@ export class CoinController extends BaseController {
             adminId!!,
             coinForUserRequest
         );
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPost({
+        path: "/withdrawal-request",
+        operationId: "createWithdrawRequest",
+        security: {
+            bearerAuth: [],
+        },
+        description: "User create sell coin",
+        summary: "User create sell coin",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: CreateWithdrawRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: WithdrawRequestResponse },
+                    },
+                },
+                description: "Register success",
+            },
+        },
+    })
+    async createWithdrawRequest(req: Request, res: Response) {
+        const createWithdrawRequest = new CreateWithdrawRequest(req.body);
+        const userId = this.getTokenInfo(req).id;
+        const result = await withdrawRequestService.createSellCoin(
+            userId,
+            createWithdrawRequest
+        );
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPost({
+        path: "/cancel-withdrawal-request/{withdrawal-request-id}",
+        operationId: "userCancelCoinRequest",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                "withdrawal-request-id": {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        description: "Admin create point for user",
+        summary: "Admin create point for user",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: WithdrawRequestResponse },
+                    },
+                },
+                description: "Register success",
+            },
+        },
+    })
+    async userCancelCoinRequest(req: Request, res: Response) {
+        const { "withdrawal-request-id": id } = req.params;
+        if (!id) {
+            throw errorService.badRequest();
+        }
+        const userId = this.getTokenInfo(req).id;
+        const result = await withdrawRequestService.userCancelCoinRequest({
+            id,
+            userId,
+        });
         this.onSuccess(res, result);
     }
 }

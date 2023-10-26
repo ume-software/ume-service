@@ -32,7 +32,7 @@ model User {
   coinHistories          CoinHistory[]
   bookingHistories       BookingHistory[]
   buyCoinRequests        BuyCoinRequest[]
-  sellCoinRequests       SellCoinRequest[]
+  withdrawRequests       WithdrawRequest[]
   notices                Notice[]
   posts                  Post[]
   likePosts              LikePost[]
@@ -249,15 +249,16 @@ model AdminPaymentSystem {
 }
 
 model UserPaymentSystem {
-  id              String                @id @default(uuid()) @map("id")
-  createdAt       DateTime?             @default(now()) @map("created_at")
-  updatedAt       DateTime?             @updatedAt @map("updated_at")
-  deletedAt       DateTime?             @map("deleted_at")
-  user            User                  @relation(fields: [userId], references: [id])
-  userId          String                @map("user_id")
-  platform        PaymentSystemPlatform @map("platform")
-  platformAccount String?               @map("platform_account")
-  beneficiary     String?               @map("beneficiary")
+  id               String                @id @default(uuid()) @map("id")
+  createdAt        DateTime?             @default(now()) @map("created_at")
+  updatedAt        DateTime?             @updatedAt @map("updated_at")
+  deletedAt        DateTime?             @map("deleted_at")
+  user             User                  @relation(fields: [userId], references: [id])
+  userId           String                @map("user_id")
+  platform         PaymentSystemPlatform @map("platform")
+  platformAccount  String?               @map("platform_account")
+  beneficiary      String?               @map("beneficiary")
+  withdrawRequests WithdrawRequest[]
 
   @@map("user_payment_system")
 }
@@ -397,7 +398,7 @@ model CoinHistory {
   donationId      String?          @map("donation_id")
   donation        Donation?        @relation(fields: [donationId], references: [id])
   buyCoinRequest  BuyCoinRequest?
-  sellCoinRequest SellCoinRequest?
+  withdrawRequest WithdrawRequest?
 
   @@map("coin_history")
 }
@@ -534,24 +535,24 @@ model BuyCoinRequest {
   @@map("buy_coin_request")
 }
 
-model SellCoinRequest {
-  id              String                 @id @default(uuid()) @map("id")
-  createdAt       DateTime?              @default(now()) @map("created_at")
-  updatedAt       DateTime?              @updatedAt @map("updated_at")
-  deletedAt       DateTime?              @map("deleted_at")
-  content         String?                @map("content")
-  amountMoney     Int?                   @map("amount_money")
-  amountCoin      Float?                 @map("amount_coin")
-  unitCurrency    UnitCurrency?          @map("unit_currency")
-  requester       User                   @relation(fields: [requesterId], references: [id])
-  requesterId     String                 @map("requester_id")
-  qrContent       String?                @map("qr_content")
-  coinHistory     CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
-  coinHistoryId   String?                @unique @map("coin_history_id")
-  status          SellCoinRequestStatus? @default(PENDING) @map("status")
-  handlerId       String?                @map("handler_id")
-  handlerFeedback String?                @map("handler_feedback")
-  billImageUrl    String?                @map("bill_image_url")
+model WithdrawRequest {
+  id                  String                 @id @default(uuid()) @map("id")
+  createdAt           DateTime?              @default(now()) @map("created_at")
+  updatedAt           DateTime?              @updatedAt @map("updated_at")
+  deletedAt           DateTime?              @map("deleted_at")
+  amountMoney         Int?                   @map("amount_money")
+  amountCoin          Float?                 @map("amount_coin")
+  unitCurrency        UnitCurrency?          @map("unit_currency")
+  requester           User                   @relation(fields: [requesterId], references: [id])
+  requesterId         String                 @map("requester_id")
+  coinHistory         CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
+  coinHistoryId       String?                @unique @map("coin_history_id")
+  status              WithdrawRequestStatus? @default(PENDING) @map("status")
+  handlerId           String?                @map("handler_id")
+  handlerFeedback     String?                @map("handler_feedback")
+  billImageUrl        String?                @map("bill_image_url")
+  userPaymentSystem   UserPaymentSystem      @relation(fields: [userPaymentSystemId], references: [id])
+  userPaymentSystemId String                 @map("user_payment_system_id")
 
   @@map("withdrawal_request")
 }
@@ -745,7 +746,7 @@ enum BuyCoinRequestStatus {
   APPROVED
 }
 
-enum SellCoinRequestStatus {
+enum WithdrawRequestStatus {
   PENDING
   CANCEL
   REJECTED

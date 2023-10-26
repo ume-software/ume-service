@@ -63,11 +63,22 @@ export class UpdateUserProfileRequest {
     @IsString()
     public avatarUrl!: string | null;
 
+    @ApiModelProperty({
+        description: "phone",
+        required: false,
+        example: "09887654321",
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    @IsOptional()
+    @IsString()
+    public phone!: string | null;
+
     constructor(data: UpdateUserProfileRequest) {
         if (data) {
             Object.assign(
                 this,
                 mappingDataRequest(UpdateUserProfileRequest, data, [
+                    "phone",
                     "name",
                     "slug",
                     "gender",

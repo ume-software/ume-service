@@ -32,6 +32,8 @@ import { ServiceAttributeValueRepository } from "./common/serviceAttributeValue.
 import { ProviderServiceAttributeRepository } from "./common/providerServiceAttribute.repository";
 import { ProviderServiceAttributeValueRepository } from "./common/providerServiceAttributeValue.repository";
 import { ReportUserRepository } from "./common/reportUser.repository";
+import { WithdrawRequestRepository } from "./common/withdrawRequest.repository";
+import { UserPaymentSystemRepository } from "./common/userPaymentSystem.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -69,6 +71,8 @@ const providerServiceAttributeRepository =
 const providerServiceAttributeValueRepository =
     new ProviderServiceAttributeValueRepository();
 const reportUserRepository = new ReportUserRepository();
+const withdrawRequestRepository = new WithdrawRequestRepository();
+const userPaymentSystemRepository = new UserPaymentSystemRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -104,4 +108,6 @@ export {
     providerServiceAttributeRepository,
     providerServiceAttributeValueRepository,
     reportUserRepository,
+    withdrawRequestRepository,
+    userPaymentSystemRepository,
 };

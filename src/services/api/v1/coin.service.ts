@@ -3,6 +3,7 @@ import { UserCoinResponse } from "@/common/responses/coin/userCoin.response";
 import {
     bookingHistoryRepository,
     coinHistoryRepository,
+    withdrawRequestRepository,
 } from "@/repositories";
 import { errorService, userService } from "@/services";
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
@@ -76,13 +77,20 @@ export class CoinService {
             throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
         }
         const totalCoin = await this.getTotalCoinUser(user.id);
-        const getTotalCoinFrozen =
+        const getTotalCoinFrozenFromBooking =
             await bookingHistoryRepository.getTotalCoinFrozenByBookerId(
+                user.id
+            );
+        const getTotalCoinFrozenFromWithdraw =
+            await withdrawRequestRepository.getTotalCoinFrozenByRequesterId(
                 user.id
             );
         return {
             userId: user.id,
-            totalCoinsAvailable: totalCoin - getTotalCoinFrozen,
+            totalCoinsAvailable:
+                totalCoin -
+                getTotalCoinFrozenFromBooking -
+                getTotalCoinFrozenFromWithdraw,
             totalCoin,
         };
     }

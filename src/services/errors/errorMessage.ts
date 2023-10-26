@@ -376,7 +376,14 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to perform a transaction but does not have sufficient coins, resulting in a 402 Payment Required status.",
     },
-
+    YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_WITHDRAW: {
+        type: "coin_exception",
+        message: "You don't have enough coins to withdraw.",
+        codeNumber: 20501,
+        statusCode: 402,
+        description:
+            "This error occurs when a user tries to perform a withdraw but does not have sufficient coins, resulting in a 402 Payment Required status.",
+    },
     BUY_COIN_REQUEST_NOT_FOUND: {
         type: "buy_coin_request_exception",
         message: "Buy coin request not found.",
@@ -394,11 +401,19 @@ export const ERROR_MESSAGE = {
         description:
             "This error is used when a user attempts to process a buy coin request that has already been completed, resulting in a 422 Unprocessable Entity status.",
     },
+    WITHDRAW_REQUEST_NOT_FOUND: {
+        type: "withdraw_request_exception",
+        message: "Withdraw request not found.",
+        codeNumber: 20700,
+        statusCode: 404,
+        description:
+            "This error is used when a withdraw request cannot be found in the system, resulting in a 404 Not Found status.",
+    },
 
     THIS_NOTICE_DOES_NOT_EXISTED: {
         type: "notice_exception",
         message: "This notice doesn't exist.",
-        codeNumber: 20700,
+        codeNumber: 20800,
         statusCode: 404,
         description:
             "This error is used when a notice does not exist in the system, resulting in a 404 Not Found status.",
@@ -407,7 +422,7 @@ export const ERROR_MESSAGE = {
     THIS_BOOKING_HAS_BEEN_FEEDBACK: {
         type: "feedback_exception",
         message: "This booking has been feedback",
-        codeNumber: 20800,
+        codeNumber: 20900,
         statusCode: 400,
         description:
             "This error occurs when a user attempts to provide feedback for a booking that has already received feedback, resulting in a 400 Bad Request status.",
@@ -415,7 +430,7 @@ export const ERROR_MESSAGE = {
     YOU_CAN_ONLY_UPDATE_UNAPPROVED_VOUCHER: {
         type: "voucher_exception",
         message: "You can only update unapproved voucher",
-        codeNumber: 20900,
+        codeNumber: 21000,
         statusCode: 400,
         description:
             "This error occurs when a user tries to update the information of a voucher that has already been approved, resulting in a 400 Bad Request status.",
@@ -423,7 +438,7 @@ export const ERROR_MESSAGE = {
     YOU_CAN_ONLY_UPDATE_UNPUBLISHED_VOUCHER: {
         type: "voucher_exception",
         message: "You can only update unpublished voucher",
-        codeNumber: 20901,
+        codeNumber: 21001,
         statusCode: 400,
         description:
             "This error occurs when a user tries to update the information of a voucher that has already been published, resulting in a 400 Bad Request status.",
@@ -431,7 +446,7 @@ export const ERROR_MESSAGE = {
     SPECIAL_TIME_PERIODS_CANNOT_OVERLAP: {
         type: "booking_cost_exception",
         message: "Special time periods cannot overlap.",
-        codeNumber: 21000,
+        codeNumber: 21100,
         statusCode: 400,
         description:
             "This error occurs when a user tries to update the booking cost of a service that has overlap, resulting in a 400 Bad Request status.",
