@@ -1,6 +1,9 @@
 import { IOptionFilterHotProvider } from "@/common/interface/IOptionFilterHotProvider.interface";
 import { IOptionFilterProvider } from "@/common/interface/IOptionFilterProvider.interface";
-import { AdminHandleBanProviderRequest } from "@/common/requests";
+import {
+    AdminHandleBanProviderRequest,
+    UpdateProviderProfileRequest,
+} from "@/common/requests";
 import prisma from "@/models/base.prisma";
 import {
     noticeRepository,
@@ -186,5 +189,18 @@ export class ProviderService extends BasePrismaService<
                 tx
             );
         });
+    }
+
+    async updateProviderProfile(
+        updateProviderProfileRequest: UpdateProviderProfileRequest
+    ) {
+        return await providerConfigRepository.update(
+            updateProviderProfileRequest,
+            {
+                where: {
+                    userId: updateProviderProfileRequest.userId,
+                },
+            }
+        );
     }
 }

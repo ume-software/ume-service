@@ -42,8 +42,8 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
         }
         return prisma.$transaction(async (tx) => {
             if (
-                updateBannerRequest.position &&
-                updateBannerRequest.position < banner.position!
+                updateBannerRequest.position && // 4
+                updateBannerRequest.position < banner.position! //10
             ) {
                 await this.repository.update(
                     { position: { increment: 1 } },
@@ -51,6 +51,7 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
                         where: {
                             position: {
                                 gte: updateBannerRequest.position,
+                                lt: banner.position,
                             },
                         },
                     },
@@ -65,7 +66,8 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
                     {
                         where: {
                             position: {
-                                lte: updateBannerRequest.position,
+                                gte: banner.position,
+                                lt: updateBannerRequest.position,
                             },
                         },
                     },
@@ -76,6 +78,32 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
             return await this.repository.updateById(
                 id,
                 updateBannerRequest as Prisma.BannerUpdateInput,
+                tx
+            );
+        });
+    }
+
+    async deleteById(id: string) {
+        const banner = await this.findOne({ where: { id } });
+        if (!banner) {
+            throw errorService.recordNotFound();
+        }
+        return prisma.$transaction(async (tx) => {
+            await this.repository.update(
+                { position: { decrement: 1 } },
+                {
+                    where: {
+                        position: {
+                            gte: banner.position,
+                        },
+                    },
+                },
+                tx
+            );
+
+            return await this.repository.updateById(
+                id,
+                { position: null, deletedAt: new Date() },
                 tx
             );
         });

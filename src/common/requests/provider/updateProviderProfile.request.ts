@@ -1,39 +1,13 @@
-import { IsOptional, IsString, IsUrl } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
+import { ProviderStatus } from "@prisma/client";
 
 @ApiModel({
     description: "User update provider profile",
 })
 export class UpdateProviderProfileRequest {
     userId!: string;
-    @ApiModelProperty({
-        description: "Slug url",
-        required: false,
-        example: "do-tran-minh-chu",
-    })
-    @IsOptional()
-    @IsString()
-    slug!: string;
-
-    @ApiModelProperty({
-        description: "Display name of provider",
-        required: false,
-        example: "Đỗ Trần Minh Chu",
-    })
-    @IsOptional()
-    @IsString()
-    name!: string;
-
-    @ApiModelProperty({
-        description: "Avatart Url of provider",
-        required: false,
-        example:
-            "https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png",
-    })
-    @IsOptional()
-    @IsUrl()
-    avatarUrl!: string;
 
     @ApiModelProperty({
         description: "Url mp3",
@@ -42,8 +16,18 @@ export class UpdateProviderProfileRequest {
             "https://files.playerduo.net/production/audio_voices/79eb9c87-917c-4331-88f8-7a04d2c2712b__83a27d00-e0a2-11eb-8c44-9f18adc4e12c__audio_voice.mp3",
     })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     voiceUrl!: string;
+
+    @ApiModelProperty({
+        description: "Description",
+        required: false,
+        example: ProviderStatus.ACTIVATED,
+        enum: Object.values(ProviderStatus),
+    })
+    @IsOptional()
+    @IsEnum(ProviderStatus)
+    status!: ProviderStatus;
 
     @ApiModelProperty({
         description: "Description",
@@ -59,10 +43,8 @@ export class UpdateProviderProfileRequest {
             Object.assign(
                 this,
                 mappingDataRequest(UpdateProviderProfileRequest, data, [
-                    "avatarUrl",
+                    "userId",
                     "description",
-                    "name",
-                    "slug",
                     "voiceUrl",
                 ])
             );

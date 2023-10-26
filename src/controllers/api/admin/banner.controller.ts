@@ -14,6 +14,7 @@ import { bannerService, errorService } from "@/services";
 import { BannerService } from "@/services/api/v1/banner.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
+    ApiOperationDelete,
     ApiOperationGet,
     ApiOperationPatch,
     ApiOperationPost,
@@ -54,6 +55,11 @@ export class AdminManageBannerController extends BaseController {
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminUpdateBanner)
+        );
+        this.router.delete(
+            "/:id",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminDeleteBanner)
         );
     }
 
@@ -198,6 +204,50 @@ export class AdminManageBannerController extends BaseController {
         }
         const adminUpdateBanner = new UpdateBannerRequest(req.body);
         const result = await this.service.updateById(id, adminUpdateBanner);
+        this.onSuccess(res, result);
+    }
+    @ApiOperationDelete({
+        path: "/{id}",
+        operationId: "adminDeleteBanner",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin update banner",
+        summary: "Admin update banner",
+        parameters: {
+            path: {
+                id: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: UpdateBannerRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BannerResponse },
+                    },
+                },
+                description: "Admin update banner",
+            },
+        },
+    })
+    async adminDeleteBanner(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) {
+            throw errorService.badRequest();
+        }
+        const result = await this.service.deleteById(id);
         this.onSuccess(res, result);
     }
 }

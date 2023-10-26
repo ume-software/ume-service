@@ -1,4 +1,5 @@
 import {
+    UpdateProviderProfileRequest,
     UpdateUserProfileRequest,
     UserSendKYCRequest,
 } from "@/common/requests";
@@ -9,6 +10,7 @@ import {
     UserInformationResponse,
 } from "@/common/responses";
 import { UserKYCRequestResponse } from "@/common/responses/kycRequest";
+import { ProviderConfigResponse } from "@/common/responses/providerConfig";
 
 import {
     BaseController,
@@ -16,7 +18,7 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { errorService, userService } from "@/services";
+import { errorService, providerService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
 import {
     limitParameter,
@@ -71,6 +73,11 @@ export class UserController extends BaseController {
             "/become-provider",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userBecomeProvider)
+        );
+        this.router.patch(
+            "/provider-profile",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.userUpdateProviderProfile)
         );
     }
 
@@ -250,6 +257,44 @@ export class UserController extends BaseController {
     async userBecomeProvider(req: Request, res: Response) {
         const userId = this.getTokenInfo(req).id;
         const result = await userService.userBecomeProvider(userId);
+        this.onSuccess(res, result);
+    }
+    @ApiOperationPatch({
+        path: "/update-provider-profile",
+        operationId: "userUpdateProviderProfile",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Update provider profile",
+        summary: "Update provider profile",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: UpdateProviderProfileRequest },
+                },
+            },
+        },
+
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderConfigResponse },
+                    },
+                },
+                description: "Update user profile success",
+            },
+        },
+    })
+    async userUpdateProviderProfile(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const updateProviderProfileRequest = new UpdateProviderProfileRequest({
+            ...req.body,
+            userId,
+        });
+        const result = await providerService.updateProviderProfile(
+            updateProviderProfileRequest
+        );
         this.onSuccess(res, result);
     }
 
