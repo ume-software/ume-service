@@ -40,6 +40,7 @@ import { MomoService } from "./api/v1/momo.service";
 import { ServiceAttributeService } from "./api/v1/serviceAttribute.service";
 import { WithdrawRequestService } from "./api/v1/withdrawRequest.service";
 import { UserPaymentSystemService } from "./api/v1/userPaymentSystem.service";
+import { BannerService } from "./api/v1/banner.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -82,6 +83,7 @@ const momoService = new MomoService();
 const serviceAttributeService = new ServiceAttributeService();
 const withdrawRequestService = new WithdrawRequestService();
 const userPaymentSystemService = new UserPaymentSystemService();
+const bannerService = new BannerService();
 export {
     scheduleService,
     errorService,
@@ -124,4 +126,5 @@ export {
     serviceAttributeService,
     withdrawRequestService,
     userPaymentSystemService,
+    bannerService,
 };

@@ -12,4 +12,5 @@ export * from "./qrPayment";
 export * from "./service";
 export * from "./user";
 export * from "./voucher";
-export * from "./kycRequest"
+export * from "./kycRequest";
+export * from "./banner";
