@@ -50,6 +50,11 @@ export class CoinController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminCreatePointForUser)
         );
+        this.router.get(
+            "/withdrawal-request",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getWithdrawRequests)
+        );
         this.router.post(
             "/withdrawal-request",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -58,7 +63,7 @@ export class CoinController extends BaseController {
         this.router.patch(
             "/cancel-withdrawal-request/:withdrawal-request-id",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.createWithdrawRequest)
+            this.route(this.userCancelCoinRequest)
         );
     }
     @ApiOperationGet({
@@ -199,6 +204,37 @@ export class CoinController extends BaseController {
         );
         this.onSuccess(res, result);
     }
+    @ApiOperationGet({
+        path: "/withdrawal-request",
+        operationId: "getWithdrawRequests",
+        security: {
+            bearerAuth: [],
+        },
+        description: "User create sell coin",
+        summary: "User create sell coin",
+        parameters: {
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: WithdrawRequestResponse },
+                    },
+                },
+                description: "Register success",
+            },
+        },
+    })
+    async getWithdrawRequests(req: Request, res: Response) {
+        let queryInfoPrisma = req.queryInfoPrisma ?? {};
+        const userId = this.getTokenInfo(req).id;
+        _.set(queryInfoPrisma, "where.requesterId", userId);
+        const result = await withdrawRequestService.findAndCountAll(
+            queryInfoPrisma
+        );
+        this.onSuccess(res, result);
+    }
 
     @ApiOperationPost({
         path: "/withdrawal-request",
@@ -252,8 +288,8 @@ export class CoinController extends BaseController {
                 },
             },
         },
-        description: "Admin create point for user",
-        summary: "Admin create point for user",
+        description: "User Cancel Coin Request",
+        summary: "User Cancel Coin Request",
         responses: {
             200: {
                 content: {

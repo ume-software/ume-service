@@ -57,4 +57,9 @@ export class UserPaymentSystemResponse {
         type: SwaggerDefinitionConstant.STRING,
     })
     beneficiary!: string;
+    @ApiModelProperty({
+        description: "userId",
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+    })
+    userId!: string;
 }

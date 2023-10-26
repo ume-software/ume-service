@@ -1,5 +1,6 @@
 import { UserPaymentSystemRequest } from "@/common/requests/userPaymentSystem";
 import { UserPaymentSystemResponse } from "@/common/responses";
+import { UserPaymentSystemPagingResponse } from "@/common/responses/userPaymentSystem/userPaymentSystemPaging.response";
 import {
     BaseController,
     Request,
@@ -8,12 +9,15 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { userPaymentSystemService } from "@/services";
 import { UserPaymentSystemService } from "@/services/api/v1/userPaymentSystem.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 
 import {
+    ApiOperationGet,
     ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/user-payment-system",
@@ -28,6 +32,11 @@ export class UserPaymentSystemController extends BaseController {
     }
 
     customRouting() {
+        this.router.get(
+            "/",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getUserPaymentSystems)
+        );
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -35,6 +44,37 @@ export class UserPaymentSystemController extends BaseController {
         );
     }
     service: UserPaymentSystemService;
+
+    @ApiOperationGet({
+        path: "",
+        operationId: "getUserPaymentSystems",
+        security: {
+            bearerAuth: [],
+        },
+        description: "get user payment systems",
+        summary: "get user payment systems",
+        parameters: {
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserPaymentSystemPagingResponse },
+                    },
+                },
+                description: "Filter Service success",
+            },
+        },
+    })
+    async getUserPaymentSystems(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+
+        let queryInfoPrisma = req.queryInfoPrisma || {};
+        _.set(queryInfoPrisma, "where.userId", userId);
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccessAsList(res, result);
+    }
 
     @ApiOperationPost({
         path: "",
