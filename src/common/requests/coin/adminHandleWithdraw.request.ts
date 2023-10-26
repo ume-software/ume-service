@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, IsUUID, IsUrl } from "class-validator";
+import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { WithdrawRequestStatus } from "@prisma/client";
@@ -16,7 +16,6 @@ export class AdminHandleWithdrawRequest {
         example: "url",
     })
     @IsOptional()
-    @IsUrl()
     public billImageUrl?: string;
 
     @ApiModelProperty({

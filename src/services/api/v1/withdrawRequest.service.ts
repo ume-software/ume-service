@@ -85,13 +85,10 @@ export class WithdrawRequestService extends BasePrismaService<
         if (!id || !status) {
             throw errorService.badRequest();
         }
-
+        console.log("id ====< ", id);
         let withdrawRequest = await this.repository.findById(id);
         if (!withdrawRequest) {
             throw errorService.error(ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND);
-        }
-        if (withdrawRequest.handlerId != adminId) {
-            throw errorService.permissionDeny();
         }
         const { PENDING, REJECTED, COMPLETED } = WithdrawRequestStatus;
         if (withdrawRequest.status != PENDING) {
@@ -108,6 +105,7 @@ export class WithdrawRequestService extends BasePrismaService<
                 billImageUrl: billImageUrl!,
                 handlerFeedback: feedback!,
                 status,
+                handlerId: adminId,
             };
 
             if (status == COMPLETED) {

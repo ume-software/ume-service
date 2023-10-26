@@ -19,6 +19,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/coin",
@@ -83,7 +84,53 @@ export class CoinController extends BaseController {
         },
     })
     async getHistoryCoin(req: Request, res: Response) {
-        const queryInfoPrisma = req.queryInfoPrisma;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        queryInfoPrisma.include = {
+            adminCreated: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            booking: {
+                include: {
+                    providerService: {
+                        include: {
+                            provider: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    avatarUrl: true,
+                                    slug: true,
+                                    gender: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            donation: {
+                include: {
+                    donor: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            avatarUrl: true,
+                        },
+                    },
+                    recipient: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            avatarUrl: true,
+                        },
+                    },
+                },
+            },
+        };
+
         const userId = this.getTokenInfo(req).id;
         const result = await this.service.getHistoryCoinByUserId(
             userId!,

@@ -1,5 +1,7 @@
 import { CoinType } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { BookingHistoryResponse } from "../booking";
+import { DonationResponse } from "../donation/donation.response";
 
 @ApiModel({
     description: "Coin History response",
@@ -58,4 +60,33 @@ export class CoinHistoryResponse {
         example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
     })
     adminIdCreated?: string;
+
+    @ApiModelProperty({
+        description: "Id of booiking this history",
+        required: false,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+    })
+    bookingId?: string;
+
+    @ApiModelProperty({
+        description: "Id of booiking this history",
+        required: false,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+        model: BookingHistoryResponse,
+    })
+    booking?: BookingHistoryResponse;
+
+    @ApiModelProperty({
+        description: "Id of donation this history",
+        required: false,
+        example: "a1da9857-355e-43f1-8fdb-26a8a0ace6bd",
+    })
+    donationId?: string;
+
+    @ApiModelProperty({
+        description: "Donation",
+        required: false,
+        model: DonationResponse,
+    })
+    donation?: DonationResponse;
 }

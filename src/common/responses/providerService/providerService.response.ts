@@ -6,7 +6,6 @@ import {
 import { BookingCostResponse } from "../bookingCost/bookingCost.response";
 import { ServiceResponse } from "../service";
 import { ProviderServiceAttributeResponse } from "./providerServiceAttribute.response";
-
 @ApiModel({
     description: "Provider service response",
 })
@@ -36,10 +35,15 @@ export class ProviderServiceResponse {
     deletedAt!: Date;
 
     @ApiModelProperty({
-        description: "Provider service name",
+        description: "Provider Id",
         example: "0c261207-3e82-4d56-a261-32175b797a78",
     })
     providerId!: string;
+
+    @ApiModelProperty({
+        description: "Provider",
+    })
+    provider!: any;
 
     @ApiModelProperty({
         description: "Service id",

@@ -2,7 +2,7 @@ export * from "./base";
 export * from "./booking";
 export * from "./bookingCost";
 export * from "./coin";
-export * from "./donate";
+export * from "./donation";
 export * from "./error";
 export * from "./feedback";
 export * from "./notice";
