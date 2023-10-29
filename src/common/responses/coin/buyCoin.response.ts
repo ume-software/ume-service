@@ -5,6 +5,8 @@ import {
     UnitCurrency,
 } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { UserInformationResponse } from "../user";
+import { AdminInformationResponse } from "../admin";
 
 @ApiModel({
     description: "Get Qr BuyCoin response",
@@ -66,7 +68,12 @@ export class BuyCoinResponse {
         example: "1f0095c1-4795-4c77-b1f7-b5778501c77c",
     })
     requesterId!: string;
-
+    @ApiModelProperty({
+        description: "Requester",
+        required: false,
+        model: UserInformationResponse,
+    })
+    requester?: UserInformationResponse;
     @ApiModelProperty({
         description: "data string",
         required: true,
@@ -103,7 +110,12 @@ export class BuyCoinResponse {
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
     })
     handlerId!: string;
-
+    @ApiModelProperty({
+        description: "Handler (admin)",
+        required: false,
+        model: AdminInformationResponse,
+    })
+    handler?: AdminInformationResponse;
     @ApiModelProperty({
         description: "Handler feedback",
         required: false,

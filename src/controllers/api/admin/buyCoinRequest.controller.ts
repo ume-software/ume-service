@@ -16,6 +16,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/admin/buy-coin-request",
@@ -101,7 +102,9 @@ export class AdminManageBuyCoinRequestController extends BaseController {
         },
     })
     async adminGetOneBuyCoinRequest(req: Request, res: Response) {
+        const { id } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
+        _.set(queryInfoPrisma, "where.id", id);
         const result = await this.service.findOne(queryInfoPrisma);
         this.onSuccess(res, result);
     }
