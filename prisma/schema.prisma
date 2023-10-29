@@ -502,7 +502,7 @@ model ReportUser {
   reportingUserId String           @map("reporting_user_id")
   reportedUser    User             @relation("ReportedUsers", fields: [reportedUserId], references: [id])
   reportedUserId  String           @map("reported_user_id")
-  resonseType     ReportResoneType @default(OTHER) @map("resone_type")
+  reasonType      ReportReasonType @default(OTHER) @map("resone_type")
   content         String?          @map("content")
 
   @@map("report_user")
@@ -572,12 +572,12 @@ model Notice {
 }
 
 model Banner {
-  id         String    @id @default(uuid()) @map("id")
-  createdAt  DateTime? @default(now()) @map("created_at")
-  updatedAt  DateTime? @updatedAt @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
-  imageUrl   String?   @map("image_url")
-  position   Int?      @map("position")
+  id          String    @id @default(uuid()) @map("id")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  imageUrl    String?   @map("image_url")
+  position    Int?      @map("position")
   isActivated Boolean?  @default(false) @map("is_actiaved")
 
   @@map("banner")
@@ -824,7 +824,7 @@ enum BuyCoinRequestDataStringType {
   REDIRECT_URL
 }
 
-enum ReportResoneType {
+enum ReportReasonType {
   ABUSIVE_LANGUAGE
   CHEATING
   SPAM_OR_HARASSMENT

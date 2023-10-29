@@ -41,6 +41,7 @@ import { ServiceAttributeService } from "./api/v1/serviceAttribute.service";
 import { WithdrawRequestService } from "./api/v1/withdrawRequest.service";
 import { UserPaymentSystemService } from "./api/v1/userPaymentSystem.service";
 import { BannerService } from "./api/v1/banner.service";
+import { ReportUserService } from "./api/v1/reportUser.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -84,6 +85,7 @@ const serviceAttributeService = new ServiceAttributeService();
 const withdrawRequestService = new WithdrawRequestService();
 const userPaymentSystemService = new UserPaymentSystemService();
 const bannerService = new BannerService();
+const reportUserService = new ReportUserService();
 export {
     scheduleService,
     errorService,
@@ -127,4 +129,5 @@ export {
     withdrawRequestService,
     userPaymentSystemService,
     bannerService,
+    reportUserService
 };

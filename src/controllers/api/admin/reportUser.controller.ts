@@ -1,70 +1,71 @@
-import { BuyCoinPagingResponse, BuyCoinResponse } from "@/common/responses";
+import {
+    ReportUserPagingResponse,
+    ReportUserResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { buyCoinRequestService } from "@/services";
-import { BuyCoinRequestService } from "@/services/api/v1/buyCoinRequest.service";
-import {
-    queryParameters,
-    selectParameter,
-} from "@/swagger/parameters/query.parameter";
+import { reportUserService } from "@/services";
+import { ReportUserService } from "@/services/api/v1/reportUser.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/buy-coin-request",
-    name: "AdminManageBuyCoinRequest",
+    path: "/api/admin/report-user",
+    name: "AdminManageReportUser",
 })
-export class AdminManageBuyCoinRequestController extends BaseController {
+export class AdminManageReportUserController extends BaseController {
     constructor() {
         super();
-        this.service = buyCoinRequestService;
-        this.path = "buy-coin-request";
+        this.service = reportUserService;
+        this.path = "report-user";
         this.customRouting();
     }
-    service: BuyCoinRequestService;
+    service: ReportUserService;
     customRouting() {
         this.router.get(
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListBuyCoinRequest)
+            this.route(this.adminGetReportUser)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetOneBuyCoinRequest)
+            this.route(this.AdminGetOneReportUser)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListBuyCoinRequest",
+        operationId: "adminGetReportUser",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Admin get list buy coin request",
-        summary: "Admin get list buy coin request",
+        description: "Admin get list report user",
+        summary: "Admin get list report user",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinPagingResponse },
+                        schema: { model: ReportUserPagingResponse },
                     },
                 },
                 description: "Approved success",
             },
         },
     })
-    async adminGetListBuyCoinRequest(req: Request, res: Response) {
+    async adminGetReportUser(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
@@ -72,12 +73,12 @@ export class AdminManageBuyCoinRequestController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetOneBuyCoinRequest",
+        operationId: "AdminGetOneReportUser",
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one buy coin request",
-        summary: "Admin get one buy coin request",
+        description: "Admin get one report user",
+        summary: "Admin get one report user",
         parameters: {
             path: {
                 id: {
@@ -87,21 +88,23 @@ export class AdminManageBuyCoinRequestController extends BaseController {
                     },
                 },
             },
-            query: selectParameter,
+            query: queryParameters,
         },
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: ReportUserResponse },
                     },
                 },
                 description: "Rejected success",
             },
         },
     })
-    async adminGetOneBuyCoinRequest(req: Request, res: Response) {
-        const queryInfoPrisma = req.queryInfoPrisma || {};
+    async AdminGetOneReportUser(req: Request, res: Response) {
+        const { id } = req.params;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(queryInfoPrisma, "where.id", id);
         const result = await this.service.findOne(queryInfoPrisma);
         this.onSuccess(res, result);
     }

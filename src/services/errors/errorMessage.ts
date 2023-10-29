@@ -451,4 +451,12 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to update the booking cost of a service that has overlap, resulting in a 400 Bad Request status.",
     },
+    THE_TIME_TO_REPORT_A_USER_NEEDS_TO_BE_24_HOURS_APART: {
+        type: "report_user_exception",
+        message: "The time to report a user needs to be 24 hours apart.",
+        codeNumber: 21200,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries to report a user, resulting in a 400 Bad Request status.",
+    },
 };
