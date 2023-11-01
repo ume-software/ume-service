@@ -2,6 +2,7 @@ import { BuyCoinRequestStatus, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { AdminInformationResponse } from "../admin";
 import { UserInformationResponse } from "../user";
+import { UserPaymentSystemResponse } from "../userPaymentSystem";
 
 @ApiModel({
     description: "Get Qr BuyCoin response",
@@ -111,9 +112,17 @@ export class WithdrawRequestResponse {
     })
     billImageUrl?: string;
     @ApiModelProperty({
-        description: "userPaymentSystemId id (admin)",
+        description: "userPaymentSystem Id",
         required: true,
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
     })
     userPaymentSystemId!: string;
+
+    @ApiModelProperty({
+        description: "userPaymentSystem",
+        required: true,
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
+        model: UserPaymentSystemResponse,
+    })
+    userPaymentSystem!: UserPaymentSystemResponse;
 }

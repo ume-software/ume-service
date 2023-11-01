@@ -49,7 +49,7 @@ model User {
   providerServices       ProviderService[]
   vouchers               Voucher[]
   reportingUsers         ReportUser[]              @relation("ReportingUsers")
-  ReportedUsers          ReportUser[]              @relation("ReportedUsers")
+  reportedUsers          ReportUser[]              @relation("ReportedUsers")
 
   @@map("user")
 }
