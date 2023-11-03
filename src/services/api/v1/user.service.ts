@@ -19,7 +19,13 @@ import {
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { NoticeType, Prisma, User, UserKYCStatus } from "@prisma/client";
+import {
+    NoticeType,
+    Prisma,
+    ProviderStatus,
+    User,
+    UserKYCStatus,
+} from "@prisma/client";
 
 export class UserService extends BasePrismaService<typeof userRepository> {
     constructor() {
@@ -313,6 +319,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                     id: userId,
                 },
             },
+            status: ProviderStatus.ACTIVATED,
         });
         return await userRepository.updateById(userId, {
             isProvider: true,
