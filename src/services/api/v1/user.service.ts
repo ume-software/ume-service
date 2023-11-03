@@ -8,6 +8,7 @@ import {
     likePostRepository,
     noticeRepository,
     postRepository,
+    providerConfigRepository,
     userKYCRequestRepository,
     userRepository,
 } from "@/repositories";
@@ -24,7 +25,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
     constructor() {
         super(userRepository);
     }
-    async checkSlugUserExisted(slug:string){
+    async checkSlugUserExisted(slug: string) {
         if (!slug) return false;
         return !!(await this.repository.findOne({
             where: {
@@ -306,7 +307,13 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 ERROR_MESSAGE.USER_NEED_VERIFY_ACCOUNT_BEFORE_BECOME_PROVIDER
             );
         }
-
+        await providerConfigRepository.create({
+            user: {
+                connect: {
+                    id: userId,
+                },
+            },
+        });
         return await userRepository.updateById(userId, {
             isProvider: true,
         });
