@@ -265,7 +265,7 @@ export class CoinController extends BaseController {
     async createWithdrawRequest(req: Request, res: Response) {
         const createWithdrawRequest = new CreateWithdrawRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await withdrawRequestService.createSellCoin(
+        const result = await withdrawRequestService.createWithdrawRequest(
             userId,
             createWithdrawRequest
         );

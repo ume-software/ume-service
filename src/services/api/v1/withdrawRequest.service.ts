@@ -35,7 +35,7 @@ export class WithdrawRequestService extends BasePrismaService<
         return await this.repository.findOne(query);
     }
 
-    async createSellCoin(
+    async createWithdrawRequest(
         requesterId: string,
         getQrBuyCoinRequest: CreateWithdrawRequest
     ) {
