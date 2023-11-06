@@ -3,10 +3,10 @@ import { Request } from "@/controllers/base/base.controller";
 import axios from "axios";
 import prisma from "@/models/base.prisma";
 import {
-    buyCoinRequestRepository,
-    coinHistoryRepository,
+    depositRequestRepository,
+    balanceHistoryRepository,
 } from "@/repositories";
-import { BuyCoinRequestStatus, CoinType } from "@prisma/client";
+import { DepositRequestStatus, BalanceType } from "@prisma/client";
 import crypto from "crypto";
 import { bcryptService } from "@/services";
 export class MomoService {
@@ -19,7 +19,7 @@ export class MomoService {
         const ipnUrl = config.momo.inpUrl!;
         const requestType = "captureWallet";
         const extraData = bcryptService.hashData(data.orderId);
-        
+
         const rawSignature =
             "accessKey=" +
             accessKey +
@@ -78,42 +78,42 @@ export class MomoService {
             [key: string]: string;
         };
 
-        const buyCoinRequest = await buyCoinRequestRepository.findOne({
+        const depositRequest = await depositRequestRepository.findOne({
             where: {
                 transactionCode: orderId,
             },
         });
         if (
             ((await bcryptService.compareDataWithHash(orderId!, extraData!)) &&
-                buyCoinRequest &&
+                depositRequest &&
                 resultCode == "0",
             [
-                BuyCoinRequestStatus.INIT,
-                BuyCoinRequestStatus.PENDING,
-                BuyCoinRequestStatus.USER_NOTICES_PAID,
-            ].includes(buyCoinRequest?.status as any))
+                DepositRequestStatus.INIT,
+                DepositRequestStatus.PENDING,
+                DepositRequestStatus.USER_NOTICES_PAID,
+            ].includes(depositRequest?.status as any))
         )
             await prisma.$transaction(async (tx) => {
-                await coinHistoryRepository.create(
+                await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
-                                id: buyCoinRequest?.requesterId!,
+                                id: depositRequest?.requesterId!,
                             },
                         },
-                        amount: buyCoinRequest?.amountCoin!,
-                        coinType: CoinType.BUY_COIN,
+                        amount: depositRequest?.amountBalance!,
+                        balanceType: BalanceType.DEPOSIT,
                     },
                     tx
                 );
 
-                return await buyCoinRequestRepository.update(
+                return await depositRequestRepository.update(
                     {
-                        status: BuyCoinRequestStatus.APPROVED,
+                        status: DepositRequestStatus.APPROVED,
                     },
                     {
                         where: {
-                            id: buyCoinRequest?.id,
+                            id: depositRequest?.id,
                         },
                     },
                     tx

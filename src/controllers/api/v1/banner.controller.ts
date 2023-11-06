@@ -1,4 +1,4 @@
-import { BuyCoinPagingResponse, BuyCoinResponse } from "@/common/responses";
+import { DepositPagingResponse, DepositResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -43,7 +43,7 @@ export class BannerController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinPagingResponse },
+                        schema: { model: DepositPagingResponse },
                     },
                 },
                 description: "Approved success",
@@ -76,7 +76,7 @@ export class BannerController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "User get one banner",

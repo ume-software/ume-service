@@ -1,8 +1,8 @@
 import {
     AdminGetUserPagingResponseResponse,
     AdminGetUserResponseResponse,
-    CoinHistoryPagingResponse,
-    UserCoinResponse,
+    BalanceHistoryPagingResponse,
+    UserBalanceResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -10,12 +10,10 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { coinService, errorService, userService } from "@/services";
+import { balanceService, errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import {
-    queryParameters,
-} from "@/swagger/parameters/query.parameter";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPatch,
@@ -50,7 +48,7 @@ export class AdminManageUserController extends BaseController {
         this.router.get(
             "/:slug/coin-history",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetUserCoinHistoryBySlug)
+            this.route(this.adminGetUserBalanceHistoryBySlug)
         );
         this.router.get(
             "/:slug/coin",
@@ -67,7 +65,6 @@ export class AdminManageUserController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminUnBanUserBySlug)
         );
-        
     }
 
     @ApiOperationGet({
@@ -149,7 +146,7 @@ export class AdminManageUserController extends BaseController {
     }
     @ApiOperationGet({
         path: "/{slug}/coin-history",
-        operationId: "adminGetUserCoinHistoryBySlug",
+        operationId: "adminGetUserBalanceHistoryBySlug",
         security: {
             bearerAuth: [],
         },
@@ -170,14 +167,14 @@ export class AdminManageUserController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: CoinHistoryPagingResponse },
+                        schema: { model: BalanceHistoryPagingResponse },
                     },
                 },
                 description: "Get information success",
             },
         },
     })
-    async adminGetUserCoinHistoryBySlug(req: Request, res: Response) {
+    async adminGetUserBalanceHistoryBySlug(req: Request, res: Response) {
         const { slug } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
         if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
@@ -198,7 +195,7 @@ export class AdminManageUserController extends BaseController {
         }
         queryInfoPrisma.where.userId = user.id;
 
-        const result = await coinService.findAndCountAll(queryInfoPrisma);
+        const result = await balanceService.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
     }
 
@@ -224,7 +221,7 @@ export class AdminManageUserController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UserCoinResponse },
+                        schema: { model: UserBalanceResponse },
                     },
                 },
                 description: "Get information success",
@@ -234,7 +231,7 @@ export class AdminManageUserController extends BaseController {
     async adminGetTotalCoinByUserSlug(req: Request, res: Response) {
         const { slug } = req.params;
 
-        const result = await coinService.getTotalCoinByUserSlug(slug!);
+        const result = await balanceService.getTotalBalanceByUserSlug(slug!);
         this.onSuccess(res, result);
     }
 
@@ -311,6 +308,4 @@ export class AdminManageUserController extends BaseController {
         });
         this.onSuccess(res, result);
     }
-
-  
 }

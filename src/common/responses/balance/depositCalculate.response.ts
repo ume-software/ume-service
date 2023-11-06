@@ -1,21 +1,19 @@
-
 import { PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: 'Buy coin calculate response'
+    description: "Buy coin calculate response",
 })
-export class BuyCoinCalculateResponse {
-
+export class DepositCalculateResponse {
     @ApiModelProperty({
-        description: 'AmountCoin',
+        description: "AmountBalance",
         required: true,
         example: 20,
     })
-    public amountCoin!: number;
+    public amountBalance!: number;
 
     @ApiModelProperty({
-        description: 'platform',
+        description: "platform",
         required: true,
         enum: Object.values(PaymentSystemPlatform),
         example: PaymentSystemPlatform.MOMO,
@@ -23,7 +21,7 @@ export class BuyCoinCalculateResponse {
     public platform!: PaymentSystemPlatform;
 
     @ApiModelProperty({
-        description: 'unitCurrency',
+        description: "unitCurrency",
         required: true,
         enum: Object.values(UnitCurrency),
         example: UnitCurrency.VND,
@@ -50,7 +48,4 @@ export class BuyCoinCalculateResponse {
         example: 30030,
     })
     totalMoney!: number;
-
-
 }
-

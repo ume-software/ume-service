@@ -1,17 +1,13 @@
-import {
-    BuyCoinRequestDataStringType,
-    BuyCoinRequestStatus,
-    PaymentSystemPlatform,
-    UnitCurrency,
-} from "@prisma/client";
+import { DepositRequestStatus, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
-import { UserInformationResponse } from "../user";
 import { AdminInformationResponse } from "../admin";
+import { UserInformationResponse } from "../user";
+import { UserPaymentSystemResponse } from "../userPaymentSystem";
 
 @ApiModel({
     description: "Get Qr BuyCoin response",
 })
-export class BuyCoinResponse {
+export class WithdrawRequestResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,
@@ -75,21 +71,6 @@ export class BuyCoinResponse {
     })
     requester?: UserInformationResponse;
     @ApiModelProperty({
-        description: "data string",
-        required: true,
-        example:
-            "2|99|0947875625|Đỗ Trần Minh Chu||0|0|30030|HMJXXU19J605062023|transfer_myqr",
-    })
-    dataString!: string;
-
-    @ApiModelProperty({
-        description: "QR string",
-        required: true,
-        example: BuyCoinRequestDataStringType.QR,
-    })
-    dataStringType!: BuyCoinRequestDataStringType;
-
-    @ApiModelProperty({
         description: "Coin history Id",
         required: false,
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d",
@@ -99,13 +80,13 @@ export class BuyCoinResponse {
     @ApiModelProperty({
         description: "Status",
         required: true,
-        enum: Object.values(BuyCoinRequestStatus),
-        example: BuyCoinRequestStatus.INIT,
+        enum: Object.values(DepositRequestStatus),
+        example: DepositRequestStatus.INIT,
     })
-    status!: BuyCoinRequestStatus;
+    status!: DepositRequestStatus;
 
     @ApiModelProperty({
-        description: "Hander id (admin)",
+        description: "Handler id (admin)",
         required: true,
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
     })
@@ -116,6 +97,7 @@ export class BuyCoinResponse {
         model: AdminInformationResponse,
     })
     handler?: AdminInformationResponse;
+
     @ApiModelProperty({
         description: "Handler feedback",
         required: false,
@@ -129,26 +111,18 @@ export class BuyCoinResponse {
         example: "url",
     })
     billImageUrl?: string;
+    @ApiModelProperty({
+        description: "userPaymentSystem Id",
+        required: true,
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
+    })
+    userPaymentSystemId!: string;
 
     @ApiModelProperty({
-        description: "Platform",
+        description: "userPaymentSystem",
         required: true,
-        enum: Object.values(PaymentSystemPlatform),
-        example: PaymentSystemPlatform.MOMO,
+        example: "3646a0ae-494a-4cef-876c-1f578c3d6b8f",
+        model: UserPaymentSystemResponse,
     })
-    platform!: PaymentSystemPlatform;
-
-    @ApiModelProperty({
-        description: "Transaction code",
-        required: true,
-        example: "1LUDPOFOF507062023105048841",
-    })
-    transactionCode!: string;
-
-    @ApiModelProperty({
-        description: "Content",
-        required: true,
-        example: "1LUDPOFOF507062023105048841",
-    })
-    content!: string;
+    userPaymentSystem!: UserPaymentSystemResponse;
 }

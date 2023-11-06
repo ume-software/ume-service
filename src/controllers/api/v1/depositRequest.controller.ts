@@ -1,13 +1,13 @@
 import {
-    CreateBuyCoinRequest,
-    BuyCoinCalculateRequest,
-    BuyCoinCalculateListRequest,
-    BuyCoinHandleRequest,
+    CreateDepositRequest,
+    DepositCalculateRequest,
+    DepositCalculateListRequest,
+    DepositHandleRequest,
 } from "@/common/requests";
 import {
-    BuyCoinResponse,
-    BuyCoinCalculateResponse,
-    BuyCoinCalculateListResponse,
+    DepositResponse,
+    DepositCalculateResponse,
+    DepositCalculateListResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -15,9 +15,9 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { buyCoinRequestService } from "@/services";
-import { BuyCoinRequestService } from "@/services/api/v1/buyCoinRequest.service";
-import { handlerFilterBuyCoinParameters } from "@/swagger/parameters/query.parameter";
+import { depositRequestService } from "@/services";
+import { DepositRequestService } from "@/services/api/v1/depositRequest.service";
+import { handlerFilterDepositParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiOperationPost,
@@ -27,47 +27,47 @@ import {
 
 @ApiPath({
     path: "/api/v1/buy-coin-request",
-    name: "BuyCoinRequest",
+    name: "DepositRequest",
 })
-export class BuyCoinRequestController extends BaseController {
+export class DepositRequestController extends BaseController {
     constructor() {
         super();
-        this.service = buyCoinRequestService;
+        this.service = depositRequestService;
         this.path = "buy-coin-request";
         this.customRouting();
     }
-    service: BuyCoinRequestService;
+    service: DepositRequestService;
 
     customRouting() {
         this.router.get(
             "/request-to-handler",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.getBuyCoinRequestToHandler)
+            this.route(this.getDepositRequestToHandler)
         );
         this.router.post(
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.createBuyCoinRequest)
+            this.route(this.createDepositRequest)
         );
-        this.router.post("/calculate", this.route(this.buyCoinCalculate));
+        this.router.post("/calculate", this.route(this.depositCalculate));
         this.router.post(
             "/calculate-list",
-            this.route(this.buyCoinCalculateList)
+            this.route(this.depositCalculateList)
         );
         this.router.post(
             "/handle",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.handleBuyCoinRequest)
+            this.route(this.handleDepositRequest)
         );
     }
     @ApiOperationGet({
         path: "/request-to-handler",
-        operationId: "getBuyCoinRequestToHandler",
+        operationId: "getDepositRequestToHandler",
         security: {
             bearerAuth: [],
         },
         parameters: {
-            query: handlerFilterBuyCoinParameters,
+            query: handlerFilterDepositParameters,
         },
         description: "Handler get all buy coin request to them",
         summary: "Handler get all buy coin request to them",
@@ -75,14 +75,14 @@ export class BuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Get list buy coin request success",
             },
         },
     })
-    async getBuyCoinRequestToHandler(req: Request, res: Response) {
+    async getDepositRequestToHandler(req: Request, res: Response) {
         let queryInfoPrisma = req.queryInfoPrisma;
         const { transaction_code: transactionCode, status } = req.query;
         const userId = this.getTokenInfo(req).id;
@@ -106,7 +106,7 @@ export class BuyCoinRequestController extends BaseController {
 
     @ApiOperationPost({
         path: "",
-        operationId: "createBuyCoinRequest",
+        operationId: "createDepositRequest",
         security: {
             bearerAuth: [],
         },
@@ -115,7 +115,7 @@ export class BuyCoinRequestController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: CreateBuyCoinRequest },
+                    schema: { model: CreateDepositRequest },
                 },
             },
         },
@@ -123,26 +123,26 @@ export class BuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Create buy coin request success",
             },
         },
     })
-    async createBuyCoinRequest(req: Request, res: Response) {
-        const createBuyCoinRequest = new CreateBuyCoinRequest(req.body);
+    async createDepositRequest(req: Request, res: Response) {
+        const createDepositRequest = new CreateDepositRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.createBuyCoin(
+        const result = await this.service.createDeposit(
             userId,
-            createBuyCoinRequest
+            createDepositRequest
         );
         this.onSuccess(res, result);
     }
 
     @ApiOperationPost({
         path: "/calculate",
-        operationId: "buyCoinCalculate",
+        operationId: "depositCalculate",
         security: {
             bearerAuth: [],
         },
@@ -151,7 +151,7 @@ export class BuyCoinRequestController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: BuyCoinCalculateRequest },
+                    schema: { model: DepositCalculateRequest },
                 },
             },
         },
@@ -159,24 +159,24 @@ export class BuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinCalculateResponse },
+                        schema: { model: DepositCalculateResponse },
                     },
                 },
                 description: "Create buy coin request success",
             },
         },
     })
-    async buyCoinCalculate(req: Request, res: Response) {
-        const buyCoinCalculateRequest = new BuyCoinCalculateRequest(req.body);
-        const result = await this.service.buyCoinCalculate(
-            buyCoinCalculateRequest
+    async depositCalculate(req: Request, res: Response) {
+        const depositCalculateRequest = new DepositCalculateRequest(req.body);
+        const result = await this.service.depositCalculate(
+            depositCalculateRequest
         );
         this.onSuccess(res, result);
     }
 
     @ApiOperationPost({
         path: "/calculate-list",
-        operationId: "buyCoinCalculateList",
+        operationId: "depositCalculateList",
         security: {
             bearerAuth: [],
         },
@@ -185,7 +185,7 @@ export class BuyCoinRequestController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: BuyCoinCalculateListRequest },
+                    schema: { model: DepositCalculateListRequest },
                 },
             },
         },
@@ -193,25 +193,25 @@ export class BuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinCalculateListResponse },
+                        schema: { model: DepositCalculateListResponse },
                     },
                 },
                 description: "Create buy coin request success",
             },
         },
     })
-    async buyCoinCalculateList(req: Request, res: Response) {
-        const buyCoinCalculateListRequest = new BuyCoinCalculateListRequest(
+    async depositCalculateList(req: Request, res: Response) {
+        const depositCalculateListRequest = new DepositCalculateListRequest(
             req.body
         );
-        const result = await this.service.buyCoinCalculateList(
-            buyCoinCalculateListRequest
+        const result = await this.service.depositCalculateList(
+            depositCalculateListRequest
         );
         this.onSuccess(res, result);
     }
     @ApiOperationPost({
         path: "/handle",
-        operationId: "handleBuyCoinRequest",
+        operationId: "handleDepositRequest",
         security: {
             bearerAuth: [],
         },
@@ -220,7 +220,7 @@ export class BuyCoinRequestController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: BuyCoinHandleRequest },
+                    schema: { model: DepositHandleRequest },
                 },
             },
         },
@@ -228,19 +228,19 @@ export class BuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Handle buy coin request success",
             },
         },
     })
-    async handleBuyCoinRequest(req: Request, res: Response) {
-        const buyCoinHandleRequest = new BuyCoinHandleRequest(req.body);
+    async handleDepositRequest(req: Request, res: Response) {
+        const depositHandleRequest = new DepositHandleRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.buyCoinHandle(
+        const result = await this.service.depositHandle(
             userId!!,
-            buyCoinHandleRequest
+            depositHandleRequest
         );
         this.onSuccess(res, result);
     }

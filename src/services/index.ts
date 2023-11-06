@@ -13,10 +13,10 @@ import { CryptoService } from "./common/crypto.service";
 import { ServiceService } from "./api/v1/service.service";
 import { ProviderService } from "./api/v1/provider.service";
 import { ProviderServiceService } from "./api/v1/providerService.service";
-import { CoinService } from "./api/v1/coin.service";
+import { BalanceService } from "./api/v1/balance.service";
 import { BookingService } from "./api/v1/booking.service";
 import { FeedbackService } from "./api/v1/feedback.service";
-import { BuyCoinRequestService } from "./api/v1/buyCoinRequest.service";
+import { DepositRequestService } from "./api/v1/depositRequest.service";
 import { PostService } from "./api/v1/post.service";
 import { CommentPostService } from "./api/v1/commentPost.service";
 import { LikePostService } from "./api/v1/likePost.service";
@@ -57,7 +57,7 @@ const googleService = new GoogleService();
 // const redisService = new RedisService();
 //=============
 const bookingService = new BookingService();
-const coinService = new CoinService();
+const balanceService = new BalanceService();
 const providerService = new ProviderService();
 const providerServiceService = new ProviderServiceService();
 const serviceService = new ServiceService();
@@ -69,7 +69,7 @@ const authService = new AuthService();
 const paymentQrSettingService = new PaymentQrSettingService();
 const qrPaymentService = new QrPaymentService();
 const feedbackService = new FeedbackService();
-const buyCoinRequestService = new BuyCoinRequestService();
+const depositRequestService = new DepositRequestService();
 const postService = new PostService();
 const commentPostService = new CommentPostService();
 const likePostService = new LikePostService();
@@ -101,7 +101,7 @@ export {
     // redisService,
     // CRUD
     bookingService,
-    coinService,
+    balanceService,
     providerService,
     providerServiceService,
     userService,
@@ -113,7 +113,7 @@ export {
     qrPaymentService,
     serviceService,
     feedbackService,
-    buyCoinRequestService,
+    depositRequestService,
     postService,
     commentPostService,
     likePostService,
@@ -129,5 +129,5 @@ export {
     withdrawRequestService,
     userPaymentSystemService,
     bannerService,
-    reportUserService
+    reportUserService,
 };

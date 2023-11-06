@@ -4,19 +4,19 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 
-import { CoinHistoryResponse } from "./coinHistory.response";
 import { PaginationResponse } from "../base";
+import { DepositResponse } from "./deposit.response";
 
 @ApiModel({
-    description: "Coin History response",
+    description: "Buy Coin paging response",
 })
-export class CoinHistoryPagingResponse {
+export class DepositPagingResponse {
     @ApiModelProperty({
         description: "Row",
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: CoinHistoryResponse,
+        itemType: DepositResponse,
     })
-    row!: Array<CoinHistoryResponse>;
+    row!: Array<DepositResponse>;
 
     @ApiModelProperty({
         description: "Count",

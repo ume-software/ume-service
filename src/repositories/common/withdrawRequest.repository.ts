@@ -98,7 +98,7 @@ export class WithdrawRequestRepository extends BasePrismaRepository {
         });
     }
 
-    async getTotalCoinFrozenByRequesterId(
+    async getTotalBalanceFrozenByRequesterId(
         requesterId: string,
         tx: PrismaTransaction = this.prisma
     ): Promise<number> {
@@ -110,10 +110,10 @@ export class WithdrawRequestRepository extends BasePrismaRepository {
                         status: WithdrawRequestStatus.PENDING,
                     },
                     _sum: {
-                        amountCoin: true,
+                        amountBalance: true,
                     },
                 })
-            )._sum.amountCoin || 0
+            )._sum.amountBalance || 0
         );
     }
 }

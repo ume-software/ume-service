@@ -9,7 +9,7 @@ export class TopDonationDonorResponse {
         description: "Total coin donate",
         example: 20,
     })
-    totalCoinDonated!: number;
+    totalBalanceDonated!: number;
 
     @ApiModelProperty({
         description: "Count donate",

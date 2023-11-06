@@ -1,16 +1,16 @@
 
 import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-swagger-typescript";
-import { BuyCoinCalculateResponse } from "./buyCoinCalculate.response";
+import { DepositCalculateResponse } from "./depositCalculate.response";
 
 @ApiModel({
     description: 'Buy coin calculate response'
 })
-export class BuyCoinCalculateListResponse {
+export class DepositCalculateListResponse {
     @ApiModelProperty({
         description: "Row",
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: BuyCoinCalculateResponse,
+        itemType: DepositCalculateResponse,
     })
-    row!: Array<BuyCoinCalculateResponse>;
+    row!: Array<DepositCalculateResponse>;
 }
 

@@ -384,22 +384,22 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to perform a withdraw but does not have sufficient coins, resulting in a 402 Payment Required status.",
     },
-    BUY_COIN_REQUEST_NOT_FOUND: {
-        type: "buy_coin_request_exception",
-        message: "Buy coin request not found.",
+    DEPOSIT_REQUEST_NOT_FOUND: {
+        type: "deposit_request_exception",
+        message: "Deposit request not found.",
         codeNumber: 20600,
         statusCode: 404,
         description:
-            "This error is used when a buy coin request cannot be found in the system, resulting in a 404 Not Found status.",
+            "This error is used when a deposit request cannot be found in the system, resulting in a 404 Not Found status.",
     },
 
-    BUY_COIN_REQUEST_HAS_BEEN_PROCESSED: {
-        type: "buy_coin_request_exception",
-        message: "The request to buy coins has been processed.",
+    DEPOSIT_REQUEST_HAS_BEEN_PROCESSED: {
+        type: "deposit_request_exception",
+        message: "The request to deposit has been processed.",
         codeNumber: 20601,
         statusCode: 422,
         description:
-            "This error is used when a user attempts to process a buy coin request that has already been completed, resulting in a 422 Unprocessable Entity status.",
+            "This error is used when a user attempts to process a deposit request that has already been completed, resulting in a 422 Unprocessable Entity status.",
     },
     WITHDRAW_REQUEST_NOT_FOUND: {
         type: "withdraw_request_exception",

@@ -1,26 +1,19 @@
 import { PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
-import { IsArray, IsEnum, IsInt } from "class-validator";
-import {
-    ApiModel,
-    ApiModelProperty,
-    SwaggerDefinitionConstant,
-} from "express-swagger-typescript";
+import { IsEnum, IsNumber } from "class-validator";
+import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Buy coin calculate list request",
+    description: "Buy coin calculate request",
 })
-export class BuyCoinCalculateListRequest {
+export class DepositCalculateRequest {
     @ApiModelProperty({
-        description: "AmountCoin",
+        description: "AmountBalance",
         required: true,
-        type: SwaggerDefinitionConstant.ARRAY,
-        itemType: SwaggerDefinitionConstant.NUMBER,
-        example: [20, 50, 100, 200, 500],
+        example: 20,
     })
-    @IsInt({ each: true })
-    @IsArray()
-    public amountCoins!: Array<number>;
+    @IsNumber()
+    public amountBalance!: number;
 
     @ApiModelProperty({
         description: "platform",
@@ -40,12 +33,12 @@ export class BuyCoinCalculateListRequest {
     @IsEnum(UnitCurrency)
     public unitCurrency!: UnitCurrency;
 
-    constructor(data: BuyCoinCalculateListRequest) {
+    constructor(data: DepositCalculateRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(BuyCoinCalculateListRequest, data, [
-                    "amountCoins",
+                mappingDataRequest(DepositCalculateRequest, data, [
+                    "amountBalance",
                     "platform",
                     "unitCurrency",
                 ])

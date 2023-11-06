@@ -4,11 +4,11 @@ import {
 } from "@/common/requests";
 import prisma from "@/models/base.prisma";
 import {
-    coinHistoryRepository,
-    coinSettingRepository,
+    balanceHistoryRepository,
+    balanceSettingRepository,
     withdrawRequestRepository,
 } from "@/repositories";
-import { coinService, errorService } from "@/services";
+import { balanceService, errorService } from "@/services";
 
 import {
     BasePrismaService,
@@ -16,7 +16,7 @@ import {
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import {
-    CoinType,
+    BalanceType,
     Prisma,
     WithdrawRequestStatus,
     UnitCurrency,
@@ -37,24 +37,23 @@ export class WithdrawRequestService extends BasePrismaService<
 
     async createWithdrawRequest(
         requesterId: string,
-        getQrBuyCoinRequest: CreateWithdrawRequest
+        getQrBuyBalanceRequest: CreateWithdrawRequest
     ) {
-        const { amountCoin, userPaymentSystemId, unitCurrency } =
-            getQrBuyCoinRequest;
-        if (!amountCoin || !unitCurrency || !userPaymentSystemId) {
+        const { amountBalance, userPaymentSystemId, unitCurrency } =
+            getQrBuyBalanceRequest;
+        if (!amountBalance || !unitCurrency || !userPaymentSystemId) {
             throw errorService.badRequest();
         }
-        const checkAmountCoin = await coinService.getTotalCoinByUserSlug(
-            requesterId
-        );
-        if (checkAmountCoin.totalCoinsAvailable < amountCoin) {
+        const checkAmountBalance =
+            await balanceService.getTotalBalanceByUserSlug(requesterId);
+        if (checkAmountBalance.totalBalanceAvailable < amountBalance) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_WITHDRAW
             );
         }
         const { totalMoney } =
-            await coinSettingRepository.convertCoinToMoneyForSellCoin(
-                amountCoin,
+            await balanceSettingRepository.convertBalanceToMoneyForWithdraw(
+                amountBalance,
                 unitCurrency
             );
 
@@ -66,7 +65,7 @@ export class WithdrawRequestService extends BasePrismaService<
             },
             unitCurrency: UnitCurrency.VND,
             amountMoney: totalMoney,
-            amountCoin,
+            amountBalance,
             userPaymentSystem: {
                 connect: {
                     id: userPaymentSystemId,
@@ -85,10 +84,9 @@ export class WithdrawRequestService extends BasePrismaService<
         if (!id || !status) {
             throw errorService.badRequest();
         }
-        console.log("id ====< ", id);
         let withdrawRequest = await this.repository.findById(id);
         if (!withdrawRequest) {
-            throw errorService.error(ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND);
+            throw errorService.error(ERROR_MESSAGE.DEPOSIT_REQUEST_NOT_FOUND);
         }
         const { PENDING, REJECTED, COMPLETED } = WithdrawRequestStatus;
         if (withdrawRequest.status != PENDING) {
@@ -96,7 +94,7 @@ export class WithdrawRequestService extends BasePrismaService<
         }
         if ([COMPLETED, REJECTED].includes(withdrawRequest.status as any)) {
             throw errorService.error(
-                ERROR_MESSAGE.BUY_COIN_REQUEST_HAS_BEEN_PROCESSED
+                ERROR_MESSAGE.DEPOSIT_REQUEST_HAS_BEEN_PROCESSED
             );
         }
 
@@ -109,15 +107,15 @@ export class WithdrawRequestService extends BasePrismaService<
             };
 
             if (status == COMPLETED) {
-                const coinHistory = await coinHistoryRepository.create(
+                const balanceHistory = await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
                                 id: withdrawRequest?.requesterId!,
                             },
                         },
-                        amount: -withdrawRequest?.amountCoin!,
-                        coinType: CoinType.WITHDRAW,
+                        amount: -withdrawRequest?.amountBalance!,
+                        balanceType: BalanceType.WITHDRAW,
                         adminCreated: {
                             connect: {
                                 id: adminId,
@@ -126,9 +124,9 @@ export class WithdrawRequestService extends BasePrismaService<
                     },
                     tx
                 );
-                body.coinHistory = {
+                body.balanceHistory = {
                     connect: {
-                        id: coinHistory.id,
+                        id: balanceHistory.id,
                     },
                 };
             }
@@ -136,11 +134,11 @@ export class WithdrawRequestService extends BasePrismaService<
             return withdrawRequest;
         });
     }
-    async userCancelCoinRequest(userCancelCoinRequest: {
+    async userCancelBalanceRequest(userCancelBalanceRequest: {
         userId: string;
         id: string;
     }) {
-        const { id, userId } = userCancelCoinRequest;
+        const { id, userId } = userCancelBalanceRequest;
         if (!id || !userId) {
             throw errorService.badRequest();
         }
@@ -152,7 +150,7 @@ export class WithdrawRequestService extends BasePrismaService<
             },
         });
         if (!withdrawRequest) {
-            throw errorService.error(ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND);
+            throw errorService.error(ERROR_MESSAGE.DEPOSIT_REQUEST_NOT_FOUND);
         }
 
         return await this.repository.updateById(id, {

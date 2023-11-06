@@ -1,29 +1,31 @@
 import {
-    CoinSettingType,
+    BalanceSettingType,
     PaymentSystemPlatform,
     UnitCurrency,
 } from "@prisma/client";
 import { BasePrismaRepository } from "../base/basePrisma.repository";
 
-export class CoinSettingRepository extends BasePrismaRepository {
+export class BalanceSettingRepository extends BasePrismaRepository {
     constructor() {
         super();
     }
-    async getConvertCoinToMoneyForSellCoinRate(unitCurrency: UnitCurrency) {
-        const setting = await this.prisma.coinSetting.findFirst({
+    async getConvertBalanceToMoneyForWithdrawRate(
+        unitCurrency: UnitCurrency
+    ) {
+        const setting = await this.prisma.balanceSetting.findFirst({
             where: {
-                coinSettingType: CoinSettingType.SELL_COIN,
+                balanceSettingType: BalanceSettingType.DEPOSIT,
                 unitCurrency,
             },
         });
-        let conversionRateCoin = 0.001,
+        let conversionRateBalance = 0.001,
             feePercentage = 0.001,
             surcharge = 0;
         if (setting) {
-            conversionRateCoin =
-                setting.conversionRateCoin != null
-                    ? setting.conversionRateCoin
-                    : conversionRateCoin;
+            conversionRateBalance =
+                setting.conversionRateBalance != null
+                    ? setting.conversionRateBalance
+                    : conversionRateBalance;
             feePercentage =
                 setting.feePercentage != null
                     ? setting.feePercentage
@@ -32,30 +34,30 @@ export class CoinSettingRepository extends BasePrismaRepository {
                 setting.surcharge != null ? setting.surcharge : surcharge;
         }
         return {
-            conversionRateCoin,
+            conversionRateBalance,
             feePercentage,
             surcharge,
         };
     }
-    async getConvertCoinToMoneyForBuyCoinRate(
+    async getConvertBalanceToMoneyForDepositRate(
         unitCurrency: UnitCurrency,
         paymentSystemPlatform: PaymentSystemPlatform
     ) {
-        const setting = await this.prisma.coinSetting.findFirst({
+        const setting = await this.prisma.balanceSetting.findFirst({
             where: {
-                coinSettingType: CoinSettingType.BUY_COIN,
+                balanceSettingType: BalanceSettingType.DEPOSIT,
                 paymentSystemPlatform,
                 unitCurrency,
             },
         });
-        let conversionRateCoin = 0.001,
+        let conversionRateBalance = 0.001,
             feePercentage = 0.001,
             surcharge = 0;
         if (setting) {
-            conversionRateCoin =
-                setting.conversionRateCoin != null
-                    ? setting.conversionRateCoin
-                    : conversionRateCoin;
+            conversionRateBalance =
+                setting.conversionRateBalance != null
+                    ? setting.conversionRateBalance
+                    : conversionRateBalance;
             feePercentage =
                 setting.feePercentage != null
                     ? setting.feePercentage
@@ -64,22 +66,22 @@ export class CoinSettingRepository extends BasePrismaRepository {
                 setting.surcharge != null ? setting.surcharge : surcharge;
         }
         return {
-            conversionRateCoin,
+            conversionRateBalance,
             feePercentage,
             surcharge,
         };
     }
 
-    calculateCoinToMoneyForBuyCoin(
-        amountCoin: number,
+    calculateBalanceToMoneyForDeposit(
+        amountBalance: number,
         option = {
-            conversionRateCoin: 0.001,
+            conversionRateBalance: 0.001,
             feePercentage: 0.001,
             surcharge: 0,
         }
     ) {
-        const { conversionRateCoin, feePercentage, surcharge } = option;
-        const amountMoney = Math.round(amountCoin / conversionRateCoin);
+        const { conversionRateBalance, feePercentage, surcharge } = option;
+        const amountMoney = Math.round(amountBalance / conversionRateBalance);
         const totalFee = Math.round(amountMoney * feePercentage + surcharge);
         return {
             amountMoney,
@@ -88,16 +90,16 @@ export class CoinSettingRepository extends BasePrismaRepository {
         };
     }
 
-    calculateCoinToMoneyForSellCoin(
-        amountCoin: number,
+    calculateBalanceToMoneyForWithdraw(
+        amountBalance: number,
         option = {
-            conversionRateCoin: 0.001,
+            conversionRateBalance: 0.001,
             feePercentage: 0.001,
             surcharge: 0,
         }
     ) {
-        const { conversionRateCoin, feePercentage, surcharge } = option;
-        const amountMoney = Math.round(amountCoin / conversionRateCoin);
+        const { conversionRateBalance, feePercentage, surcharge } = option;
+        const amountMoney = Math.round(amountBalance / conversionRateBalance);
         const totalFee = Math.round(amountMoney * feePercentage + surcharge);
         return {
             amountMoney,
@@ -105,49 +107,56 @@ export class CoinSettingRepository extends BasePrismaRepository {
             totalMoney: amountMoney - totalFee,
         };
     }
-    async convertCoinToMoneyForSellCoin(
-        amountCoin: number,
+    async convertBalanceToMoneyForWithdraw(
+        amountBalance: number,
         unitCurrency: UnitCurrency
     ) {
-        const option = await this.getConvertCoinToMoneyForSellCoinRate(
+        const option = await this.getConvertBalanceToMoneyForWithdrawRate(
             unitCurrency
         );
-        return this.calculateCoinToMoneyForSellCoin(amountCoin, option);
+        return this.calculateBalanceToMoneyForWithdraw(
+            amountBalance,
+            option
+        );
     }
 
-    async convertCoinToMoneyForBuyCoin(
-        amountCoin: number,
+    async convertBalanceToMoneyForDeposit(
+        amountBalance: number,
         unitCurrency: UnitCurrency,
         paymentSystemPlatform: PaymentSystemPlatform
     ) {
-        const option = await this.getConvertCoinToMoneyForBuyCoinRate(
+        const option = await this.getConvertBalanceToMoneyForDepositRate(
             unitCurrency,
             paymentSystemPlatform
         );
-        return this.calculateCoinToMoneyForBuyCoin(amountCoin, option);
+        return this.calculateBalanceToMoneyForDeposit(amountBalance, option);
     }
 
-    async calculateCoinBookingForProvider(amountCoin: number): Promise<number> {
+    async calculateBalanceBookingForProvider(
+        amountBalance: number
+    ): Promise<number> {
         return await this.calculateForProvider(
-            amountCoin,
-            CoinSettingType.PROVIDER_GET_COIN_BOOKING
+            amountBalance,
+            BalanceSettingType.PROVIDER_GET_MONEY_BOOKING
         );
     }
 
-    async calculateCoinDonateForProvider(amountCoin: number): Promise<number> {
+    async calculateBalanceDonateForProvider(
+        amountBalance: number
+    ): Promise<number> {
         return await this.calculateForProvider(
-            amountCoin,
-            CoinSettingType.PROVIDER_GET_COIN_DONATE
+            amountBalance,
+            BalanceSettingType.PROVIDER_GET_MONEY_DONATE
         );
     }
 
     private async calculateForProvider(
-        amountCoin: number,
-        coinType: CoinSettingType
+        amountBalance: number,
+        coinType: BalanceSettingType
     ): Promise<number> {
-        const setting = await this.prisma.coinSetting.findFirst({
+        const setting = await this.prisma.balanceSetting.findFirst({
             where: {
-                coinSettingType: coinType,
+                balanceSettingType: coinType,
             },
         });
         let feePercentage = 0.001,
@@ -160,7 +169,7 @@ export class CoinSettingRepository extends BasePrismaRepository {
             surcharge =
                 setting.surcharge != null ? setting.surcharge : surcharge;
         }
-        const totalFee = amountCoin * feePercentage + surcharge;
-        return amountCoin - totalFee;
+        const totalFee = amountBalance * feePercentage + surcharge;
+        return amountBalance - totalFee;
     }
 }

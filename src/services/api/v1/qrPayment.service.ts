@@ -1,4 +1,5 @@
-import { GetQrBuyCoinRequest } from "@/common/requests/qrPayment/getQrBuyCoin.request";
+
+import { GetQrDepositRequest } from "@/common/requests";
 import { ESyntaxRegexPaymentQrSetting } from "@/enums/syntaxRegexPaymentQrSetting.enum";
 import {
     adminPaymentSystemRepository,
@@ -7,8 +8,8 @@ import {
 import { errorService, utilService } from "@/services";
 
 export class QrPaymentService {
-    async getQrBuyCoin(getQrBuyCoinRequest: GetQrBuyCoinRequest) {
-        const { amount, platform, transferContent } = getQrBuyCoinRequest;
+    async getQrDeposit(getQrDepositRequest: GetQrDepositRequest) {
+        const { amount, platform, transferContent } = getQrDepositRequest;
         const adminPaymentSystem =
             await adminPaymentSystemRepository.getRandomByPlatForm(platform);
 

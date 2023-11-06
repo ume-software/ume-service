@@ -8,12 +8,12 @@ import { mappingDataRequest } from "../base";
 })
 export class CreateWithdrawRequest {
     @ApiModelProperty({
-        description: "AmountCoin",
+        description: "AmountBalance",
         required: true,
         example: 20,
     })
     @IsInt()
-    amountCoin!: number;
+    amountBalance!: number;
 
     @ApiModelProperty({
         description: "unitCurrency",
@@ -37,7 +37,7 @@ export class CreateWithdrawRequest {
             Object.assign(
                 this,
                 mappingDataRequest(CreateWithdrawRequest, data, [
-                    "amountCoin",
+                    "amountBalance",
                     "unitCurrency",
                     "userPaymentSystemId",
                 ])

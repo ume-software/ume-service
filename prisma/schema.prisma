@@ -29,9 +29,9 @@ model User {
   isVerified             Boolean                   @default(false) @map("is_verified")
   isProvider             Boolean                   @default(false) @map("is_provider")
   providerConfig         ProviderConfig?
-  coinHistories          CoinHistory[]
+  balanceHistories       BalanceHistory[]
   bookingHistories       BookingHistory[]
-  buyCoinRequests        BuyCoinRequest[]
+  depositRequests        DepositRequest[]
   withdrawRequests       WithdrawRequest[]
   notices                Notice[]
   posts                  Post[]
@@ -182,26 +182,26 @@ model RefreshTokenUser {
 }
 
 model Admin {
-  id                            String               @id @default(uuid()) @map("id")
-  createdAt                     DateTime?            @default(now()) @map("created_at")
-  updatedAt                     DateTime?            @updatedAt @map("updated_at")
-  deletedAt                     DateTime?            @map("deleted_at")
-  name                          String?              @map("name") @db.VarChar(80)
-  username                      String?              @map("username") @db.VarChar(20)
-  dob                           DateTime?            @map("dob")
-  gender                        Gender               @default(OTHER) @map("gender")
-  phone                         String?              @map("phone")
-  email                         String?              @map("email")
-  password                      String?              @map("password")
-  avatarUrl                     String?              @map("avatar_url")
-  ipv4                          String?              @map("ipv4") @db.Char(20)
-  refreshTokenAdmin             RefreshTokenAdmin?
-  adminRoles                    AdminRole[]
-  adminPaymentSystems           AdminPaymentSystem[]
-  userVerificationRequests      UserKYCRequest[]
-  historyAllocationCoinForUsers CoinHistory[]
-  voucher                       Voucher[]
-  buyCoinRequest                BuyCoinRequest[]
+  id                               String               @id @default(uuid()) @map("id")
+  createdAt                        DateTime?            @default(now()) @map("created_at")
+  updatedAt                        DateTime?            @updatedAt @map("updated_at")
+  deletedAt                        DateTime?            @map("deleted_at")
+  name                             String?              @map("name") @db.VarChar(80)
+  username                         String?              @map("username") @db.VarChar(20)
+  dob                              DateTime?            @map("dob")
+  gender                           Gender               @default(OTHER) @map("gender")
+  phone                            String?              @map("phone")
+  email                            String?              @map("email")
+  password                         String?              @map("password")
+  avatarUrl                        String?              @map("avatar_url")
+  ipv4                             String?              @map("ipv4") @db.Char(20)
+  refreshTokenAdmin                RefreshTokenAdmin?
+  adminRoles                       AdminRole[]
+  adminPaymentSystems              AdminPaymentSystem[]
+  userVerificationRequests         UserKYCRequest[]
+  historyAllocationBalanceForUsers BalanceHistory[]
+  voucher                          Voucher[]
+  depositRequest                   DepositRequest[]
 
   @@map("admin")
 }
@@ -382,14 +382,14 @@ model BookingCost {
   @@map("booking_cost")
 }
 
-model CoinHistory {
+model BalanceHistory {
   id              String           @id @default(uuid()) @map("id")
   createdAt       DateTime?        @default(now()) @map("created_at")
   updatedAt       DateTime?        @updatedAt @map("updated_at")
   deletedAt       DateTime?        @map("deleted_at")
   user            User             @relation(fields: [userId], references: [id])
   userId          String           @map("user_id")
-  coinType        CoinType?        @map("coin_type")
+  balanceType     BalanceType?     @map("balance_type")
   amount          Float?           @map("amount")
   adminCreated    Admin?           @relation(fields: [adminIdCreated], references: [id])
   adminIdCreated  String?          @map("admin_id_created")
@@ -397,10 +397,10 @@ model CoinHistory {
   booking         BookingHistory?  @relation(fields: [bookingId], references: [id])
   donationId      String?          @map("donation_id")
   donation        Donation?        @relation(fields: [donationId], references: [id])
-  buyCoinRequest  BuyCoinRequest?
+  depositRequest  DepositRequest?
   withdrawRequest WithdrawRequest?
 
-  @@map("coin_history")
+  @@map("balance_history")
 }
 
 model BookingHistory {
@@ -417,10 +417,10 @@ model BookingHistory {
   totalCost               Float                    @map("total_cost")
   bookingPeriod           Int                      @map("booking_period")
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
-  providerReceivedCoin    Float?                   @map("provider_received_coin")
+  providerReceivedBalance Float?                   @map("provider_received_balance")
   feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
-  coinHistory             CoinHistory[]
+  balanceHistories        BalanceHistory[]
 
   @@map("booking_history")
 }
@@ -508,31 +508,31 @@ model ReportUser {
   @@map("report_user")
 }
 
-model BuyCoinRequest {
-  id              String                       @id @default(uuid()) @map("id")
-  createdAt       DateTime?                    @default(now()) @map("created_at")
-  updatedAt       DateTime?                    @updatedAt @map("updated_at")
-  deletedAt       DateTime?                    @map("deleted_at")
-  amountMoney     Int?                         @map("amount_money")
-  amountCoin      Float?                       @map("amount_coin")
-  unitCurrency    UnitCurrency?                @map("unit_currency")
-  requester       User                         @relation(fields: [requesterId], references: [id])
-  requesterId     String                       @map("requester_id")
-  dataString      String?                      @map("data_string")
-  dataStringType  BuyCoinRequestDataStringType @map("data_string_type")
-  coinHistory     CoinHistory?                 @relation(fields: [coinHistoryId], references: [id])
-  coinHistoryId   String?                      @unique @map("coin_history_id")
-  status          BuyCoinRequestStatus         @default(INIT) @map("status")
-  handlerId       String?                      @map("handler_id")
-  handler         Admin?                       @relation(fields: [handlerId], references: [id])
-  handlerFeedback String?                      @map("handler_feedback")
-  billImageUrl    String?                      @map("bill_image_url")
-  platform        PaymentSystemPlatform?       @map("platform")
-  transactionCode String?                      @unique() @map("transaction_code")
-  content         String?                      @map("content")
-  beneficiary     String?                      @map("beneficiary")
+model DepositRequest {
+  id               String                       @id @default(uuid()) @map("id")
+  createdAt        DateTime?                    @default(now()) @map("created_at")
+  updatedAt        DateTime?                    @updatedAt @map("updated_at")
+  deletedAt        DateTime?                    @map("deleted_at")
+  amountMoney      Int?                         @map("amount_money")
+  amountBalance    Float?                       @map("amount_balance")
+  unitCurrency     UnitCurrency?                @map("unit_currency")
+  requester        User                         @relation(fields: [requesterId], references: [id])
+  requesterId      String                       @map("requester_id")
+  dataString       String?                      @map("data_string")
+  dataStringType   DepositRequestDataStringType @map("data_string_type")
+  balanceHistory   BalanceHistory?              @relation(fields: [balanceHistoryId], references: [id])
+  balanceHistoryId String?                      @unique @map("balance_history_id")
+  status           DepositRequestStatus         @default(INIT) @map("status")
+  handlerId        String?                      @map("handler_id")
+  handler          Admin?                       @relation(fields: [handlerId], references: [id])
+  handlerFeedback  String?                      @map("handler_feedback")
+  billImageUrl     String?                      @map("bill_image_url")
+  platform         PaymentSystemPlatform?       @map("platform")
+  transactionCode  String?                      @unique() @map("transaction_code")
+  content          String?                      @map("content")
+  beneficiary      String?                      @map("beneficiary")
 
-  @@map("buy_coin_request")
+  @@map("buy_balance_request")
 }
 
 model WithdrawRequest {
@@ -541,12 +541,12 @@ model WithdrawRequest {
   updatedAt           DateTime?              @updatedAt @map("updated_at")
   deletedAt           DateTime?              @map("deleted_at")
   amountMoney         Int?                   @map("amount_money")
-  amountCoin          Float?                 @map("amount_coin")
+  amountBalance       Float?                 @map("amount_balance")
   unitCurrency        UnitCurrency?          @map("unit_currency")
   requester           User                   @relation(fields: [requesterId], references: [id])
   requesterId         String                 @map("requester_id")
-  coinHistory         CoinHistory?           @relation(fields: [coinHistoryId], references: [id])
-  coinHistoryId       String?                @unique @map("coin_history_id")
+  balanceHistory      BalanceHistory?        @relation(fields: [balanceHistoryId], references: [id])
+  balanceHistoryId    String?                @unique @map("balance_history_id")
   status              WithdrawRequestStatus? @default(PENDING) @map("status")
   handlerId           String?                @map("handler_id")
   handlerFeedback     String?                @map("handler_feedback")
@@ -583,19 +583,19 @@ model Banner {
   @@map("banner")
 }
 
-model CoinSetting {
+model BalanceSetting {
   id                    String                 @id @default(uuid()) @map("id")
   createdAt             DateTime?              @default(now()) @map("created_at")
   updatedAt             DateTime?              @updatedAt @map("updated_at")
   deletedAt             DateTime?              @map("deleted_at")
-  coinSettingType       CoinSettingType?       @map("coin_setting_type")
+  balanceSettingType    BalanceSettingType?    @map("balance_setting_type")
   paymentSystemPlatform PaymentSystemPlatform? @map("payment_system_platform")
   unitCurrency          UnitCurrency?          @map("unit_currency")
-  conversionRateCoin    Float?                 @map("conversion_rate_coin")
+  conversionRateBalance Float?                 @map("conversion_rate_balance")
   feePercentage         Float?                 @default(0) @map("fee")
   surcharge             Float?                 @default(0) @map("surcharge")
 
-  @@map("coin_setting")
+  @@map("balance_setting")
 }
 
 model Post {
@@ -658,30 +658,30 @@ model WatchedPost {
 }
 
 model Donation {
-  id             String        @id @default(uuid()) @map("id")
-  createdAt      DateTime?     @default(now()) @map("created_at")
-  updatedAt      DateTime?     @updatedAt @map("updated_at")
-  deletedAt      DateTime?     @map("deleted_at")
-  donor          User          @relation("DonorDonations", fields: [donorId], references: [id])
-  donorId        String        @map("donor_id")
-  donatedAmount  Float         @map("donated_amount")
-  recipient      User          @relation("RecipientDonations", fields: [recipientId], references: [id])
-  recipientId    String        @map("recipient_id")
-  receivedAmount Float         @map("received_amount")
-  message        String?       @map("message")
-  coinHistory    CoinHistory[]
+  id             String           @id @default(uuid()) @map("id")
+  createdAt      DateTime?        @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  donor          User             @relation("DonorDonations", fields: [donorId], references: [id])
+  donorId        String           @map("donor_id")
+  donatedAmount  Float            @map("donated_amount")
+  recipient      User             @relation("RecipientDonations", fields: [recipientId], references: [id])
+  recipientId    String           @map("recipient_id")
+  receivedAmount Float            @map("received_amount")
+  message        String?          @map("message")
+  balanceHistory BalanceHistory[]
 
   @@map("donation")
 }
 
-enum CoinType {
+enum BalanceType {
   SPEND_BOOKING
   SPEND_GIFT
   SPEND_DONATE
   GET_BOOKING
   GET_DONATE
   GET_GIFT
-  BUY_COIN
+  DEPOSIT
   GET_MISSION
   WITHDRAW
   ADMIN
@@ -738,7 +738,7 @@ enum UnitCurrency {
   USD
 }
 
-enum BuyCoinRequestStatus {
+enum DepositRequestStatus {
   INIT
   USER_NOTICES_PAID
   PENDING
@@ -753,12 +753,12 @@ enum WithdrawRequestStatus {
   COMPLETED
 }
 
-enum CoinSettingType {
-  BUY_COIN
-  SELL_COIN
-  PROVIDER_GET_COIN_BOOKING
-  GIFT_TO_COIN
-  PROVIDER_GET_COIN_DONATE
+enum BalanceSettingType {
+  DEPOSIT
+  WITHDRAW
+  PROVIDER_GET_MONEY_BOOKING
+  GIFT_TO_MONEY
+  PROVIDER_GET_MONEY_DONATE
 }
 
 enum NoticeType {
@@ -819,7 +819,7 @@ enum VoucherStatus {
   REJECTED
 }
 
-enum BuyCoinRequestDataStringType {
+enum DepositRequestDataStringType {
   QR
   REDIRECT_URL
 }

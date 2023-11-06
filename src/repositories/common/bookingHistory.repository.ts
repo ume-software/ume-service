@@ -181,7 +181,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         });
     }
 
-    async getTotalCoinFrozenByBookerId(
+    async getTotalBalanceFrozenByBookerId(
         bookerId: string,
         tx: PrismaTransaction = this.prisma
     ): Promise<number> {
@@ -205,6 +205,4 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             )._sum.totalCost || 0
         );
     }
-
-   
 }

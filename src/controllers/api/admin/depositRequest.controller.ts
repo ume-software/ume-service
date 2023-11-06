@@ -1,12 +1,12 @@
-import { BuyCoinPagingResponse, BuyCoinResponse } from "@/common/responses";
+import { DepositPagingResponse, DepositResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { buyCoinRequestService } from "@/services";
-import { BuyCoinRequestService } from "@/services/api/v1/buyCoinRequest.service";
+import { depositRequestService } from "@/services";
+import { DepositRequestService } from "@/services/api/v1/depositRequest.service";
 import {
     queryParameters,
     selectParameter,
@@ -19,33 +19,33 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/buy-coin-request",
-    name: "AdminManageBuyCoinRequest",
+    path: "/api/admin/deposit-request",
+    name: "AdminManageDepositRequest",
 })
-export class AdminManageBuyCoinRequestController extends BaseController {
+export class AdminManageDepositRequestController extends BaseController {
     constructor() {
         super();
-        this.service = buyCoinRequestService;
-        this.path = "buy-coin-request";
+        this.service = depositRequestService;
+        this.path = "deposit-request";
         this.customRouting();
     }
-    service: BuyCoinRequestService;
+    service: DepositRequestService;
     customRouting() {
         this.router.get(
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListBuyCoinRequest)
+            this.route(this.adminGetListDepositRequest)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetOneBuyCoinRequest)
+            this.route(this.adminGetOneDepositRequest)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListBuyCoinRequest",
+        operationId: "adminGetListDepositRequest",
         security: {
             bearerAuth: [],
         },
@@ -58,14 +58,14 @@ export class AdminManageBuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinPagingResponse },
+                        schema: { model: DepositPagingResponse },
                     },
                 },
                 description: "Approved success",
             },
         },
     })
-    async adminGetListBuyCoinRequest(req: Request, res: Response) {
+    async adminGetListDepositRequest(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
@@ -73,7 +73,7 @@ export class AdminManageBuyCoinRequestController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetOneBuyCoinRequest",
+        operationId: "adminGetOneDepositRequest",
         security: {
             bearerAuth: [],
         },
@@ -94,14 +94,14 @@ export class AdminManageBuyCoinRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Rejected success",
             },
         },
     })
-    async adminGetOneBuyCoinRequest(req: Request, res: Response) {
+    async adminGetOneDepositRequest(req: Request, res: Response) {
         const { id } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
         _.set(queryInfoPrisma, "where.id", id);

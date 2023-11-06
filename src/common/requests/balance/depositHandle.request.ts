@@ -1,4 +1,4 @@
-import { BuyCoinRequestStatus } from "@prisma/client";
+import { DepositRequestStatus } from "@prisma/client";
 import { IsEnum, IsOptional, IsString, IsUUID, IsUrl } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
@@ -6,7 +6,7 @@ import { mappingDataRequest } from "../base";
 @ApiModel({
     description: "Get QR buy coin request",
 })
-export class BuyCoinHandleRequest {
+export class DepositHandleRequest {
     @ApiModelProperty({
         description: "id",
         required: true,
@@ -34,22 +34,22 @@ export class BuyCoinHandleRequest {
     public feedback?: string;
 
     @ApiModelProperty({
-        description: "BuyCoinRequestStatus",
+        description: "DepositRequestStatus",
         required: true,
         enum: Object.values([
-            BuyCoinRequestStatus.APPROVED,
-            BuyCoinRequestStatus.REJECTED,
+            DepositRequestStatus.APPROVED,
+            DepositRequestStatus.REJECTED,
         ]),
-        example: BuyCoinRequestStatus.APPROVED,
+        example: DepositRequestStatus.APPROVED,
     })
-    @IsEnum(BuyCoinRequestStatus)
-    public status!: BuyCoinRequestStatus;
+    @IsEnum(DepositRequestStatus)
+    public status!: DepositRequestStatus;
 
-    constructor(data: BuyCoinHandleRequest) {
+    constructor(data: DepositHandleRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(BuyCoinHandleRequest, data, [
+                mappingDataRequest(DepositHandleRequest, data, [
                     "id",
                     "billImageUrl",
                     "feedback",

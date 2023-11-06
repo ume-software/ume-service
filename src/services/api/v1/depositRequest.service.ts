@@ -1,18 +1,18 @@
 import {
-    BuyCoinCalculateRequest,
-    BuyCoinCalculateListRequest,
-    CreateBuyCoinRequest,
-    BuyCoinHandleRequest,
+    DepositCalculateRequest,
+    DepositCalculateListRequest,
+    CreateDepositRequest,
+    DepositHandleRequest,
 } from "@/common/requests";
 import {
-    BuyCoinCalculateResponse,
-    BuyCoinCalculateListResponse,
+    DepositCalculateResponse,
+    DepositCalculateListResponse,
 } from "@/common/responses";
 import prisma from "@/models/base.prisma";
 import {
-    coinSettingRepository,
-    buyCoinRequestRepository,
-    coinHistoryRepository,
+    balanceSettingRepository,
+    depositRequestRepository,
+    balanceHistoryRepository,
 } from "@/repositories";
 import {
     errorService,
@@ -27,19 +27,19 @@ import {
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import {
-    BuyCoinRequestDataStringType,
-    BuyCoinRequestStatus,
-    CoinType,
+    DepositRequestDataStringType,
+    DepositRequestStatus,
+    BalanceType,
     PaymentSystemPlatform,
     Prisma,
     UnitCurrency,
 } from "@prisma/client";
 
-export class BuyCoinRequestService extends BasePrismaService<
-    typeof buyCoinRequestRepository
+export class DepositRequestService extends BasePrismaService<
+    typeof depositRequestRepository
 > {
     constructor() {
-        super(buyCoinRequestRepository);
+        super(depositRequestRepository);
     }
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
@@ -48,44 +48,46 @@ export class BuyCoinRequestService extends BasePrismaService<
         return await this.repository.findOne(query);
     }
 
-    async buyCoinCalculate(
-        buyCoinCalculateRequest: BuyCoinCalculateRequest
-    ): Promise<BuyCoinCalculateResponse> {
-        const { amountCoin, platform, unitCurrency } = buyCoinCalculateRequest;
-        if (!amountCoin || !platform || !unitCurrency) {
+    async depositCalculate(
+        depositCalculateRequest: DepositCalculateRequest
+    ): Promise<DepositCalculateResponse> {
+        const { amountBalance, platform, unitCurrency } =
+            depositCalculateRequest;
+        if (!amountBalance || !platform || !unitCurrency) {
             throw errorService.badRequest();
         }
-        const result = await coinSettingRepository.convertCoinToMoneyForBuyCoin(
-            amountCoin,
-            unitCurrency,
-            platform
-        );
-
-        return {
-            ...buyCoinCalculateRequest,
-            ...result,
-        };
-    }
-    async buyCoinCalculateList(
-        buyCoinCalculateListRequest: BuyCoinCalculateListRequest
-    ): Promise<BuyCoinCalculateListResponse> {
-        const { amountCoins, platform, unitCurrency } =
-            buyCoinCalculateListRequest;
-        if (!amountCoins || !platform || !unitCurrency) {
-            throw errorService.badRequest();
-        }
-        const option =
-            await coinSettingRepository.getConvertCoinToMoneyForBuyCoinRate(
+        const result =
+            await balanceSettingRepository.convertBalanceToMoneyForDeposit(
+                amountBalance,
                 unitCurrency,
                 platform
             );
-        const row = amountCoins.map((amountCoin: number) => {
+
+        return {
+            ...depositCalculateRequest,
+            ...result,
+        };
+    }
+    async depositCalculateList(
+        depositCalculateListRequest: DepositCalculateListRequest
+    ): Promise<DepositCalculateListResponse> {
+        const { amountBalance, platform, unitCurrency } =
+            depositCalculateListRequest;
+        if (!amountBalance || !platform || !unitCurrency) {
+            throw errorService.badRequest();
+        }
+        const option =
+            await balanceSettingRepository.getConvertBalanceToMoneyForDepositRate(
+                unitCurrency,
+                platform
+            );
+        const row = amountBalance.map((amountBalance: number) => {
             return {
-                amountCoin,
+                amountBalance,
                 platform,
                 unitCurrency,
-                ...coinSettingRepository.calculateCoinToMoneyForBuyCoin(
-                    amountCoin,
+                ...balanceSettingRepository.calculateBalanceToMoneyForDeposit(
+                    amountBalance,
                     option
                 ),
             };
@@ -96,17 +98,17 @@ export class BuyCoinRequestService extends BasePrismaService<
         };
     }
 
-    async createBuyCoin(
+    async createDeposit(
         requesterId: string,
-        getQrBuyCoinRequest: CreateBuyCoinRequest
+        getQrDepositRequest: CreateDepositRequest
     ) {
-        const { amountCoin, platform, unitCurrency } = getQrBuyCoinRequest;
-        if (!amountCoin || !platform || !unitCurrency) {
+        const { amountBalance, platform, unitCurrency } = getQrDepositRequest;
+        if (!amountBalance || !platform || !unitCurrency) {
             throw errorService.badRequest();
         }
         const { totalMoney } =
-            await coinSettingRepository.convertCoinToMoneyForBuyCoin(
-                amountCoin,
+            await balanceSettingRepository.convertBalanceToMoneyForDeposit(
+                amountBalance,
                 unitCurrency,
                 platform
             );
@@ -139,7 +141,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                             },
                             unitCurrency: UnitCurrency.VND,
                             amountMoney: totalMoney,
-                            amountCoin,
+                            amountBalance,
                             dataString: vnpayService.createPaymentUrl({
                                 amount: totalMoney,
                                 orderId: transferContent,
@@ -147,10 +149,10 @@ export class BuyCoinRequestService extends BasePrismaService<
                                 locale: "vn",
                             }),
                             dataStringType:
-                                BuyCoinRequestDataStringType.REDIRECT_URL,
+                                DepositRequestDataStringType.REDIRECT_URL,
                             transactionCode,
                             platform,
-                            status: BuyCoinRequestStatus.INIT,
+                            status: DepositRequestStatus.INIT,
                             content: transferContent,
                         },
                         tx
@@ -167,16 +169,16 @@ export class BuyCoinRequestService extends BasePrismaService<
                             },
                             unitCurrency: UnitCurrency.VND,
                             amountMoney: totalMoney,
-                            amountCoin,
+                            amountBalance,
                             dataString: await momoService.createPaymentUrl({
                                 amount: totalMoney,
-                                orderId: transferContent
+                                orderId: transferContent,
                             }),
                             dataStringType:
-                                BuyCoinRequestDataStringType.REDIRECT_URL,
+                                DepositRequestDataStringType.REDIRECT_URL,
                             transactionCode,
                             platform,
-                            status: BuyCoinRequestStatus.INIT,
+                            status: DepositRequestStatus.INIT,
                             content: transferContent,
                         },
                         tx
@@ -185,7 +187,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                 }
                 default: {
                     const { qrString, adminPaymentSystem } =
-                        await qrPaymentService.getQrBuyCoin({
+                        await qrPaymentService.getQrDeposit({
                             amount: totalMoney,
                             platform,
                             transferContent,
@@ -200,9 +202,9 @@ export class BuyCoinRequestService extends BasePrismaService<
                             },
                             unitCurrency: UnitCurrency.VND,
                             amountMoney: totalMoney,
-                            amountCoin,
+                            amountBalance,
                             dataString: qrString,
-                            dataStringType: BuyCoinRequestDataStringType.QR,
+                            dataStringType: DepositRequestDataStringType.QR,
                             transactionCode,
                             platform,
                             handler: {
@@ -211,7 +213,7 @@ export class BuyCoinRequestService extends BasePrismaService<
                                 },
                             },
                             beneficiary: adminPaymentSystem.beneficiary,
-                            status: BuyCoinRequestStatus.INIT,
+                            status: DepositRequestStatus.INIT,
                             content: transferContent,
                         },
                         tx
@@ -221,55 +223,55 @@ export class BuyCoinRequestService extends BasePrismaService<
         });
     }
 
-    async buyCoinHandle(
+    async depositHandle(
         adminId: string,
-        buyCoinHandleRequest: BuyCoinHandleRequest
+        depositHandleRequest: DepositHandleRequest
     ) {
-        const { id, status, billImageUrl, feedback } = buyCoinHandleRequest;
+        const { id, status, billImageUrl, feedback } = depositHandleRequest;
         if (!id || !status) {
             throw errorService.badRequest();
         }
 
-        let buyCoinRequest = await this.repository.findById(id);
-        if (!buyCoinRequest) {
-            throw errorService.error(ERROR_MESSAGE.BUY_COIN_REQUEST_NOT_FOUND);
+        let depositRequest = await this.repository.findById(id);
+        if (!depositRequest) {
+            throw errorService.error(ERROR_MESSAGE.DEPOSIT_REQUEST_NOT_FOUND);
         }
-        if (buyCoinRequest.handlerId != adminId) {
+        if (depositRequest.handlerId != adminId) {
             throw errorService.permissionDeny();
         }
         const { APPROVED, INIT, PENDING, REJECTED, USER_NOTICES_PAID } =
-            BuyCoinRequestStatus;
+            DepositRequestStatus;
         if (
             ![USER_NOTICES_PAID, INIT, PENDING].includes(
-                buyCoinRequest.status as any
+                depositRequest.status as any
             ) ||
             [INIT, USER_NOTICES_PAID].includes(status as any)
         ) {
             throw errorService.badRequest();
         }
-        if ([APPROVED, REJECTED].includes(buyCoinRequest.status as any)) {
+        if ([APPROVED, REJECTED].includes(depositRequest.status as any)) {
             throw errorService.error(
-                ERROR_MESSAGE.BUY_COIN_REQUEST_HAS_BEEN_PROCESSED
+                ERROR_MESSAGE.DEPOSIT_REQUEST_HAS_BEEN_PROCESSED
             );
         }
 
         return await prisma.$transaction(async (tx) => {
-            const body: Prisma.BuyCoinRequestUpdateInput = {
+            const body: Prisma.DepositRequestUpdateInput = {
                 billImageUrl: billImageUrl!,
                 handlerFeedback: feedback!,
                 status,
             };
 
             if (status == APPROVED) {
-                const coinHistory = await coinHistoryRepository.create(
+                const balanceHistory = await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
-                                id: buyCoinRequest?.requesterId!,
+                                id: depositRequest?.requesterId!,
                             },
                         },
-                        amount: buyCoinRequest?.amountCoin!,
-                        coinType: CoinType.BUY_COIN,
+                        amount: depositRequest?.amountBalance!,
+                        balanceType: BalanceType.DEPOSIT,
                         adminCreated: {
                             connect: {
                                 id: adminId,
@@ -278,14 +280,14 @@ export class BuyCoinRequestService extends BasePrismaService<
                     },
                     tx
                 );
-                body.coinHistory = {
+                body.balanceHistory = {
                     connect: {
-                        id: coinHistory.id,
+                        id: balanceHistory.id,
                     },
                 };
             }
-            buyCoinRequest = await this.repository.updateById(id, body, tx);
-            return buyCoinRequest;
+            depositRequest = await this.repository.updateById(id, body, tx);
+            return depositRequest;
         });
     }
 }

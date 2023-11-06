@@ -496,7 +496,7 @@ export class ProviderServiceService extends BasePrismaService<
             listProviderServiceIds.map((providerServiceId: string) => {
                 return prisma.bookingHistory.aggregate({
                     _sum: {
-                        providerReceivedCoin: true,
+                        providerReceivedBalance: true,
                         bookingPeriod: true,
                         totalCost: true,
                     },
@@ -521,10 +521,10 @@ export class ProviderServiceService extends BasePrismaService<
             if (!bookingHistoryAggregate) return item;
             const {
                 _count: { id },
-                _sum: { bookingPeriod, providerReceivedCoin, totalCost },
+                _sum: { bookingPeriod, providerReceivedBalance, totalCost },
             } = bookingHistoryAggregate;
             return Object.assign(item, {
-                totalReceivedCoin: providerReceivedCoin,
+                totalReceivedBalance: providerReceivedBalance,
                 totalBookingPeriod: bookingPeriod,
                 totalRevenue: totalCost,
                 totalBooking: id,

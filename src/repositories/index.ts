@@ -1,13 +1,13 @@
 import { BookingCostRepository } from "./common/bookingCost.repository";
 import { BookingHistoryRepository } from "./common/bookingHistory.repository";
-import { CoinHistoryRepository } from "./common/coinHistory.repository";
+import { BalanceHistoryRepository } from "./common/balanceHistory.repository";
 import { ProviderRepository } from "./common/provider.repository";
 import { ProviderServiceRepository } from "./common/providerService.repository";
 import { ServiceRepository } from "./common/service.repository";
 import { UserRepository } from "./common/user.repository";
 import { FeedbackRepository } from "./common/feedback.repository";
-import { BuyCoinRequestRepository } from "./common/buyCoinRequest.repository";
-import { CoinSettingRepository } from "./common/coinSetting.repository";
+import { DepositRequestRepository } from "./common/depositRequest.repository";
+import { BalanceSettingRepository } from "./common/balanceSetting.repository";
 import { PostRepository } from "./common/post.repository";
 import { CommentPostRepository } from "./common/commentPost.repository";
 import { LikePostRepository } from "./common/likePost.repository";
@@ -38,7 +38,7 @@ import { BannerRepository } from "./common/banner.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
-const coinHistoryRepository = new CoinHistoryRepository();
+const balanceHistoryRepository = new BalanceHistoryRepository();
 const providerRepository = new ProviderRepository();
 const providerServiceRepository = new ProviderServiceRepository();
 const serviceRepository = new ServiceRepository();
@@ -49,8 +49,8 @@ const adminRoleRepository = new AdminRoleRepository();
 const refreshTokenAdminRepository = new RefreshTokenAdminRepository();
 const adminPaymentSystemRepository = new AdminPaymentSystemRepository();
 const feedbackRepository = new FeedbackRepository();
-const buyCoinRequestRepository = new BuyCoinRequestRepository();
-const coinSettingRepository = new CoinSettingRepository();
+const depositRequestRepository = new DepositRequestRepository();
+const balanceSettingRepository = new BalanceSettingRepository();
 const postRepository = new PostRepository();
 const commentPostRepository = new CommentPostRepository();
 const likePostRepository = new LikePostRepository();
@@ -78,7 +78,7 @@ const bannerRepository = new BannerRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
-    coinHistoryRepository,
+    balanceHistoryRepository,
     providerRepository,
     providerServiceRepository,
     serviceRepository,
@@ -89,8 +89,8 @@ export {
     adminPaymentSystemRepository,
     refreshTokenAdminRepository,
     feedbackRepository,
-    buyCoinRequestRepository,
-    coinSettingRepository,
+    depositRequestRepository,
+    balanceSettingRepository,
     postRepository,
     commentPostRepository,
     likePostRepository,

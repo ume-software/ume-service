@@ -5,7 +5,7 @@ import {
     AdminGetUserResponseResponse,
     BookingHistoryPagingResponse,
     ProviderResponse,
-    UserCoinResponse,
+    UserBalanceResponse,
 } from "@/common/responses";
 import { AdminGetBookingStatisticResponse } from "@/common/responses/booking/adminGetBookingStatistic.response";
 import {
@@ -16,7 +16,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import {
     bookingService,
-    coinService,
+    balanceService,
     errorService,
     providerService,
     providerServiceService,
@@ -269,7 +269,7 @@ export class AdminManageProviderController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UserCoinResponse },
+                        schema: { model: UserBalanceResponse },
                     },
                 },
                 description: "Get information success",
@@ -279,7 +279,9 @@ export class AdminManageProviderController extends BaseController {
     async adminGetTotalCoinByProviderSlug(req: Request, res: Response) {
         const { slug } = req.params;
 
-        const result = await coinService.getTotalCoinByProviderSlug(slug!);
+        const result = await balanceService.getTotalBalanceByProviderSlug(
+            slug!
+        );
         this.onSuccess(res, result);
     }
 

@@ -1,8 +1,8 @@
-import { CoinForUserRequest, CreateWithdrawRequest } from "@/common/requests";
+import { BalanceForUserRequest, CreateWithdrawRequest } from "@/common/requests";
 import {
-    CoinHistoryPagingResponse,
+    BalanceHistoryPagingResponse,
     WithdrawRequestResponse,
-    UserCoinResponse,
+    UserBalanceResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -10,8 +10,8 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { coinService, errorService, withdrawRequestService } from "@/services";
-import { CoinService } from "@/services/api/v1/coin.service";
+import { balanceService, errorService, withdrawRequestService } from "@/services";
+import { BalanceService } from "@/services/api/v1/balance.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -23,27 +23,27 @@ import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/coin",
-    name: "Coin",
+    name: "Balance",
 })
-export class CoinController extends BaseController {
+export class BalanceController extends BaseController {
     constructor() {
         super();
-        this.service = coinService;
+        this.service = balanceService;
         this.path = "coin";
         this.customRouting();
     }
-    service: CoinService;
+    service: BalanceService;
 
     customRouting() {
         this.router.get(
             "/history",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.getHistoryCoin)
+            this.route(this.getHistoryBalance)
         );
         this.router.get(
             "/total",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.getTotalCoin)
+            this.route(this.getTotalBalance)
         );
         this.router.post(
             "/admin",
@@ -63,12 +63,12 @@ export class CoinController extends BaseController {
         this.router.patch(
             "/cancel-withdrawal-request/:withdrawal-request-id",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.userCancelCoinRequest)
+            this.route(this.userCancelBalanceRequest)
         );
     }
     @ApiOperationGet({
         path: "/history",
-        operationId: "getHistoryCoin",
+        operationId: "getHistoryBalance",
         security: {
             bearerAuth: [],
         },
@@ -81,14 +81,14 @@ export class CoinController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: CoinHistoryPagingResponse },
+                        schema: { model: BalanceHistoryPagingResponse },
                     },
                 },
                 description: "Response coin history success",
             },
         },
     })
-    async getHistoryCoin(req: Request, res: Response) {
+    async getHistoryBalance(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma ?? {};
         queryInfoPrisma.include = {
             adminCreated: {
@@ -137,7 +137,7 @@ export class CoinController extends BaseController {
         };
 
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.getHistoryCoinByUserId(
+        const result = await this.service.getHistoryBalanceByUserId(
             userId!,
             queryInfoPrisma!
         );
@@ -146,7 +146,7 @@ export class CoinController extends BaseController {
 
     @ApiOperationGet({
         path: "/total",
-        operationId: "getTotalCoin",
+        operationId: "getTotalBalance",
         security: {
             bearerAuth: [],
         },
@@ -156,16 +156,16 @@ export class CoinController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UserCoinResponse },
+                        schema: { model: UserBalanceResponse },
                     },
                 },
                 description: "Get total point success",
             },
         },
     })
-    async getTotalCoin(req: Request, res: Response) {
+    async getTotalBalance(req: Request, res: Response) {
         const userId = this.getTokenInfo(req).id;
-        const result = await this.service.getTotalCoinByUserSlug(userId!);
+        const result = await this.service.getTotalBalanceByUserSlug(userId!);
         this.onSuccess(res, result);
     }
 
@@ -180,7 +180,7 @@ export class CoinController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: CoinForUserRequest },
+                    schema: { model: BalanceForUserRequest },
                 },
             },
         },
@@ -188,7 +188,7 @@ export class CoinController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: UserCoinResponse },
+                        schema: { model: UserBalanceResponse },
                     },
                 },
                 description: "Register success",
@@ -196,7 +196,7 @@ export class CoinController extends BaseController {
         },
     })
     async adminCreatePointForUser(req: Request, res: Response) {
-        const coinForUserRequest = new CoinForUserRequest(req.body);
+        const coinForUserRequest = new BalanceForUserRequest(req.body);
         const adminId = req.tokenInfo?.id;
         const result = await this.service.adminCreatePointToUser(
             adminId!!,
@@ -274,7 +274,7 @@ export class CoinController extends BaseController {
 
     @ApiOperationPost({
         path: "/cancel-withdrawal-request/{withdrawal-request-id}",
-        operationId: "userCancelCoinRequest",
+        operationId: "userCancelBalanceRequest",
         security: {
             bearerAuth: [],
         },
@@ -288,8 +288,8 @@ export class CoinController extends BaseController {
                 },
             },
         },
-        description: "User Cancel Coin Request",
-        summary: "User Cancel Coin Request",
+        description: "User Cancel Balance Request",
+        summary: "User Cancel Balance Request",
         responses: {
             200: {
                 content: {
@@ -301,13 +301,13 @@ export class CoinController extends BaseController {
             },
         },
     })
-    async userCancelCoinRequest(req: Request, res: Response) {
+    async userCancelBalanceRequest(req: Request, res: Response) {
         const { "withdrawal-request-id": id } = req.params;
         if (!id) {
             throw errorService.badRequest();
         }
         const userId = this.getTokenInfo(req).id;
-        const result = await withdrawRequestService.userCancelCoinRequest({
+        const result = await withdrawRequestService.userCancelBalanceRequest({
             id,
             userId,
         });

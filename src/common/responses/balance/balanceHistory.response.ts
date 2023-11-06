@@ -1,12 +1,12 @@
-import { CoinType } from "@prisma/client";
+import { BalanceType } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { BookingHistoryResponse } from "../booking";
 import { DonationResponse } from "../donation/donation.response";
 
 @ApiModel({
-    description: "Coin History response",
+    description: "Balance History response",
 })
-export class CoinHistoryResponse {
+export class BalanceHistoryResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,
@@ -42,10 +42,10 @@ export class CoinHistoryResponse {
     @ApiModelProperty({
         description: "Slug url",
         required: true,
-        enum: Object.values(CoinType),
-        example: CoinType.BUY_COIN,
+        enum: Object.values(BalanceType),
+        example: BalanceType.DEPOSIT,
     })
-    coinType!: CoinType;
+    coinType!: BalanceType;
 
     @ApiModelProperty({
         description: "Amount",

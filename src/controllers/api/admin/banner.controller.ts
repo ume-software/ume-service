@@ -1,7 +1,7 @@
 import { CreateBannerRequest, UpdateBannerRequest } from "@/common/requests";
 import {
-    BuyCoinPagingResponse,
-    BuyCoinResponse,
+    DepositPagingResponse,
+    DepositResponse,
     BannerResponse,
 } from "@/common/responses";
 import {
@@ -78,7 +78,7 @@ export class AdminManageBannerController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinPagingResponse },
+                        schema: { model: DepositPagingResponse },
                     },
                 },
                 description: "Approved success",
@@ -114,7 +114,7 @@ export class AdminManageBannerController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Admin get one banner",

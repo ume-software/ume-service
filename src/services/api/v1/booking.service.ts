@@ -4,8 +4,8 @@ import { config } from "@/configs";
 import { Request } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
 import {
-    coinHistoryRepository,
-    coinSettingRepository,
+    balanceHistoryRepository,
+    balanceSettingRepository,
     noticeRepository,
     userRepository,
     bookingHistoryRepository,
@@ -13,7 +13,7 @@ import {
 } from "@/repositories";
 
 import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.repository";
-import { coinService, errorService, noticeService } from "@/services";
+import { balanceService, errorService, noticeService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -21,7 +21,7 @@ import {
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { socketService } from "@/services/socketIO";
 
-import { BookingStatus, CoinType, NoticeType, Prisma } from "@prisma/client";
+import { BookingStatus, BalanceType, NoticeType, Prisma } from "@prisma/client";
 import moment from "moment";
 
 export class BookingService extends BasePrismaService<BookingHistoryRepository> {
@@ -103,10 +103,10 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             costPerHour = providerService.bookingCosts[0]?.amount!;
         }
         const totalCost = bookingPeriod * costPerHour;
-        const { totalCoinsAvailable } =
-            await coinService.getTotalCoinByUserSlug(booker?.id!);
+        const { totalBalanceAvailable } =
+            await balanceService.getTotalBalanceByUserSlug(booker?.id!);
 
-        if (totalCoinsAvailable < totalCost) {
+        if (totalBalanceAvailable < totalCost) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
@@ -278,7 +278,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 if (hasBookingEnded) {
                     throw errorService.error(ERROR_MESSAGE.BOOKING_ENDED);
                 }
-                await coinHistoryRepository.create(
+                await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
@@ -291,11 +291,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                             },
                         },
                         amount: -totalCost,
-                        coinType: CoinType.SPEND_BOOKING,
+                        balanceType: BalanceType.SPEND_BOOKING,
                     },
                     tx
                 );
-                await coinHistoryRepository.create(
+                await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
@@ -307,10 +307,10 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                                 id: bookingHistoryId,
                             },
                         },
-                        amount: await coinSettingRepository.calculateCoinBookingForProvider(
+                        amount: await balanceSettingRepository.calculateBalanceBookingForProvider(
                             totalCost
                         ),
-                        coinType: CoinType.GET_BOOKING,
+                        balanceType: BalanceType.GET_BOOKING,
                     },
                     tx
                 );
@@ -417,7 +417,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             _sum: {
                 bookingPeriod: true,
                 totalCost: true,
-                providerReceivedCoin: true,
+                providerReceivedBalance: true,
             },
             where: {
                 providerService: {
@@ -461,7 +461,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             totalFeedback,
             totalTime: bookingHistoryAggregate._sum.bookingPeriod,
             totalRevenue: bookingHistoryAggregate._sum.totalCost,
-            totalProfit: bookingHistoryAggregate._sum.providerReceivedCoin,
+            totalProfit: bookingHistoryAggregate._sum.providerReceivedBalance,
             totalBookingSuccess: bookingHistoryAggregate._count.bookerId,
         };
     }

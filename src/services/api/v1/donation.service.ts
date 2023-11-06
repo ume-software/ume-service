@@ -7,14 +7,14 @@ import {
 import { ETopDonationDuration } from "@/enums/topDonationDuration.enum";
 import prisma from "@/models/base.prisma";
 import {
-    coinHistoryRepository,
-    coinSettingRepository,
+    balanceHistoryRepository,
+    balanceSettingRepository,
     donationRepository,
     userRepository,
 } from "@/repositories";
-import { coinService, errorService, utilService } from "@/services";
+import { balanceService, errorService, utilService } from "@/services";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { CoinType } from "@prisma/client";
+import { BalanceType } from "@prisma/client";
 
 export class DonationService {
     async topDonationRecipient(
@@ -76,7 +76,7 @@ export class DonationService {
         );
         const row = result.map((item) => {
             return {
-                totalCoinDonated: item._sum.donatedAmount || 0,
+                totalBalanceDonated: item._sum.donatedAmount || 0,
                 numberDonated: item._count.donatedAmount,
                 donorId: item.donorId,
                 donor: mappingDonors[item.donorId],
@@ -93,10 +93,10 @@ export class DonationService {
         if (!donorId || !recipientId || !amount) {
             throw errorService.badRequest();
         }
-        const { totalCoinsAvailable } =
-            await coinService.getTotalCoinByUserSlug(donorId);
+        const { totalBalanceAvailable } =
+            await balanceService.getTotalBalanceByUserSlug(donorId);
 
-        if (totalCoinsAvailable < amount) {
+        if (totalBalanceAvailable < amount) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
             );
@@ -113,7 +113,7 @@ export class DonationService {
         }
         return await prisma.$transaction(async (tx) => {
             const actualReceivingAmount =
-                await coinSettingRepository.calculateCoinDonateForProvider(
+                await balanceSettingRepository.calculateBalanceDonateForProvider(
                     amount
                 );
             const donation = await donationRepository.create(
@@ -134,7 +134,7 @@ export class DonationService {
                 },
                 tx
             );
-            await coinHistoryRepository.create(
+            await balanceHistoryRepository.create(
                 {
                     user: {
                         connect: {
@@ -147,12 +147,12 @@ export class DonationService {
                         },
                     },
                     amount: -amount,
-                    coinType: CoinType.SPEND_DONATE,
+                    balanceType: BalanceType.SPEND_DONATE,
                 },
                 tx
             );
 
-            await coinHistoryRepository.create(
+            await balanceHistoryRepository.create(
                 {
                     user: {
                         connect: {
@@ -165,7 +165,7 @@ export class DonationService {
                         },
                     },
                     amount: actualReceivingAmount,
-                    coinType: CoinType.GET_DONATE,
+                    balanceType: BalanceType.GET_DONATE,
                 },
                 tx
             );

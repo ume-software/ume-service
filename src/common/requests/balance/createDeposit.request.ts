@@ -1,19 +1,19 @@
-import { PaymentSystemPlatform } from "@prisma/client";
+import { PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
 import { IsEnum, IsInt } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Get Qr Deposit request",
+    description: "Get QR buy coin request",
 })
-export class GetQrDepositRequest {
+export class CreateDepositRequest {
     @ApiModelProperty({
-        description: "Amount",
+        description: "AmountBalance",
         required: true,
-        example: 20000,
+        example: 20,
     })
     @IsInt()
-    public amount!: number;
+    public amountBalance!: number;
 
     @ApiModelProperty({
         description: "platform",
@@ -24,13 +24,23 @@ export class GetQrDepositRequest {
     @IsEnum(PaymentSystemPlatform)
     public platform!: PaymentSystemPlatform;
 
-    constructor(data: GetQrDepositRequest) {
+    @ApiModelProperty({
+        description: "unitCurrency",
+        required: true,
+        enum: Object.values(UnitCurrency),
+        example: UnitCurrency.VND,
+    })
+    @IsEnum(UnitCurrency)
+    public unitCurrency!: UnitCurrency;
+
+    constructor(data: CreateDepositRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(GetQrDepositRequest, data, [
-                    "amount",
+                mappingDataRequest(CreateDepositRequest, data, [
+                    "amountBalance",
                     "platform",
+                    "unitCurrency",
                 ])
             );
         }

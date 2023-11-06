@@ -5,7 +5,7 @@ import { mappingDataRequest } from "../base";
 @ApiModel({
     description: "User registor become provider",
 })
-export class CoinForUserRequest {
+export class BalanceForUserRequest {
     @ApiModelProperty({
         description: "Amount",
         required: true,
@@ -21,11 +21,11 @@ export class CoinForUserRequest {
     })
     @IsUUID()
     userId!: string;
-    constructor(data: CoinForUserRequest) {
+    constructor(data: BalanceForUserRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(CoinForUserRequest, data, [
+                mappingDataRequest(BalanceForUserRequest, data, [
                     "amount",
                     "userId",
                 ])

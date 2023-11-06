@@ -1,6 +1,6 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
 import { ETopDonationDuration } from "@/enums/topDonationDuration.enum";
-import { BuyCoinRequestStatus, Gender, ProviderStatus } from "@prisma/client";
+import { DepositRequestStatus, Gender, ProviderStatus } from "@prisma/client";
 import {
     IApiParameters,
     SwaggerDefinitionConstant,
@@ -190,7 +190,7 @@ export const filterHotProviderParameters = {
     },
 };
 
-export const handlerFilterBuyCoinParameters = {
+export const handlerFilterDepositParameters = {
     ...limitParameter,
     ...pageParameter,
     ...orderParameter,
@@ -199,10 +199,10 @@ export const handlerFilterBuyCoinParameters = {
         required: false,
         schema: {
             type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-            default: BuyCoinRequestStatus.INIT,
+            default: DepositRequestStatus.INIT,
         },
         description: `
-        Example : status=${BuyCoinRequestStatus.INIT}
+        Example : status=${DepositRequestStatus.INIT}
         `,
     },
     transaction_code: {

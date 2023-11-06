@@ -6,11 +6,11 @@ import {
 } from "@/controllers/base/base.controller";
 import prisma from "@/models/base.prisma";
 import {
-    buyCoinRequestRepository,
-    coinHistoryRepository,
+    depositRequestRepository,
+    balanceHistoryRepository,
 } from "@/repositories";
 import { vnpayService } from "@/services";
-import { BuyCoinRequestStatus, CoinType } from "@prisma/client";
+import { DepositRequestStatus, BalanceType } from "@prisma/client";
 // const responseCodeTable = {
 //     "00": {
 //         vn: "Giao dịch thành công",
@@ -108,48 +108,48 @@ export class VNPayWebhookController extends BaseController {
         let hmac = crypto.createHmac("sha512", secretKey);
         hmac.update(new Buffer(signData, "utf-8")).digest("hex");
         const vnp_TxnRef = vnp_Params["vnp_TxnRef"];
-        let buyCoinRequest = await buyCoinRequestRepository.findOne({
+        let depositRequest = await depositRequestRepository.findOne({
             where: {
                 transactionCode: vnp_TxnRef,
             },
         });
         if (
-            buyCoinRequest &&
+            depositRequest &&
             [
-                BuyCoinRequestStatus.INIT,
-                BuyCoinRequestStatus.PENDING,
-                BuyCoinRequestStatus.USER_NOTICES_PAID,
-            ].includes(buyCoinRequest.status as any)
+                DepositRequestStatus.INIT,
+                DepositRequestStatus.PENDING,
+                DepositRequestStatus.USER_NOTICES_PAID,
+            ].includes(depositRequest.status as any)
         )
             await prisma.$transaction(async (tx) => {
-                await coinHistoryRepository.create(
+                await balanceHistoryRepository.create(
                     {
                         user: {
                             connect: {
-                                id: buyCoinRequest?.requesterId!,
+                                id: depositRequest?.requesterId!,
                             },
                         },
-                        amount: buyCoinRequest?.amountCoin!,
-                        coinType: CoinType.BUY_COIN,
+                        amount: depositRequest?.amountBalance!,
+                        balanceType: BalanceType.DEPOSIT,
                     },
                     tx
                 );
 
-                buyCoinRequest = await buyCoinRequestRepository.update(
+                depositRequest = await depositRequestRepository.update(
                     {
                         status:
                             vnp_Params["vnp_ResponseCode"] == "07"
-                                ? BuyCoinRequestStatus.APPROVED
-                                : BuyCoinRequestStatus.REJECTED,
+                                ? DepositRequestStatus.APPROVED
+                                : DepositRequestStatus.REJECTED,
                     },
                     {
                         where: {
-                            id: buyCoinRequest?.id,
+                            id: depositRequest?.id,
                         },
                     },
                     tx
                 );
-                return buyCoinRequest;
+                return depositRequest;
             });
 
         res.send(

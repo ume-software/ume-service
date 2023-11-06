@@ -1,7 +1,7 @@
 import { AdminHandleWithdrawRequest } from "@/common/requests";
 import {
-    BuyCoinPagingResponse,
-    BuyCoinResponse,
+    DepositPagingResponse,
+    DepositResponse,
     WithdrawRequestResponse,
 } from "@/common/responses";
 import {
@@ -66,7 +66,7 @@ export class AdminManageWithdrawRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinPagingResponse },
+                        schema: { model: DepositPagingResponse },
                     },
                 },
                 description: "Approved success",
@@ -102,7 +102,7 @@ export class AdminManageWithdrawRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BuyCoinResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Rejected success",

@@ -1,7 +1,7 @@
 import {
     BookingStatus,
-    CoinSettingType,
-    CoinType,
+    BalanceSettingType,
+    BalanceType,
     Gender,
     LoginType,
     PaymentSystemPlatform,
@@ -512,33 +512,34 @@ async function seed() {
                     },
                 });
             }
-            // Create CoinHistory
+            // Create BalanceHistory
             for (const user of users) {
-                const coinType =
-                    Object.values(CoinType)[
+                const balanceType =
+                    Object.values(BalanceType)[
                         faker.number.int({
                             min: 0,
-                            max: Object.values(CoinType).length - 1,
+                            max: Object.values(BalanceType).length - 1,
                         })
-                    ] || CoinType.ADMIN;
-                await prisma.coinHistory.create({
+                    ] || BalanceType.ADMIN;
+                await prisma.balanceHistory.create({
                     data: {
                         user: {
                             connect: {
                                 id: user.id,
                             },
                         },
-                        coinType: coinType,
+                        balanceType: balanceType,
                         amount:
-                            (coinType.toString().includes("SPEND") ? -1 : 1) *
-                            faker.number.int({ min: 1, max: 100 }),
+                            (balanceType.toString().includes("SPEND")
+                                ? -1
+                                : 1) * faker.number.int({ min: 1, max: 100 }),
                     },
                 });
             }
             // Create BookingHistory
             for (let i = 0; i < userDefault.length; i++) {
                 for (let j = 0; j < userDefault.length; j++) {
-                    const totalCoin = faker.number.int({ min: 10, max: 200 });
+                    const totalBalance = faker.number.int({ min: 10, max: 200 });
                     const bookingStatus =
                         Object.values(BookingStatus)[
                             faker.number.int({
@@ -573,12 +574,12 @@ async function seed() {
                                 bookingStatus != BookingStatus.INIT
                                     ? faker.date.recent()
                                     : null,
-                            totalCost: totalCoin,
+                            totalCost: totalBalance,
                             bookingPeriod: faker.number.int({
                                 min: 1,
                                 max: 10,
                             }),
-                            providerReceivedCoin: totalCoin * 0.95,
+                            providerReceivedBalance: totalBalance * 0.95,
                         },
                     });
                 }
@@ -598,37 +599,37 @@ async function seed() {
                 });
             }
         }
-        if (!(await prisma.coinSetting.findFirst())) {
-            await prisma.coinSetting.createMany({
+        if (!(await prisma.balanceSetting.findFirst())) {
+            await prisma.balanceSetting.createMany({
                 data: [
                     {
                         unitCurrency: UnitCurrency.VND,
                         feePercentage: 0.001,
                         surcharge: 0,
-                        coinSettingType: CoinSettingType.BUY_COIN,
+                        balanceSettingType: BalanceSettingType.DEPOSIT,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
-                        conversionRateCoin: 0.001,
+                        conversionRateBalance: 0.001,
                     },
                     {
                         unitCurrency: UnitCurrency.VND,
                         feePercentage: 0.001,
                         surcharge: 1000,
-                        coinSettingType: CoinSettingType.SELL_COIN,
+                        balanceSettingType: BalanceSettingType.DEPOSIT,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
-                        conversionRateCoin: 0.001,
+                        conversionRateBalance: 0.001,
                     },
                     {
-                        coinSettingType:
-                            CoinSettingType.PROVIDER_GET_COIN_BOOKING,
+                        balanceSettingType:
+                            BalanceSettingType.PROVIDER_GET_MONEY_BOOKING,
                         feePercentage: 0.001,
                     },
                     {
-                        coinSettingType:
-                            CoinSettingType.PROVIDER_GET_COIN_DONATE,
+                        balanceSettingType:
+                            BalanceSettingType.PROVIDER_GET_MONEY_DONATE,
                         feePercentage: 0.0005,
                     },
                     {
-                        coinSettingType: CoinSettingType.GIFT_TO_COIN,
+                        balanceSettingType: BalanceSettingType.GIFT_TO_MONEY,
                         feePercentage: 0.001,
                     },
                 ],
