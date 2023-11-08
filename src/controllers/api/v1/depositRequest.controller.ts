@@ -26,14 +26,14 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/v1/buy-coin-request",
+    path: "/api/v1/deposit-request",
     name: "DepositRequest",
 })
 export class DepositRequestController extends BaseController {
     constructor() {
         super();
         this.service = depositRequestService;
-        this.path = "buy-coin-request";
+        this.path = "deposit-request";
         this.customRouting();
     }
     service: DepositRequestService;
