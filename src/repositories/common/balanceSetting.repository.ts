@@ -9,23 +9,16 @@ export class BalanceSettingRepository extends BasePrismaRepository {
     constructor() {
         super();
     }
-    async getConvertBalanceToMoneyForWithdrawRate(
-        unitCurrency: UnitCurrency
-    ) {
+    async getConvertBalanceToMoneyForWithdrawRate(unitCurrency: UnitCurrency) {
         const setting = await this.prisma.balanceSetting.findFirst({
             where: {
                 balanceSettingType: BalanceSettingType.DEPOSIT,
                 unitCurrency,
             },
         });
-        let conversionRateBalance = 0.001,
-            feePercentage = 0.001,
+        let feePercentage = 0.001,
             surcharge = 0;
         if (setting) {
-            conversionRateBalance =
-                setting.conversionRateBalance != null
-                    ? setting.conversionRateBalance
-                    : conversionRateBalance;
             feePercentage =
                 setting.feePercentage != null
                     ? setting.feePercentage
@@ -34,7 +27,6 @@ export class BalanceSettingRepository extends BasePrismaRepository {
                 setting.surcharge != null ? setting.surcharge : surcharge;
         }
         return {
-            conversionRateBalance,
             feePercentage,
             surcharge,
         };
@@ -50,14 +42,9 @@ export class BalanceSettingRepository extends BasePrismaRepository {
                 unitCurrency,
             },
         });
-        let conversionRateBalance = 0.001,
-            feePercentage = 0.001,
+        let feePercentage = 0.001,
             surcharge = 0;
         if (setting) {
-            conversionRateBalance =
-                setting.conversionRateBalance != null
-                    ? setting.conversionRateBalance
-                    : conversionRateBalance;
             feePercentage =
                 setting.feePercentage != null
                     ? setting.feePercentage
@@ -66,22 +53,19 @@ export class BalanceSettingRepository extends BasePrismaRepository {
                 setting.surcharge != null ? setting.surcharge : surcharge;
         }
         return {
-            conversionRateBalance,
             feePercentage,
             surcharge,
         };
     }
 
     calculateBalanceToMoneyForDeposit(
-        amountBalance: number,
+        amountMoney: number,
         option = {
-            conversionRateBalance: 0.001,
             feePercentage: 0.001,
             surcharge: 0,
         }
     ) {
-        const { conversionRateBalance, feePercentage, surcharge } = option;
-        const amountMoney = Math.round(amountBalance / conversionRateBalance);
+        const { feePercentage, surcharge } = option;
         const totalFee = Math.round(amountMoney * feePercentage + surcharge);
         return {
             amountMoney,
@@ -91,15 +75,14 @@ export class BalanceSettingRepository extends BasePrismaRepository {
     }
 
     calculateBalanceToMoneyForWithdraw(
-        amountBalance: number,
+        amountMoney: number,
         option = {
-            conversionRateBalance: 0.001,
             feePercentage: 0.001,
             surcharge: 0,
         }
     ) {
-        const { conversionRateBalance, feePercentage, surcharge } = option;
-        const amountMoney = Math.round(amountBalance / conversionRateBalance);
+        const { feePercentage, surcharge } = option;
+
         const totalFee = Math.round(amountMoney * feePercentage + surcharge);
         return {
             amountMoney,
@@ -114,10 +97,7 @@ export class BalanceSettingRepository extends BasePrismaRepository {
         const option = await this.getConvertBalanceToMoneyForWithdrawRate(
             unitCurrency
         );
-        return this.calculateBalanceToMoneyForWithdraw(
-            amountBalance,
-            option
-        );
+        return this.calculateBalanceToMoneyForWithdraw(amountBalance, option);
     }
 
     async convertBalanceToMoneyForDeposit(

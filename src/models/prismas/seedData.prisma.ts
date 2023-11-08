@@ -539,7 +539,10 @@ async function seed() {
             // Create BookingHistory
             for (let i = 0; i < userDefault.length; i++) {
                 for (let j = 0; j < userDefault.length; j++) {
-                    const totalBalance = faker.number.int({ min: 10, max: 200 });
+                    const totalBalance = faker.number.int({
+                        min: 10,
+                        max: 200,
+                    });
                     const bookingStatus =
                         Object.values(BookingStatus)[
                             faker.number.int({
@@ -608,7 +611,6 @@ async function seed() {
                         surcharge: 0,
                         balanceSettingType: BalanceSettingType.DEPOSIT,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
-                        conversionRateBalance: 0.001,
                     },
                     {
                         unitCurrency: UnitCurrency.VND,
@@ -616,7 +618,6 @@ async function seed() {
                         surcharge: 1000,
                         balanceSettingType: BalanceSettingType.DEPOSIT,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
-                        conversionRateBalance: 0.001,
                     },
                     {
                         balanceSettingType:

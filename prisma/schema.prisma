@@ -591,7 +591,6 @@ model BalanceSetting {
   balanceSettingType    BalanceSettingType?    @map("balance_setting_type")
   paymentSystemPlatform PaymentSystemPlatform? @map("payment_system_platform")
   unitCurrency          UnitCurrency?          @map("unit_currency")
-  conversionRateBalance Float?                 @map("conversion_rate_balance")
   feePercentage         Float?                 @default(0) @map("fee")
   surcharge             Float?                 @default(0) @map("surcharge")
 
@@ -669,7 +668,7 @@ model Donation {
   recipientId    String           @map("recipient_id")
   receivedAmount Float            @map("received_amount")
   message        String?          @map("message")
-  balanceHistory BalanceHistory[]
+  balanceHistories BalanceHistory[]
 
   @@map("donation")
 }
