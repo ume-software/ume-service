@@ -90,17 +90,13 @@ export class VoucherService extends BasePrismaService<
             updateVoucherRequest.isPublished = true;
         }
         if (
-            Object.keys(updateVoucherRequest).length === 3 &&
-            "isActivated" in updateVoucherRequest
+            Object.keys(updateVoucherRequest).length === 3 ||
+            (Object.keys(updateVoucherRequest).length === 2 &&
+                "isActivated" in updateVoucherRequest)
         ) {
-            return await this.repository.update(
-                {
-                    ...updateVoucherRequest,
-                },
-                {
-                    where: { id: voucher.id },
-                }
-            );
+            return await this.repository.update(updateVoucherRequest, {
+                where: { id: voucher.id },
+            });
         }
         if (voucher.status == VoucherStatus.APPROVED) {
             throw errorService.error(
