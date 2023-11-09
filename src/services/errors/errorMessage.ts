@@ -368,21 +368,21 @@ export const ERROR_MESSAGE = {
             "This error is used when a provider attempts to perform actions on a service that does not exist in their service list, resulting in a 404 Not Found status.",
     },
 
-    YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION: {
-        type: "coin_exception",
-        message: "You don't have enough coins to make the transaction.",
+    YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_MAKE_THE_TRANSACTION: {
+        type: "balance_exception",
+        message: "You don't have enough balances to make the transaction.",
         codeNumber: 20500,
         statusCode: 402,
         description:
-            "This error occurs when a user tries to perform a transaction but does not have sufficient coins, resulting in a 402 Payment Required status.",
+            "This error occurs when a user tries to perform a transaction but does not have sufficient balances, resulting in a 402 Payment Required status.",
     },
-    YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_WITHDRAW: {
-        type: "coin_exception",
-        message: "You don't have enough coins to withdraw.",
+    YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAW: {
+        type: "balance_exception",
+        message: "You don't have enough balances to withdraw.",
         codeNumber: 20501,
         statusCode: 402,
         description:
-            "This error occurs when a user tries to perform a withdraw but does not have sufficient coins, resulting in a 402 Payment Required status.",
+            "This error occurs when a user tries to perform a withdraw but does not have sufficient balances, resulting in a 402 Payment Required status.",
     },
     DEPOSIT_REQUEST_NOT_FOUND: {
         type: "deposit_request_exception",

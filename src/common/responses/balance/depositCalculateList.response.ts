@@ -3,7 +3,7 @@ import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "express-s
 import { DepositCalculateResponse } from "./depositCalculate.response";
 
 @ApiModel({
-    description: 'Buy coin calculate response'
+    description: 'Deposit calculate response'
 })
 export class DepositCalculateListResponse {
     @ApiModelProperty({

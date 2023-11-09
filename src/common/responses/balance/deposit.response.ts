@@ -48,11 +48,11 @@ export class DepositResponse {
     amountMoney!: number;
 
     @ApiModelProperty({
-        description: "Amount coin",
+        description: "Amount balance",
         required: true,
         example: 30,
     })
-    amountCoin!: number;
+    amountBalance!: number;
 
     @ApiModelProperty({
         description: "Unit currency",
@@ -90,11 +90,11 @@ export class DepositResponse {
     dataStringType!: DepositRequestDataStringType;
 
     @ApiModelProperty({
-        description: "Coin history Id",
+        description: "Balance history Id",
         required: false,
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d",
     })
-    coinHistoryId?: string;
+    balanceHistoryId?: string;
 
     @ApiModelProperty({
         description: "Status",

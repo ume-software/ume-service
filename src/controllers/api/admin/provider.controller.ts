@@ -65,9 +65,9 @@ export class AdminManageProviderController extends BaseController {
             this.route(this.adminGetBookingHistoryByProviderSlug)
         );
         this.router.get(
-            "/:slug/coin",
+            "/:slug/balance",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetTotalCoinByProviderSlug)
+            this.route(this.adminGetTotalBalanceByProviderSlug)
         );
         this.router.get(
             "/:slug/booking-statistics",
@@ -248,13 +248,13 @@ export class AdminManageProviderController extends BaseController {
     }
 
     @ApiOperationGet({
-        path: "/{slug}/coin",
-        operationId: "adminGetTotalCoinByProviderSlug",
+        path: "/{slug}/balance",
+        operationId: "adminGetTotalBalanceByProviderSlug",
         security: {
             bearerAuth: [],
         },
-        description: "Admin get user coin by slug",
-        summary: "Admin get user coin by slug",
+        description: "Admin get user balance by slug",
+        summary: "Admin get user balance by slug",
         parameters: {
             path: {
                 slug: {
@@ -276,7 +276,7 @@ export class AdminManageProviderController extends BaseController {
             },
         },
     })
-    async adminGetTotalCoinByProviderSlug(req: Request, res: Response) {
+    async adminGetTotalBalanceByProviderSlug(req: Request, res: Response) {
         const { slug } = req.params;
 
         const result = await balanceService.getTotalBalanceByProviderSlug(

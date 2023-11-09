@@ -32,7 +32,7 @@ export class BookingCostProviderServiceRequest {
     endTimeOfDay!: string;
 
     @ApiModelProperty({
-        description: "Amount coin",
+        description: "Amount",
         required: true,
         example: 10,
     })

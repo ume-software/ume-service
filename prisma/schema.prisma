@@ -532,7 +532,7 @@ model DepositRequest {
   content          String?                      @map("content")
   beneficiary      String?                      @map("beneficiary")
 
-  @@map("buy_balance_request")
+  @@map("deposit_request")
 }
 
 model WithdrawRequest {
@@ -657,17 +657,17 @@ model WatchedPost {
 }
 
 model Donation {
-  id             String           @id @default(uuid()) @map("id")
-  createdAt      DateTime?        @default(now()) @map("created_at")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  deletedAt      DateTime?        @map("deleted_at")
-  donor          User             @relation("DonorDonations", fields: [donorId], references: [id])
-  donorId        String           @map("donor_id")
-  donatedAmount  Float            @map("donated_amount")
-  recipient      User             @relation("RecipientDonations", fields: [recipientId], references: [id])
-  recipientId    String           @map("recipient_id")
-  receivedAmount Float            @map("received_amount")
-  message        String?          @map("message")
+  id               String           @id @default(uuid()) @map("id")
+  createdAt        DateTime?        @default(now()) @map("created_at")
+  updatedAt        DateTime?        @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+  donor            User             @relation("DonorDonations", fields: [donorId], references: [id])
+  donorId          String           @map("donor_id")
+  donatedAmount    Float            @map("donated_amount")
+  recipient        User             @relation("RecipientDonations", fields: [recipientId], references: [id])
+  recipientId      String           @map("recipient_id")
+  receivedAmount   Float            @map("received_amount")
+  message          String?          @map("message")
   balanceHistories BalanceHistory[]
 
   @@map("donation")

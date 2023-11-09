@@ -45,7 +45,7 @@ export class BalanceHistoryResponse {
         enum: Object.values(BalanceType),
         example: BalanceType.DEPOSIT,
     })
-    coinType!: BalanceType;
+    balanceType!: BalanceType;
 
     @ApiModelProperty({
         description: "Amount",

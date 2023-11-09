@@ -4,7 +4,7 @@ import { mappingDataRequest } from "../base";
 import { WithdrawRequestStatus } from "@prisma/client";
 
 @ApiModel({
-    description: "Get QR buy coin request",
+    description: "Get QR deposit request",
 })
 export class AdminHandleWithdrawRequest {
     @IsUUID()

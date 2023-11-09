@@ -6,7 +6,7 @@ import { UserInformationResponse } from "../user";
 })
 export class TopDonationRecipientResponse {
     @ApiModelProperty({
-        description: "Total coin donate",
+        description: "Total balance donate",
         example: 20,
     })
     totalReceivedAmount!: number;

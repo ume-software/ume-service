@@ -1,1 +1,1 @@
-export * from "./getQrBuyCoin.response";
+export * from "./getQrDeposit.response";

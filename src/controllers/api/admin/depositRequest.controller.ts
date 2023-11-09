@@ -52,8 +52,8 @@ export class AdminManageDepositRequestController extends BaseController {
         parameters: {
             query: queryParameters,
         },
-        description: "Admin get list buy coin request",
-        summary: "Admin get list buy coin request",
+        description: "Admin get list deposit request",
+        summary: "Admin get list deposit request",
         responses: {
             200: {
                 content: {
@@ -77,8 +77,8 @@ export class AdminManageDepositRequestController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one buy coin request",
-        summary: "Admin get one buy coin request",
+        description: "Admin get one deposit request",
+        summary: "Admin get one deposit request",
         parameters: {
             path: {
                 id: {

@@ -69,8 +69,8 @@ export class DepositRequestController extends BaseController {
         parameters: {
             query: handlerFilterDepositParameters,
         },
-        description: "Handler get all buy coin request to them",
-        summary: "Handler get all buy coin request to them",
+        description: "Handler get all deposit request to them",
+        summary: "Handler get all deposit request to them",
         responses: {
             200: {
                 content: {
@@ -78,7 +78,7 @@ export class DepositRequestController extends BaseController {
                         schema: { model: DepositResponse },
                     },
                 },
-                description: "Get list buy coin request success",
+                description: "Get list deposit request success",
             },
         },
     })
@@ -110,8 +110,8 @@ export class DepositRequestController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "User create buy coin request",
-        summary: "User create buy coin request",
+        description: "User create deposit request",
+        summary: "User create deposit request",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -126,7 +126,7 @@ export class DepositRequestController extends BaseController {
                         schema: { model: DepositResponse },
                     },
                 },
-                description: "Create buy coin request success",
+                description: "Create deposit request success",
             },
         },
     })
@@ -146,8 +146,8 @@ export class DepositRequestController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "User create buy coin request",
-        summary: "User create buy coin request",
+        description: "User create deposit request",
+        summary: "User create deposit request",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -162,7 +162,7 @@ export class DepositRequestController extends BaseController {
                         schema: { model: DepositCalculateResponse },
                     },
                 },
-                description: "Create buy coin request success",
+                description: "Create deposit request success",
             },
         },
     })
@@ -180,8 +180,8 @@ export class DepositRequestController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "User create buy coin request",
-        summary: "User create buy coin request",
+        description: "User create deposit request",
+        summary: "User create deposit request",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -196,7 +196,7 @@ export class DepositRequestController extends BaseController {
                         schema: { model: DepositCalculateListResponse },
                     },
                 },
-                description: "Create buy coin request success",
+                description: "Create deposit request success",
             },
         },
     })
@@ -215,8 +215,8 @@ export class DepositRequestController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Handle buy coin request",
-        summary: "Handle buy coin request",
+        description: "Handle deposit request",
+        summary: "Handle deposit request",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
@@ -231,7 +231,7 @@ export class DepositRequestController extends BaseController {
                         schema: { model: DepositResponse },
                     },
                 },
-                description: "Handle buy coin request success",
+                description: "Handle deposit request success",
             },
         },
     })

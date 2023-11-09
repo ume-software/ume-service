@@ -65,11 +65,11 @@ export class AdminGetProviderServiceResponse {
     description!: string;
 
     @ApiModelProperty({
-        description: "Total coin provider received",
+        description: "Total balance provider received",
         example: 1074.45,
         type: SwaggerDefinitionConstant.NUMBER,
     })
-    totalReceivedCoin!: number;
+    totalReceivedBalance!: number;
 
     @ApiModelProperty({
         description: "Total revenue",

@@ -1,7 +1,7 @@
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: "User coin response",
+    description: "User balance response",
 })
 export class UserBalanceResponse {
     @ApiModelProperty({
@@ -12,14 +12,14 @@ export class UserBalanceResponse {
     userId?: string;
 
     @ApiModelProperty({
-        description: "Total coins available of user",
+        description: "Total balances available of user",
         required: true,
         example: 900,
     })
     totalBalanceAvailable!: number;
 
     @ApiModelProperty({
-        description: "Total coin of user",
+        description: "Total balance of user",
         required: true,
         example: 1000,
     })

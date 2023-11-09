@@ -132,11 +132,11 @@ export class BalanceSettingRepository extends BasePrismaRepository {
 
     private async calculateForProvider(
         amountBalance: number,
-        coinType: BalanceSettingType
+        balanceType: BalanceSettingType
     ): Promise<number> {
         const setting = await this.prisma.balanceSetting.findFirst({
             where: {
-                balanceSettingType: coinType,
+                balanceSettingType: balanceType,
             },
         });
         let feePercentage = 0.001,

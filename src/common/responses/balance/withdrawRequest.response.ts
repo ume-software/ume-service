@@ -5,7 +5,7 @@ import { UserInformationResponse } from "../user";
 import { UserPaymentSystemResponse } from "../userPaymentSystem";
 
 @ApiModel({
-    description: "Get Qr BuyCoin response",
+    description: "Withdraw Request Response",
 })
 export class WithdrawRequestResponse {
     @ApiModelProperty({
@@ -44,11 +44,11 @@ export class WithdrawRequestResponse {
     amountMoney!: number;
 
     @ApiModelProperty({
-        description: "Amount coin",
+        description: "Amount balance",
         required: true,
         example: 30,
     })
-    amountCoin!: number;
+    amountBalance!: number;
 
     @ApiModelProperty({
         description: "Unit currency",
@@ -75,7 +75,7 @@ export class WithdrawRequestResponse {
         required: false,
         example: "3646a0ae-494a-4cef-876c-1f578c3d6b8d",
     })
-    coinHistoryId?: string;
+    balanceHistoryId?: string;
 
     @ApiModelProperty({
         description: "Status",

@@ -2,7 +2,7 @@ import { PaymentSystemPlatform, UnitCurrency } from "@prisma/client";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 
 @ApiModel({
-    description: "Buy coin calculate response",
+    description: "Deposit calculate response",
 })
 export class DepositCalculateResponse {
     @ApiModelProperty({

@@ -8,11 +8,11 @@ import {
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Buy coin calculate list request",
+    description: "Deposit calculate list request",
 })
 export class DepositCalculateListRequest {
     @ApiModelProperty({
-        description: "AmountCoin",
+        description: "amountBalance",
         required: true,
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: SwaggerDefinitionConstant.NUMBER,

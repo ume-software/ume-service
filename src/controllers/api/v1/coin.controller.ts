@@ -22,14 +22,14 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/v1/coin",
+    path: "/api/v1/balance",
     name: "Balance",
 })
 export class BalanceController extends BaseController {
     constructor() {
         super();
         this.service = balanceService;
-        this.path = "coin";
+        this.path = "balance";
         this.customRouting();
     }
     service: BalanceService;
@@ -72,8 +72,8 @@ export class BalanceController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Get history coins of the user",
-        summary: "Get history coins of the user",
+        description: "Get history balances of the user",
+        summary: "Get history balances of the user",
         parameters: {
             query: queryParameters,
         },
@@ -84,7 +84,7 @@ export class BalanceController extends BaseController {
                         schema: { model: BalanceHistoryPagingResponse },
                     },
                 },
-                description: "Response coin history success",
+                description: "Response balance history success",
             },
         },
     })
@@ -150,8 +150,8 @@ export class BalanceController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Total number of coins of the user himself",
-        summary: "Total number of coins of the user himself",
+        description: "Total number of balances of the user himself",
+        summary: "Total number of balances of the user himself",
         responses: {
             200: {
                 content: {
@@ -196,11 +196,11 @@ export class BalanceController extends BaseController {
         },
     })
     async adminCreatePointForUser(req: Request, res: Response) {
-        const coinForUserRequest = new BalanceForUserRequest(req.body);
+        const balanceForUserRequest = new BalanceForUserRequest(req.body);
         const adminId = req.tokenInfo?.id;
         const result = await this.service.adminCreatePointToUser(
             adminId!!,
-            coinForUserRequest
+            balanceForUserRequest
         );
         this.onSuccess(res, result);
     }
@@ -210,8 +210,8 @@ export class BalanceController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "User create sell coin",
-        summary: "User create sell coin",
+        description: "User create sell balance",
+        summary: "User create sell balance",
         parameters: {
             query: queryParameters,
         },
@@ -242,8 +242,8 @@ export class BalanceController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "User create sell coin",
-        summary: "User create sell coin",
+        description: "User create sell balance",
+        summary: "User create sell balance",
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {

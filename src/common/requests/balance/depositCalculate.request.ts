@@ -4,7 +4,7 @@ import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 
 @ApiModel({
-    description: "Buy coin calculate request",
+    description: "Deposit calculate request",
 })
 export class DepositCalculateRequest {
     @ApiModelProperty({

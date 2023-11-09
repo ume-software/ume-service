@@ -98,7 +98,7 @@ export class DonationService {
 
         if (totalBalanceAvailable < amount) {
             throw errorService.error(
-                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
+                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_MAKE_THE_TRANSACTION
             );
         }
         const provider = await userRepository.findOne({

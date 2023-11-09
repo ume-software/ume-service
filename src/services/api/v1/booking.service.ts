@@ -108,7 +108,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
 
         if (totalBalanceAvailable < totalCost) {
             throw errorService.error(
-                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_MAKE_THE_TRANSACTION
+                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_MAKE_THE_TRANSACTION
             );
         }
 

@@ -48,7 +48,7 @@ export class WithdrawRequestService extends BasePrismaService<
             await balanceService.getTotalBalanceByUserSlug(requesterId);
         if (checkAmountBalance.totalBalanceAvailable < amountBalance) {
             throw errorService.error(
-                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_COINS_TO_WITHDRAW
+                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAW
             );
         }
         const { totalMoney } =

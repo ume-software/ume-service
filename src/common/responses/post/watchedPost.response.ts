@@ -3,7 +3,7 @@ import { PostResponse } from "./post.response";
 import { UserInformationResponse } from "../user/userInformation.response";
 
 @ApiModel({
-    description: "User coin response",
+    description: "Watched Post Response",
 })
 export class WatchedPostResponse {
     @ApiModelProperty({
