@@ -90,7 +90,7 @@ export class VoucherService extends BasePrismaService<
             updateVoucherRequest.isPublished = true;
         }
         if (
-            Object.keys(updateVoucherRequest).length === 2 &&
+            Object.keys(updateVoucherRequest).length === 3 &&
             "isActivated" in updateVoucherRequest
         ) {
             return await this.repository.update(
