@@ -63,7 +63,7 @@ export class BalanceController extends BaseController {
         this.router.patch(
             "/cancel-withdrawal-request/:withdrawal-request-id",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.userCancelBalanceRequest)
+            this.route(this.userCancelWithdrawRequest)
         );
     }
     @ApiOperationGet({
@@ -198,7 +198,7 @@ export class BalanceController extends BaseController {
     async adminCreatePointForUser(req: Request, res: Response) {
         const balanceForUserRequest = new BalanceForUserRequest(req.body);
         const adminId = req.tokenInfo?.id;
-        const result = await this.service.adminCreatePointToUser(
+        const result = await this.service.adminCreateBalanceToUser(
             adminId!!,
             balanceForUserRequest
         );
@@ -274,7 +274,7 @@ export class BalanceController extends BaseController {
 
     @ApiOperationPost({
         path: "/cancel-withdrawal-request/{withdrawal-request-id}",
-        operationId: "userCancelBalanceRequest",
+        operationId: "userCancelWithdrawRequest",
         security: {
             bearerAuth: [],
         },
@@ -301,13 +301,13 @@ export class BalanceController extends BaseController {
             },
         },
     })
-    async userCancelBalanceRequest(req: Request, res: Response) {
+    async userCancelWithdrawRequest(req: Request, res: Response) {
         const { "withdrawal-request-id": id } = req.params;
         if (!id) {
             throw errorService.badRequest();
         }
         const userId = this.getTokenInfo(req).id;
-        const result = await withdrawRequestService.userCancelBalanceRequest({
+        const result = await withdrawRequestService.userCancelWithdrawRequest({
             id,
             userId,
         });

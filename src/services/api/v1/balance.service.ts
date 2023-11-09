@@ -14,7 +14,7 @@ export class BalanceService {
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await balanceHistoryRepository.findAndCountAll(query);
     }
-    async adminCreatePointToUser(
+    async adminCreateBalanceToUser(
         adminId: string,
         balanceForUserRequest: BalanceForUserRequest
     ): Promise<UserBalanceResponse> {

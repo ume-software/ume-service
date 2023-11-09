@@ -134,11 +134,11 @@ export class WithdrawRequestService extends BasePrismaService<
             return withdrawRequest;
         });
     }
-    async userCancelBalanceRequest(userCancelBalanceRequest: {
+    async userCancelWithdrawRequest(userCancelWithdrawRequest: {
         userId: string;
         id: string;
     }) {
-        const { id, userId } = userCancelBalanceRequest;
+        const { id, userId } = userCancelWithdrawRequest;
         if (!id || !userId) {
             throw errorService.badRequest();
         }
