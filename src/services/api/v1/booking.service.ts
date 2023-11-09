@@ -13,7 +13,7 @@ import {
 } from "@/repositories";
 
 import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.repository";
-import { balanceService, errorService, noticeService } from "@/services";
+import { balanceService, errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -75,7 +75,6 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 nowTimehhmm
             );
 
-        console.log("providerService ===> ", providerService);
         if (!providerService) {
             throw errorService.error(
                 ERROR_MESSAGE.THIS_PROVIDER_SERVICE_DOES_NOT_EXISTED
@@ -188,7 +187,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 socketService.emitUserBookingProvider(socket, bookingHistory);
             }
         }
-        noticeService.create({
+        noticeRepository.create({
             user: {
                 connect: {
                     id: provider.id,

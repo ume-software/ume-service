@@ -4,6 +4,8 @@ import {
     PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, BalanceHistory, BalanceType } from "@prisma/client";
+import { UserBalanceResponse } from "@/common/responses";
+import { bookingHistoryRepository } from "..";
 
 export class BalanceHistoryRepository extends BasePrismaRepository {
     constructor() {
@@ -103,5 +105,28 @@ export class BalanceHistoryRepository extends BasePrismaRepository {
         return await tx.balanceHistory.deleteMany({
             where: balanceHistoryWhereInput,
         });
+    }
+
+    async getTotalBalanceByUserId(
+        userId: string
+    ): Promise<UserBalanceResponse> {
+        const totalBalance = await this.getTotalBalanceUser(userId);
+        const getTotalBalanceFrozen =
+            await bookingHistoryRepository.getTotalBalanceFrozenByBookerId(
+                userId
+            );
+        return {
+            userId: userId,
+            totalBalanceAvailable: totalBalance - getTotalBalanceFrozen,
+            totalBalance,
+        };
+    }
+    async getTotalBalanceUser(userId: string) {
+        return (
+            (await this.countByUserIdAndBalanceType(
+                userId,
+                Object.values(BalanceType)
+            )) || 0
+        );
     }
 }

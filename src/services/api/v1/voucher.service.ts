@@ -86,7 +86,9 @@ export class VoucherService extends BasePrismaService<
         if (!voucher) {
             throw errorService.recordNotFound();
         }
-
+        if (updateVoucherRequest.isActivated == true) {
+            updateVoucherRequest.isPublished = true;
+        }
         if (
             Object.keys(updateVoucherRequest).length === 2 &&
             "isActivated" in updateVoucherRequest
@@ -106,9 +108,6 @@ export class VoucherService extends BasePrismaService<
             );
         }
 
-        if (updateVoucherRequest.isActivated == true) {
-            updateVoucherRequest.isPublished = true;
-        }
         updateVoucherRequest.providerId = provider.id;
 
         return await this.repository.updateById(

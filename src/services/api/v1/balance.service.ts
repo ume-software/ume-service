@@ -4,8 +4,9 @@ import {
     bookingHistoryRepository,
     balanceHistoryRepository,
     withdrawRequestRepository,
+    userRepository,
 } from "@/repositories";
-import { errorService, userService } from "@/services";
+import { errorService } from "@/services";
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BalanceHistory, BalanceType } from "@prisma/client";
@@ -19,7 +20,7 @@ export class BalanceService {
         balanceForUserRequest: BalanceForUserRequest
     ): Promise<UserBalanceResponse> {
         const { amount, userId } = balanceForUserRequest;
-        const user = await userService.findOne({
+        const user = await userRepository.findOne({
             where: {
                 id: userId,
             },
@@ -65,7 +66,7 @@ export class BalanceService {
     async getTotalBalanceByUserSlug(
         slug: string
     ): Promise<UserBalanceResponse> {
-        const user = await userService.findOne({
+        const user = await userRepository.findOne({
             where: {
                 OR: [
                     {
@@ -80,7 +81,9 @@ export class BalanceService {
         if (!user) {
             throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
         }
-        const totalBalance = await this.getTotalBalanceUser(user.id);
+        const totalBalance = await balanceHistoryRepository.getTotalBalanceUser(
+            user.id
+        );
         const getTotalBalanceFrozenFromBooking =
             await bookingHistoryRepository.getTotalBalanceFrozenByBookerId(
                 user.id
@@ -101,7 +104,7 @@ export class BalanceService {
     async getTotalBalanceByProviderSlug(
         slug: string
     ): Promise<UserBalanceResponse> {
-        const user = await userService.findOne({
+        const user = await userRepository.findOne({
             where: {
                 provider: {
                     OR: [
@@ -118,23 +121,7 @@ export class BalanceService {
         if (!user) {
             throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
         }
-        const totalBalance = await this.getTotalBalanceUser(user.id);
-        const getTotalBalanceFrozen =
-            await bookingHistoryRepository.getTotalBalanceFrozenByBookerId(
-                user.id
-            );
-        return {
-            userId: user.id,
-            totalBalanceAvailable: totalBalance - getTotalBalanceFrozen,
-            totalBalance,
-        };
-    }
-    private async getTotalBalanceUser(userId: string) {
-        return (
-            (await balanceHistoryRepository.countByUserIdAndBalanceType(
-                userId,
-                Object.values(BalanceType)
-            )) || 0
-        );
+
+        return balanceHistoryRepository.getTotalBalanceByUserId(user.id);
     }
 }
