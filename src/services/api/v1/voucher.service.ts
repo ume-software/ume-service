@@ -95,7 +95,7 @@ export class VoucherService extends BasePrismaService<
         ) {
             return await this.repository.update(
                 {
-                    isActivated: updateVoucherRequest.isActivated!,
+                    ...updateVoucherRequest,
                 },
                 {
                     where: { id: voucher.id },
