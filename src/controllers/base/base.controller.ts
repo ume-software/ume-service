@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import { IAccessToken } from "@/interfaces/auth/accessToken.interface";
 import {
     accountTypeMiddleware,
+    adminRoleMiddleware,
     authMiddleware,
     authOrUnAuthMiddleware,
     systemMiddleware,
@@ -16,6 +17,7 @@ import {
     SOCKET_EXPRESS,
     ServerSocket,
 } from "@/services/socketIO/socketIO.service";
+import { AdminRoleType } from "@prisma/client";
 
 export interface Request extends express.Request {
     ipv4?: string;
@@ -230,6 +232,9 @@ export class BaseController {
 
     accountTypeMiddlewares(option?: EAccountType[]): any[] {
         return [accountTypeMiddleware.run(option)];
+    }
+    adminRoleMiddlewares(option?: AdminRoleType[]): any[] {
+        return [adminRoleMiddleware.run(option)];
     }
 
     systemsMiddlewares(): any[] {

@@ -8,9 +8,9 @@ import { mappingDataRequest } from "../base";
 import { IsEnum, IsOptional, IsString } from "class-validator";
 
 @ApiModel({
-    description: "Create account request",
+    description: "Update account request",
 })
-export class CreateAdminAccountRequest {
+export class UpdateAdminAccountRequest {
     @ApiModelProperty({
         description: "Fullname of user",
         required: true,
@@ -90,12 +90,11 @@ export class CreateAdminAccountRequest {
         example: [AdminRoleType.ADMIN],
     })
     public roles!: Array<AdminRoleType>;
-
-    constructor(data: CreateAdminAccountRequest) {
+    constructor(data: UpdateAdminAccountRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(CreateAdminAccountRequest, data, [
+                mappingDataRequest(UpdateAdminAccountRequest, data, [
                     "name",
                     "dob",
                     "gender",

@@ -1,4 +1,5 @@
 import { AccountTypeMiddleware } from "./accountType.middleware";
+import { AdminRoleMiddleware } from "./adminRole.middleware";
 import { AuthMiddleware } from "./auth.middleware";
 import { AuthOrUnAuthMiddleware } from "./authOrUnAuth.middleware";
 import { DecryptMiddleware } from "./decrypt.middleware";
@@ -7,8 +8,6 @@ import { MorganMiddleware } from "./morgan.middleware";
 import { ParseRequestMiddleware } from "./parseRequest.middleware";
 import { QueryPrismaMiddleware } from "./queryPrisma.middleware";
 import { SystemMiddleware } from "./system.middleware";
-
-
 
 const queryPrismaMiddleware = new QueryPrismaMiddleware();
 const loggerMiddleware = new LoggerMiddleware();
@@ -19,6 +18,7 @@ const authOrUnAuthMiddleware = new AuthOrUnAuthMiddleware();
 const accountTypeMiddleware = new AccountTypeMiddleware();
 const decryptMiddleware = new DecryptMiddleware();
 const systemMiddleware = new SystemMiddleware();
+const adminRoleMiddleware = new AdminRoleMiddleware();
 export {
     queryPrismaMiddleware,
     loggerMiddleware,
@@ -28,5 +28,6 @@ export {
     authOrUnAuthMiddleware,
     accountTypeMiddleware,
     decryptMiddleware,
-    systemMiddleware
-}
+    systemMiddleware,
+    adminRoleMiddleware,
+};

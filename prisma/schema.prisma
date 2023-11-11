@@ -696,7 +696,7 @@ enum LoginType {
 }
 
 enum AdminRoleType {
-  SUPERADMIN
+  SUPER_ADMIN
   ADMIN
   COLLABORATOR
   CASHIER

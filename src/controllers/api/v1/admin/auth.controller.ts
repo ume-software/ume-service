@@ -11,7 +11,6 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import {
     LoginInAppRequest,
-    RegisterInAppRequest,
     RenewTokenRequest,
 } from "@/common/requests";
 import {
@@ -35,44 +34,9 @@ export class AdminAuthController extends BaseController {
             this.route(this.getAdminInfo)
         );
         this.router.post("/login", this.route(this.adminLogin));
-        this.router.post("/register", this.route(this.adminRegisterAccount));
         this.router.post("/renew-token", this.route(this.adminRenewToken));
     }
     service: AuthService;
-
-    @ApiOperationPost({
-        path: "/register",
-        operationId: "adminRegister",
-        description: "Admin register account",
-        summary: "Admin register account",
-        requestBody: {
-            content: {
-                [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: RegisterInAppRequest },
-                },
-            },
-        },
-        responses: {
-            200: {
-                content: {
-                    [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: AdminLoginResponse },
-                    },
-                },
-                description: "Register token success",
-            },
-        },
-    })
-    async adminRegisterAccount(req: Request, res: Response) {
-        const registerInAppRequest = new RegisterInAppRequest({
-            ...req.body,
-            ipv4: req.ipv4,
-        });
-        const result = await this.service.adminRegisterAccount(
-            registerInAppRequest
-        );
-        this.onSuccess(res, result);
-    }
 
     @ApiOperationPost({
         path: "/login",
