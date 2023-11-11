@@ -26,7 +26,7 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/voucher",
+    path: "/api/v1/admin/voucher",
     name: "AdminManageVoucher",
 })
 export class AdminManageVoucherController extends BaseController {

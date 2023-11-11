@@ -15,7 +15,7 @@ import { UploadResponse } from "@/common/responses/upload/upload.response";
 
 const pathFiles = config.server.path_audio;
 @ApiPath({
-    path: "/api/audio",
+    path: "/api/v1/audio",
     name: "Audio",
 })
 export class AudioController extends BaseController {

@@ -21,7 +21,7 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/admin/user-kyc-request",
+    path: "/api/v1/admin/user-kyc-request",
     name: "AdminManageUserKYCRequest",
 })
 export class AdminManageUserKYCRequestController extends BaseController {

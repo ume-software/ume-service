@@ -1,16 +1,16 @@
-import {
-    ReportUserPagingResponse,
-    ReportUserResponse,
-} from "@/common/responses";
+import { DepositPagingResponse, DepositResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { reportUserService } from "@/services";
-import { ReportUserService } from "@/services/api/v1/reportUser.service";
-import { queryParameters } from "@/swagger/parameters/query.parameter";
+import { depositRequestService } from "@/services";
+import { DepositRequestService } from "@/services/api/v1/depositRequest.service";
+import {
+    queryParameters,
+    selectParameter,
+} from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiPath,
@@ -19,53 +19,53 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/report-user",
-    name: "AdminManageReportUser",
+    path: "/api/v1/admin/deposit-request",
+    name: "AdminManageDepositRequest",
 })
-export class AdminManageReportUserController extends BaseController {
+export class AdminManageDepositRequestController extends BaseController {
     constructor() {
         super();
-        this.service = reportUserService;
-        this.path = "report-user";
+        this.service = depositRequestService;
+        this.path = "deposit-request";
         this.customRouting();
     }
-    service: ReportUserService;
+    service: DepositRequestService;
     customRouting() {
         this.router.get(
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetReportUser)
+            this.route(this.adminGetListDepositRequest)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.AdminGetOneReportUser)
+            this.route(this.adminGetOneDepositRequest)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetReportUser",
+        operationId: "adminGetListDepositRequest",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Admin get list report user",
-        summary: "Admin get list report user",
+        description: "Admin get list deposit request",
+        summary: "Admin get list deposit request",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ReportUserPagingResponse },
+                        schema: { model: DepositPagingResponse },
                     },
                 },
                 description: "Approved success",
             },
         },
     })
-    async adminGetReportUser(req: Request, res: Response) {
+    async adminGetListDepositRequest(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
@@ -73,12 +73,12 @@ export class AdminManageReportUserController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "AdminGetOneReportUser",
+        operationId: "adminGetOneDepositRequest",
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one report user",
-        summary: "Admin get one report user",
+        description: "Admin get one deposit request",
+        summary: "Admin get one deposit request",
         parameters: {
             path: {
                 id: {
@@ -88,22 +88,22 @@ export class AdminManageReportUserController extends BaseController {
                     },
                 },
             },
-            query: queryParameters,
+            query: selectParameter,
         },
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: ReportUserResponse },
+                        schema: { model: DepositResponse },
                     },
                 },
                 description: "Rejected success",
             },
         },
     })
-    async AdminGetOneReportUser(req: Request, res: Response) {
+    async adminGetOneDepositRequest(req: Request, res: Response) {
         const { id } = req.params;
-        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        const queryInfoPrisma = req.queryInfoPrisma || {};
         _.set(queryInfoPrisma, "where.id", id);
         const result = await this.service.findOne(queryInfoPrisma);
         this.onSuccess(res, result);

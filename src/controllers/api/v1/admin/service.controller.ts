@@ -23,7 +23,7 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/service",
+    path: "/api/v1/admin/service",
     name: "AdminManageService",
 })
 export class AdminManageServiceController extends BaseController {

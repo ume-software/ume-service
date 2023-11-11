@@ -21,7 +21,7 @@ import {
 import { AdminInformationResponse } from "@/common/responses/admin";
 
 @ApiPath({
-    path: "/api/admin/auth",
+    path: "/api/v1/admin/auth",
     name: "AdminAuth",
 })
 export class AdminAuthController extends BaseController {

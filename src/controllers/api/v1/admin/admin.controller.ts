@@ -15,7 +15,7 @@ import { CreateAdminAccountRequest } from "@/common/requests";
 import { AdminInformationResponse } from "@/common/responses/admin";
 
 @ApiPath({
-    path: "/api/admin",
+    path: "/api/v1/admin",
     name: "admin",
 })
 export class AdminController extends BaseController {

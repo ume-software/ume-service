@@ -22,7 +22,7 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/admin/user",
+    path: "/api/v1/admin/user",
     name: "AdminManageUser",
 })
 export class AdminManageUserController extends BaseController {

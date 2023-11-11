@@ -1,84 +1,78 @@
-import { DepositPagingResponse, DepositResponse } from "@/common/responses";
+import { BookingHistoryPagingResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { depositRequestService } from "@/services";
-import { DepositRequestService } from "@/services/api/v1/depositRequest.service";
-import {
-    queryParameters,
-    selectParameter,
-} from "@/swagger/parameters/query.parameter";
+import { bookingService } from "@/services";
+import { BookingService } from "@/services/api/v1/booking.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
-import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/deposit-request",
-    name: "AdminManageDepositRequest",
+    path: "/api/v1/admin/booking",
+    name: "AdminManageBooking",
 })
-export class AdminManageDepositRequestController extends BaseController {
+export class AdminManageBookingController extends BaseController {
     constructor() {
         super();
-        this.service = depositRequestService;
-        this.path = "deposit-request";
+        this.service = bookingService;
+        this.path = "booking";
         this.customRouting();
     }
-    service: DepositRequestService;
+    service: BookingService;
     customRouting() {
         this.router.get(
-            "",
+            "/",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListDepositRequest)
+            this.route(this.adminGetListBookingHistory)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetOneDepositRequest)
+            this.route(this.adminGetBookingHistoryById)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListDepositRequest",
+        operationId: "adminGetListBookingHistory",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Admin get list deposit request",
-        summary: "Admin get list deposit request",
+        description: "Get all booking",
+        summary: "Get all booking",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: DepositPagingResponse },
+                        schema: { model: BookingHistoryPagingResponse },
                     },
                 },
-                description: "Approved success",
+                description: "Get all booking success",
             },
         },
     })
-    async adminGetListDepositRequest(req: Request, res: Response) {
+    async adminGetListBookingHistory(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetOneDepositRequest",
+        operationId: "adminGetBookingHistoryById",
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one deposit request",
-        summary: "Admin get one deposit request",
         parameters: {
             path: {
                 id: {
@@ -88,24 +82,28 @@ export class AdminManageDepositRequestController extends BaseController {
                     },
                 },
             },
-            query: selectParameter,
+            query: queryParameters,
         },
+        description: "Get all booking",
+        summary: "Get all booking",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: DepositResponse },
+                        schema: { model: BookingHistoryPagingResponse },
                     },
                 },
-                description: "Rejected success",
+                description: "Get all booking success",
             },
         },
     })
-    async adminGetOneDepositRequest(req: Request, res: Response) {
+    async adminGetBookingHistoryById(req: Request, res: Response) {
         const { id } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
-        _.set(queryInfoPrisma, "where.id", id);
+        if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
+        if (!queryInfoPrisma.where.id) queryInfoPrisma.where.id = id;
+
         const result = await this.service.findOne(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
 }

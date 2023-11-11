@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { join } from "path";
-import { imageService, utilService } from "@/services";
+import { fileService, utilService } from "@/services";
 import { Request, Response } from "express";
 import { config } from "@/configs";
 import { BaseController } from "@/controllers/base/base.controller";
@@ -13,26 +13,25 @@ import {
 import { hostLanguageParameter } from "@/swagger/parameters/query.parameter";
 import { UploadResponse } from "@/common/responses/upload/upload.response";
 
-const pathImages = config.server.path_images;
-
+const pathFiles = config.server.path_files;
 @ApiPath({
-    path: "/api/image",
-    name: "Image",
+    path: "/api//v1/file",
+    name: "File",
 })
-export class ImageController extends BaseController {
+export class FileController extends BaseController {
     constructor() {
         super();
         this.customRouting();
-        this.path = "image";
+        this.path = "file";
     }
     customRouting() {
         const multer = require("multer");
         var storage = multer.diskStorage({
             destination: function (_req: Request, _file: any, cb: any) {
-                if (!fs.existsSync(pathImages)) {
-                    fs.mkdirSync(pathImages);
+                if (!fs.existsSync(pathFiles)) {
+                    fs.mkdirSync(pathFiles);
                 }
-                cb(null, pathImages);
+                cb(null, pathFiles);
             },
             filename: function (_req: Request, file: any, cb: any) {
                 cb(null, utilService.revokeFileName(file.originalname));
@@ -41,19 +40,15 @@ export class ImageController extends BaseController {
 
         const upload = multer({ storage: storage });
 
-        this.router.get(
-            "/:filename",
-            this.authOrUnAuthMiddlewares(),
-            this.route(this.getImage)
-        );
+        this.router.get("/:filename", this.route(this.getFile));
         this.router.post("/", upload.array("files"), this.route(this.upload));
     }
 
     @ApiOperationGet({
         path: "/{filename}",
-        operationId: "getImage",
-        description: "Get image by filename",
-        summary: "Get image",
+        operationId: "getFile",
+        description: "Get file by filename",
+        summary: "Get file",
         parameters: {
             path: {
                 filename: {
@@ -66,24 +61,27 @@ export class ImageController extends BaseController {
         },
         responses: {
             200: {
-                description: "Get image success",
+                description: "Get file success",
             },
         },
     })
-    async getImage(req: Request, res: Response) {
+    async getFile(req: Request, res: Response) {
         const { filename } = req.params;
-        const pathFileName = join(
-            pathImages,
-            decodeURIComponent(`${filename}`)
-        );
+        const pathFileName = join(pathFiles, decodeURIComponent(`${filename}`));
 
         fs.exists(pathFileName, function (exists) {
             if (exists) {
                 fs.readFile(pathFileName, function (err, data) {
                     if (!err) {
-                        res.writeHead(200, {
-                            "Content-Type": "image/png,image/gif",
-                        });
+                        res.setHeader(
+                            "Content-Type",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        );
+                        res.setHeader(
+                            "Content-Disposition",
+                            `attachment; filename="${filename}"`
+                        );
+                        //   res.setHeader("Content-Type", "audio/mpeg");
                         res.end(data);
                     }
                 });
@@ -92,7 +90,7 @@ export class ImageController extends BaseController {
                 res.write(`{
                               "code": 500,
                               "type": "database_exception_query_fail",
-                              "message": "Image does not exist"
+                              "message": "File does not exist"
                           }`);
                 res.end();
             }
@@ -101,14 +99,14 @@ export class ImageController extends BaseController {
 
     @ApiOperationPost({
         path: "",
-        operationId: "uploadImage",
-        description: "Upload image",
-        summary: "Upload image",
+        operationId: "uploadFile",
+        description: "Upload file",
+        summary: "Upload file",
         parameters: {
             path: hostLanguageParameter,
         },
         requestBody: {
-            description: "Upload multiple image",
+            description: "Upload multiple file",
             required: true,
             content: {
                 [SwaggerDefinitionConstant.Produce.FORM_DATA]: {
@@ -124,14 +122,6 @@ export class ImageController extends BaseController {
                                     format: SwaggerDefinitionConstant.Model
                                         .Property.Format.BINARY,
                                 },
-                            },
-                            width: {
-                                type: SwaggerDefinitionConstant.Model.Property
-                                    .Type.INTEGER,
-                            },
-                            height: {
-                                type: SwaggerDefinitionConstant.Model.Property
-                                    .Type.INTEGER,
                             },
                         },
                     },
@@ -150,7 +140,7 @@ export class ImageController extends BaseController {
         },
     })
     async upload(req: Request, res: Response) {
-        const pathnames = await imageService.upload(req, "api/image");
+        const pathnames = await fileService.upload(req, "api/file");
         this.onSuccess(res, { results: pathnames });
     }
 }

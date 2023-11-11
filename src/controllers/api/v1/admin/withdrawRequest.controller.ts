@@ -22,7 +22,7 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/withdraw-request",
+    path: "/api/v1/admin/withdraw-request",
     name: "AdminManageWithdrawRequest",
 })
 export class AdminManageWithdrawRequestController extends BaseController {

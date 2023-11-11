@@ -24,7 +24,7 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/banner",
+    path: "/api/v1/admin/banner",
     name: "AdminManageBanner",
 })
 export class AdminManageBannerController extends BaseController {

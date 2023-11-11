@@ -1,78 +1,84 @@
-import { BookingHistoryPagingResponse } from "@/common/responses";
+import {
+    ReportUserPagingResponse,
+    ReportUserResponse,
+} from "@/common/responses";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { bookingService } from "@/services";
-import { BookingService } from "@/services/api/v1/booking.service";
+import { reportUserService } from "@/services";
+import { ReportUserService } from "@/services/api/v1/reportUser.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
-    path: "/api/admin/booking",
-    name: "AdminManageBooking",
+    path: "/api/v1/admin/report-user",
+    name: "AdminManageReportUser",
 })
-export class AdminManageBookingController extends BaseController {
+export class AdminManageReportUserController extends BaseController {
     constructor() {
         super();
-        this.service = bookingService;
-        this.path = "booking";
+        this.service = reportUserService;
+        this.path = "report-user";
         this.customRouting();
     }
-    service: BookingService;
+    service: ReportUserService;
     customRouting() {
         this.router.get(
-            "/",
+            "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListBookingHistory)
+            this.route(this.adminGetReportUser)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetBookingHistoryById)
+            this.route(this.AdminGetOneReportUser)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListBookingHistory",
+        operationId: "adminGetReportUser",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Get all booking",
-        summary: "Get all booking",
+        description: "Admin get list report user",
+        summary: "Admin get list report user",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryPagingResponse },
+                        schema: { model: ReportUserPagingResponse },
                     },
                 },
-                description: "Get all booking success",
+                description: "Approved success",
             },
         },
     })
-    async adminGetListBookingHistory(req: Request, res: Response) {
+    async adminGetReportUser(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccessAsList(res, result);
+        this.onSuccess(res, result);
     }
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetBookingHistoryById",
+        operationId: "AdminGetOneReportUser",
         security: {
             bearerAuth: [],
         },
+        description: "Admin get one report user",
+        summary: "Admin get one report user",
         parameters: {
             path: {
                 id: {
@@ -84,26 +90,22 @@ export class AdminManageBookingController extends BaseController {
             },
             query: queryParameters,
         },
-        description: "Get all booking",
-        summary: "Get all booking",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryPagingResponse },
+                        schema: { model: ReportUserResponse },
                     },
                 },
-                description: "Get all booking success",
+                description: "Rejected success",
             },
         },
     })
-    async adminGetBookingHistoryById(req: Request, res: Response) {
+    async AdminGetOneReportUser(req: Request, res: Response) {
         const { id } = req.params;
-        const queryInfoPrisma = req.queryInfoPrisma || {};
-        if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
-        if (!queryInfoPrisma.where.id) queryInfoPrisma.where.id = id;
-
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(queryInfoPrisma, "where.id", id);
         const result = await this.service.findOne(queryInfoPrisma);
-        this.onSuccessAsList(res, result);
+        this.onSuccess(res, result);
     }
 }
