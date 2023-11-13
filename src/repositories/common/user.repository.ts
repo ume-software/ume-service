@@ -76,10 +76,13 @@ export class UserRepository extends BasePrismaRepository {
                 isOnline: true,
                 isProvider: true,
                 isBanned: true,
-                latestOnline:true,
+                latestOnline: true,
                 createdAt: true,
                 updatedAt: true,
                 providerConfig: {
+                    where: {
+                        deletedAt: null,
+                    },
                     select: {
                         voiceUrl: true,
                         description: true,
@@ -88,6 +91,9 @@ export class UserRepository extends BasePrismaRepository {
                     },
                 },
                 providerServices: {
+                    where: {
+                        deletedAt: null,
+                    },
                     select: {
                         id: true,
                         serviceId: true,
@@ -96,6 +102,9 @@ export class UserRepository extends BasePrismaRepository {
                         description: true,
                         position: true,
                         bookingCosts: {
+                            where: {
+                                deletedAt: null,
+                            },
                             select: {
                                 id: true,
                                 amount: true,
