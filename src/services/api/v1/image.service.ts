@@ -2,12 +2,12 @@ import { join } from "path";
 import { unlinkSync, writeFileSync, readFileSync } from "fs";
 import { config } from "@/configs";
 import sharp from "sharp";
-import { utilService } from "..";
+import { utilService } from "../..";
 // const gifResize = require('@gumlet/gif-resize')
 
 const pathImages = config.server.path_images;
 export class ImageService {
-    async upload(req: any, pathApi: string = "api/image"): Promise<string[]> {
+    async upload(req: any, pathApi: string = "api/image/v1"): Promise<string[]> {
         let files = req.files;
         let { ...resize } = req.body;
         resize = utilService.removeEmpty(resize);

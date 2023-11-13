@@ -2,7 +2,7 @@ import { join } from "path";
 import { config } from "@/configs";
 
 export class FileService {
-    async upload(req: any, pathApi: string = "api/file"): Promise<string[]> {
+    async upload(req: any, pathApi: string = "api/file/v1"): Promise<string[]> {
         let files = req.files;
         const pathnames = [];
         let listFiles = [];

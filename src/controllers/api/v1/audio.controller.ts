@@ -132,7 +132,7 @@ export class AudioController extends BaseController {
         },
     })
     async upload(req: Request, res: Response) {
-        const pathnames = await fileService.upload(req, "api/audio");
+        const pathnames = await fileService.upload(req, "api/audio/v1");
         this.onSuccess(res, { results: pathnames });
     }
 }

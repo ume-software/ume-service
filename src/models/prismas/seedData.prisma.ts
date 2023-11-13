@@ -484,7 +484,7 @@ async function seed() {
                                 },
                             },
                             defaultCost:
-                                faker.number.int({ min: 5, max: 50 }) || 10,
+                                faker.number.int({ min: 5000, max: 50000 }) || 10000,
                             position:
                                 faker.number.int({ min: 1, max: 10 }) || 1,
                         },
@@ -508,7 +508,7 @@ async function seed() {
                             ["12:00", "13:00", "14:00"][
                                 faker.number.int({ min: 0, max: 2 })
                             ] || "12:00",
-                        amount: faker.number.int({ min: 10, max: 100 }),
+                        amount: faker.number.int({ min: 10000, max: 100000 }),
                     },
                 });
             }
