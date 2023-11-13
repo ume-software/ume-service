@@ -16,6 +16,7 @@ import { CreateAdminAccountRequest } from "@/common/requests";
 import { AdminInformationResponse } from "@/common/responses/admin";
 import { UpdateAdminAccountRequest } from "@/common/requests/admin/updateAdminAccount.request";
 import { AdminRoleType } from "@prisma/client";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 
 @ApiPath({
     path: "/api/v1/admin/account",
@@ -97,6 +98,9 @@ export class AccountAdminController extends BaseController {
         summary: "Supper Admin Get List Admin Account",
         security: {
             bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
         },
         responses: {
             200: {
