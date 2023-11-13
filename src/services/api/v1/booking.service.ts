@@ -10,6 +10,8 @@ import {
     userRepository,
     bookingHistoryRepository,
     providerServiceRepository,
+    voucherRepository,
+    voucherRedeemedBookingRepository,
 } from "@/repositories";
 
 import { BookingHistoryRepository } from "@/repositories/common/bookingHistory.repository";
@@ -21,7 +23,14 @@ import {
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { socketService } from "@/services/socketIO";
 
-import { BookingStatus, BalanceType, NoticeType, Prisma } from "@prisma/client";
+import {
+    BookingStatus,
+    BalanceType,
+    NoticeType,
+    Prisma,
+    VoucherType,
+    DiscountUnit,
+} from "@prisma/client";
 import moment from "moment";
 
 export class BookingService extends BasePrismaService<BookingHistoryRepository> {
@@ -56,7 +65,8 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const bookingProviderRequest = new BookingProviderRequest(req.body);
         const bookerId = req.tokenInfo?.id;
 
-        const { providerServiceId, bookingPeriod } = bookingProviderRequest;
+        const { providerServiceId, bookingPeriod, voucherIds } =
+            bookingProviderRequest;
         const booker = await userRepository.findOne({
             where: {
                 id: bookerId,
@@ -105,12 +115,101 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const { totalBalanceAvailable } =
             await balanceService.getTotalBalanceByUserSlug(booker?.id!);
 
-        if (totalBalanceAvailable < totalCost) {
+        const vouchers = await voucherRepository.findMany({
+            where: {
+                id: {
+                    in: voucherIds,
+                },
+            },
+        });
+        const voucherByBookerId = (
+            await voucherRepository.findVoucherByBookerId(
+                booker.id,
+                provider.id
+            )
+        ).map((item) => item.id);
+        let voucherRedeemedBookingData = [];
+        let totalCashbackValueByVoucherProvider = 0;
+        let totalCashbackValueByVoucherSystem = 0;
+        let totalDiscountValueByVoucherProvider = 0;
+        let totalDiscountValueByVoucherSystem = 0;
+        if (voucherIds?.length)
+            for (const voucher of vouchers) {
+                if (
+                    (voucher.providerId && provider.id != voucher.providerId) ||
+                    !voucherByBookerId.includes(voucher.id)
+                ) {
+                    throw errorService.error(
+                        ERROR_MESSAGE.VOUCHER_CANNOT_APPLY_TO_BOOKING
+                    );
+                }
+                if (
+                    (voucher.minimumBookingDurationForUsage &&
+                        voucher.minimumBookingDurationForUsage <
+                            bookingPeriod) ||
+                    (voucher.minimumBookingTotalPriceForUsage &&
+                        voucher.minimumBookingTotalPriceForUsage < totalCost)
+                ) {
+                    throw errorService.error(
+                        ERROR_MESSAGE.YOU_ARE_NOT_ELIGIBLE_TO_USE_THE_VOUCHER
+                    );
+                }
+
+                let discountValue =
+                    voucher.discountUnit == DiscountUnit.PERCENT
+                        ? (voucher.discountValue / 100) * totalCost
+                        : voucher.discountValue;
+
+                if (
+                    voucher.maximumDiscountValue &&
+                    discountValue > voucher.maximumDiscountValue
+                )
+                    discountValue = voucher.maximumDiscountValue;
+
+                switch (voucher.type) {
+                    case VoucherType.CASHBACK: {
+                        if (voucher.providerId) {
+                            totalCashbackValueByVoucherProvider +=
+                                discountValue;
+                        } else {
+                            totalCashbackValueByVoucherSystem += discountValue;
+                        }
+                        break;
+                    }
+                    case VoucherType.DISCOUNT: {
+                        if (voucher.providerId) {
+                            totalDiscountValueByVoucherProvider +=
+                                discountValue;
+                        } else {
+                            totalDiscountValueByVoucherSystem += discountValue;
+                        }
+                        break;
+                    }
+                }
+                voucherRedeemedBookingData.push({
+                    bookerId: booker.id,
+                    voucherId: voucher.id,
+                    totalCashbackValue:
+                        voucher.type == VoucherType.CASHBACK
+                            ? discountValue
+                            : 0,
+                    totalDiscountValue:
+                        voucher.type == VoucherType.DISCOUNT
+                            ? discountValue
+                            : 0,
+                });
+            }
+
+        if (
+            totalBalanceAvailable <
+            totalCost -
+                totalDiscountValueByVoucherProvider -
+                totalDiscountValueByVoucherSystem
+        ) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_MAKE_THE_TRANSACTION
             );
         }
-
         const checkHaveBookingWithCurrentProviderPending =
             await this.repository.findOne({
                 where: {
@@ -148,26 +247,33 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             },
         });
 
-        console.log(
-            "nearestBookingProviderAccepted ===> ",
-            nearestBookingProviderAccepted
-        );
         if (nearestBookingProviderAccepted?.acceptedAt) {
             nearestBookingProviderAccepted.acceptedAt.setHours(
                 nearestBookingProviderAccepted.acceptedAt.getHours() +
                     nearestBookingProviderAccepted.bookingPeriod
             );
-            if (nearestBookingProviderAccepted.acceptedAt < new Date()) {
+
+            if (nearestBookingProviderAccepted.acceptedAt > new Date()) {
                 throw errorService.error(
                     ERROR_MESSAGE.PROVIDER_BUSY_WITH_OTHER_BOOKING
                 );
             }
         }
-
+        const providerReceivedBalance =
+            await balanceSettingRepository.calculateBalanceBookingForProvider(
+                totalCost -
+                    totalDiscountValueByVoucherProvider -
+                    totalCashbackValueByVoucherProvider
+            );
         const bookingHistory = await bookingHistoryRepository.create({
             bookingPeriod,
             status: BookingStatus.INIT,
-            totalCost,
+            totalCost:
+                totalCost -
+                totalDiscountValueByVoucherProvider -
+                totalDiscountValueByVoucherSystem -
+                totalCashbackValueByVoucherProvider -
+                totalCashbackValueByVoucherSystem,
             booker: {
                 connect: {
                     id: booker.id,
@@ -178,7 +284,20 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     id: providerService.id,
                 },
             },
+            providerReceivedBalance,
         });
+        if (voucherRedeemedBookingData?.length) {
+            voucherRedeemedBookingData = voucherRedeemedBookingData.map(
+                (item) => ({
+                    ...item,
+                    bookingHistoryId: bookingHistory.id,
+                })
+            );
+            await voucherRedeemedBookingRepository.createMany(
+                voucherRedeemedBookingData as Prisma.VoucherRedeemedBookingCreateManyInput[]
+            );
+        }
+
         const socketIO = this.socketIO(req);
         const userIdOfProvider = bookingHistory.providerService?.provider?.id;
         if (socketIO.connections && userIdOfProvider) {
@@ -216,19 +335,24 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const fiveMinutesBefore = new Date(
             now.valueOf() - config.server.bookingExpireTimeMillisecond
         );
-        const bookingHistory = await bookingHistoryRepository.findOne({
+        const bookingHistoryForHandle = await bookingHistoryRepository.findOne({
             where: {
                 id: bookingHistoryId,
             },
         });
 
-        if (!bookingHistory) {
+        if (!bookingHistoryForHandle) {
             throw errorService.error(
                 ERROR_MESSAGE.BOOKING_REQUEST_DOES_NOT_EXISTED
             );
         }
 
-        const { bookerId, providerServiceId, totalCost } = bookingHistory;
+        const {
+            bookerId,
+            providerServiceId,
+            totalCost,
+            providerReceivedBalance,
+        } = bookingHistoryForHandle;
         const providerService = await providerServiceRepository.findOne({
             where: {
                 id: providerServiceId,
@@ -260,8 +384,9 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         if (requestFrom == "OTHER") {
             throw errorService.permissionDeny();
         }
-        const { status: oldStatus } = bookingHistory;
-        const hasBookingEnded = bookingHistory.createdAt! < fiveMinutesBefore;
+        const { status: oldStatus } = bookingHistoryForHandle;
+        const hasBookingEnded =
+            bookingHistoryForHandle.createdAt! < fiveMinutesBefore;
         return await prisma.$transaction(async (tx) => {
             if (!status.includes(requestFrom)) {
                 throw errorService.permissionDeny();
@@ -306,9 +431,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                                 id: bookingHistoryId,
                             },
                         },
-                        amount: await balanceSettingRepository.calculateBalanceBookingForProvider(
-                            totalCost
-                        ),
+                        amount: providerReceivedBalance,
                         balanceType: BalanceType.GET_BOOKING,
                     },
                     tx
@@ -352,13 +475,20 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             switch (status) {
                 case PROVIDER_CANCEL: {
                     type = NoticeType.BOOKING_HAS_BEEN_DECLINED;
+                    await voucherRedeemedBookingRepository.deleteMany(
+                        {
+                            bookingHistoryId,
+                        },
+                        tx
+                    );
                     break;
                 }
                 case PROVIDER_ACCEPT: {
-                    type = NoticeType.BOOKING_HAS_BEEN_SUCCESSED;
+                    type = NoticeType.BOOKING_HAS_BEEN_SUCCEEDED;
                     break;
                 }
             }
+
             noticeRepository.create({
                 user: {
                     connect: {

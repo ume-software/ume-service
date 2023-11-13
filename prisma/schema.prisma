@@ -438,7 +438,6 @@ model VoucherRedeemedBooking {
   bookingHistoryId   String         @map("booking_history_id")
   totalDiscountValue Int            @default(0) @map("total_discount_value")
   totalCashbackValue Int            @default(0) @map("total_cashback_value")
-
   @@map("voucher_redeemed_booking")
 }
 
@@ -764,7 +763,7 @@ enum NoticeType {
   NEW_MESSAGE
   HAVE_BOOKING
   BOOKING_HAS_BEEN_DECLINED
-  BOOKING_HAS_BEEN_SUCCESSED
+  BOOKING_HAS_BEEN_SUCCEEDED
   SOMEONE_FOLLOWING_YOU
   ADMIN_HAS_BANNED_PROVIDER
   ADMIN_HAS_UN_BANNED_PROVIDER

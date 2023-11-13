@@ -443,6 +443,22 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to update the information of a voucher that has already been published, resulting in a 400 Bad Request status.",
     },
+    VOUCHER_CANNOT_APPLY_TO_BOOKING: {
+        type: "voucher_exception",
+        message: "Have voucher cannot apply to booking",
+        codeNumber: 21002,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries apply an invalid voucher, resulting in a 400 Bad Request status.",
+    },
+    YOU_ARE_NOT_ELIGIBLE_TO_USE_THE_VOUCHER: {
+        type: "voucher_exception",
+        message: "You are not eligible to use the voucher",
+        codeNumber: 21003,
+        statusCode: 400,
+        description:
+            "This error occurs when a user tries apply a voucher not eligible to use, resulting in a 400 Bad Request status.",
+    },
     SPECIAL_TIME_PERIODS_CANNOT_OVERLAP: {
         type: "booking_cost_exception",
         message: "Special time periods cannot overlap.",

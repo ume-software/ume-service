@@ -6,8 +6,6 @@ import {
 import { Prisma, VoucherRedeemedBooking } from "@prisma/client";
 
 export class VoucherRedeemedBookingRepository extends BasePrismaRepository {
- 
-
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: VoucherRedeemedBooking[];
         count: number;
@@ -47,14 +45,23 @@ export class VoucherRedeemedBookingRepository extends BasePrismaRepository {
     }
 
     async create(
-        VoucherRedeemedBookingCreateInput: Prisma.VoucherRedeemedBookingCreateInput,
+        voucherRedeemedBookingCreateInput: Prisma.VoucherRedeemedBookingCreateInput,
         tx: PrismaTransaction = this.prisma
     ): Promise<VoucherRedeemedBooking> {
         return await tx.voucherRedeemedBooking.create({
-            data: VoucherRedeemedBookingCreateInput,
+            data: voucherRedeemedBookingCreateInput,
         });
     }
-
+    async createMany(
+        voucherRedeemedBookingCreateManyInput:
+            | Prisma.VoucherRedeemedBookingCreateManyInput
+            | Prisma.VoucherRedeemedBookingCreateManyInput[],
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.voucherRedeemedBooking.createMany({
+            data: voucherRedeemedBookingCreateManyInput,
+        });
+    }
     async findOne(
         query?: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
