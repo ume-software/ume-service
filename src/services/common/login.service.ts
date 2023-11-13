@@ -300,6 +300,13 @@ export class LoginService {
             where: {
                 username,
             },
+            include: {
+                adminRoles: {
+                    where: {
+                        deletedAt: null,
+                    },
+                },
+            },
         });
         if (!admin) {
             throw errorService.error(ERROR_MESSAGE.USERNAME_DOES_NOT_EXIST);
