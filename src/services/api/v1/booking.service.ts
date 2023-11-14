@@ -64,7 +64,84 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
     async userBookingProvider(req: Request) {
         const bookingProviderRequest = new BookingProviderRequest(req.body);
         const bookerId = req.tokenInfo?.id;
+        if (!bookerId) {
+            throw errorService.badToken();
+        }
+        let {
+            providerReceivedBalance,
+            bookingPeriod,
+            totalCostSpendBooking,
+            voucherRedeemedBookingData,
+            providerService,
+            provider,
+        } = await this.estimateBookingProvider(
+            bookerId,
+            bookingProviderRequest
+        );
+        return await prisma.$transaction(async (tx) => {
+            const bookingHistory = await bookingHistoryRepository.create(
+                {
+                    bookingPeriod,
+                    status: BookingStatus.INIT,
+                    totalCost: totalCostSpendBooking,
+                    booker: {
+                        connect: {
+                            id: bookerId,
+                        },
+                    },
+                    providerService: {
+                        connect: {
+                            id: providerService.id,
+                        },
+                    },
+                    providerReceivedBalance,
+                },
+                tx
+            );
+            if (voucherRedeemedBookingData?.length) {
+                voucherRedeemedBookingData = voucherRedeemedBookingData.map(
+                    (item) => ({
+                        ...item,
+                        bookingHistoryId: bookingHistory.id,
+                    })
+                );
+                await voucherRedeemedBookingRepository.createMany(
+                    voucherRedeemedBookingData as Prisma.VoucherRedeemedBookingCreateManyInput[],
+                    tx
+                );
+            }
 
+            await noticeRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: provider.id,
+                        },
+                    },
+                    type: NoticeType.HAVE_BOOKING,
+                    data: JSON.parse(JSON.stringify(bookingHistory)),
+                },
+                tx
+            );
+            const socketIO = this.socketIO(req);
+            const userIdOfProvider =
+                bookingHistory.providerService?.provider?.id;
+            if (socketIO.connections && userIdOfProvider) {
+                const socket = socketIO.connections[userIdOfProvider];
+                if (socket) {
+                    socketService.emitUserBookingProvider(
+                        socket,
+                        bookingHistory
+                    );
+                }
+            }
+            return bookingHistory;
+        });
+    }
+    async estimateBookingProvider(
+        bookerId: string,
+        bookingProviderRequest: BookingProviderRequest
+    ) {
         const { providerServiceId, bookingPeriod, voucherIds } =
             bookingProviderRequest;
         const booker = await userRepository.findOne({
@@ -128,7 +205,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 provider.id
             )
         ).map((item) => item.id);
-        let voucherRedeemedBookingData = [];
+        let voucherRedeemedBookingData: any[] = [];
         let totalCashbackValueByVoucherProvider = 0;
         let totalCashbackValueByVoucherSystem = 0;
         let totalDiscountValueByVoucherProvider = 0;
@@ -140,18 +217,20 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     !voucherByBookerId.includes(voucher.id)
                 ) {
                     throw errorService.error(
-                        ERROR_MESSAGE.VOUCHER_CANNOT_APPLY_TO_BOOKING
+                        ERROR_MESSAGE.VOUCHER_CANNOT_APPLY_TO_BOOKING,
+                        voucher
                     );
                 }
                 if (
                     (voucher.minimumBookingDurationForUsage &&
-                        voucher.minimumBookingDurationForUsage <
+                        voucher.minimumBookingDurationForUsage >
                             bookingPeriod) ||
                     (voucher.minimumBookingTotalPriceForUsage &&
-                        voucher.minimumBookingTotalPriceForUsage < totalCost)
+                        voucher.minimumBookingTotalPriceForUsage > totalCost)
                 ) {
                     throw errorService.error(
-                        ERROR_MESSAGE.YOU_ARE_NOT_ELIGIBLE_TO_USE_THE_VOUCHER
+                        ERROR_MESSAGE.YOU_ARE_NOT_ELIGIBLE_TO_USE_THE_VOUCHER,
+                        voucher
                     );
                 }
 
@@ -265,59 +344,26 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     totalDiscountValueByVoucherProvider -
                     totalCashbackValueByVoucherProvider
             );
-        const bookingHistory = await bookingHistoryRepository.create({
+
+        return {
             bookingPeriod,
-            status: BookingStatus.INIT,
-            totalCost:
+            providerService,
+            provider,
+            voucherRedeemedBookingData,
+            totalCostBeforeVoucher: totalCost,
+            totalCostSpendBooking:
                 totalCost -
                 totalDiscountValueByVoucherProvider -
                 totalDiscountValueByVoucherSystem -
                 totalCashbackValueByVoucherProvider -
                 totalCashbackValueByVoucherSystem,
-            booker: {
-                connect: {
-                    id: booker.id,
-                },
-            },
-            providerService: {
-                connect: {
-                    id: providerService.id,
-                },
-            },
             providerReceivedBalance,
-        });
-        if (voucherRedeemedBookingData?.length) {
-            voucherRedeemedBookingData = voucherRedeemedBookingData.map(
-                (item) => ({
-                    ...item,
-                    bookingHistoryId: bookingHistory.id,
-                })
-            );
-            await voucherRedeemedBookingRepository.createMany(
-                voucherRedeemedBookingData as Prisma.VoucherRedeemedBookingCreateManyInput[]
-            );
-        }
-
-        const socketIO = this.socketIO(req);
-        const userIdOfProvider = bookingHistory.providerService?.provider?.id;
-        if (socketIO.connections && userIdOfProvider) {
-            const socket = socketIO.connections[userIdOfProvider];
-            if (socket) {
-                socketService.emitUserBookingProvider(socket, bookingHistory);
-            }
-        }
-        noticeRepository.create({
-            user: {
-                connect: {
-                    id: provider.id,
-                },
-            },
-            type: NoticeType.HAVE_BOOKING,
-            data: JSON.parse(JSON.stringify(bookingHistory)),
-        });
-        return bookingHistory;
+            totalCashbackValueByVoucherProvider,
+            totalCashbackValueByVoucherSystem,
+            totalDiscountValueByVoucherProvider,
+            totalDiscountValueByVoucherSystem,
+        };
     }
-
     async bookingHandle(req: Request) {
         const bookingHandleRequest = new BookingHandleRequest(req.body);
         const userRequestId = req.tokenInfo?.id!;

@@ -49,7 +49,10 @@ export class ErrorService {
         return new ErrorResponse(ERROR_MESSAGE.BAD_REQUEST);
     }
 
-    error(errorResponse: IErrorResponse) {
+    error(errorResponse: IErrorResponse | IBaseErrorOption, data?: any) {
+        if (data) {
+            errorResponse.data = data;
+        }
         return new ErrorResponse(errorResponse);
     }
 }
