@@ -4,9 +4,16 @@ import {
     PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, User } from "@prisma/client";
+import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 export class UserRepository extends BasePrismaRepository {
     async findMany(query?: ICrudOptionPrisma) {
         return await this.prisma.user.findMany(query);
+    }
+    async count(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.user.count(query as any);
     }
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
@@ -150,5 +157,24 @@ export class UserRepository extends BasePrismaRepository {
                 updatedAt: true,
             },
         });
+    }
+    async newUserStatistics(
+        time: number = 12,
+        unit: EIntervalUnit = EIntervalUnit.months,
+        gapUnit: EIntervalUnit = EIntervalUnit.months
+    ) {
+        const generateSeries = unit == EIntervalUnit.years ? time * 12 : time;
+        const interval = `${time} ${unit}`;
+        return await this.prisma.$queryRawUnsafe(`
+            WITH statistic_user AS (
+                SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
+                FROM generate_series(0, ${generateSeries}) n
+            )
+            SELECT COUNT(u.created_at)::int AS value, sp.time AS time
+            FROM statistic_user su
+            LEFT JOIN "user" u ON date_trunc('${gapUnit}', u.created_at) = su.time
+            GROUP BY su.time
+            ORDER BY su.time;
+        `);
     }
 }

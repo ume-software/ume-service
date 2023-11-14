@@ -4,6 +4,7 @@ import {
     PrismaTransaction,
 } from "../base/basePrisma.repository";
 import { Prisma, ProviderConfig } from "@prisma/client";
+import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 
 export class ProviderConfigRepository extends BasePrismaRepository {
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
@@ -21,7 +22,12 @@ export class ProviderConfigRepository extends BasePrismaRepository {
             count,
         };
     }
-
+    async count(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.user.count(query as any);
+    }
     async updateById(
         id: string,
         providerConfigUpdateInput: Prisma.ProviderConfigUpdateInput,
@@ -92,5 +98,25 @@ export class ProviderConfigRepository extends BasePrismaRepository {
         return await tx.providerConfig.deleteMany({
             where: providerConfigWhereInput,
         });
+    }
+
+    async newProviderStatistics(
+        time: number = 12,
+        unit: EIntervalUnit = EIntervalUnit.months,
+        gapUnit: EIntervalUnit = EIntervalUnit.months
+    ) {
+        const generateSeries = unit == EIntervalUnit.years ? time * 12 : time;
+        const interval = `${time} ${unit}`;
+        return await this.prisma.$queryRawUnsafe(`
+            WITH statistic_provider AS (
+                SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
+                FROM generate_series(0, ${generateSeries}) n
+            )
+            SELECT COUNT(pc.created_at)::int AS value, sp.time AS time
+            FROM statistic_provider sp
+            LEFT JOIN "provider_config" pc ON date_trunc('${gapUnit}', pc.created_at) = sp.time
+            GROUP BY sp.time
+            ORDER BY sp.time;
+        `);
     }
 }

@@ -1,4 +1,5 @@
 import { IHostLanguage } from "@/enums/hostLanguage.enum";
+import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 import { ETopDonationDuration } from "@/enums/topDonationDuration.enum";
 import { DepositRequestStatus, Gender, ProviderStatus } from "@prisma/client";
 import {
@@ -240,6 +241,44 @@ export const filterTopDonationParameters = {
         },
         description: `
         Example : top=10
+        `,
+    },
+};
+
+export const intervalStatisticParameters: IApiParameters = {
+    time: {
+        name: "time",
+        required: true,
+        schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+            default: 1,
+        },
+        description: `
+        Example : time=12
+        `,
+    },
+    unit: {
+        name: "unit",
+        required: true,
+        schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+            default: EIntervalUnit.months,
+            enum: Object.values(EIntervalUnit),
+        },
+        description: `
+        Example : unit=${EIntervalUnit.months}
+        `,
+    },
+    ["gap-unit"]: {
+        name: "gap_unit",
+        required: true,
+        schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+            default: EIntervalUnit.months,
+            enum: Object.values(EIntervalUnit),
+        },
+        description: `
+        Example : gap-unit=${EIntervalUnit.months}
         `,
     },
 };
