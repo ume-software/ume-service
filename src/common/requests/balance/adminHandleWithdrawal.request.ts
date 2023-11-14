@@ -1,12 +1,12 @@
 import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
-import { WithdrawRequestStatus } from "@prisma/client";
+import { WithdrawalRequestStatus } from "@prisma/client";
 
 @ApiModel({
     description: "Get QR deposit request",
 })
-export class AdminHandleWithdrawRequest {
+export class AdminHandleWithdrawalRequest {
     @IsUUID()
     public id?: string;
 
@@ -28,22 +28,22 @@ export class AdminHandleWithdrawRequest {
     public feedback?: string;
 
     @ApiModelProperty({
-        description: "WithdrawRequestStatus",
+        description: "WithdrawalRequestStatus",
         required: true,
         enum: Object.values([
-            WithdrawRequestStatus.COMPLETED,
-            WithdrawRequestStatus.REJECTED,
+            WithdrawalRequestStatus.COMPLETED,
+            WithdrawalRequestStatus.REJECTED,
         ]),
-        example: WithdrawRequestStatus.COMPLETED,
+        example: WithdrawalRequestStatus.COMPLETED,
     })
-    @IsEnum(WithdrawRequestStatus)
-    public status!: WithdrawRequestStatus;
+    @IsEnum(WithdrawalRequestStatus)
+    public status!: WithdrawalRequestStatus;
 
-    constructor(data: AdminHandleWithdrawRequest) {
+    constructor(data: AdminHandleWithdrawalRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(AdminHandleWithdrawRequest, data, [
+                mappingDataRequest(AdminHandleWithdrawalRequest, data, [
                     "id",
                     "billImageUrl",
                     "feedback",

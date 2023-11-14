@@ -38,7 +38,7 @@ import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 import { VNPayService } from "./api/v1/vnpay.service";
 import { MomoService } from "./api/v1/momo.service";
 import { ServiceAttributeService } from "./api/v1/serviceAttribute.service";
-import { WithdrawRequestService } from "./api/v1/withdrawRequest.service";
+import { WithdrawalRequestService } from "./api/v1/withdrawalRequest.service";
 import { UserPaymentSystemService } from "./api/v1/userPaymentSystem.service";
 import { BannerService } from "./api/v1/banner.service";
 import { ReportUserService } from "./api/v1/reportUser.service";
@@ -83,7 +83,7 @@ const donationService = new DonationService();
 const vnpayService = new VNPayService();
 const momoService = new MomoService();
 const serviceAttributeService = new ServiceAttributeService();
-const withdrawRequestService = new WithdrawRequestService();
+const withdrawalRequestService = new WithdrawalRequestService();
 const userPaymentSystemService = new UserPaymentSystemService();
 const bannerService = new BannerService();
 const reportUserService = new ReportUserService();
@@ -128,7 +128,7 @@ export {
     vnpayService,
     momoService,
     serviceAttributeService,
-    withdrawRequestService,
+    withdrawalRequestService,
     userPaymentSystemService,
     bannerService,
     reportUserService,

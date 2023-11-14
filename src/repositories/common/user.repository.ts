@@ -170,7 +170,7 @@ export class UserRepository extends BasePrismaRepository {
                 SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
                 FROM generate_series(0, ${generateSeries}) n
             )
-            SELECT COUNT(u.created_at)::int AS value, sp.time AS time
+            SELECT COUNT(u.created_at)::int AS value, su.time AS time
             FROM statistic_user su
             LEFT JOIN "user" u ON date_trunc('${gapUnit}', u.created_at) = su.time
             GROUP BY su.time

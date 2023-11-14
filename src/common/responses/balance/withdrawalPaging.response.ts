@@ -5,18 +5,18 @@ import {
 } from "express-swagger-typescript";
 
 import { PaginationResponse } from "../base";
-import { WithdrawRequestResponse } from "./withdrawRequest.response";
+import { WithdrawalRequestResponse } from "./withdrawalRequest.response";
 
 @ApiModel({
-    description: "Withdraw paging response",
+    description: "Withdrawal paging response",
 })
-export class WithdrawRequestPagingResponse {
+export class WithdrawalRequestPagingResponse {
     @ApiModelProperty({
         description: "Row",
         type: SwaggerDefinitionConstant.ARRAY,
-        itemType: WithdrawRequestResponse,
+        itemType: WithdrawalRequestResponse,
     })
-    row!: Array<WithdrawRequestResponse>;
+    row!: Array<WithdrawalRequestResponse>;
 
     @ApiModelProperty({
         description: "Count",

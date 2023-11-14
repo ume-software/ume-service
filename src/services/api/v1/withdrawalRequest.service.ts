@@ -1,12 +1,12 @@
 import {
-    AdminHandleWithdrawRequest,
-    CreateWithdrawRequest,
+    AdminHandleWithdrawalRequest,
+    CreateWithdrawalRequest,
 } from "@/common/requests";
 import prisma from "@/models/base.prisma";
 import {
     balanceHistoryRepository,
     balanceSettingRepository,
-    withdrawRequestRepository,
+    withdrawalRequestRepository,
 } from "@/repositories";
 import { balanceService, errorService } from "@/services";
 
@@ -18,15 +18,15 @@ import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import {
     BalanceType,
     Prisma,
-    WithdrawRequestStatus,
+    WithdrawalRequestStatus,
     UnitCurrency,
 } from "@prisma/client";
 
-export class WithdrawRequestService extends BasePrismaService<
-    typeof withdrawRequestRepository
+export class WithdrawalRequestService extends BasePrismaService<
+    typeof withdrawalRequestRepository
 > {
     constructor() {
-        super(withdrawRequestRepository);
+        super(withdrawalRequestRepository);
     }
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
@@ -35,9 +35,9 @@ export class WithdrawRequestService extends BasePrismaService<
         return await this.repository.findOne(query);
     }
 
-    async createWithdrawRequest(
+    async createWithdrawalRequest(
         requesterId: string,
-        getQrBuyBalanceRequest: CreateWithdrawRequest
+        getQrBuyBalanceRequest: CreateWithdrawalRequest
     ) {
         const { amountBalance, userPaymentSystemId, unitCurrency } =
             getQrBuyBalanceRequest;
@@ -48,11 +48,11 @@ export class WithdrawRequestService extends BasePrismaService<
             await balanceService.getTotalBalanceByUserSlug(requesterId);
         if (checkAmountBalance.totalBalanceAvailable < amountBalance) {
             throw errorService.error(
-                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAW
+                ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAWAL
             );
         }
         const { totalMoney } =
-            await balanceSettingRepository.convertBalanceToMoneyForWithdraw(
+            await balanceSettingRepository.convertBalanceToMoneyForWithdrawal(
                 amountBalance,
                 unitCurrency
             );
@@ -71,35 +71,35 @@ export class WithdrawRequestService extends BasePrismaService<
                     id: userPaymentSystemId,
                 },
             },
-            status: WithdrawRequestStatus.PENDING,
+            status: WithdrawalRequestStatus.PENDING,
         });
     }
 
-    async adminHandleWithdrawRequest(
+    async adminHandleWithdrawalRequest(
         adminId: string,
-        adminHandleWithdrawRequest: AdminHandleWithdrawRequest
+        adminHandleWithdrawalRequest: AdminHandleWithdrawalRequest
     ) {
         const { id, status, billImageUrl, feedback } =
-            adminHandleWithdrawRequest;
+            adminHandleWithdrawalRequest;
         if (!id || !status) {
             throw errorService.badRequest();
         }
-        let withdrawRequest = await this.repository.findById(id);
-        if (!withdrawRequest) {
+        let withdrawalRequest = await this.repository.findById(id);
+        if (!withdrawalRequest) {
             throw errorService.error(ERROR_MESSAGE.DEPOSIT_REQUEST_NOT_FOUND);
         }
-        const { PENDING, REJECTED, COMPLETED } = WithdrawRequestStatus;
-        if (withdrawRequest.status != PENDING) {
+        const { PENDING, REJECTED, COMPLETED } = WithdrawalRequestStatus;
+        if (withdrawalRequest.status != PENDING) {
             throw errorService.badRequest();
         }
-        if ([COMPLETED, REJECTED].includes(withdrawRequest.status as any)) {
+        if ([COMPLETED, REJECTED].includes(withdrawalRequest.status as any)) {
             throw errorService.error(
                 ERROR_MESSAGE.DEPOSIT_REQUEST_HAS_BEEN_PROCESSED
             );
         }
 
         return await prisma.$transaction(async (tx) => {
-            const body: Prisma.WithdrawRequestUpdateInput = {
+            const body: Prisma.WithdrawalRequestUpdateInput = {
                 billImageUrl: billImageUrl!,
                 handlerFeedback: feedback!,
                 status,
@@ -111,11 +111,11 @@ export class WithdrawRequestService extends BasePrismaService<
                     {
                         user: {
                             connect: {
-                                id: withdrawRequest?.requesterId!,
+                                id: withdrawalRequest?.requesterId!,
                             },
                         },
-                        amount: -withdrawRequest?.amountBalance!,
-                        balanceType: BalanceType.WITHDRAW,
+                        amount: -withdrawalRequest?.amountBalance!,
+                        balanceType: BalanceType.WITHDRAWAL,
                         adminCreated: {
                             connect: {
                                 id: adminId,
@@ -130,31 +130,31 @@ export class WithdrawRequestService extends BasePrismaService<
                     },
                 };
             }
-            withdrawRequest = await this.repository.updateById(id, body, tx);
-            return withdrawRequest;
+            withdrawalRequest = await this.repository.updateById(id, body, tx);
+            return withdrawalRequest;
         });
     }
-    async userCancelWithdrawRequest(userCancelWithdrawRequest: {
+    async userCancelWithdrawalRequest(userCancelWithdrawalRequest: {
         userId: string;
         id: string;
     }) {
-        const { id, userId } = userCancelWithdrawRequest;
+        const { id, userId } = userCancelWithdrawalRequest;
         if (!id || !userId) {
             throw errorService.badRequest();
         }
 
-        let withdrawRequest = await this.repository.findOne({
+        let withdrawalRequest = await this.repository.findOne({
             where: {
                 id,
                 requesterId: userId,
             },
         });
-        if (!withdrawRequest) {
+        if (!withdrawalRequest) {
             throw errorService.error(ERROR_MESSAGE.DEPOSIT_REQUEST_NOT_FOUND);
         }
 
         return await this.repository.updateById(id, {
-            status: WithdrawRequestStatus.CANCEL,
+            status: WithdrawalRequestStatus.CANCEL,
         });
     }
 }

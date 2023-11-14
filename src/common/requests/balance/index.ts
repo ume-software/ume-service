@@ -4,5 +4,5 @@ export * from "./depositCalculateList.request";
 export * from "./depositHandle.request";
 export * from "./createDeposit.request";
 export * from "./getQrDeposit.request";
-export * from "./createWithdraw.request";
-export * from "./adminHandleWithdraw.request";
+export * from "./createWithdrawal.request";
+export * from "./adminHandleWithdrawal.request";

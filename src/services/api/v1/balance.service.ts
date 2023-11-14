@@ -3,7 +3,7 @@ import { UserBalanceResponse } from "@/common/responses/balance/userBalance.resp
 import {
     bookingHistoryRepository,
     balanceHistoryRepository,
-    withdrawRequestRepository,
+    withdrawalRequestRepository,
     userRepository,
 } from "@/repositories";
 import { errorService } from "@/services";
@@ -88,8 +88,8 @@ export class BalanceService {
             await bookingHistoryRepository.getTotalBalanceFrozenByBookerId(
                 user.id
             );
-        const getTotalBalanceFrozenFromWithdraw =
-            await withdrawRequestRepository.getTotalBalanceFrozenByRequesterId(
+        const getTotalBalanceFrozenFromWithdrawal =
+            await withdrawalRequestRepository.getTotalBalanceFrozenByRequesterId(
                 user.id
             );
         return {
@@ -97,7 +97,7 @@ export class BalanceService {
             totalBalanceAvailable:
                 totalBalance -
                 getTotalBalanceFrozenFromBooking -
-                getTotalBalanceFrozenFromWithdraw,
+                getTotalBalanceFrozenFromWithdrawal,
             totalBalance,
         };
     }

@@ -1,5 +1,12 @@
 import { EIntervalUnit } from "@/enums/intervalUnit.enum";
-import { providerConfigRepository, providerServiceRepository, userRepository } from "@/repositories";
+import {
+    bookingHistoryRepository,
+    depositRequestRepository,
+    providerConfigRepository,
+    providerServiceRepository,
+    userRepository,
+    withdrawalRequestRepository,
+} from "@/repositories";
 
 export class StatisticService {
     async newUserStatistics(
@@ -47,7 +54,34 @@ export class StatisticService {
         return { totalProvider, totalProviderIsBanned };
     }
 
-    async getMostProviderServicesStatistics(){
-        return await providerServiceRepository.getMostProviderServicesStatistics()
+    async getMostProviderServicesStatistics() {
+        return await providerServiceRepository.getMostProviderServicesStatistics();
+    }
+    async getMostBookingServicesStatistics() {
+        return await bookingHistoryRepository.getMostBookingServicesStatistics();
+    }
+
+    async amountMoneyDepositStatistics(
+        time?: number,
+        unit?: EIntervalUnit,
+        gapUnit?: EIntervalUnit
+    ) {
+        return await depositRequestRepository.amountMoneyDepositStatistics(
+            time,
+            unit,
+            gapUnit
+        );
+    }
+
+    async amountMoneyWithdrawalStatistics(
+        time?: number,
+        unit?: EIntervalUnit,
+        gapUnit?: EIntervalUnit
+    ) {
+        return await withdrawalRequestRepository.amountMoneyWithdrawalStatistics(
+            time,
+            unit,
+            gapUnit
+        );
     }
 }

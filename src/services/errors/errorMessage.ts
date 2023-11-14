@@ -376,13 +376,13 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to perform a transaction but does not have sufficient balances, resulting in a 402 Payment Required status.",
     },
-    YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAW: {
+    YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_WITHDRAWAL: {
         type: "balance_exception",
-        message: "You don't have enough balances to withdraw.",
+        message: "You don't have enough balances to withdrawal.",
         codeNumber: 20501,
         statusCode: 402,
         description:
-            "This error occurs when a user tries to perform a withdraw but does not have sufficient balances, resulting in a 402 Payment Required status.",
+            "This error occurs when a user tries to perform a withdrawal but does not have sufficient balances, resulting in a 402 Payment Required status.",
     },
     DEPOSIT_REQUEST_NOT_FOUND: {
         type: "deposit_request_exception",
@@ -401,13 +401,13 @@ export const ERROR_MESSAGE = {
         description:
             "This error is used when a user attempts to process a deposit request that has already been completed, resulting in a 422 Unprocessable Entity status.",
     },
-    WITHDRAW_REQUEST_NOT_FOUND: {
-        type: "withdraw_request_exception",
-        message: "Withdraw request not found.",
+    Withdrawal_REQUEST_NOT_FOUND: {
+        type: "withdrawal_request_exception",
+        message: "Withdrawal request not found.",
         codeNumber: 20700,
         statusCode: 404,
         description:
-            "This error is used when a withdraw request cannot be found in the system, resulting in a 404 Not Found status.",
+            "This error is used when a withdrawal request cannot be found in the system, resulting in a 404 Not Found status.",
     },
 
     THIS_NOTICE_DOES_NOT_EXISTED: {

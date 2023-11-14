@@ -32,7 +32,7 @@ model User {
   balanceHistories       BalanceHistory[]
   bookingHistories       BookingHistory[]
   depositRequests        DepositRequest[]
-  withdrawRequests       WithdrawRequest[]
+  withdrawalRequests       WithdrawalRequest[]
   notices                Notice[]
   posts                  Post[]
   likePosts              LikePost[]
@@ -258,7 +258,7 @@ model UserPaymentSystem {
   platform         PaymentSystemPlatform @map("platform")
   platformAccount  String?               @map("platform_account")
   beneficiary      String?               @map("beneficiary")
-  withdrawRequests WithdrawRequest[]
+  withdrawalRequests WithdrawalRequest[]
 
   @@map("user_payment_system")
 }
@@ -398,7 +398,7 @@ model BalanceHistory {
   donationId      String?          @map("donation_id")
   donation        Donation?        @relation(fields: [donationId], references: [id])
   depositRequest  DepositRequest?
-  withdrawRequest WithdrawRequest?
+  withdrawalRequest WithdrawalRequest?
 
   @@map("balance_history")
 }
@@ -534,7 +534,7 @@ model DepositRequest {
   @@map("deposit_request")
 }
 
-model WithdrawRequest {
+model WithdrawalRequest {
   id                  String                 @id @default(uuid()) @map("id")
   createdAt           DateTime?              @default(now()) @map("created_at")
   updatedAt           DateTime?              @updatedAt @map("updated_at")
@@ -546,7 +546,7 @@ model WithdrawRequest {
   requesterId         String                 @map("requester_id")
   balanceHistory      BalanceHistory?        @relation(fields: [balanceHistoryId], references: [id])
   balanceHistoryId    String?                @unique @map("balance_history_id")
-  status              WithdrawRequestStatus? @default(PENDING) @map("status")
+  status              WithdrawalRequestStatus? @default(PENDING) @map("status")
   handlerId           String?                @map("handler_id")
   handlerFeedback     String?                @map("handler_feedback")
   billImageUrl        String?                @map("bill_image_url")
@@ -681,7 +681,7 @@ enum BalanceType {
   GET_GIFT
   DEPOSIT
   GET_MISSION
-  WITHDRAW
+  WITHDRAWAL
   ADMIN
 }
 
@@ -744,7 +744,7 @@ enum DepositRequestStatus {
   APPROVED
 }
 
-enum WithdrawRequestStatus {
+enum WithdrawalRequestStatus {
   PENDING
   CANCEL
   REJECTED
@@ -753,7 +753,7 @@ enum WithdrawRequestStatus {
 
 enum BalanceSettingType {
   DEPOSIT
-  WITHDRAW
+  WITHDRAWAL
   PROVIDER_GET_MONEY_BOOKING
   GIFT_TO_MONEY
   PROVIDER_GET_MONEY_DONATE
@@ -769,8 +769,8 @@ enum NoticeType {
   ADMIN_HAS_UN_BANNED_PROVIDER
   ADMIN_HAS_APPROVED_KYC_REQUEST
   ADMIN_HAS_REJECTED_KYC_REQUEST
-  ADMIN_HAS_COMPLETED_WITHDRAW_REQUEST
-  ADMIN_HAS_REJECTED_WITHDRAW_REQUEST
+  ADMIN_HAS_COMPLETED_WITHDRAWAL_REQUEST
+  ADMIN_HAS_REJECTED_WITHDRAWAL_REQUEST
 }
 
 enum VoucherType {

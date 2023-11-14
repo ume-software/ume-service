@@ -5,5 +5,5 @@ export * from "./balanceHistory.response";
 export * from "./balanceHistoryPaging.response";
 export * from "./userBalance.response";
 export * from "./depositPaging.response";
-export * from "./withdrawRequest.response";
-export * from "./withdrawPaging.response";
+export * from "./withdrawalRequest.response";
+export * from "./withdrawalPaging.response";

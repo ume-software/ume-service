@@ -6,7 +6,7 @@ import { mappingDataRequest } from "../base";
 @ApiModel({
     description: "Create deposit request",
 })
-export class CreateWithdrawRequest {
+export class CreateWithdrawalRequest {
     @ApiModelProperty({
         description: "AmountBalance",
         required: true,
@@ -32,11 +32,11 @@ export class CreateWithdrawRequest {
     @IsUUID()
     userPaymentSystemId!: string;
 
-    constructor(data: CreateWithdrawRequest) {
+    constructor(data: CreateWithdrawalRequest) {
         if (data) {
             Object.assign(
                 this,
-                mappingDataRequest(CreateWithdrawRequest, data, [
+                mappingDataRequest(CreateWithdrawalRequest, data, [
                     "amountBalance",
                     "unitCurrency",
                     "userPaymentSystemId",

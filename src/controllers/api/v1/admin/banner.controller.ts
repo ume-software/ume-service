@@ -97,8 +97,8 @@ export class AdminManageBannerController extends BaseController {
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one withdraw request",
-        summary: "Admin get one withdraw request",
+        description: "Admin get one withdrawal request",
+        summary: "Admin get one withdrawal request",
         parameters: {
             path: {
                 id: {

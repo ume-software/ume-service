@@ -1,8 +1,8 @@
-import { AdminHandleWithdrawRequest } from "@/common/requests";
+import { AdminHandleWithdrawalRequest } from "@/common/requests";
 import {
     DepositPagingResponse,
     DepositResponse,
-    WithdrawRequestResponse,
+    WithdrawalRequestResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -10,8 +10,8 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { withdrawRequestService } from "@/services";
-import { WithdrawRequestService } from "@/services/api/v1/withdrawRequest.service";
+import { withdrawalRequestService } from "@/services";
+import { WithdrawalRequestService } from "@/services/api/v1/withdrawalRequest.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -22,46 +22,46 @@ import {
 import _ from "lodash";
 
 @ApiPath({
-    path: "/api/v1/admin/withdraw-request",
-    name: "AdminManageWithdrawRequest",
+    path: "/api/v1/admin/withdrawal-request",
+    name: "AdminManageWithdrawalRequest",
 })
-export class AdminManageWithdrawRequestController extends BaseController {
+export class AdminManageWithdrawalRequestController extends BaseController {
     constructor() {
         super();
-        this.service = withdrawRequestService;
-        this.path = "withdraw-request";
+        this.service = withdrawalRequestService;
+        this.path = "withdrawal-request";
         this.customRouting();
     }
-    service: WithdrawRequestService;
+    service: WithdrawalRequestService;
     customRouting() {
         this.router.get(
             "",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListWithdrawRequest)
+            this.route(this.adminGetListWithdrawalRequest)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetOneWithdrawRequest)
+            this.route(this.adminGetOneWithdrawalRequest)
         );
         this.router.patch(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminHandleWithdrawRequest)
+            this.route(this.adminHandleWithdrawalRequest)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListWithdrawRequest",
+        operationId: "adminGetListWithdrawalRequest",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Admin get list withdraw request",
-        summary: "Admin get list withdraw request",
+        description: "Admin get list withdrawal request",
+        summary: "Admin get list withdrawal request",
         responses: {
             200: {
                 content: {
@@ -73,7 +73,7 @@ export class AdminManageWithdrawRequestController extends BaseController {
             },
         },
     })
-    async adminGetListWithdrawRequest(req: Request, res: Response) {
+    async adminGetListWithdrawalRequest(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccess(res, result);
@@ -81,12 +81,12 @@ export class AdminManageWithdrawRequestController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetOneWithdrawRequest",
+        operationId: "adminGetOneWithdrawalRequest",
         security: {
             bearerAuth: [],
         },
-        description: "Admin get one withdraw request",
-        summary: "Admin get one withdraw request",
+        description: "Admin get one withdrawal request",
+        summary: "Admin get one withdrawal request",
         parameters: {
             path: {
                 id: {
@@ -109,7 +109,7 @@ export class AdminManageWithdrawRequestController extends BaseController {
             },
         },
     })
-    async adminGetOneWithdrawRequest(req: Request, res: Response) {
+    async adminGetOneWithdrawalRequest(req: Request, res: Response) {
         const { id } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma ?? {};
         _.set(queryInfoPrisma, "where.id", id);
@@ -118,12 +118,12 @@ export class AdminManageWithdrawRequestController extends BaseController {
     }
     @ApiOperationPatch({
         path: "/{id}",
-        operationId: "adminHandleWithdrawRequest",
+        operationId: "adminHandleWithdrawalRequest",
         security: {
             bearerAuth: [],
         },
-        description: "Admin handle withdraw request",
-        summary: "Admin handle withdraw request",
+        description: "Admin handle withdrawal request",
+        summary: "Admin handle withdrawal request",
         parameters: {
             path: {
                 id: {
@@ -137,7 +137,7 @@ export class AdminManageWithdrawRequestController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: AdminHandleWithdrawRequest },
+                    schema: { model: AdminHandleWithdrawalRequest },
                 },
             },
         },
@@ -145,23 +145,23 @@ export class AdminManageWithdrawRequestController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: WithdrawRequestResponse },
+                        schema: { model: WithdrawalRequestResponse },
                     },
                 },
                 description: "Rejected success",
             },
         },
     })
-    async adminHandleWithdrawRequest(req: Request, res: Response) {
+    async adminHandleWithdrawalRequest(req: Request, res: Response) {
         const { id } = req.params;
         const adminId = this.getTokenInfo(req).id;
-        const adminHandleWithdrawRequest = new AdminHandleWithdrawRequest({
+        const adminHandleWithdrawalRequest = new AdminHandleWithdrawalRequest({
             id,
             ...req.body,
         });
-        const result = await this.service.adminHandleWithdrawRequest(
+        const result = await this.service.adminHandleWithdrawalRequest(
             adminId,
-            adminHandleWithdrawRequest
+            adminHandleWithdrawalRequest
         );
         this.onSuccess(res, result);
     }

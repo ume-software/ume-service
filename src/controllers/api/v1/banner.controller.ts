@@ -59,8 +59,8 @@ export class BannerController extends BaseController {
     @ApiOperationGet({
         path: "/{id}",
         operationId: "getOneBanner",
-        description: "User get one withdraw request",
-        summary: "User get one withdraw request",
+        description: "User get one withdrawal request",
+        summary: "User get one withdrawal request",
         parameters: {
             path: {
                 id: {

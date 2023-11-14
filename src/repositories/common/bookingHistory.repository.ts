@@ -205,4 +205,15 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             )._sum.totalCost || 0
         );
     }
+
+    async getMostBookingServicesStatistics() {
+        return await this.prisma.$queryRaw`
+            SELECT  s.id as id , s.name AS name, COUNT(bh.provider_service_id)::int AS value
+            FROM booking_history bh
+            JOIN provider_service ps ON bh.provider_service_id = ps.id
+            JOIN service s ON ps.service_id = s.id
+            GROUP BY s.name , s.id 
+            ORDER BY value DESC;
+        `;
+    }
 }

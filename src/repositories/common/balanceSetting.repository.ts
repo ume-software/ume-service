@@ -9,7 +9,7 @@ export class BalanceSettingRepository extends BasePrismaRepository {
     constructor() {
         super();
     }
-    async getConvertBalanceToMoneyForWithdrawRate(unitCurrency: UnitCurrency) {
+    async getConvertBalanceToMoneyForWithdrawalRate(unitCurrency: UnitCurrency) {
         const setting = await this.prisma.balanceSetting.findFirst({
             where: {
                 balanceSettingType: BalanceSettingType.DEPOSIT,
@@ -74,7 +74,7 @@ export class BalanceSettingRepository extends BasePrismaRepository {
         };
     }
 
-    calculateBalanceToMoneyForWithdraw(
+    calculateBalanceToMoneyForWithdrawal(
         amountMoney: number,
         option = {
             feePercentage: 0.001,
@@ -90,14 +90,14 @@ export class BalanceSettingRepository extends BasePrismaRepository {
             totalMoney: amountMoney - totalFee,
         };
     }
-    async convertBalanceToMoneyForWithdraw(
+    async convertBalanceToMoneyForWithdrawal(
         amountBalance: number,
         unitCurrency: UnitCurrency
     ) {
-        const option = await this.getConvertBalanceToMoneyForWithdrawRate(
+        const option = await this.getConvertBalanceToMoneyForWithdrawalRate(
             unitCurrency
         );
-        return this.calculateBalanceToMoneyForWithdraw(amountBalance, option);
+        return this.calculateBalanceToMoneyForWithdrawal(amountBalance, option);
     }
 
     async convertBalanceToMoneyForDeposit(

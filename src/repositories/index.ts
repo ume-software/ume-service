@@ -32,7 +32,7 @@ import { ServiceAttributeValueRepository } from "./common/serviceAttributeValue.
 import { ProviderServiceAttributeRepository } from "./common/providerServiceAttribute.repository";
 import { ProviderServiceAttributeValueRepository } from "./common/providerServiceAttributeValue.repository";
 import { ReportUserRepository } from "./common/reportUser.repository";
-import { WithdrawRequestRepository } from "./common/withdrawRequest.repository";
+import { WithdrawalRequestRepository } from "./common/withdrawalRequest.repository";
 import { UserPaymentSystemRepository } from "./common/userPaymentSystem.repository";
 import { BannerRepository } from "./common/banner.repository";
 
@@ -72,7 +72,7 @@ const providerServiceAttributeRepository =
 const providerServiceAttributeValueRepository =
     new ProviderServiceAttributeValueRepository();
 const reportUserRepository = new ReportUserRepository();
-const withdrawRequestRepository = new WithdrawRequestRepository();
+const withdrawalRequestRepository = new WithdrawalRequestRepository();
 const userPaymentSystemRepository = new UserPaymentSystemRepository();
 const bannerRepository = new BannerRepository();
 export {
@@ -110,7 +110,7 @@ export {
     providerServiceAttributeRepository,
     providerServiceAttributeValueRepository,
     reportUserRepository,
-    withdrawRequestRepository,
+    withdrawalRequestRepository,
     userPaymentSystemRepository,
     bannerRepository,
 };

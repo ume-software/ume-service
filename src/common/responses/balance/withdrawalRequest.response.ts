@@ -5,9 +5,9 @@ import { UserInformationResponse } from "../user";
 import { UserPaymentSystemResponse } from "../userPaymentSystem";
 
 @ApiModel({
-    description: "Withdraw Request Response",
+    description: "Withdrawal Request Response",
 })
-export class WithdrawRequestResponse {
+export class WithdrawalRequestResponse {
     @ApiModelProperty({
         description: "Id's provider",
         required: true,

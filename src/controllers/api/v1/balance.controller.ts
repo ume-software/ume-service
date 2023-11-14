@@ -1,7 +1,10 @@
-import { BalanceForUserRequest, CreateWithdrawRequest } from "@/common/requests";
+import {
+    BalanceForUserRequest,
+    CreateWithdrawalRequest,
+} from "@/common/requests";
 import {
     BalanceHistoryPagingResponse,
-    WithdrawRequestResponse,
+    WithdrawalRequestResponse,
     UserBalanceResponse,
 } from "@/common/responses";
 import {
@@ -10,11 +13,16 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { balanceService, errorService, withdrawRequestService } from "@/services";
+import {
+    balanceService,
+    errorService,
+    withdrawalRequestService,
+} from "@/services";
 import { BalanceService } from "@/services/api/v1/balance.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
+    ApiOperationPatch,
     ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
@@ -53,17 +61,17 @@ export class BalanceController extends BaseController {
         this.router.get(
             "/withdrawal-request",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.getWithdrawRequests)
+            this.route(this.getWithdrawalRequests)
         );
         this.router.post(
             "/withdrawal-request",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.createWithdrawRequest)
+            this.route(this.createWithdrawalRequest)
         );
         this.router.patch(
-            "/cancel-withdrawal-request/:withdrawal-request-id",
+            "/cancel-withdrawal-request/:id",
             this.accountTypeMiddlewares([EAccountType.USER]),
-            this.route(this.userCancelWithdrawRequest)
+            this.route(this.userCancelWithdrawalRequest)
         );
     }
     @ApiOperationGet({
@@ -206,7 +214,7 @@ export class BalanceController extends BaseController {
     }
     @ApiOperationGet({
         path: "/withdrawal-request",
-        operationId: "getWithdrawRequests",
+        operationId: "getWithdrawalRequests",
         security: {
             bearerAuth: [],
         },
@@ -219,18 +227,18 @@ export class BalanceController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: WithdrawRequestResponse },
+                        schema: { model: WithdrawalRequestResponse },
                     },
                 },
                 description: "Register success",
             },
         },
     })
-    async getWithdrawRequests(req: Request, res: Response) {
+    async getWithdrawalRequests(req: Request, res: Response) {
         let queryInfoPrisma = req.queryInfoPrisma ?? {};
         const userId = this.getTokenInfo(req).id;
         _.set(queryInfoPrisma, "where.requesterId", userId);
-        const result = await withdrawRequestService.findAndCountAll(
+        const result = await withdrawalRequestService.findAndCountAll(
             queryInfoPrisma
         );
         this.onSuccess(res, result);
@@ -238,7 +246,7 @@ export class BalanceController extends BaseController {
 
     @ApiOperationPost({
         path: "/withdrawal-request",
-        operationId: "createWithdrawRequest",
+        operationId: "createWithdrawalRequest",
         security: {
             bearerAuth: [],
         },
@@ -247,7 +255,7 @@ export class BalanceController extends BaseController {
         requestBody: {
             content: {
                 [SwaggerDefinitionConstant.Produce.JSON]: {
-                    schema: { model: CreateWithdrawRequest },
+                    schema: { model: CreateWithdrawalRequest },
                 },
             },
         },
@@ -255,32 +263,32 @@ export class BalanceController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: WithdrawRequestResponse },
+                        schema: { model: WithdrawalRequestResponse },
                     },
                 },
                 description: "Register success",
             },
         },
     })
-    async createWithdrawRequest(req: Request, res: Response) {
-        const createWithdrawRequest = new CreateWithdrawRequest(req.body);
+    async createWithdrawalRequest(req: Request, res: Response) {
+        const createWithdrawalRequest = new CreateWithdrawalRequest(req.body);
         const userId = this.getTokenInfo(req).id;
-        const result = await withdrawRequestService.createWithdrawRequest(
+        const result = await withdrawalRequestService.createWithdrawalRequest(
             userId,
-            createWithdrawRequest
+            createWithdrawalRequest
         );
         this.onSuccess(res, result);
     }
 
-    @ApiOperationPost({
-        path: "/cancel-withdrawal-request/{withdrawal-request-id}",
-        operationId: "userCancelWithdrawRequest",
+    @ApiOperationPatch({
+        path: "/cancel-withdrawal-request/{id}",
+        operationId: "userCancelWithdrawalRequest",
         security: {
             bearerAuth: [],
         },
         parameters: {
             path: {
-                "withdrawal-request-id": {
+                id: {
                     required: true,
                     schema: {
                         type: SwaggerDefinitionConstant.Parameter.Type.STRING,
@@ -294,23 +302,24 @@ export class BalanceController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: WithdrawRequestResponse },
+                        schema: { model: WithdrawalRequestResponse },
                     },
                 },
                 description: "Register success",
             },
         },
     })
-    async userCancelWithdrawRequest(req: Request, res: Response) {
-        const { "withdrawal-request-id": id } = req.params;
+    async userCancelWithdrawalRequest(req: Request, res: Response) {
+        const { id } = req.params;
         if (!id) {
             throw errorService.badRequest();
         }
         const userId = this.getTokenInfo(req).id;
-        const result = await withdrawRequestService.userCancelWithdrawRequest({
-            id,
-            userId,
-        });
+        const result =
+            await withdrawalRequestService.userCancelWithdrawalRequest({
+                id,
+                userId,
+            });
         this.onSuccess(res, result);
     }
 }

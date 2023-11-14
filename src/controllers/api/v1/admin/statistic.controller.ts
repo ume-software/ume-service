@@ -1,6 +1,7 @@
 import {
     AdminGetTotalUserResponse,
     BaseSingleChartStatisticResponse,
+    BaseSingleChartTimeStatisticResponse,
 } from "@/common/responses";
 import { AdminGetTotalProviderResponse } from "@/common/responses/statistic/adminGetTotalProvider.response";
 import {
@@ -36,7 +37,7 @@ export class AdminManageStatisticController extends BaseController {
         this.router.get(
             "/new-user",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.getGetNewUserStatistic)
+            this.route(this.adminGetNewUserStatistic)
         );
         this.router.get(
             "/new-provider",
@@ -53,11 +54,31 @@ export class AdminManageStatisticController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetTotalProvider)
         );
+        this.router.get(
+            "/provider-service-most-used",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetMostProviderServicesStatistics)
+        );
+        this.router.get(
+            "/most-booking-service",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetMostBookingServicesStatistics)
+        );
+        this.router.get(
+            "/deposit",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetAmountMoneyDepositStatistics)
+        );
+        this.router.get(
+            "/withdrawal",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetAmountMoneyWithdrawalStatistics)
+        );
     }
 
     @ApiOperationGet({
         path: "/new-user",
-        operationId: "getGetNewUserStatistic",
+        operationId: "adminGetNewUserStatistic",
         security: {
             bearerAuth: [],
         },
@@ -70,14 +91,14 @@ export class AdminManageStatisticController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BaseSingleChartStatisticResponse },
+                        schema: { model: BaseSingleChartTimeStatisticResponse },
                     },
                 },
                 description: "Admin get new user statistic success",
             },
         },
     })
-    async getGetNewUserStatistic(req: Request, res: Response) {
+    async adminGetNewUserStatistic(req: Request, res: Response) {
         const { time, unit, "gap-unit": gapUnit } = req.query;
         const data = await this.service.newUserStatistics(
             time ? Number.parseInt(time as string) : undefined,
@@ -102,7 +123,7 @@ export class AdminManageStatisticController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BaseSingleChartStatisticResponse },
+                        schema: { model: BaseSingleChartTimeStatisticResponse },
                     },
                 },
                 description: "Admin get new provider statistic success",
@@ -165,5 +186,119 @@ export class AdminManageStatisticController extends BaseController {
     async adminGetTotalProvider(_req: Request, res: Response) {
         const result = await this.service.getTotalProvider();
         this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/provider-service-most-used",
+        operationId: "adminGetMostProviderServicesStatistics",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get most provider services statistics",
+        summary: "Admin get most provider services statistics",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BaseSingleChartStatisticResponse },
+                    },
+                },
+                description:
+                    "Admin get most provider services statistics success",
+            },
+        },
+    })
+    async adminGetMostProviderServicesStatistics(_req: Request, res: Response) {
+        const data = await this.service.getMostProviderServicesStatistics();
+        this.onSuccess(res, { data });
+    }
+
+    @ApiOperationGet({
+        path: "/most-booking-service",
+        operationId: "adminGetMostBookingServicesStatistics",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get most provider services statistics",
+        summary: "Admin get most provider services statistics",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BaseSingleChartStatisticResponse },
+                    },
+                },
+                description:
+                    "Admin get most provider services statistics success",
+            },
+        },
+    })
+    async adminGetMostBookingServicesStatistics(_req: Request, res: Response) {
+        const data = await this.service.getMostBookingServicesStatistics();
+        this.onSuccess(res, { data });
+    }
+
+    @ApiOperationGet({
+        path: "/deposit",
+        operationId: "adminGetAmountMoneyDepositStatistics",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: intervalStatisticParameters,
+        },
+        description: "Admin get new provider statistic",
+        summary: "Admin get new provider statistic",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BaseSingleChartTimeStatisticResponse },
+                    },
+                },
+                description: "Admin get new provider statistic success",
+            },
+        },
+    })
+    async adminGetAmountMoneyDepositStatistics(req: Request, res: Response) {
+        const { time, unit, "gap-unit": gapUnit } = req.query;
+        const data = await this.service.amountMoneyDepositStatistics(
+            time ? Number.parseInt(time as string) : undefined,
+            unit as EIntervalUnit,
+            gapUnit as EIntervalUnit
+        );
+        this.onSuccess(res, { data });
+    }
+
+    @ApiOperationGet({
+        path: "/withdrawal",
+        operationId: "adminGetAmountMoneyWithdrawalStatistics",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: intervalStatisticParameters,
+        },
+        description: "Admin get new provider statistic",
+        summary: "Admin get new provider statistic",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BaseSingleChartTimeStatisticResponse },
+                    },
+                },
+                description: "Admin get new provider statistic success",
+            },
+        },
+    })
+    async adminGetAmountMoneyWithdrawalStatistics(req: Request, res: Response) {
+        const { time, unit, "gap-unit": gapUnit } = req.query;
+        const data = await this.service.amountMoneyWithdrawalStatistics(
+            time ? Number.parseInt(time as string) : undefined,
+            unit as EIntervalUnit,
+            gapUnit as EIntervalUnit
+        );
+        this.onSuccess(res, { data });
     }
 }
