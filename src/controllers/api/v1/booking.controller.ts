@@ -6,6 +6,7 @@ import {
 import {
     BookingHistoryPagingResponse,
     BookingHistoryResponse,
+    EstimateHistoryResponse,
     FeedbackResponse,
 } from "@/common/responses";
 import {
@@ -171,7 +172,7 @@ export class BookingController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryResponse },
+                        schema: { model: EstimateHistoryResponse },
                     },
                 },
                 description: "Create new booking success",
