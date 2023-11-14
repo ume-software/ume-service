@@ -71,12 +71,13 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             providerReceivedBalance,
             bookingPeriod,
             totalCostSpendBooking,
-            voucherRedeemedBookingData,
+            voucherRedeemedBooking: voucherRedeemedBookingData,
             providerService,
             provider,
         } = await this.estimateBookingProvider(
             bookerId,
-            bookingProviderRequest
+            bookingProviderRequest,
+            false
         );
         return await prisma.$transaction(async (tx) => {
             const bookingHistory = await bookingHistoryRepository.create(
@@ -140,7 +141,8 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
     }
     async estimateBookingProvider(
         bookerId: string,
-        bookingProviderRequest: BookingProviderRequest
+        bookingProviderRequest: BookingProviderRequest,
+        onlyEstimate: boolean = true
     ) {
         const { providerServiceId, bookingPeriod, voucherIds } =
             bookingProviderRequest;
@@ -280,10 +282,11 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             }
 
         if (
+            onlyEstimate &&
             totalBalanceAvailable <
-            totalCost -
-                totalDiscountValueByVoucherProvider -
-                totalDiscountValueByVoucherSystem
+                totalCost -
+                    totalDiscountValueByVoucherProvider -
+                    totalDiscountValueByVoucherSystem
         ) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_DO_NOT_HAVE_ENOUGH_BALANCE_TO_MAKE_THE_TRANSACTION
@@ -306,7 +309,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     },
                 },
             });
-        if (checkHaveBookingWithCurrentProviderPending) {
+        if (checkHaveBookingWithCurrentProviderPending && onlyEstimate) {
             throw errorService.error(
                 ERROR_MESSAGE.YOU_HAVE_A_TRANSACTION_PENDING_ACCEPT_FROM_THIS_PROVIDER
             );
@@ -332,7 +335,10 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     nearestBookingProviderAccepted.bookingPeriod
             );
 
-            if (nearestBookingProviderAccepted.acceptedAt > new Date()) {
+            if (
+                nearestBookingProviderAccepted.acceptedAt > new Date() &&
+                onlyEstimate
+            ) {
                 throw errorService.error(
                     ERROR_MESSAGE.PROVIDER_BUSY_WITH_OTHER_BOOKING
                 );
@@ -346,11 +352,16 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             );
 
         return {
-            bookingPeriod,
             providerService,
             provider,
-            voucherRedeemedBookingData,
+            voucherRedeemedBooking: voucherRedeemedBookingData,
+            costPerHour,
+            bookingPeriod,
             totalCostBeforeVoucher: totalCost,
+            totalCostNeedForBooking:
+                totalCost -
+                totalDiscountValueByVoucherProvider -
+                totalDiscountValueByVoucherSystem,
             totalCostSpendBooking:
                 totalCost -
                 totalDiscountValueByVoucherProvider -

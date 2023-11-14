@@ -56,6 +56,11 @@ export class BookingController extends BaseController {
             this.route(this.createBooking)
         );
         this.router.post(
+            "/estimate",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.estimateBooking)
+        );
+        this.router.post(
             "/:id/feedback",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.createFeedbackBooking)
@@ -147,7 +152,42 @@ export class BookingController extends BaseController {
         const result = await this.service.userBookingProvider(req);
         this.onSuccess(res, result);
     }
+    @ApiOperationPost({
+        path: "/estimate",
+        operationId: "estimateBooking",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Create new booking",
+        summary: "Create new booking",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: BookingProviderRequest },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryResponse },
+                    },
+                },
+                description: "Create new booking success",
+            },
+        },
+    })
+    async estimateBooking(req: Request, res: Response) {
+        const bookingProviderRequest = new BookingProviderRequest(req.body);
+        const bookerId = this.getTokenInfo(req).id;
 
+        const result = await this.service.estimateBookingProvider(
+            bookerId,
+            bookingProviderRequest
+        );
+        this.onSuccess(res, result);
+    }
     @ApiOperationPost({
         path: "/{id}/feedback",
         operationId: "createFeedbackBooking",
