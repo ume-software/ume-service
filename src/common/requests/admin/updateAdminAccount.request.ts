@@ -5,7 +5,7 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEnum, IsOptional, IsString } from "class-validator";
 
 @ApiModel({
     description: "Update account request",
@@ -77,9 +77,18 @@ export class UpdateAdminAccountRequest {
     @ApiModelProperty({
         description: "password",
         required: true,
+        example: "password",
     })
     @IsString()
     public password!: string;
+
+    @ApiModelProperty({
+        description: "Is activated",
+        required: true,
+        example: true,
+    })
+    @IsBoolean()
+    public isActivated!: boolean;
 
     @ApiModelProperty({
         description: "admin roles",
@@ -103,6 +112,7 @@ export class UpdateAdminAccountRequest {
                     "phone",
                     "username",
                     "password",
+                    "isActivated",
                     "roles",
                 ])
             );

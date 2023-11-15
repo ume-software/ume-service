@@ -88,6 +88,14 @@ export class AdminResponse {
     public avatarUrl!: string;
 
     @ApiModelProperty({
+        description: "Is Activated",
+        required: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+        example: true,
+    })
+    public isActivated!: boolean;
+
+    @ApiModelProperty({
         description: "adminRoles",
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: AdminRoleResponse,

@@ -32,7 +32,7 @@ model User {
   balanceHistories       BalanceHistory[]
   bookingHistories       BookingHistory[]
   depositRequests        DepositRequest[]
-  withdrawalRequests       WithdrawalRequest[]
+  withdrawalRequests     WithdrawalRequest[]
   notices                Notice[]
   posts                  Post[]
   likePosts              LikePost[]
@@ -146,7 +146,6 @@ model UserSensitiveInformation {
   permanentResidency         String?   @map("permanent_residency")
   religion                   String?   @map("religion")
   homeTown                   String?   @map("home_town")
-  adminId                    String?
 
   @@map("user_sensitive_information")
 }
@@ -194,6 +193,7 @@ model Admin {
   email                            String?              @map("email")
   password                         String?              @map("password")
   avatarUrl                        String?              @map("avatar_url")
+  isActivated                      Boolean?             @default(true) @map("is_activated")
   ipv4                             String?              @map("ipv4") @db.Char(20)
   refreshTokenAdmin                RefreshTokenAdmin?
   adminRoles                       AdminRole[]
@@ -249,15 +249,15 @@ model AdminPaymentSystem {
 }
 
 model UserPaymentSystem {
-  id               String                @id @default(uuid()) @map("id")
-  createdAt        DateTime?             @default(now()) @map("created_at")
-  updatedAt        DateTime?             @updatedAt @map("updated_at")
-  deletedAt        DateTime?             @map("deleted_at")
-  user             User                  @relation(fields: [userId], references: [id])
-  userId           String                @map("user_id")
-  platform         PaymentSystemPlatform @map("platform")
-  platformAccount  String?               @map("platform_account")
-  beneficiary      String?               @map("beneficiary")
+  id                 String                @id @default(uuid()) @map("id")
+  createdAt          DateTime?             @default(now()) @map("created_at")
+  updatedAt          DateTime?             @updatedAt @map("updated_at")
+  deletedAt          DateTime?             @map("deleted_at")
+  user               User                  @relation(fields: [userId], references: [id])
+  userId             String                @map("user_id")
+  platform           PaymentSystemPlatform @map("platform")
+  platformAccount    String?               @map("platform_account")
+  beneficiary        String?               @map("beneficiary")
   withdrawalRequests WithdrawalRequest[]
 
   @@map("user_payment_system")
@@ -383,21 +383,21 @@ model BookingCost {
 }
 
 model BalanceHistory {
-  id              String           @id @default(uuid()) @map("id")
-  createdAt       DateTime?        @default(now()) @map("created_at")
-  updatedAt       DateTime?        @updatedAt @map("updated_at")
-  deletedAt       DateTime?        @map("deleted_at")
-  user            User             @relation(fields: [userId], references: [id])
-  userId          String           @map("user_id")
-  balanceType     BalanceType?     @map("balance_type")
-  amount          Float?           @map("amount")
-  adminCreated    Admin?           @relation(fields: [adminIdCreated], references: [id])
-  adminIdCreated  String?          @map("admin_id_created")
-  bookingId       String?          @map("booking_id")
-  booking         BookingHistory?  @relation(fields: [bookingId], references: [id])
-  donationId      String?          @map("donation_id")
-  donation        Donation?        @relation(fields: [donationId], references: [id])
-  depositRequest  DepositRequest?
+  id                String             @id @default(uuid()) @map("id")
+  createdAt         DateTime?          @default(now()) @map("created_at")
+  updatedAt         DateTime?          @updatedAt @map("updated_at")
+  deletedAt         DateTime?          @map("deleted_at")
+  user              User               @relation(fields: [userId], references: [id])
+  userId            String             @map("user_id")
+  balanceType       BalanceType?       @map("balance_type")
+  amount            Float?             @map("amount")
+  adminCreated      Admin?             @relation(fields: [adminIdCreated], references: [id])
+  adminIdCreated    String?            @map("admin_id_created")
+  bookingId         String?            @map("booking_id")
+  booking           BookingHistory?    @relation(fields: [bookingId], references: [id])
+  donationId        String?            @map("donation_id")
+  donation          Donation?          @relation(fields: [donationId], references: [id])
+  depositRequest    DepositRequest?
   withdrawalRequest WithdrawalRequest?
 
   @@map("balance_history")
@@ -438,6 +438,7 @@ model VoucherRedeemedBooking {
   bookingHistoryId   String         @map("booking_history_id")
   totalDiscountValue Int            @default(0) @map("total_discount_value")
   totalCashbackValue Int            @default(0) @map("total_cashback_value")
+
   @@map("voucher_redeemed_booking")
 }
 
@@ -535,23 +536,23 @@ model DepositRequest {
 }
 
 model WithdrawalRequest {
-  id                  String                 @id @default(uuid()) @map("id")
-  createdAt           DateTime?              @default(now()) @map("created_at")
-  updatedAt           DateTime?              @updatedAt @map("updated_at")
-  deletedAt           DateTime?              @map("deleted_at")
-  amountMoney         Int?                   @map("amount_money")
-  amountBalance       Float?                 @map("amount_balance")
-  unitCurrency        UnitCurrency?          @map("unit_currency")
-  requester           User                   @relation(fields: [requesterId], references: [id])
-  requesterId         String                 @map("requester_id")
-  balanceHistory      BalanceHistory?        @relation(fields: [balanceHistoryId], references: [id])
-  balanceHistoryId    String?                @unique @map("balance_history_id")
+  id                  String                   @id @default(uuid()) @map("id")
+  createdAt           DateTime?                @default(now()) @map("created_at")
+  updatedAt           DateTime?                @updatedAt @map("updated_at")
+  deletedAt           DateTime?                @map("deleted_at")
+  amountMoney         Int?                     @map("amount_money")
+  amountBalance       Float?                   @map("amount_balance")
+  unitCurrency        UnitCurrency?            @map("unit_currency")
+  requester           User                     @relation(fields: [requesterId], references: [id])
+  requesterId         String                   @map("requester_id")
+  balanceHistory      BalanceHistory?          @relation(fields: [balanceHistoryId], references: [id])
+  balanceHistoryId    String?                  @unique @map("balance_history_id")
   status              WithdrawalRequestStatus? @default(PENDING) @map("status")
-  handlerId           String?                @map("handler_id")
-  handlerFeedback     String?                @map("handler_feedback")
-  billImageUrl        String?                @map("bill_image_url")
-  userPaymentSystem   UserPaymentSystem      @relation(fields: [userPaymentSystemId], references: [id])
-  userPaymentSystemId String                 @map("user_payment_system_id")
+  handlerId           String?                  @map("handler_id")
+  handlerFeedback     String?                  @map("handler_feedback")
+  billImageUrl        String?                  @map("bill_image_url")
+  userPaymentSystem   UserPaymentSystem        @relation(fields: [userPaymentSystemId], references: [id])
+  userPaymentSystemId String                   @map("user_payment_system_id")
 
   @@map("withdrawal_request")
 }

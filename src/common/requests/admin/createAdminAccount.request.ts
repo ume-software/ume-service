@@ -104,6 +104,7 @@ export class CreateAdminAccountRequest {
                     "phone",
                     "username",
                     "password",
+                    "isActivated",
                     "roles",
                 ])
             );
