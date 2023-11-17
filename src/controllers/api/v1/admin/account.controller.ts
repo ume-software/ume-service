@@ -177,6 +177,13 @@ export class AccountAdminController extends BaseController {
                 },
             },
         },
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: UpdateAdminAccountRequest },
+                },
+            },
+        },
         responses: {
             200: {
                 content: {
