@@ -150,7 +150,7 @@ export class ImageController extends BaseController {
         },
     })
     async upload(req: Request, res: Response) {
-        const pathnames = await imageService.upload(req, "api/image/v1");
+        const pathnames = await imageService.upload(req, "api/v1/image");
         this.onSuccess(res, { results: pathnames });
     }
 }

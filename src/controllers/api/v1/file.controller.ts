@@ -140,7 +140,7 @@ export class FileController extends BaseController {
         },
     })
     async upload(req: Request, res: Response) {
-        const pathnames = await fileService.upload(req, "api/file/v1");
+        const pathnames = await fileService.upload(req, "api/v1/file");
         this.onSuccess(res, { results: pathnames });
     }
 }
