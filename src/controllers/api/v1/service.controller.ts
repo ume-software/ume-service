@@ -119,6 +119,22 @@ export class ServiceController extends BaseController {
                 slug: slug,
             },
         ]);
+
+        queryInfoPrisma.include = {
+            serviceAttributes: {
+                where: {
+                    deletedAt: null,
+                },
+                include: {
+                    serviceAttributeValues: {
+                        where: {
+                            deletedAt: null,
+                        },
+                    },
+                },
+            },
+        };
+
         const result = await this.service.findOne(queryInfoPrisma);
         this.onSuccess(res, result);
     }
