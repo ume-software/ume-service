@@ -13,10 +13,25 @@ import {
     userRepository,
 } from "@/repositories";
 import { balanceService, errorService, utilService } from "@/services";
+import {
+    BasePrismaService,
+    ICrudOptionPrisma,
+} from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BalanceType } from "@prisma/client";
 
-export class DonationService {
+export class DonationService extends BasePrismaService<
+    typeof donationRepository
+> {
+    constructor() {
+        super(donationRepository);
+    }
+    async findAndCountAll(query?: ICrudOptionPrisma) {
+        return await this.repository.findAndCountAll(query);
+    }
+    async findOne(query?: ICrudOptionPrisma) {
+        return await this.repository.findOne(query);
+    }
     async topDonationRecipient(
         duration: ETopDonationDuration,
         top: number

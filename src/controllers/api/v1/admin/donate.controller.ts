@@ -1,15 +1,13 @@
-import {
-    BookingHistoryPagingResponse,
-    BookingHistoryResponse,
-} from "@/common/responses";
+import { DonationPagingResponse,DonationResponse } from "@/common/responses";
+
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { bookingService } from "@/services";
-import { BookingService } from "@/services/api/v1/booking.service";
+import { donationService } from "@/services";
+import { DonationService } from "@/services/api/v1/donation.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -18,53 +16,53 @@ import {
 } from "express-swagger-typescript";
 
 @ApiPath({
-    path: "/api/v1/admin/booking",
-    name: "AdminManageBooking",
+    path: "/api/v1/admin/donation",
+    name: "AdminManageDonation",
 })
-export class AdminManageBookingController extends BaseController {
+export class AdminManageDonationController extends BaseController {
     constructor() {
         super();
-        this.service = bookingService;
-        this.path = "booking";
+        this.service = donationService;
+        this.path = "donation";
         this.customRouting();
     }
-    service: BookingService;
+    service: DonationService;
     customRouting() {
         this.router.get(
             "/",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetListBookingHistory)
+            this.route(this.adminGetListDonation)
         );
         this.router.get(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
-            this.route(this.adminGetBookingHistoryById)
+            this.route(this.adminGetDonationById)
         );
     }
 
     @ApiOperationGet({
         path: "",
-        operationId: "adminGetListBookingHistory",
+        operationId: "adminGetListDonation",
         security: {
             bearerAuth: [],
         },
         parameters: {
             query: queryParameters,
         },
-        description: "Get all booking",
-        summary: "Get all booking",
+        description: "Get all donation",
+        summary: "Get all donation",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryPagingResponse },
+                        schema: { model: DonationPagingResponse },
                     },
                 },
-                description: "Get all booking success",
+                description: "Get all donation success",
             },
         },
     })
-    async adminGetListBookingHistory(req: Request, res: Response) {
+    async adminGetListDonation(req: Request, res: Response) {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
@@ -72,7 +70,7 @@ export class AdminManageBookingController extends BaseController {
 
     @ApiOperationGet({
         path: "/{id}",
-        operationId: "adminGetBookingHistoryById",
+        operationId: "adminGetDonationById",
         security: {
             bearerAuth: [],
         },
@@ -87,20 +85,20 @@ export class AdminManageBookingController extends BaseController {
             },
             query: queryParameters,
         },
-        description: "Get all booking",
-        summary: "Get all booking",
+        description: "Get all donation",
+        summary: "Get all donation",
         responses: {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryResponse },
+                        schema: { model: DonationResponse },
                     },
                 },
-                description: "Get all booking success",
+                description: "Get all donation success",
             },
         },
     })
-    async adminGetBookingHistoryById(req: Request, res: Response) {
+    async adminGetDonationById(req: Request, res: Response) {
         const { id } = req.params;
         const queryInfoPrisma = req.queryInfoPrisma || {};
         if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
