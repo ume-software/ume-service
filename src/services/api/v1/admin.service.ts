@@ -1,4 +1,5 @@
 import { CreateAdminAccountRequest } from "@/common/requests/admin/createAdminAccount.request";
+import { UpdateAdminAccountRequest } from "@/common/requests/admin/updateAdminAccount.request";
 import { AdminInformationResponse } from "@/common/responses/admin/adminInformation.response";
 import { adminRepository } from "@/repositories";
 import { AdminIncludeAdminRoleAndAdminPaymentSystem } from "@/repositories/common/admin.repository";
@@ -41,7 +42,7 @@ export class AdminService extends BasePrismaService<typeof adminRepository> {
     }
     async updateById(
         id: string,
-        adminUpdateInput: Prisma.AdminUpdateInput
+        adminUpdateInput: UpdateAdminAccountRequest
     ): Promise<AdminIncludeAdminRoleAndAdminPaymentSystem | null> {
         return await this.repository.updateById(id, adminUpdateInput);
     }
