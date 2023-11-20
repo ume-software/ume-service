@@ -16,6 +16,7 @@ export class UpdateAdminAccountRequest {
         required: true,
         example: "Do Tran Minh Chu",
     })
+    @IsOptional()
     @IsString()
     public name!: string;
 
@@ -67,37 +68,32 @@ export class UpdateAdminAccountRequest {
     public phone?: string;
 
     @ApiModelProperty({
-        description: "The username for login",
-        required: true,
-        example: "username",
-    })
-    @IsString()
-    public username!: string;
-
-    @ApiModelProperty({
         description: "password",
         required: true,
         example: "password",
     })
+    @IsOptional()
     @IsString()
     public password!: string;
 
     @ApiModelProperty({
         description: "Is activated",
         required: true,
-        example: true,
+        example: false,
     })
+    @IsOptional()
     @IsBoolean()
     public isActivated!: boolean;
 
     @ApiModelProperty({
         description: "admin roles",
-        required: true,
+        required: false,
         type: SwaggerDefinitionConstant.ARRAY,
         enum: Object.values(AdminRoleType),
         itemType: SwaggerDefinitionConstant.STRING,
         example: [AdminRoleType.ADMIN],
     })
+    @IsOptional()
     public roles!: Array<AdminRoleType>;
     constructor(data: UpdateAdminAccountRequest) {
         if (data) {
@@ -110,7 +106,6 @@ export class UpdateAdminAccountRequest {
                     "avatarUrl",
                     "email",
                     "phone",
-                    "username",
                     "password",
                     "isActivated",
                     "roles",
