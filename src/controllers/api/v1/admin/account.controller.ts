@@ -157,7 +157,7 @@ export class AccountAdminController extends BaseController {
         if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
         if (!queryInfoPrisma.where.id) queryInfoPrisma.where.id = id;
         const result = await this.service.findOne(queryInfoPrisma);
-        this.onSuccessAsList(res, result);
+        this.onSuccess(res, result);
     }
 
     @ApiOperationPatch({
@@ -208,6 +208,6 @@ export class AccountAdminController extends BaseController {
             id,
             updateAdminAccountRequest
         );
-        this.onSuccessAsList(res, result);
+        this.onSuccess(res, result);
     }
 }
