@@ -135,6 +135,7 @@ export class AccountAdminController extends BaseController {
                     },
                 },
             },
+            query: queryParameters,
         },
         responses: {
             200: {
