@@ -50,7 +50,7 @@ export class AdminManageStatisticController extends BaseController {
             this.route(this.adminGetTotalUser)
         );
         this.router.get(
-            "/total-user",
+            "/total-provider",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetTotalProvider)
         );
