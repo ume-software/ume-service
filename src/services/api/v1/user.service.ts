@@ -5,6 +5,7 @@ import {
 import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfile.request";
 import prisma from "@/models/base.prisma";
 import {
+    bookingHistoryRepository,
     likePostRepository,
     noticeRepository,
     postRepository,
@@ -267,7 +268,32 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             count: result.count,
         };
     }
+    async getBookingCanFeedbackByUserSlug(
+        providerSlug: string,
+        bookerId: string
+    ) {
+        const provider = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: providerSlug,
+                    },
+                    {
+                        slug: providerSlug,
+                    },
+                ],
+                isProvider: true,
+            },
+        });
+        if (!provider) return null;
+        const booking =
+            await bookingHistoryRepository.getBookingCanFeedbackByUserSlug(
+                provider.id,
+                bookerId
+            );
 
+        return booking.length >= 0 ? booking[0] : null;
+    }
     async userSendKYCRequest(
         userId: string,
         userKYCRequest: UserSendKYCRequest

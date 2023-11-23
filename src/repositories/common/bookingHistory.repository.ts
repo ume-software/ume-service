@@ -216,4 +216,39 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             ORDER BY value DESC;
         `;
     }
+
+    async getBookingCanFeedbackByUserSlug(
+        providerId: string,
+        bookerId: string
+    ) {
+        return (
+            (await this.prisma.$queryRaw`
+            SELECT * FROM booking_history
+            WHERE booker_id  = ${bookerId}
+            AND provider_service_id  IN (
+                SELECT id FROM provider_service ps WHERE ps.provider_id  = ${providerId}
+            )
+            AND accepted_at  IS NOT NULL
+            and (
+            (status in ('PROVIDER_FINISH_SOON','USER_FINISH_SOON') AND updated_at < NOW() - INTERVAL '1 hour' * 24) OR
+                (status = 'PROVIDER_ACCEPT' AND accepted_at > NOW() - INTERVAL '1 hour' * (-booking_period + 24))
+                )
+            ORDER BY accepted_at DESC
+            LIMIT 1;
+        `) as any[]
+        ).map((item) => ({
+            id: item.id,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            deletedAt: item.deleted_at,
+            status: item.status,
+            acceptedAt: item.accepted_at,
+            bookerId: item.booker_id,
+            totalCost: item.total_cost,
+            bookingPeriod: item.booking_period,
+            appliedVoucherIds: item.applied_voucher_ids,
+            providerServiceId: item.provider_service_id,
+            providerReceivedBalance: item.provider_received_balance,
+        }));
+    }
 }

@@ -6,6 +6,7 @@ import {
 } from "@/common/requests";
 import {
     AlbumPagingResponse,
+    BookingHistoryPagingResponse,
     CheckExistedResponse,
     PostPagingResponse,
     UserInformationResponse,
@@ -56,6 +57,11 @@ export class UserController extends BaseController {
         this.router.get("/:slug", this.route(this.getUserBySlug));
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
         this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
+        this.router.get(
+            "/:slug/booking-can-feedback",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getBookingCanFeedbackByUserSlug)
+        );
         this.router.get(
             "/check-slug/:slug",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -446,6 +452,45 @@ export class UserController extends BaseController {
             queryInfoPrisma
         );
         this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/booking-can-feedback",
+        operationId: "getBookingCanFeedbackByUserSlug",
+        description: "Get booking can feedback by slug or id of user",
+        summary: "Get booking can feedback by slug or id of user",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Provider success",
+            },
+        },
+    })
+    async getBookingCanFeedbackByUserSlug(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const { slug } = req.params;
+        const result = await this.service.getBookingCanFeedbackByUserSlug(
+            slug!,
+            userId
+        );
+        this.onSuccess(res, result);
     }
 
     @ApiOperationGet({
