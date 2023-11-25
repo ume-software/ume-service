@@ -11,16 +11,27 @@ export class PostService extends BasePrismaService<typeof postRepository> {
     constructor() {
         super(postRepository);
     }
-    async suggestPost(userId?: string, query?: ICrudOptionPrisma) {
+    async suggestPost(
+        userId?: string,
+        isFollowing: boolean = false,
+        query?: ICrudOptionPrisma
+    ) {
         let result: {
             row: any;
             count: any;
         };
         if (userId) {
-            result = await this.repository.suggestForUserId(
-                userId,
-                query?.take
-            );
+            if (isFollowing) {
+                result = await this.repository.suggestForFollowerId(
+                    userId,
+                    query?.take
+                );
+            } else {
+                result = await this.repository.suggestForUserId(
+                    userId,
+                    query?.take
+                );
+            }
         } else {
             result = await this.repository.suggestForAnonymous(query?.take);
         }

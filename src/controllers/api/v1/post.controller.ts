@@ -48,6 +48,11 @@ export class PostController extends BaseController {
             this.authOrUnAuthMiddlewares(),
             this.route(this.suggestPost)
         );
+        this.router.get(
+            "/suggest-following",
+            this.authMiddlewares(),
+            this.route(this.suggestPostFollowing)
+        );
         this.router.get("/:id", this.route(this.getPostById));
         this.router.get("/:id/like", this.route(this.getLikeByPostId));
         this.router.get("/:id/comment", this.route(this.getCommentByPostId));
@@ -105,6 +110,40 @@ export class PostController extends BaseController {
         const userId = req.tokenInfo?.id;
         const result = await this.service.suggestPost(
             userId!,
+            false,
+            queryInfoPrisma!
+        );
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/suggest-following",
+        operationId: "suggestPostFollowing",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Get all posts",
+        summary: "Get all posts",
+        parameters: {
+            query: queryParameters,
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: PostPagingResponse },
+                    },
+                },
+                description: "Response post success",
+            },
+        },
+    })
+    async suggestPostFollowing(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma;
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.suggestPost(
+            userId,
+            true,
             queryInfoPrisma!
         );
         this.onSuccessAsList(res, result);

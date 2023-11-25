@@ -79,6 +79,18 @@ export class PostRepository extends BasePrismaRepository {
             WHERE cp.post_id = p.id
         )::int  AS comment_count,
         CASE
+            WHEN EXISTS (
+                SELECT 1 
+                FROM follow f
+                WHERE f.follower_id = '${userId}'
+                AND f.following_id = p.user_id
+            ) AND NOT EXISTS (
+                SELECT 1
+                FROM watched_post wp
+                WHERE wp.user_id = '${userId}'
+                AND wp.post_id = p.id
+                AND wp.deleted_at IS NULL
+            ) THEN 1 -- Posts by followed users that the user hasn't seen
 	        WHEN 
 	        	p.user_id = '${userId}' AND 
 		        NOT EXISTS (
@@ -88,7 +100,7 @@ export class PostRepository extends BasePrismaRepository {
 		            AND wp.post_id = p.id
                     AND wp.deleted_at IS NULL
 		        ) 
-	        THEN 1
+	        THEN 2 -- Posts by the user that the user hasn't seen
             WHEN EXISTS (
                 SELECT 1 
                 FROM post author
@@ -115,7 +127,7 @@ export class PostRepository extends BasePrismaRepository {
                     AND wp.deleted_at IS NULL
                 )
                 
-            ) THEN 2 -- Regularly like and comment on other posts by the author of that article but have not seen the post
+            ) THEN 3 -- Regularly like and comment on other posts by the author of that article but have not seen the post
             WHEN (
                 SELECT COUNT(*) 
                 FROM like_post lp 
@@ -136,7 +148,7 @@ export class PostRepository extends BasePrismaRepository {
                     AND wp.post_id = p.id
                     AND wp.deleted_at IS NULL
             )
-            THEN 3 -- A lot of people like the comment but I haven't seen it myself
+            THEN 4 -- A lot of people like the comment but I haven't seen it myself
             WHEN EXISTS (
                 SELECT 1 
                 FROM post author
@@ -155,8 +167,8 @@ export class PostRepository extends BasePrismaRepository {
                     AND cp.post_id = author.id
                     AND cp.deleted_at IS NULL
                 )
-            ) THEN 4 -- Rarely like and comment on posts other than the author of that article and have seen it
-            ELSE 5 -- Rarely like and rarely comment on posts other than those by the author of that article and viewed
+            ) THEN 5 -- Rarely like and comment on posts other than the author of that article and have seen it
+            ELSE 6 -- Rarely like and rarely comment on posts other than those by the author of that article and viewed
         END AS priority,
         CASE WHEN lp.id IS NULL THEN FALSE ELSE TRUE END AS is_like
     FROM post p
@@ -173,6 +185,65 @@ export class PostRepository extends BasePrismaRepository {
         );
         const countResult: any = await this.prisma.$queryRawUnsafe(
             `SELECT COUNT(*)::int  as count FROM post`
+        );
+        return {
+            row,
+            count: countResult[0].count,
+        };
+    }
+    async suggestForFollowerId(followerId: string, take: number | undefined) {
+        const query = `
+    SELECT p.id, p.content, p.user_id, p.thumbnails, p.created_at, p.updated_at, p.deleted_at,
+        (
+            SELECT COUNT(*) 
+            FROM like_post lp 
+            WHERE lp.post_id = p.id
+        )::int AS like_count,
+        (
+            SELECT COUNT(*) 
+            FROM comment_post cp 
+            WHERE cp.post_id = p.id
+        )::int AS comment_count,
+        CASE
+            WHEN NOT EXISTS (
+                SELECT 1
+                FROM watched_post wp
+                WHERE wp.user_id = '${followerId}'
+                AND wp.post_id = p.id
+                AND wp.deleted_at IS NULL
+            ) THEN 1 -- Posts by the user that the user hasn't seen
+            ELSE 2 -- Other posts
+        END AS priority,
+        CASE WHEN lp.id IS NULL THEN FALSE ELSE TRUE END AS is_like
+    FROM post p
+    INNER JOIN follow f ON p.user_id = f.following_id
+    LEFT JOIN like_post lp ON lp.post_id = p.id AND lp.user_id = '${followerId}'
+    WHERE f.follower_id = '${followerId}'
+    AND p.deleted_at IS NULL
+    ORDER BY priority, p.created_at DESC
+    `;
+        const row = await this.prisma.$queryRawUnsafe(
+            `
+      ${query} 
+      ${take != undefined ? `LIMIT ${take}` : ""}
+      `
+        );
+        const countResult: any = await this.prisma.$queryRawUnsafe(
+            `SELECT COUNT(p.id) AS total_posts,
+            SUM(CASE
+                WHEN NOT EXISTS (
+                    SELECT 1
+                    FROM watched_post wp
+                    WHERE wp.user_id = '${followerId}'
+                    AND wp.post_id = p.id
+                    AND wp.deleted_at IS NULL
+                ) THEN 1
+                ELSE 0
+            END) AS unseen_posts_count
+        FROM post p
+        INNER JOIN follow f ON p.user_id = f.following_id
+        WHERE f.follower_id = '${followerId}'
+        AND p.deleted_at IS NULL;`
         );
         return {
             row,
