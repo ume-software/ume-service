@@ -146,7 +146,7 @@ export class WithdrawalRequestRepository extends BasePrismaRepository {
             SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
             FROM generate_series(0, ${generateSeries}) n
         )
-        SELECT COUNT(wr.created_at)::int AS value, sd.time AS time
+        SELECT COUNT(wr.created_at)::int AS value, sw.time AS time
         FROM statistic_withdrawal sw
         LEFT JOIN withdrawal_request wr ON date_trunc('${gapUnit}', wr.created_at) = sw.time
         WHERE wr.status = '${WithdrawalRequestStatus.COMPLETED}'
