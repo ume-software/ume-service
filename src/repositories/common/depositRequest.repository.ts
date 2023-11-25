@@ -98,7 +98,18 @@ export class DepositRequestRepository extends BasePrismaRepository {
             where: depositRequestWhereInput,
         });
     }
-
+    async getTotalAmountMoney(where: Prisma.DepositRequestWhereInput) {
+        return (
+            (
+                await this.prisma.depositRequest.aggregate({
+                    where,
+                    _sum: {
+                        amountMoney: true,
+                    },
+                })
+            )._sum.amountMoney || 0
+        );
+    }
     async amountMoneyDepositStatistics(
         time: number = 12,
         unit: EIntervalUnit = EIntervalUnit.months,

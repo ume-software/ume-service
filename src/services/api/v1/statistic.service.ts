@@ -7,6 +7,7 @@ import {
     userRepository,
     withdrawalRequestRepository,
 } from "@/repositories";
+import { DepositRequestStatus, WithdrawalRequestStatus } from "@prisma/client";
 
 export class StatisticService {
     async newUserStatistics(
@@ -54,11 +55,31 @@ export class StatisticService {
         return { totalProvider, totalProviderIsBanned };
     }
 
-    async getMostProviderServicesStatistics() {
-        return await providerServiceRepository.getMostProviderServicesStatistics();
+    async getMostProviderServicesStatistics(limit: number) {
+        return await providerServiceRepository.getMostProviderServicesStatistics(
+            limit
+        );
     }
-    async getMostBookingServicesStatistics() {
-        return await bookingHistoryRepository.getMostBookingServicesStatistics();
+    async getMostBookingServicesStatistics(limit: number) {
+        return await bookingHistoryRepository.getMostBookingServicesStatistics(
+            limit
+        );
+    }
+    async adminGetTotalDepositWithdrawal() {
+        const totalDeposit = await depositRequestRepository.getTotalAmountMoney(
+            {
+                status: DepositRequestStatus.APPROVED,
+            }
+        );
+        const totalWithdrawal =
+            await withdrawalRequestRepository.getTotalAmountMoney({
+                status: WithdrawalRequestStatus.COMPLETED,
+            });
+
+        return {
+            totalDeposit,
+            totalWithdrawal,
+        };
     }
 
     async amountMoneyDepositStatistics(

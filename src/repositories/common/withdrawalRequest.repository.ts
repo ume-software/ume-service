@@ -3,7 +3,11 @@ import {
     BasePrismaRepository,
     PrismaTransaction,
 } from "../base/basePrisma.repository";
-import { Prisma, WithdrawalRequest, WithdrawalRequestStatus } from "@prisma/client";
+import {
+    Prisma,
+    WithdrawalRequest,
+    WithdrawalRequestStatus,
+} from "@prisma/client";
 import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 
 export class WithdrawalRequestRepository extends BasePrismaRepository {
@@ -99,6 +103,18 @@ export class WithdrawalRequestRepository extends BasePrismaRepository {
         });
     }
 
+    async getTotalAmountMoney(where: Prisma.WithdrawalRequestWhereInput) {
+        return (
+            (
+                await this.prisma.withdrawalRequest.aggregate({
+                    where,
+                    _sum: {
+                        amountMoney: true,
+                    },
+                })
+            )._sum.amountMoney || 0
+        );
+    }
     async getTotalBalanceFrozenByRequesterId(
         requesterId: string,
         tx: PrismaTransaction = this.prisma

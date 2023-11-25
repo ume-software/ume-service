@@ -106,7 +106,7 @@ export class UserController extends BaseController {
             this.route(this.userBecomeProvider)
         );
         this.router.patch(
-            "/provider-profile",
+            "/update-provider-profile",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userUpdateProviderProfile)
         );

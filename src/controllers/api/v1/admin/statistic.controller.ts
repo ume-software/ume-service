@@ -65,6 +65,12 @@ export class AdminManageStatisticController extends BaseController {
             this.route(this.adminGetMostBookingServicesStatistics)
         );
         this.router.get(
+            "/total-deposit-withdrawal",
+            this.accountTypeMiddlewares([EAccountType.ADMIN]),
+            this.route(this.adminGetTotalDepositWithdrawal)
+        );
+
+        this.router.get(
             "/deposit",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminGetAmountMoneyDepositStatistics)
@@ -194,6 +200,16 @@ export class AdminManageStatisticController extends BaseController {
         security: {
             bearerAuth: [],
         },
+        parameters: {
+            path: {
+                top: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+                    },
+                },
+            },
+        },
         description: "Admin get most provider services statistics",
         summary: "Admin get most provider services statistics",
         responses: {
@@ -208,8 +224,10 @@ export class AdminManageStatisticController extends BaseController {
             },
         },
     })
-    async adminGetMostProviderServicesStatistics(_req: Request, res: Response) {
-        const data = await this.service.getMostProviderServicesStatistics();
+    async adminGetMostProviderServicesStatistics(req: Request, res: Response) {
+        let { top } = req.params;
+        if (!top) top = "10";
+        const data = await this.service.getMostProviderServicesStatistics(+top);
         this.onSuccess(res, { data });
     }
 
@@ -219,6 +237,16 @@ export class AdminManageStatisticController extends BaseController {
         security: {
             bearerAuth: [],
         },
+        parameters: {
+            path: {
+                top: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.NUMBER,
+                    },
+                },
+            },
+        },
         description: "Admin get most provider services statistics",
         summary: "Admin get most provider services statistics",
         responses: {
@@ -233,8 +261,33 @@ export class AdminManageStatisticController extends BaseController {
             },
         },
     })
-    async adminGetMostBookingServicesStatistics(_req: Request, res: Response) {
-        const data = await this.service.getMostBookingServicesStatistics();
+    async adminGetMostBookingServicesStatistics(req: Request, res: Response) {
+        let { top } = req.params;
+        if (!top) top = "10";
+        const data = await this.service.getMostBookingServicesStatistics(+top);
+        this.onSuccess(res, { data });
+    }
+    @ApiOperationGet({
+        path: "/total-deposit-withdrawal",
+        operationId: "adminGetTotalDepositWithdrawal",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Admin get total deposit and withdrawal",
+        summary: "Admin get total deposit and withdrawal",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BaseSingleChartStatisticResponse },
+                    },
+                },
+                description: "Admin get total deposit and withdrawal success",
+            },
+        },
+    })
+    async adminGetTotalDepositWithdrawal(_req: Request, res: Response) {
+        const data = await this.service.adminGetTotalDepositWithdrawal();
         this.onSuccess(res, { data });
     }
 

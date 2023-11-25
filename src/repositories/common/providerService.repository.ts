@@ -137,13 +137,14 @@ export class ProviderServiceRepository extends BasePrismaRepository {
         });
     }
 
-    async getMostProviderServicesStatistics() {
+    async getMostProviderServicesStatistics(limit: number) {
         return await this.prisma.$queryRaw`
             SELECT s.id ,s.name AS name, COUNT(ps.service_id)::int AS value
             FROM provider_service ps
             JOIN service s ON ps.service_id = s.id
             GROUP BY s.name, s.id
-            ORDER BY value DESC;
+            ORDER BY value DESC
+            LIMIT ${limit};
         `;
     }
 }
