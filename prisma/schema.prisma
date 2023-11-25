@@ -50,8 +50,23 @@ model User {
   vouchers               Voucher[]
   reportingUsers         ReportUser[]              @relation("ReportingUsers")
   reportedUsers          ReportUser[]              @relation("ReportedUsers")
+  follows                Follow[]                  @relation("UserFollows")
+  followers              Follow[]                  @relation("UserFollowers")
 
   @@map("user")
+}
+
+model Follow {
+  id          String    @id @default(uuid()) @map("id")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  follower    User      @relation("UserFollows", fields: [followerId], references: [id])
+  followerId  String    @map("follower_id")
+  following   User      @relation("UserFollowers", fields: [followingId], references: [id])
+  followingId String    @map("following_id")
+
+  @@map("follow")
 }
 
 model ProviderConfig {

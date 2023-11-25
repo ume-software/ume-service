@@ -35,6 +35,7 @@ import { ReportUserRepository } from "./common/reportUser.repository";
 import { WithdrawalRequestRepository } from "./common/withdrawalRequest.repository";
 import { UserPaymentSystemRepository } from "./common/userPaymentSystem.repository";
 import { BannerRepository } from "./common/banner.repository";
+import { FollowRepository } from "./common/follow.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -75,6 +76,7 @@ const reportUserRepository = new ReportUserRepository();
 const withdrawalRequestRepository = new WithdrawalRequestRepository();
 const userPaymentSystemRepository = new UserPaymentSystemRepository();
 const bannerRepository = new BannerRepository();
+const followRepository = new FollowRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -113,4 +115,5 @@ export {
     withdrawalRequestRepository,
     userPaymentSystemRepository,
     bannerRepository,
+    followRepository,
 };

@@ -18,3 +18,4 @@ export * from "./userPaymentSystem";
 export * from "./banner";
 export * from "./reportUser";
 export * from "./statistic";
+export * from "./follow";

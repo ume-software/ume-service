@@ -8,6 +8,7 @@ import {
     AlbumPagingResponse,
     BookingHistoryPagingResponse,
     CheckExistedResponse,
+    FollowResponse,
     PostPagingResponse,
     UserInformationResponse,
 } from "@/common/responses";
@@ -23,6 +24,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import {
     errorService,
+    followService,
     providerService,
     reportUserService,
     userService,
@@ -83,10 +85,21 @@ export class UserController extends BaseController {
             this.route(this.reportUserBySlug)
         );
         this.router.post(
+            "/:slug/follow",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.followUserBySlug)
+        );
+        this.router.post(
+            "/:slug/un-follow",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.unFollowUserBySlug)
+        );
+        this.router.post(
             "/kyc-request",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.userSendKYCRequest)
         );
+
         this.router.post(
             "/become-provider",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -213,6 +226,87 @@ export class UserController extends BaseController {
         );
         this.onSuccess(res, result);
     }
+
+    @ApiOperationPost({
+        path: "/{slug}/follow",
+        operationId: "followUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Follow user by slug",
+        summary: "Follow user by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: FollowResponse },
+                    },
+                },
+                description: "Update user profile success",
+            },
+        },
+    })
+    async followUserBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const userId = this.getTokenInfo(req).id;
+
+        const result = await followService.create(userId, slug);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationPost({
+        path: "/{slug}/un-follow",
+        operationId: "unFollowUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Un-follow user by slug",
+        summary: "Un-follow user by slug",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: FollowResponse },
+                    },
+                },
+                description: "Update user profile success",
+            },
+        },
+    })
+    async unFollowUserBySlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const userId = this.getTokenInfo(req).id;
+
+        const result = await followService.unFollow(userId, slug);
+        this.onSuccess(res, result);
+    }
+
     @ApiOperationPost({
         path: "/{slug}/report",
         operationId: "reportUserBySlug",
