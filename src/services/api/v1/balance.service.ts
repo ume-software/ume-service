@@ -1,5 +1,6 @@
 import { BalanceForUserRequest } from "@/common/requests/balance/adminCreateBalanceForUser.request";
 import { UserBalanceResponse } from "@/common/responses/balance/userBalance.response";
+import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 import {
     bookingHistoryRepository,
     balanceHistoryRepository,
@@ -7,13 +8,21 @@ import {
     userRepository,
 } from "@/repositories";
 import { errorService } from "@/services";
-import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
+import {
+    BasePrismaService,
+    ICrudOptionPrisma,
+} from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import { BalanceHistory, BalanceType } from "@prisma/client";
 
-export class BalanceService {
+export class BalanceService extends BasePrismaService<
+    typeof balanceHistoryRepository
+> {
+    constructor() {
+        super(balanceHistoryRepository);
+    }
     async findAndCountAll(query?: ICrudOptionPrisma) {
-        return await balanceHistoryRepository.findAndCountAll(query);
+        return await this.repository.findAndCountAll(query);
     }
     async adminCreateBalanceToUser(
         adminId: string,
@@ -25,7 +34,7 @@ export class BalanceService {
                 id: userId,
             },
         });
-        await balanceHistoryRepository.create({
+        await this.repository.create({
             user: {
                 connect: {
                     id: userId,
@@ -58,9 +67,7 @@ export class BalanceService {
     }> {
         if (!queryBalanceHistory.where) queryBalanceHistory.where = {};
         queryBalanceHistory.where.userId = userId;
-        return await balanceHistoryRepository.findAndCountAll(
-            queryBalanceHistory
-        );
+        return await this.repository.findAndCountAll(queryBalanceHistory);
     }
 
     async getTotalBalanceByUserSlug(
@@ -81,9 +88,7 @@ export class BalanceService {
         if (!user) {
             throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
         }
-        const totalBalance = await balanceHistoryRepository.getTotalBalanceUser(
-            user.id
-        );
+        const totalBalance = await this.repository.getTotalBalanceUser(user.id);
         const getTotalBalanceFrozenFromBooking =
             await bookingHistoryRepository.getTotalBalanceFrozenByBookerId(
                 user.id
@@ -122,6 +127,20 @@ export class BalanceService {
             throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
         }
 
-        return balanceHistoryRepository.getTotalBalanceByUserId(user.id);
+        return this.repository.getTotalBalanceByUserId(user.id);
+    }
+
+    async balanceFluctuationByUserIdStatistics(
+        userId: string,
+        time?: number,
+        unit?: EIntervalUnit,
+        gapUnit?: EIntervalUnit
+    ) {
+        return await this.repository.balanceFluctuationByUserIdStatistics(
+            userId,
+            time,
+            unit,
+            gapUnit
+        );
     }
 }

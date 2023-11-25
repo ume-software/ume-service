@@ -6,6 +6,7 @@ import {
     BalanceHistoryPagingResponse,
     WithdrawalRequestResponse,
     UserBalanceResponse,
+    BalanceFluctuationStatisticResponse,
 } from "@/common/responses";
 import {
     BaseController,
@@ -52,6 +53,11 @@ export class BalanceController extends BaseController {
             "/total",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getTotalBalance)
+        );
+        this.router.get(
+            "/fluctuation-statistic",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getBalanceFluctuationStatistics)
         );
         this.router.post(
             "/admin",
@@ -175,6 +181,33 @@ export class BalanceController extends BaseController {
         const userId = this.getTokenInfo(req).id;
         const result = await this.service.getTotalBalanceByUserSlug(userId!);
         this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/fluctuation-statistic",
+        operationId: "getBalanceFluctuationStatistics",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Total number of balances of the user himself",
+        summary: "Total number of balances of the user himself",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BalanceFluctuationStatisticResponse },
+                    },
+                },
+                description: "Get total point success",
+            },
+        },
+    })
+    async getBalanceFluctuationStatistics(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const data = await this.service.balanceFluctuationByUserIdStatistics(
+            userId!
+        );
+        this.onSuccess(res, { data });
     }
 
     @ApiOperationPost({

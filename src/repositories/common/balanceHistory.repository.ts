@@ -6,6 +6,7 @@ import {
 import { Prisma, BalanceHistory, BalanceType } from "@prisma/client";
 import { UserBalanceResponse } from "@/common/responses";
 import { bookingHistoryRepository } from "..";
+import { EIntervalUnit } from "@/enums/intervalUnit.enum";
 
 export class BalanceHistoryRepository extends BasePrismaRepository {
     constructor() {
@@ -128,5 +129,44 @@ export class BalanceHistoryRepository extends BasePrismaRepository {
                 Object.values(BalanceType)
             )) || 0
         );
+    }
+
+    async balanceFluctuationByUserIdStatistics(
+        userId: string,
+        time: number = 12,
+        unit: EIntervalUnit = EIntervalUnit.months,
+        gapUnit: EIntervalUnit = EIntervalUnit.months
+    ) {
+        const generateSeries = unit == EIntervalUnit.years ? time * 12 : time;
+        const interval = `${time} ${unit}`;
+        return await this.prisma.$queryRawUnsafe(`
+    
+            WITH statistic_month AS (
+                SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
+                FROM generate_series(0, ${generateSeries}) n
+            ),
+            balance_history_user AS (
+                SELECT 
+                    bh.user_id AS user_id,
+                    DATE_TRUNC('${gapUnit}', bh.created_at) AS created_at,
+                    bh.amount AS amount
+                FROM 
+                    balance_history bh
+                where 
+                    bh.user_id = '${userId}'
+            )
+            SELECT 
+                COALESCE(SUM(CASE WHEN bhu.amount < 0 THEN bhu.amount ELSE 0 END), 0) AS expenses,
+                COALESCE(SUM(CASE WHEN bhu.amount > 0 THEN bhu.amount ELSE 0 END), 0) AS income,
+                sm.time AS time
+            FROM 
+                statistic_month sm
+            LEFT JOIN 
+                balance_history_user bhu ON sm.time = bhu.created_at
+            GROUP BY 
+                sm.time
+            ORDER BY 
+                sm.time;
+    `);
     }
 }
