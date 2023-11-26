@@ -6,7 +6,7 @@ import {
 } from "@/common/requests";
 import {
     AlbumPagingResponse,
-    BookingHistoryPagingResponse,
+    BookingHistoryResponse,
     CheckExistedResponse,
     FollowResponse,
     PostPagingResponse,
@@ -570,7 +570,7 @@ export class UserController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BookingHistoryPagingResponse },
+                        schema: { model: BookingHistoryResponse },
                     },
                 },
                 description: "Provider success",

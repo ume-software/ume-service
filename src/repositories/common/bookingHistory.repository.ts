@@ -222,35 +222,24 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         providerId: string,
         bookerId: string
     ) {
-        return (
-            (await this.prisma.$queryRaw`
-            SELECT * FROM booking_history
+        const result = (await this.prisma.$queryRaw`
+            SELECT bh.id AS id FROM booking_history bh
             WHERE booker_id  = ${bookerId}
             AND provider_service_id  IN (
                 SELECT id FROM provider_service ps WHERE ps.provider_id  = ${providerId}
             )
             AND accepted_at  IS NOT NULL
-            and (
-            (status in ('PROVIDER_FINISH_SOON','USER_FINISH_SOON') AND updated_at < NOW() - INTERVAL '1 hour' * 24) OR
-                (status = 'PROVIDER_ACCEPT' AND accepted_at > NOW() - INTERVAL '1 hour' * (-booking_period + 24))
+            AND (
+                    (status IN ('PROVIDER_FINISH_SOON','USER_FINISH_SOON') AND updated_at < NOW() - INTERVAL '1 hour' * 24) OR
+                    (status = 'PROVIDER_ACCEPT' AND accepted_at > NOW() - INTERVAL '1 hour' * (-booking_period + 24))
                 )
+            AND NOT EXISTS (
+                SELECT * FROM feedback f WHERE f.booking_id = bh.id
+            )
             ORDER BY accepted_at DESC
             LIMIT 1;
-        `) as any[]
-        ).map((item) => ({
-            id: item.id,
-            createdAt: item.created_at,
-            updatedAt: item.updated_at,
-            deletedAt: item.deleted_at,
-            status: item.status,
-            acceptedAt: item.accepted_at,
-            bookerId: item.booker_id,
-            totalCost: item.total_cost,
-            bookingPeriod: item.booking_period,
-            appliedVoucherIds: item.applied_voucher_ids,
-            providerServiceId: item.provider_service_id,
-            providerReceivedBalance: item.provider_received_balance,
-        }));
+        `) as any[];
+        return this.findManyByIds(result.map((item) => item.id));
     }
 
     async findManyByIds(ids: Array<string>) {
