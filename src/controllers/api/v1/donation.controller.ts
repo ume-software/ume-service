@@ -39,7 +39,7 @@ export class DonationController extends BaseController {
             "/top-recipient",
             this.route(this.topDonationRecipient)
         );
-        this.router.get("/user/top", this.route(this.topDonationDonor));
+        this.router.get("/top-donor", this.route(this.topDonationDonor));
         this.router.post(
             "",
             this.accountTypeMiddlewares([EAccountType.USER]),
