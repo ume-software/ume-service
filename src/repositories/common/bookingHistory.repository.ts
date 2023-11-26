@@ -28,7 +28,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         const now = new Date(
             new Date().valueOf() - config.server.bookingExpireTimeMillisecond
         );
-        return await tx.bookingHistory.findMany({
+        const result = await tx.bookingHistory.findMany({
             where: {
                 providerService: {
                     provider: {
@@ -40,24 +40,12 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                 },
                 status: BookingStatus.INIT,
             },
-            include: {
-                booker: {
-                    select: {
-                        id: true,
-                        avatarUrl: true,
-                        dob: true,
-                        name: true,
-                        slug: true,
-                        gender: true,
-                    },
-                },
-                providerService: {
-                    include: {
-                        service: true,
-                    },
-                },
+            select: {
+                id: true,
             },
         });
+
+        return this.findManyByIds(result.map((item) => item.id));
     }
 
     async findAllPendingBookingUser(
@@ -67,7 +55,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         const now = new Date(
             new Date().valueOf() - config.server.bookingExpireTimeMillisecond
         );
-        return await tx.bookingHistory.findMany({
+        const result = await tx.bookingHistory.findMany({
             where: {
                 booker: {
                     id: userId,
@@ -77,22 +65,12 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                 },
                 status: BookingStatus.INIT,
             },
-            include: {
-                providerService: {
-                    include: {
-                        service: true,
-                        provider: {
-                            select: {
-                                id: true,
-                                avatarUrl: true,
-                                name: true,
-                                slug: true,
-                            },
-                        },
-                    },
-                },
+            select: {
+                id: true,
             },
         });
+
+        return this.findManyByIds(result.map((item) => item.id));
     }
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
@@ -228,40 +206,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                 AND status = 'PROVIDER_ACCEPT';
         `) as any[];
 
-        return await this.prisma.bookingHistory.findMany({
-            where: {
-                id: { in: result.map((item) => item.id) },
-            },
-            include: {
-                providerService: {
-                    include: {
-                        provider: {
-                            select: {
-                                id: true,
-                                avatarUrl: true,
-                                dob: true,
-                                gender: true,
-                                isOnline: true,
-                                name: true,
-                                slug: true,
-                            },
-                        },
-                        service: true,
-                    },
-                },
-                booker: {
-                    select: {
-                        id: true,
-                        avatarUrl: true,
-                        dob: true,
-                        gender: true,
-                        isOnline: true,
-                        name: true,
-                        slug: true,
-                    },
-                },
-            },
-        });
+        return this.findManyByIds(result.map((item) => item.id));
     }
     async findAllCurrentBookingByBookerId(bookerId: string) {
         const result = (await this.prisma.$queryRaw`
@@ -271,41 +216,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                 AND accepted_at + interval '1 hour' * booking_period > now()
                 AND status = 'PROVIDER_ACCEPT';
         `) as any[];
-
-        return await this.prisma.bookingHistory.findMany({
-            where: {
-                id: { in: result.map((item) => item.id) },
-            },
-            include: {
-                providerService: {
-                    include: {
-                        provider: {
-                            select: {
-                                id: true,
-                                avatarUrl: true,
-                                dob: true,
-                                gender: true,
-                                isOnline: true,
-                                name: true,
-                                slug: true,
-                            },
-                        },
-                        service: true,
-                    },
-                },
-                booker: {
-                    select: {
-                        id: true,
-                        avatarUrl: true,
-                        dob: true,
-                        gender: true,
-                        isOnline: true,
-                        name: true,
-                        slug: true,
-                    },
-                },
-            },
-        });
+        return this.findManyByIds(result.map((item) => item.id));
     }
     async getBookingCanFeedbackByUserSlug(
         providerId: string,
@@ -340,5 +251,42 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             providerServiceId: item.provider_service_id,
             providerReceivedBalance: item.provider_received_balance,
         }));
+    }
+
+    async findManyByIds(ids: Array<string>) {
+        return await this.prisma.bookingHistory.findMany({
+            where: {
+                id: { in: ids },
+            },
+            include: {
+                providerService: {
+                    include: {
+                        provider: {
+                            select: {
+                                id: true,
+                                avatarUrl: true,
+                                dob: true,
+                                gender: true,
+                                isOnline: true,
+                                name: true,
+                                slug: true,
+                            },
+                        },
+                        service: true,
+                    },
+                },
+                booker: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        gender: true,
+                        isOnline: true,
+                        name: true,
+                        slug: true,
+                    },
+                },
+            },
+        });
     }
 }
