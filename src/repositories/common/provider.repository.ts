@@ -68,6 +68,7 @@ export class ProviderRepository extends BasePrismaRepository {
               COALESCE(rbc.booking_cost, ps.default_cost) AS cost,
               rbc.booking_cost_id,
               ps.id AS provider_service_id,
+              ps."position" AS provider_service_position,
               s.slug AS service_slug,
               s.id   AS service_id,
               s.name AS service_name,
@@ -82,7 +83,8 @@ export class ProviderRepository extends BasePrismaRepository {
                   CAST(psf.avg_amount_star AS FLOAT)
                 ELSE
                   0
-              END AS star
+              END AS star,
+              ROW_NUMBER() OVER(PARTITION BY p.id ORDER BY ps."position") AS position_rank
             FROM
               "user" AS p
               INNER JOIN provider_service AS ps ON p.id = ps.provider_id
@@ -141,6 +143,7 @@ export class ProviderRepository extends BasePrismaRepository {
             pd.deleted_at as deleted_at,
             pd.cost,
             pd.provider_service_id as provider_service_id,
+            pd.provider_service_position as provider_service_position,
             pd.service_slug as service_slug,
             pd.service_id as service_id,
             pd.service_name as service_name,
@@ -151,6 +154,7 @@ export class ProviderRepository extends BasePrismaRepository {
             pd.provider_status as provider_status
           FROM provider_data AS pd
           WHERE pd.deleted_at IS NULL
+          AND pd.position_rank = 1
           ${startCost != undefined ? `AND pd.cost >= ${startCost}` : ""}
           ${endCost != undefined ? `AND pd.cost < ${endCost}` : ""}
           ${status != status ? `AND pd.providerStatus = ${status}` : ""}
@@ -188,6 +192,7 @@ export class ProviderRepository extends BasePrismaRepository {
                 deletedAt: item.deleted_at,
                 cost: item.cost,
                 providerServiceId: item.provider_service_id,
+                providerServicePosition: item.provider_service_position,
                 serviceSlug: item.service_slug,
                 serviceId: item.service_id,
                 serviceName: item.service_name,
@@ -268,6 +273,7 @@ export class ProviderRepository extends BasePrismaRepository {
                     p.updated_at AS updated_at,
                     p.deleted_at AS deleted_at,
                     ps.id AS provider_service_id,
+                    ps."position" AS provider_service_position,
                     s.slug AS service_slug,
                     s.id   AS service_id,
                     s.name AS service_name,
@@ -280,11 +286,12 @@ export class ProviderRepository extends BasePrismaRepository {
                     pc.description AS description,
                     pc.status AS provider_status,
                     CASE
-                    WHEN psf.avg_amount_star IS NOT NULL THEN
-                        CAST(psf.avg_amount_star AS FLOAT)
-                    ELSE
-                        0
-                    END AS star
+                        WHEN psf.avg_amount_star IS NOT NULL THEN
+                            CAST(psf.avg_amount_star AS FLOAT)
+                        ELSE
+                            0
+                    END AS star,
+                    ROW_NUMBER() OVER(PARTITION BY p.id ORDER BY ps."position") AS position_rank
                 FROM
                     "user" AS p
                     INNER JOIN provider_service AS ps ON p.id = ps.provider_id
@@ -324,6 +331,7 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.deleted_at as deleted_at,
                     pd.cost,
                     pd.provider_service_id as provider_service_id,
+                    pd.provider_service_position AS provider_service_position,
                     pd.service_slug as service_slug,
                     pd.service_id as service_id,
                     pd.service_name as service_name,
@@ -333,7 +341,9 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.star,
                     pd.provider_status as provider_status
                 FROM provider_data AS pd
-                WHERE pd.deleted_at IS NULL
+                WHERE 
+                    pd.deleted_at IS NULL
+                    AND pd.position_rank = 1;
          `;
         const row: any[] = await this.prisma.$queryRawUnsafe(querySql);
         return {
@@ -350,6 +360,7 @@ export class ProviderRepository extends BasePrismaRepository {
                 cost: item.cost,
                 serviceId: item.service_id,
                 providerServiceId: item.provider_service_id,
+                providerServicePosition: item.provider_service_position,
                 serviceSlug: item.service_slug,
                 serviceName: item.service_name,
                 serviceImageUrl: item.service_image_url,
