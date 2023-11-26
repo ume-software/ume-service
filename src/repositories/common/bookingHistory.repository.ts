@@ -21,7 +21,7 @@ export type BookingHistoryIncludeBookerAndProviderServiceIncludeProvider =
         booker: User | null;
     };
 export class BookingHistoryRepository extends BasePrismaRepository {
-    async findAllCurrentBookingProvider(
+    async findAllPendingBookingProvider(
         userId: string,
         tx: PrismaTransaction = this.prisma
     ) {
@@ -60,7 +60,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
         });
     }
 
-    async findAllCurrentBookingUser(
+    async findAllPendingBookingUser(
         userId: string,
         tx: PrismaTransaction = this.prisma
     ) {
@@ -217,7 +217,96 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             LIMIT ${limit};
         `;
     }
+    async findAllCurrentBookingByProviderId(providerId: string) {
+        const result = (await this.prisma.$queryRaw`
+                SELECT bh.id as id
+                FROM booking_history bh
+                WHERE provider_service_id  IN (
+                    SELECT id FROM provider_service ps WHERE ps.provider_id  = ${providerId}
+                )
+                AND accepted_at + interval '1 hour' * booking_period > now()
+                AND status = 'PROVIDER_ACCEPT';
+        `) as any[];
 
+        return await this.prisma.bookingHistory.findMany({
+            where: {
+                id: { in: result.map((item) => item.id) },
+            },
+            include: {
+                providerService: {
+                    include: {
+                        provider: {
+                            select: {
+                                id: true,
+                                avatarUrl: true,
+                                dob: true,
+                                gender: true,
+                                isOnline: true,
+                                name: true,
+                                slug: true,
+                            },
+                        },
+                        service: true,
+                    },
+                },
+                booker: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        gender: true,
+                        isOnline: true,
+                        name: true,
+                        slug: true,
+                    },
+                },
+            },
+        });
+    }
+    async findAllCurrentBookingByBookerId(bookerId: string) {
+        const result = (await this.prisma.$queryRaw`
+                SELECT bh.id as id
+                FROM booking_history bh
+                WHERE booker_id = ${bookerId}
+                AND accepted_at + interval '1 hour' * booking_period > now()
+                AND status = 'PROVIDER_ACCEPT';
+        `) as any[];
+
+        return await this.prisma.bookingHistory.findMany({
+            where: {
+                id: { in: result.map((item) => item.id) },
+            },
+            include: {
+                providerService: {
+                    include: {
+                        provider: {
+                            select: {
+                                id: true,
+                                avatarUrl: true,
+                                dob: true,
+                                gender: true,
+                                isOnline: true,
+                                name: true,
+                                slug: true,
+                            },
+                        },
+                        service: true,
+                    },
+                },
+                booker: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        dob: true,
+                        gender: true,
+                        isOnline: true,
+                        name: true,
+                        slug: true,
+                    },
+                },
+            },
+        });
+    }
     async getBookingCanFeedbackByUserSlug(
         providerId: string,
         bookerId: string

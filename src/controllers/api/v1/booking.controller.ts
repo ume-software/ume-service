@@ -42,6 +42,16 @@ export class BookingController extends BaseController {
 
     customRouting() {
         this.router.get(
+            "/pending-booking-provider",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getPendingBookingForProvider)
+        );
+        this.router.get(
+            "/pending-booking-user",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.getPendingBookingForUser)
+        );
+        this.router.get(
             "/current-booking-provider",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getCurrentBookingForProvider)
@@ -71,6 +81,56 @@ export class BookingController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.bookingHandle)
         );
+    }
+
+    @ApiOperationGet({
+        path: "/pending-booking-provider",
+        operationId: "getPendingBookingForProvider",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Get pending booking for provider",
+        summary: "Get pending booking for provider",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Get pending booking for provider success",
+            },
+        },
+    })
+    async getPendingBookingForProvider(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.getPendingBookingForProvider(userId);
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/pending-booking-user",
+        operationId: "getPendingBookingForUser",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Get pending booking for user",
+        summary: "Get pending booking for user",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Get pending booking for user success",
+            },
+        },
+    })
+    async getPendingBookingForUser(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const result = await this.service.getPendingBookingForUser(userId);
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationGet({

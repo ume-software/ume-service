@@ -43,9 +43,9 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
     async findOne(query?: ICrudOptionPrisma) {
         return await this.repository.findOne(query);
     }
-    async getCurrentBookingForProvider(userId: string) {
+    async getPendingBookingForProvider(userId: string) {
         const bookingLists =
-            await bookingHistoryRepository.findAllCurrentBookingProvider(
+            await bookingHistoryRepository.findAllPendingBookingProvider(
                 userId
             );
         return {
@@ -53,9 +53,29 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             count: bookingLists.length,
         };
     }
-    async getCurrentBookingForUser(userId: string) {
+    async getPendingBookingForUser(userId: string) {
         const bookingLists =
-            await bookingHistoryRepository.findAllCurrentBookingUser(userId);
+            await bookingHistoryRepository.findAllPendingBookingUser(userId);
+        return {
+            row: bookingLists,
+            count: bookingLists.length,
+        };
+    }
+    async getCurrentBookingForUser(bookerId: string) {
+        const bookingLists =
+            await bookingHistoryRepository.findAllCurrentBookingByBookerId(
+                bookerId
+            );
+        return {
+            row: bookingLists,
+            count: bookingLists.length,
+        };
+    }
+    async getCurrentBookingForProvider(providerId: string) {
+        const bookingLists =
+            await bookingHistoryRepository.findAllCurrentBookingByProviderId(
+                providerId
+            );
         return {
             row: bookingLists,
             count: bookingLists.length,
