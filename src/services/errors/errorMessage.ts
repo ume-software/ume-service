@@ -256,8 +256,17 @@ export const ERROR_MESSAGE = {
     PROVIDER_BUSY_WITH_OTHER_BOOKING: {
         type: "booking_exception",
         message:
-            "Unable to make a reservation at this time. The booker is currently engaged in another booking",
+            "Unable to make a reservation at this time. The provider is currently engaged in another booking",
         codeNumber: 20105,
+        statusCode: 400,
+        description:
+            "This error occurs when a user, referred to as the 'provider,' attempts to initiate a new booking with a service provider while they are already in the process of another booking. In such cases, the system prevents additional reservations until the existing booking is completed or canceled. This restriction is in place to ensure a smooth and organized booking process. To proceed, please wait for the ongoing booking to conclude or cancel it if necessary.",
+    },
+    USER_BUSY_WITH_OTHER_BOOKING: {
+        type: "booking_exception",
+        message:
+            "Unable to make a reservation at this time. The booker is currently engaged in another booking",
+        codeNumber: 20106,
         statusCode: 400,
         description:
             "This error occurs when a user, referred to as the 'booker,' attempts to initiate a new booking with a service provider while they are already in the process of another booking. In such cases, the system prevents additional reservations until the existing booking is completed or canceled. This restriction is in place to ensure a smooth and organized booking process. To proceed, please wait for the ongoing booking to conclude or cancel it if necessary.",

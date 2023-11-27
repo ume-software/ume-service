@@ -99,6 +99,22 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             bookingProviderRequest,
             false
         );
+        const currentBookingForUser = await this.getCurrentBookingForUser(
+            bookerId
+        );
+        if (currentBookingForUser.count) {
+            throw errorService.badRequest(
+                ERROR_MESSAGE.USER_BUSY_WITH_OTHER_BOOKING
+            );
+        }
+
+        const getCurrentBookingForProvider =
+            await this.getCurrentBookingForProvider(providerService.id);
+        if (getCurrentBookingForProvider.count) {
+            throw errorService.badRequest(
+                ERROR_MESSAGE.PROVIDER_BUSY_WITH_OTHER_BOOKING
+            );
+        }
         return await prisma.$transaction(async (tx) => {
             const bookingHistory = await bookingHistoryRepository.create(
                 {
