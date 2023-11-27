@@ -41,12 +41,12 @@ export class BannerRepository extends BasePrismaRepository {
         });
     }
 
-    async update(
+    async updateMany(
         bannerUpdateInput: Prisma.BannerUpdateInput,
         query: ICrudOptionPrisma,
         tx: PrismaTransaction = this.prisma
     ) {
-        return await tx.banner.update({
+        return await tx.banner.updateMany({
             data: bannerUpdateInput,
             where: query.where,
         });

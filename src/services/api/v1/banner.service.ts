@@ -14,9 +14,9 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
     }
     async create(bannerCreateInput: CreateBannerRequest): Promise<Banner> {
         return prisma.$transaction(async (tx) => {
-            await this.repository.update(
+            await this.repository.updateMany(
                 { position: { increment: 1 } },
-                {},
+                { where: { deletedAt: null } },
                 tx
             );
             return await this.repository.create(
@@ -45,7 +45,7 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
                 updateBannerRequest.position && // 4
                 updateBannerRequest.position < banner.position! //10
             ) {
-                await this.repository.update(
+                await this.repository.updateMany(
                     { position: { increment: 1 } },
                     {
                         where: {
@@ -61,7 +61,7 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
                 updateBannerRequest.position &&
                 updateBannerRequest.position > banner.position!
             ) {
-                await this.repository.update(
+                await this.repository.updateMany(
                     { position: { decrement: 1 } },
                     {
                         where: {
@@ -89,7 +89,7 @@ export class BannerService extends BasePrismaService<typeof bannerRepository> {
             throw errorService.recordNotFound();
         }
         return prisma.$transaction(async (tx) => {
-            await this.repository.update(
+            await this.repository.updateMany(
                 { position: { decrement: 1 } },
                 {
                     where: {
