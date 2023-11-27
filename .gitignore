@@ -144,9 +144,8 @@ build
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 openapi/
-images/
-files/
-openapi/
+.images/
+.files/
 # *.pem
 swagger.yml
 package-lock.json
