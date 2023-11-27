@@ -475,4 +475,12 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a user tries to report a user, resulting in a 400 Bad Request status.",
     },
+    THE_KYC_REQUEST_HAS_BEEN_PROCESSED_PERVIOUSLY: {
+        type: "report_user_exception",
+        message: "The request has been processed previously.",
+        codeNumber: 21300,
+        statusCode: 400,
+        description:
+            "This error occurs when a admin tries to update status kyc request, resulting in a 400 Bad Request status.",
+    },
 };

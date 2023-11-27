@@ -363,7 +363,9 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             throw errorService.recordNotFound();
         }
         if (userKYCRequest.userKYCStatus != UserKYCStatus.PENDING) {
-            throw errorService.badRequest();
+            throw errorService.badRequest(
+                ERROR_MESSAGE.THE_KYC_REQUEST_HAS_BEEN_PROCESSED_PERVIOUSLY
+            );
         }
 
         return await prisma.$transaction(async (tx) => {
