@@ -423,14 +423,14 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                     to: user.email,
                     description: nodemailerService.contentMail(
                         user.name!,
-                        `<p>Yêu cầu xác thực danh tính của bạn đã ${
+                        `<p style="color: white;">Yêu cầu xác thực danh tính của bạn đã ${
                             adminHandleUserKYCRequestRequest.userKYCStatus ==
                             UserKYCStatus.APPROVED
                                 ? "được duyệt"
                                 : "bị từ chối"
-                        }.</p>${
+                        }.</p >${
                             adminHandleUserKYCRequestRequest.content
-                                ? `<p>Lời nhắn : ${adminHandleUserKYCRequestRequest.content}</p>`
+                                ? `<p style="color: white;">Lời nhắn : ${adminHandleUserKYCRequestRequest.content}</p>`
                                 : ""
                         }`
                     ),
