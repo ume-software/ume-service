@@ -9,7 +9,7 @@ export class NodemailerService {
         const result = `${join(
             config.server.prefixPath.value,
             hostname,
-            "/static/videos/home.mp4"
+            "/static/images/ume-logo.svg"
         ).replace(/\\/g, "/")}`;
 
         return `
