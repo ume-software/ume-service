@@ -7,8 +7,8 @@ export class NodemailerService {
     contentMail(userName: string, text: string) {
         const hostname = config.server.host;
         const result = `${join(
-            config.server.prefixPath.value,
             hostname,
+            config.server.prefixPath.value,
             "/static/images/ume-logo.svg"
         ).replace(/\\/g, "/")}`;
 
