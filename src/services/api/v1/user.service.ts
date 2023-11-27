@@ -13,7 +13,7 @@ import {
     userKYCRequestRepository,
     userRepository,
 } from "@/repositories";
-import { errorService, utilService } from "@/services";
+import { errorService, nodemailerService, utilService } from "@/services";
 
 import {
     BasePrismaService,
@@ -339,10 +339,13 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 ERROR_MESSAGE.USER_NEED_VERIFY_ACCOUNT_BEFORE_BECOME_PROVIDER
             );
         }
+        if (user.isProvider) {
+            return user;
+        }
         await providerConfigRepository.create({
             user: {
                 connect: {
-                    id: userId,
+                    id: user.id,
                 },
             },
             status: ProviderStatus.ACTIVATED,
@@ -367,13 +370,18 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 ERROR_MESSAGE.THE_KYC_REQUEST_HAS_BEEN_PROCESSED_PERVIOUSLY
             );
         }
-
+        const user = await userRepository.findOne({
+            where: {
+                id: userKYCRequest.userId,
+            },
+        });
+        if (!user) throw errorService.badRequest(ERROR_MESSAGE.USER_NOT_FOUND);
         return await prisma.$transaction(async (tx) => {
             await noticeRepository.create(
                 {
                     user: {
                         connect: {
-                            id: userKYCRequest.userId,
+                            id: user.id,
                         },
                     },
                     type:
@@ -398,7 +406,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 },
                 tx
             );
-            return await userKYCRequestRepository.update(
+            const result = await userKYCRequestRepository.update(
                 {
                     userKYCStatus:
                         adminHandleUserKYCRequestRequest.userKYCStatus,
@@ -410,6 +418,34 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 },
                 tx
             );
+            if (user.email) {
+                nodemailerService.sendEmail({
+                    to: user.email,
+                    description: nodemailerService.contentMail(
+                        user.name!,
+                        `<p>Yêu cầu xác thực danh tính của bạn đã ${
+                            adminHandleUserKYCRequestRequest.userKYCStatus ==
+                            UserKYCStatus.APPROVED
+                                ? "được duyệt"
+                                : "bị từ chối"
+                        }.</p>${
+                            adminHandleUserKYCRequestRequest.content
+                                ? `<p>Lời nhắn : ${adminHandleUserKYCRequestRequest.content}</p>`
+                                : ""
+                        }`
+                    ),
+                    preview: `UME - Yêu cầu xác thực danh tính đã ${
+                        adminHandleUserKYCRequestRequest.userKYCStatus ==
+                        UserKYCStatus.APPROVED
+                            ? "được duyệt"
+                            : "bị từ chối"
+                    }.`,
+                    subject:
+                        "UME - Yêu cầu xác thực danh của bạn đã được xử lý",
+                });
+            }
+
+            return result;
         });
     }
 }

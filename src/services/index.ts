@@ -44,6 +44,7 @@ import { BannerService } from "./api/v1/banner.service";
 import { ReportUserService } from "./api/v1/reportUser.service";
 import { StatisticService } from "./api/v1/statistic.service";
 import { FollowService } from "./api/v1/follow.service";
+import { NodemailerService } from "./common/nodemailer.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -90,6 +91,7 @@ const bannerService = new BannerService();
 const reportUserService = new ReportUserService();
 const statisticService = new StatisticService();
 const followService = new FollowService();
+const nodemailerService = new NodemailerService();
 export {
     scheduleService,
     errorService,
@@ -102,6 +104,7 @@ export {
     firebaseService,
     loginService,
     googleService,
+    nodemailerService,
     // redisService,
     // CRUD
     bookingService,

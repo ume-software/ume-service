@@ -51,11 +51,15 @@ export class ProviderConfigRepository extends BasePrismaRepository {
     }
 
     async create(
-        ProviderConfigCreateInput: Prisma.ProviderConfigCreateInput,
+        providerConfigCreateInput: Prisma.ProviderConfigCreateInput,
         tx: PrismaTransaction = this.prisma
     ): Promise<ProviderConfig> {
+        console.log(
+            "providerConfigCreateInput ===> ",
+            providerConfigCreateInput
+        );
         return await tx.providerConfig.create({
-            data: ProviderConfigCreateInput,
+            data: providerConfigCreateInput,
         });
     }
 

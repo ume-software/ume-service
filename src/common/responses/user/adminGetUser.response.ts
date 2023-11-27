@@ -142,6 +142,30 @@ export class AdminGetUserResponseResponse {
     public isVerified!: Boolean;
 
     @ApiModelProperty({
+        description: "Is allow notification to email",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isAllowNotificationToEmail!: boolean;
+
+    @ApiModelProperty({
+        description: "Is allow notification message",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isAllowNotificationMessage!: boolean;
+
+    @ApiModelProperty({
+        description: "Is allow notification call",
+        required: true,
+        example: true,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    public isAllowNotificationCall!: boolean;
+
+    @ApiModelProperty({
         description: "providerServices",
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: ProviderServiceResponse,

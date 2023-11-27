@@ -8,50 +8,53 @@ datasource db {
 }
 
 model User {
-  id                     String                    @id @default(uuid()) @map("id")
-  createdAt              DateTime?                 @default(now()) @map("created_at")
-  updatedAt              DateTime?                 @updatedAt @map("updated_at")
-  deletedAt              DateTime?                 @map("deleted_at")
-  slug                   String?                   @map("slug")
-  name                   String?                   @map("name") @db.VarChar(80)
-  username               String?                   @map("username") @db.VarChar(80)
-  dob                    DateTime?                 @map("dob")
-  gender                 Gender                    @default(OTHER) @map("gender")
-  phone                  String?                   @map("phone")
-  email                  String?                   @map("email")
-  password               String?                   @map("password")
-  loginType              LoginType                 @default(INAPP) @map("login_type")
-  avatarUrl              String?                   @map("avatar_url")
-  ipv4                   String?                   @map("ipv4") @db.Char(40)
-  isOnline               Boolean?                  @default(false) @map("is_online")
-  latestOnline           DateTime?                 @map("latest_online")
-  isBanned               Boolean                   @default(false) @map("is_banned")
-  isVerified             Boolean                   @default(false) @map("is_verified")
-  isProvider             Boolean                   @default(false) @map("is_provider")
-  providerConfig         ProviderConfig?
-  balanceHistories       BalanceHistory[]
-  bookingHistories       BookingHistory[]
-  depositRequests        DepositRequest[]
-  withdrawalRequests     WithdrawalRequest[]
-  notices                Notice[]
-  posts                  Post[]
-  likePosts              LikePost[]
-  commentPosts           CommentPost[]
-  watchedPosts           WatchedPost[]
-  donorDonations         Donation[]                @relation("DonorDonations")
-  recipientDonations     Donation[]                @relation("RecipientDonations")
-  voucherRedeemedBooking VoucherRedeemedBooking[]
-  paymentSystems         UserPaymentSystem[]
-  refreshToken           RefreshTokenUser?
-  sensitiveInformation   UserSensitiveInformation?
-  verificationRequest    UserKYCRequest?
-  address                UserAddress?
-  providerServices       ProviderService[]
-  vouchers               Voucher[]
-  reportingUsers         ReportUser[]              @relation("ReportingUsers")
-  reportedUsers          ReportUser[]              @relation("ReportedUsers")
-  follows                Follow[]                  @relation("UserFollows")
-  followers              Follow[]                  @relation("UserFollowers")
+  id                         String                    @id @default(uuid()) @map("id")
+  createdAt                  DateTime?                 @default(now()) @map("created_at")
+  updatedAt                  DateTime?                 @updatedAt @map("updated_at")
+  deletedAt                  DateTime?                 @map("deleted_at")
+  slug                       String?                   @map("slug")
+  name                       String?                   @map("name") @db.VarChar(80)
+  username                   String?                   @map("username") @db.VarChar(80)
+  dob                        DateTime?                 @map("dob")
+  gender                     Gender                    @default(OTHER) @map("gender")
+  phone                      String?                   @map("phone")
+  email                      String?                   @map("email")
+  password                   String?                   @map("password")
+  loginType                  LoginType                 @default(INAPP) @map("login_type")
+  avatarUrl                  String?                   @map("avatar_url")
+  ipv4                       String?                   @map("ipv4") @db.Char(40)
+  isOnline                   Boolean?                  @default(false) @map("is_online")
+  latestOnline               DateTime?                 @map("latest_online")
+  isBanned                   Boolean                   @default(false) @map("is_banned")
+  isVerified                 Boolean                   @default(false) @map("is_verified")
+  isProvider                 Boolean                   @default(false) @map("is_provider")
+  isAllowNotificationToEmail Boolean                   @default(true) @map("is_allow_notification_to_email")
+  isAllowNotificationMessage Boolean                   @default(true) @map("is_allow_notification_message")
+  isAllowNotificationCall    Boolean                   @default(true) @map("is_allow_notification_call")
+  providerConfig             ProviderConfig?
+  balanceHistories           BalanceHistory[]
+  bookingHistories           BookingHistory[]
+  depositRequests            DepositRequest[]
+  withdrawalRequests         WithdrawalRequest[]
+  notices                    Notice[]
+  posts                      Post[]
+  likePosts                  LikePost[]
+  commentPosts               CommentPost[]
+  watchedPosts               WatchedPost[]
+  donorDonations             Donation[]                @relation("DonorDonations")
+  recipientDonations         Donation[]                @relation("RecipientDonations")
+  voucherRedeemedBooking     VoucherRedeemedBooking[]
+  paymentSystems             UserPaymentSystem[]
+  refreshToken               RefreshTokenUser?
+  sensitiveInformation       UserSensitiveInformation?
+  verificationRequest        UserKYCRequest?
+  address                    UserAddress?
+  providerServices           ProviderService[]
+  vouchers                   Voucher[]
+  reportingUsers             ReportUser[]              @relation("ReportingUsers")
+  reportedUsers              ReportUser[]              @relation("ReportedUsers")
+  follows                    Follow[]                  @relation("UserFollows")
+  followers                  Follow[]                  @relation("UserFollowers")
 
   @@map("user")
 }

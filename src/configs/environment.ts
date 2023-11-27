@@ -99,4 +99,8 @@ export default {
         inpUrl: process.env["MOMO_IPN_URL"],
         api: process.env["MOMO_API"],
     },
+    emailSender: {
+        username: process.env["EMAIL_USERNAME"],
+        password: process.env["EMAIL_PASSWORD"],
+    },
 };
