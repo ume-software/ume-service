@@ -38,6 +38,15 @@ export class UpdateProviderServiceRequest {
     defaultCost!: number;
 
     @ApiModelProperty({
+        description: "Position",
+        required: false,
+        example: 8,
+    })
+    @Min(1)
+    @IsInt()
+    position?: number;
+
+    @ApiModelProperty({
         description: "Provider service description",
         required: false,
         example: "Play with me :>>",
@@ -83,6 +92,7 @@ export class UpdateProviderServiceRequest {
                 this,
                 mappingDataRequest(UpdateProviderServiceRequest, data, [
                     "serviceId",
+                    "position",
                     "defaultCost",
                     "description",
                     "handleBookingCosts",

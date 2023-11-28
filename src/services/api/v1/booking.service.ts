@@ -102,7 +102,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
         const currentBookingForUser = await this.getCurrentBookingForUser(
             bookerId
         );
-        if (currentBookingForUser.count) {
+        if (currentBookingForUser.row.length != 0) {
             throw errorService.badRequest(
                 ERROR_MESSAGE.USER_BUSY_WITH_OTHER_BOOKING
             );
@@ -110,7 +110,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
 
         const getCurrentBookingForProvider =
             await this.getCurrentBookingForProvider(providerService.id);
-        if (getCurrentBookingForProvider.count) {
+        if (getCurrentBookingForProvider.row.length != 0) {
             throw errorService.badRequest(
                 ERROR_MESSAGE.PROVIDER_BUSY_WITH_OTHER_BOOKING
             );

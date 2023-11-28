@@ -177,6 +177,7 @@ export class ProviderServiceService extends BasePrismaService<
             serviceId,
             defaultCost,
             description,
+            position,
             handleBookingCosts,
             handleProviderServiceAttributes,
         } = updateProviderServiceRequest;
@@ -213,12 +214,12 @@ export class ProviderServiceService extends BasePrismaService<
         if (!preExistingProviderService) {
             return await this.create(userId, updateProviderServiceRequest);
         }
-        const countServiceProvider = await this.repository.countByProviderId(
-            provider.id
-        );
-        const position = countServiceProvider + 1;
+
         return await prisma.$transaction(async (tx: PrismaTransaction) => {
             if (!preExistingProviderService) {
+                const countServiceProvider =
+                    await this.repository.countByProviderId(provider.id, tx);
+                const position = countServiceProvider + 1;
                 preExistingProviderService = await this.repository.create(
                     {
                         service: {
@@ -397,10 +398,35 @@ export class ProviderServiceService extends BasePrismaService<
                 },
                 data: {
                     defaultCost,
-                    //   position,
                     description,
                 },
             });
+            if (position) {
+                const swapProviderService = await tx.providerService.findFirst({
+                    where: {
+                        position,
+                        providerId: preExistingProviderService.providerId,
+                    },
+                });
+                await tx.providerService.update({
+                    where: {
+                        id: preExistingProviderService.id,
+                    },
+                    data: {
+                        position,
+                    },
+                });
+                if (swapProviderService) {
+                    await tx.providerService.update({
+                        where: {
+                            id: swapProviderService.id,
+                        },
+                        data: {
+                            position: preExistingProviderService.position,
+                        },
+                    });
+                }
+            }
 
             return await tx.providerService.findFirst(
                 {
