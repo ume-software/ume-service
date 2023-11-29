@@ -467,21 +467,32 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                 ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
             );
         }
-
         const requestFrom =
             userRequestId == bookerId
                 ? "BOOKER"
                 : userRequestId == provider.id
                 ? "PROVIDER"
                 : "OTHER";
+
         if (requestFrom == "OTHER") {
             throw errorService.permissionDeny();
         }
         const { status: oldStatus } = bookingHistoryForHandle;
         const hasBookingEnded =
             bookingHistoryForHandle.createdAt! < fiveMinutesBefore;
+        const statusAllows: BookingStatus[] =
+            requestFrom == "BOOKER"
+                ? [BookingStatus.USER_CANCEL, BookingStatus.USER_FINISH_SOON]
+                : requestFrom == "PROVIDER"
+                ? [
+                      BookingStatus.PROVIDER_ACCEPT,
+                      BookingStatus.PROVIDER_CANCEL,
+                      BookingStatus.PROVIDER_FINISH_SOON,
+                  ]
+                : [];
+
         return await prisma.$transaction(async (tx) => {
-            if (!status.includes(requestFrom)) {
+            if (!statusAllows.includes(status)) {
                 throw errorService.permissionDeny();
             }
             const updateBookingHistoryRequest: Prisma.BookingHistoryUpdateInput =
