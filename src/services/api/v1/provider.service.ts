@@ -194,15 +194,13 @@ export class ProviderService extends BasePrismaService<
     async updateProviderProfile(
         updateProviderProfileRequest: UpdateProviderProfileRequest
     ) {
-        await providerConfigRepository.update(updateProviderProfileRequest, {
-            where: {
-                userId: updateProviderProfileRequest.userId,
-            },
-        });
-        return providerConfigRepository.findOne({
-            where: {
-                userId: updateProviderProfileRequest.userId,
-            },
-        });
+        return await providerConfigRepository.update(
+            updateProviderProfileRequest,
+            {
+                where: {
+                    userId: updateProviderProfileRequest.userId,
+                },
+            }
+        );
     }
 }

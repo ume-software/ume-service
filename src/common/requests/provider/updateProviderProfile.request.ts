@@ -46,6 +46,7 @@ export class UpdateProviderProfileRequest {
                     "userId",
                     "description",
                     "voiceUrl",
+                    "status",
                 ])
             );
         }
