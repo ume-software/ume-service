@@ -68,7 +68,20 @@ export class VoucherController extends BaseController {
             bearerAuth: [],
         },
         parameters: {
-            query: queryParameters,
+            query: {
+                "provider-slug": {
+                    name: "provider-slug",
+                    required: false,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                        default: "42ac81c2-1815-45f7-b598-412487161e1f",
+                    },
+                    description: `
+                    Example : provider-slug=42ac81c2-1815-45f7-b598-412487161e1f
+                    `,
+                },
+                ...queryParameters,
+            },
         },
         description: "Get My voucher",
         summary: "Get My voucher",
@@ -85,8 +98,14 @@ export class VoucherController extends BaseController {
     })
     async getMyVoucher(req: Request, res: Response) {
         const userId = this.getTokenInfo(req).id;
+        let providerSlug = undefined;
+        if (req.query["provider-slug"]) {
+            providerSlug = req.query["provider-slug"]?.toString();
+        }
+
         const result = await this.service.getMyVoucher(
             userId,
+            providerSlug,
             req.queryInfoPrisma!
         );
         this.onSuccess(res, { row: result, count: result.length });

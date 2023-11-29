@@ -35,10 +35,30 @@ export class VoucherService extends BasePrismaService<
         return await this.repository.findOne(query);
     }
 
-    async getMyVoucher(userId: string, query: ICrudOptionPrisma) {
+    async getMyVoucher(
+        userId: string,
+        providerSlug: string | undefined,
+        query: ICrudOptionPrisma
+    ) {
+        let providerId = undefined;
+        if (providerSlug) {
+            const provider = await userRepository.findOne({
+                where: {
+                    OR: [
+                        {
+                            id: providerSlug,
+                        },
+                        {
+                            slug: providerSlug,
+                        },
+                    ],
+                },
+            });
+            providerId = provider?.id;
+        }
         return await this.repository.findVoucherByBookerId(
             userId,
-            undefined,
+            providerId,
             query.select,
             query.skip
         );
