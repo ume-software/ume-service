@@ -1,5 +1,6 @@
 import { UserPaymentSystemRequest } from "@/common/requests/userPaymentSystem";
 import { userPaymentSystemRepository } from "@/repositories";
+import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -41,5 +42,13 @@ export class UserPaymentSystemService extends BasePrismaService<
 
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
+    }
+
+    async deleteOne(query?: ICrudOptionPrisma) {
+        const userPaymentSystem = await this.repository.findOne(query);
+        if (!userPaymentSystem) {
+            throw errorService.recordNotFound();
+        }
+        return await this.repository.deleteById(userPaymentSystem.id);
     }
 }

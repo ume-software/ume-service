@@ -12,6 +12,7 @@ import { UserPaymentSystemService } from "@/services/api/v1/userPaymentSystem.se
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 
 import {
+    ApiOperationDelete,
     ApiOperationGet,
     ApiOperationPost,
     ApiPath,
@@ -41,6 +42,11 @@ export class UserPaymentSystemController extends BaseController {
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.createUserPaymentSystem)
+        );
+        this.router.delete(
+            "/:id",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.deleteUserPaymentSystem)
         );
     }
     service: UserPaymentSystemService;
@@ -109,6 +115,47 @@ export class UserPaymentSystemController extends BaseController {
             ...req.body,
         });
         const result = await this.service.create(userPaymentSystemRequest);
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationDelete({
+        path: "",
+        operationId: "deleteUserPaymentSystem",
+        description: "Delete User Payment System",
+        summary: "Delete User Payment System",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            path: {
+                id: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserPaymentSystemResponse },
+                    },
+                },
+                description: "Delete UserPaymentSystem success",
+            },
+        },
+    })
+    async deleteUserPaymentSystem(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const { id } = req.params;
+        const result = await this.service.deleteOne({
+            where: {
+                id,
+                userId,
+            },
+        });
         this.onSuccess(res, result);
     }
 }
