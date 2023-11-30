@@ -8,6 +8,7 @@ import {
     AlbumPagingResponse,
     BookingHistoryResponse,
     CheckExistedResponse,
+    FeedbackPagingResponse,
     FollowResponse,
     PostPagingResponse,
     UserInformationResponse,
@@ -58,6 +59,7 @@ export class UserController extends BaseController {
     customRouting() {
         this.router.get("/:slug", this.route(this.getUserBySlug));
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
+        this.router.get("/:slug/feedback", this.route(this.getFeedbackByUserSlug));
         this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
         this.router.get(
             "/:slug/booking-can-feedback",
@@ -501,6 +503,47 @@ export class UserController extends BaseController {
         const queryInfoPrisma = req.queryInfoPrisma || {};
         const { slug } = req.params;
         const result = await this.service.getAlbumByUserSlug(
+            slug!,
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/feedback",
+        operationId: "getFeedbackByUserSlug",
+        description: "Get feedback user by slug or id",
+        summary: "Get feedback user by slug or id",
+        parameters: {
+            query: {
+                ...limitParameter,
+                ...pageParameter,
+            },
+
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: FeedbackPagingResponse },
+                    },
+                },
+                description: "Provider success",
+            },
+        },
+    })
+    async getFeedbackByUserSlug(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        const { slug } = req.params;
+        const result = await this.service.getFeedbackByUserSlug(
             slug!,
             queryInfoPrisma
         );

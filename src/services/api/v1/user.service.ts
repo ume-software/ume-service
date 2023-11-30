@@ -6,6 +6,7 @@ import { UpdateUserProfileRequest } from "@/common/requests/user/updateUserProfi
 import prisma from "@/models/base.prisma";
 import {
     bookingHistoryRepository,
+    feedbackRepository,
     likePostRepository,
     noticeRepository,
     postRepository,
@@ -27,6 +28,7 @@ import {
     User,
     UserKYCStatus,
 } from "@prisma/client";
+import _ from "lodash";
 
 export class UserService extends BasePrismaService<typeof userRepository> {
     constructor() {
@@ -183,6 +185,32 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             take,
             skip
         );
+    }
+
+    async getFeedbackByUserSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        if (!user) throw errorService.badRequest(ERROR_MESSAGE.USER_NOT_FOUND);
+        _.set(
+            queryInfoPrisma,
+            "where.booking.providerService.providerId",
+            user.id
+        );
+
+        return await feedbackRepository.findMany(queryInfoPrisma);
     }
 
     async getPostsByUserSlug(
