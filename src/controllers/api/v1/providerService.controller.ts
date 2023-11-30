@@ -13,10 +13,15 @@ import {
     Response,
 } from "@/controllers/base/base.controller";
 import { EAccountType } from "@/enums/accountType.enum";
-import { feedbackService, providerServiceService } from "@/services";
+import {
+    errorService,
+    feedbackService,
+    providerServiceService,
+} from "@/services";
 import { ProviderServiceService } from "@/services/api/v1/providerService.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
+    ApiOperationDelete,
     ApiOperationGet,
     ApiOperationPatch,
     ApiOperationPost,
@@ -57,6 +62,11 @@ export class ProviderServiceController extends BaseController {
             "/",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.updateProviderService)
+        );
+        this.router.delete(
+            "/service/:slug",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.deleteProviderService)
         );
     }
     @ApiOperationGet({
@@ -225,6 +235,49 @@ export class ProviderServiceController extends BaseController {
             userId,
             updateProviderServiceRequest
         );
+        this.onSuccess(res, result);
+    }
+
+    @ApiOperationDelete({
+        path: "/service/{slug}",
+        operationId: "deleteProviderService",
+        security: {
+            bearerAuth: [],
+        },
+        description: "Delete provider service",
+        summary: "Delete provider service",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: ProviderServiceResponse },
+                    },
+                },
+                description: "Register success",
+            },
+        },
+    })
+    async deleteProviderService(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const { slug } = req.params;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const result =
+            await this.service.providerDeleteProviderServiceBySlugService(
+                userId,
+                slug
+            );
         this.onSuccess(res, result);
     }
 }

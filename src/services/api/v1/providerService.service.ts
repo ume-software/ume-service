@@ -6,6 +6,7 @@ import {
     providerServiceAttributeRepository,
     providerServiceAttributeValueRepository,
     providerServiceRepository,
+    serviceRepository,
     userRepository,
 } from "@/repositories";
 import { PrismaTransaction } from "@/repositories/base/basePrisma.repository";
@@ -557,5 +558,78 @@ export class ProviderServiceService extends BasePrismaService<
             });
         });
         return result;
+    }
+
+    async providerDeleteProviderServiceBySlugService(
+        providerId: string,
+        slug: string
+    ) {
+        const service = await serviceRepository.findOne({
+            where: {
+                OR: [{ slug }, { id: slug }],
+            },
+        });
+        if (!service) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_SERVICE_DOES_NOT_EXISTED
+            );
+        }
+        const providerServiceExisted = await this.repository.findOne({
+            where: {
+                providerId: providerId,
+                serviceId: service.id,
+            },
+        });
+        if (!providerServiceExisted) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_SERVICE_DOES_NOT_EXISTED
+            );
+        }
+
+        return await prisma.$transaction(async (tx: PrismaTransaction) => {
+            const providerServiceAttributes =
+                await tx.providerServiceAttribute.findMany({
+                    where: {
+                        providerServiceId: providerServiceExisted.id,
+                    },
+                });
+            const providerServiceAttributeIds = providerServiceAttributes.map(
+                (item) => item.id
+            );
+            await tx.providerServiceAttributeValue.deleteMany({
+                where: {
+                    providerServiceAttributeId: {
+                        in: providerServiceAttributeIds,
+                    },
+                },
+            });
+            await tx.providerServiceAttribute.deleteMany({
+                where: {
+                    id: {
+                        in: providerServiceAttributeIds,
+                    },
+                },
+            });
+
+            const providerService = await tx.providerService.delete({
+                where: {
+                    id: providerServiceExisted.id,
+                },
+            });
+            await tx.providerService.updateMany({
+                data: {
+                    position: {
+                        decrement: 1,
+                    },
+                },
+                where: {
+                    position: {
+                        gte: providerService.position,
+                    },
+                    providerId,
+                },
+            });
+            return providerService;
+        });
     }
 }
