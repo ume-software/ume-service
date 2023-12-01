@@ -119,7 +119,7 @@ export class UserPaymentSystemController extends BaseController {
     }
 
     @ApiOperationDelete({
-        path: "",
+        path: "/{id}",
         operationId: "deleteUserPaymentSystem",
         description: "Delete User Payment System",
         summary: "Delete User Payment System",
