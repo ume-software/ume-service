@@ -210,7 +210,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             user.id
         );
 
-        return await feedbackRepository.findMany(queryInfoPrisma);
+        return await feedbackRepository.findAndCountAll(queryInfoPrisma);
     }
 
     async getPostsByUserSlug(

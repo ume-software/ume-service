@@ -34,6 +34,7 @@ import { UserService } from "@/services/api/v1/user.service";
 import {
     limitParameter,
     pageParameter,
+    queryParameters,
 } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
@@ -59,7 +60,10 @@ export class UserController extends BaseController {
     customRouting() {
         this.router.get("/:slug", this.route(this.getUserBySlug));
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
-        this.router.get("/:slug/feedback", this.route(this.getFeedbackByUserSlug));
+        this.router.get(
+            "/:slug/feedback",
+            this.route(this.getFeedbackByUserSlug)
+        );
         this.router.get("/:slug/posts", this.route(this.getPostsByUserSlug));
         this.router.get(
             "/:slug/booking-can-feedback",
@@ -515,10 +519,7 @@ export class UserController extends BaseController {
         description: "Get feedback user by slug or id",
         summary: "Get feedback user by slug or id",
         parameters: {
-            query: {
-                ...limitParameter,
-                ...pageParameter,
-            },
+            query: queryParameters,
 
             path: {
                 slug: {
