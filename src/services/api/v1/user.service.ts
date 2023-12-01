@@ -351,6 +351,9 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                             id: userId,
                         },
                     },
+                    userKYCStatus: UserKYCStatus.PENDING,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 },
                 { where: { id: userKYCRequestExisted.id } }
             );
