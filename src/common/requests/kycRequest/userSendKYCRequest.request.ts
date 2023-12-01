@@ -1,11 +1,44 @@
 import { IsString } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
+import { Gender } from "@prisma/client";
 
 @ApiModel({
     description: "User Send KYC Request",
 })
 export class UserSendKYCRequest {
+    @ApiModelProperty({
+        description: "citizenId",
+        required: true,
+        example: "0912345567",
+    })
+    @IsString()
+    citizenId!: string;
+
+    @ApiModelProperty({
+        description: "citizenName",
+        required: true,
+        example: "ĐỖ TRẦN MINH CHU",
+    })
+    @IsString()
+    citizenName!: string;
+
+    @ApiModelProperty({
+        description: "citizenDob",
+        required: true,
+        example: new Date(),
+    })
+    @IsString()
+    citizenDob!: Date;
+
+    @ApiModelProperty({
+        description: "citizenGender",
+        required: true,
+        example: Gender.FEMALE,
+    })
+    @IsString()
+    citizenGender!: Gender;
+
     @ApiModelProperty({
         description: "frontSideCitizenIdImageUrl",
         required: true,
@@ -36,6 +69,10 @@ export class UserSendKYCRequest {
             Object.assign(
                 this,
                 mappingDataRequest(UserSendKYCRequest, data, [
+                    "citizenId",
+                    "citizenName",
+                    "citizenDob",
+                    "citizenGender",
                     "frontSideCitizenIdImageUrl",
                     "backSideCitizenIdImageUrl",
                     "portraitImageUrl",

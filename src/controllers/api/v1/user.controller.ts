@@ -12,10 +12,10 @@ import {
     FollowResponse,
     PostPagingResponse,
     UserInformationResponse,
+    UserKYCRequestResponse,
+    ProviderConfigResponse,
+    ReportUserResponse,
 } from "@/common/responses";
-import { UserKYCRequestResponse } from "@/common/responses/kycRequest";
-import { ProviderConfigResponse } from "@/common/responses/providerConfig";
-import { ReportUserResponse } from "@/common/responses/reportUser";
 
 import {
     BaseController,

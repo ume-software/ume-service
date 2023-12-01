@@ -182,6 +182,10 @@ model UserKYCRequest {
   admin                      Admin?        @relation(fields: [adminId], references: [id])
   lastestHandleTime          DateTime?     @map("last_handle_time")
   userKYCStatus              UserKYCStatus @default(PENDING) @map("verification_status")
+  citizenId                  String?       @map("citizen_id")
+  citizenName                String?       @map("citizen_name")
+  citizenDob                 DateTime?     @map("citizen_dob")
+  citizenGender              Gender?       @default(PRIVATE) @map("citizen_gender")
 
   @@map("user_kyc_request")
 }

@@ -19,3 +19,5 @@ export * from "./banner";
 export * from "./reportUser";
 export * from "./statistic";
 export * from "./follow";
+export * from "./kycRequest";
+export * from "./providerConfig";

@@ -2,7 +2,7 @@ import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
 import { AdminResponse } from "../admin";
 import { UserInformationResponse } from "../user";
-import { UserKYCStatus } from "@prisma/client";
+import { Gender, UserKYCStatus } from "@prisma/client";
 
 @ApiModel({
     description: "User Send KYC Request Response",
@@ -15,6 +15,38 @@ export class UserKYCRequestResponse {
     })
     @IsUUID()
     id!: string;
+
+    @ApiModelProperty({
+        description: "citizenId",
+        required: true,
+        example: "0912345567",
+    })
+    @IsString()
+    citizenId!: string;
+
+    @ApiModelProperty({
+        description: "citizenName",
+        required: true,
+        example: "ĐỖ TRẦN MINH CHU",
+    })
+    @IsString()
+    citizenName!: string;
+
+    @ApiModelProperty({
+        description: "citizenDob",
+        required: true,
+        example: new Date(),
+    })
+    @IsString()
+    citizenDob!: Date;
+
+    @ApiModelProperty({
+        description: "citizenGender",
+        required: true,
+        example: Gender.FEMALE,
+    })
+    @IsString()
+    citizenGender!: Gender;
 
     @ApiModelProperty({
         description: "frontSideCitizenIdImageUrl",
