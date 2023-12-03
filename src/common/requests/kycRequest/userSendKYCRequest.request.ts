@@ -1,5 +1,9 @@
-import { IsString } from "class-validator";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { IsEnum, IsString } from "class-validator";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { Gender } from "@prisma/client";
 
@@ -27,16 +31,18 @@ export class UserSendKYCRequest {
         description: "citizenDob",
         required: true,
         example: new Date(),
+        type: SwaggerDefinitionConstant.DATE,
     })
-    @IsString()
     citizenDob!: Date;
 
     @ApiModelProperty({
         description: "citizenGender",
         required: true,
         example: Gender.FEMALE,
+        enum: Object.values(Gender),
+        type: SwaggerDefinitionConstant.STRING,
     })
-    @IsString()
+    @IsEnum(Gender)
     citizenGender!: Gender;
 
     @ApiModelProperty({
