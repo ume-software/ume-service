@@ -65,6 +65,7 @@ export class ProviderRepository extends BasePrismaRepository {
               p.created_at AS created_at,
               p.updated_at AS updated_at,
               p.deleted_at AS deleted_at,
+              p.is_online as is_online,
               COALESCE(rbc.booking_cost, ps.default_cost) AS cost,
               rbc.booking_cost_id,
               ps.id AS provider_service_id,
@@ -151,7 +152,8 @@ export class ProviderRepository extends BasePrismaRepository {
             pd.gender,
             pd.dob,
             pd.star,
-            pd.provider_status as provider_status
+            pd.provider_status as provider_status,
+            pd.is_online as is_online
           FROM provider_data AS pd
           WHERE pd.deleted_at IS NULL
           AND pd.position_rank = 1
@@ -201,6 +203,7 @@ export class ProviderRepository extends BasePrismaRepository {
                 dob: item.dob,
                 star: item.star,
                 providerStatus: item.provider_status,
+                isOnline: item.is_provider,
             })),
             count: Number(countResult[0].count),
         };
@@ -272,6 +275,7 @@ export class ProviderRepository extends BasePrismaRepository {
                     p.created_at AS created_at,
                     p.updated_at AS updated_at,
                     p.deleted_at AS deleted_at,
+                    p.is_online as is_online,
                     ps.id AS provider_service_id,
                     ps."position" AS provider_service_position,
                     s.slug AS service_slug,
@@ -339,7 +343,8 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.gender,
                     pd.dob,
                     pd.star,
-                    pd.provider_status as provider_status
+                    pd.provider_status as provider_status,
+                    pd.is_online as is_online,
                 FROM provider_data AS pd
                 WHERE 
                     pd.deleted_at IS NULL
@@ -368,6 +373,7 @@ export class ProviderRepository extends BasePrismaRepository {
                 dob: item.dob,
                 star: item.star,
                 providerStatus: item.provider_status,
+                isOnline: item.is_online,
             })),
             count: Number(countResult[0].count),
         };

@@ -112,6 +112,13 @@ export class FilterProviderResponse {
     star?: number;
 
     @ApiModelProperty({
+        description: "isOnline",
+        required: false,
+        example: 4.9,
+    })
+    isOnline?: boolean;
+
+    @ApiModelProperty({
         description: "provider status",
         required: true,
         enum: Object.values(ProviderStatus),
