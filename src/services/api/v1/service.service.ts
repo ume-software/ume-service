@@ -59,6 +59,7 @@ export class ServiceService extends BasePrismaService<
                 },
                 select: {
                     id: true,
+                    serviceId: true,
                 },
             })
         ).map((item) => item.serviceId);
