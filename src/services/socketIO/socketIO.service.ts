@@ -3,6 +3,8 @@ import http from "http";
 
 import { errorService, tokenService } from "..";
 import { config } from "@/configs";
+import { EAccountType } from "@/enums/accountType.enum";
+import { userRepository } from "@/repositories";
 type Connections = { [userId: string]: Socket };
 export type ServerSocket = Server & { connections?: Connections };
 export const SOCKET_EVENTS = {
@@ -56,10 +58,16 @@ export class SocketService {
             if (!token) {
                 return next(errorService.unauthorized());
             }
-            const result: any = tokenService.decodeToken(`${token}`);
-            const { id: userId } = result;
-
-            (this.socketServer.connections as Connections)[userId] = socket;
+            const result = tokenService.decodeToken(`${token}`);
+            const { id: userId, type } = result;
+            if (type == EAccountType.USER) {
+                await userRepository.updateById(userId, {
+                    isOnline: true,
+                    latestOnline: new Date(),
+                });
+            }
+            if (userId)
+                (this.socketServer.connections as Connections)[userId] = socket;
             this.socketIdMapUserId[socket.id] = userId;
 
             return next();
@@ -106,6 +114,10 @@ export class SocketService {
     private onClientDisconnect(socket: Socket) {
         const userId = this.socketIdMapUserId[socket.id];
         if (userId) {
+            userRepository.updateById(userId, {
+                isOnline: false,
+            });
+
             if (this.socketServer.connections) {
                 delete this.socketServer.connections[userId];
             }
