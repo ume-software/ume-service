@@ -188,4 +188,25 @@ export class UserInformationResponse {
         model: VoucherResponse,
     })
     vouchers?: VoucherResponse;
+
+    @ApiModelProperty({
+        description: "followingAmount",
+        required: false,
+        type: SwaggerDefinitionConstant.NUMBER,
+    })
+    followingAmount?: number;
+
+    @ApiModelProperty({
+        description: "followerAmount",
+        required: false,
+        type: SwaggerDefinitionConstant.NUMBER,
+    })
+    followerAmount?: number;
+
+    @ApiModelProperty({
+        description: "isFollowing",
+        required: false,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    isFollowing?: boolean;
 }

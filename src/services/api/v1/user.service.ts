@@ -7,6 +7,7 @@ import prisma from "@/models/base.prisma";
 import {
     bookingHistoryRepository,
     feedbackRepository,
+    followRepository,
     likePostRepository,
     noticeRepository,
     postRepository,
@@ -83,8 +84,29 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         ]);
     }
 
-    async getUserBySlug(userSlug: string) {
-        const result = await this.repository.getByIdOrSlug(userSlug);
+    async getUserBySlug(userSlug: string, requesterId?: string) {
+        const result: any = await this.repository.getByIdOrSlug(userSlug);
+        if (result) {
+            result.followerAmount = await prisma.follow.count({
+                where: {
+                    followerId: result.id,
+                },
+            });
+            result.followingAmount = await prisma.follow.count({
+                where: {
+                    followingId: result.id,
+                },
+            });
+            if (requesterId) {
+                result.isFollowing = await prisma.follow.findFirst({
+                    where: {
+                        followingId: result.id,
+                        followerId: requesterId,
+                    },
+                });
+            }
+        }
+
         return result;
     }
 
@@ -162,6 +184,87 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         );
     }
 
+    async getFollowerByUserSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        if (!user) {
+            throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+        const { skip, take } = queryInfoPrisma;
+        const followers = await followRepository.findAndCountAll({
+            where: {
+                followingId: user.id,
+            },
+            skip: skip!,
+            take: take!,
+        });
+
+        const row = await userRepository.findMany({
+            ...queryInfoPrisma,
+            where: {
+                id: { in: followers.row.map((item) => item.id) },
+            },
+        });
+
+        return {
+            row,
+            count: followers.count,
+        };
+    }
+
+    async getFollowingByUserSlug(
+        userSlug: string,
+        queryInfoPrisma: ICrudOptionPrisma
+    ) {
+        const user = await this.repository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: userSlug,
+                    },
+                    {
+                        slug: userSlug,
+                    },
+                ],
+            },
+        });
+        if (!user) {
+            throw errorService.error(ERROR_MESSAGE.USER_NOT_FOUND);
+        }
+        const { skip, take } = queryInfoPrisma;
+        const followers = await followRepository.findAndCountAll({
+            where: {
+                followerId: user.id,
+            },
+            skip: skip!,
+            take: take!,
+        });
+
+        const row = await userRepository.findMany({
+            ...queryInfoPrisma,
+            where: {
+                id: { in: followers.row.map((item) => item.id) },
+            },
+        });
+
+        return {
+            row,
+            count: followers.count,
+        };
+    }
     async getAlbumByUserSlug(
         userSlug: string,
         queryInfoPrisma: ICrudOptionPrisma

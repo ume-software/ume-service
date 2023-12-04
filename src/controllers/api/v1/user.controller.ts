@@ -15,6 +15,7 @@ import {
     UserKYCRequestResponse,
     ProviderConfigResponse,
     ReportUserResponse,
+    UserInformationPagingResponse,
 } from "@/common/responses";
 
 import {
@@ -58,7 +59,19 @@ export class UserController extends BaseController {
     service: UserService;
 
     customRouting() {
-        this.router.get("/:slug", this.route(this.getUserBySlug));
+        this.router.get(
+            "/:slug",
+            this.authOrUnAuthMiddlewares(),
+            this.route(this.getUserBySlug)
+        );
+        this.router.get(
+            "/:slug/follower",
+            this.route(this.getFollowerByUserSlug)
+        );
+        this.router.get(
+            "/:slug/following",
+            this.route(this.getFollowingByUserSlug)
+        );
         this.router.get("/:slug/album", this.route(this.getAlbumByUserSlug));
         this.router.get(
             "/:slug/feedback",
@@ -121,6 +134,9 @@ export class UserController extends BaseController {
     @ApiOperationGet({
         path: "/{slug}",
         operationId: "getUserBySlug",
+        security: {
+            bearerAuth: [],
+        },
         description: "Get user information",
         summary: "Get user information",
         parameters: {
@@ -145,11 +161,12 @@ export class UserController extends BaseController {
         },
     })
     async getUserBySlug(req: Request, res: Response) {
+        const userId = req.tokenInfo?.id;
         const { slug } = req.params;
         if (!slug) {
             throw errorService.badRequest();
         }
-        const result = await userService.getUserBySlug(slug);
+        const result = await userService.getUserBySlug(slug, userId);
         this.onSuccess(res, result);
     }
 
@@ -470,6 +487,88 @@ export class UserController extends BaseController {
             updateProviderProfileRequest
         );
         this.onSuccess(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/follower",
+        operationId: "getFollowerByUserSlug",
+        description: "Get follower by user slug",
+        summary: "Get follower by user slug",
+        parameters: {
+            query: {
+                ...limitParameter,
+                ...pageParameter,
+            },
+
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserInformationPagingResponse },
+                    },
+                },
+                description: "Follower response",
+            },
+        },
+    })
+    async getFollowerByUserSlug(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        const { slug } = req.params;
+        const result = await this.service.getFollowerByUserSlug(
+            slug!,
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
+    }
+
+    @ApiOperationGet({
+        path: "/{slug}/following",
+        operationId: "getFollowingByUserSlug",
+        description: "Get following by user slug",
+        summary: "Get following by user slug",
+        parameters: {
+            query: {
+                ...limitParameter,
+                ...pageParameter,
+            },
+
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: UserInformationPagingResponse },
+                    },
+                },
+                description: "Following response",
+            },
+        },
+    })
+    async getFollowingByUserSlug(req: Request, res: Response) {
+        const queryInfoPrisma = req.queryInfoPrisma || {};
+        const { slug } = req.params;
+        const result = await this.service.getFollowingByUserSlug(
+            slug!,
+            queryInfoPrisma
+        );
+        this.onSuccessAsList(res, result);
     }
 
     @ApiOperationGet({
