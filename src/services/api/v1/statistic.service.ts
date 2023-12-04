@@ -37,12 +37,47 @@ export class StatisticService {
                 isBanned: true,
             },
         });
+       
         const totalUserIsVerified = await userRepository.count({
             where: {
                 isVerified: true,
             },
         });
-        return { totalUser, totalUserIsBanned, totalUserIsVerified };
+
+        const totalUserIsBannedAndIsVerified = await userRepository.count({
+            where: {
+                isBanned: true,
+                isVerified: true,
+            },
+        });
+        const totalUserIsBannedAndIsNotVerified = await userRepository.count({
+            where: {
+                isBanned: true,
+                isVerified: false,
+            },
+        });
+
+        const totalUserIsNotBannedAndIsVerified = await userRepository.count({
+            where: {
+                isBanned: false,
+                isVerified: true,
+            },
+        });
+        const totalUserIsNotBannedAndIsNotVerified = await userRepository.count({
+            where: {
+                isBanned: false,
+                isVerified: false,
+            },
+        });
+        return {
+            totalUser,
+            totalUserIsVerified,
+            totalUserIsBanned,
+            totalUserIsBannedAndIsVerified,
+            totalUserIsBannedAndIsNotVerified,
+            totalUserIsNotBannedAndIsVerified,
+            totalUserIsNotBannedAndIsNotVerified
+        };
     }
 
     async getTotalProvider() {
