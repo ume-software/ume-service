@@ -72,7 +72,7 @@ export class FeedbackService extends BasePrismaService<
             content,
             booking: {
                 connect: {
-                    id: bookerId,
+                    id: bookingId,
                 },
             },
         });
