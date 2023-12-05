@@ -98,12 +98,12 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 },
             });
             if (requesterId) {
-                result.isFollowing = await prisma.follow.findFirst({
+                result.isFollowing = !!(await prisma.follow.findFirst({
                     where: {
                         followingId: result.id,
                         followerId: requesterId,
                     },
-                });
+                }));
             }
         }
 
