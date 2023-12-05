@@ -344,7 +344,7 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.dob,
                     pd.star,
                     pd.provider_status as provider_status,
-                    pd.is_online as is_online,
+                    pd.is_online as is_online
                 FROM provider_data AS pd
                 WHERE 
                     pd.deleted_at IS NULL
