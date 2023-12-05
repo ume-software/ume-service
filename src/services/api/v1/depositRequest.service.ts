@@ -13,6 +13,7 @@ import {
     balanceSettingRepository,
     depositRequestRepository,
     balanceHistoryRepository,
+    noticeRepository,
 } from "@/repositories";
 import {
     errorService,
@@ -33,6 +34,7 @@ import {
     PaymentSystemPlatform,
     Prisma,
     UnitCurrency,
+    NoticeType,
 } from "@prisma/client";
 
 export class DepositRequestService extends BasePrismaService<
@@ -287,6 +289,16 @@ export class DepositRequestService extends BasePrismaService<
                 };
             }
             depositRequest = await this.repository.updateById(id, body, tx);
+            if (status == APPROVED)
+                noticeRepository.create({
+                    user: {
+                        connect: {
+                            id: depositRequest?.requesterId!,
+                        },
+                    },
+                    type: NoticeType.DEPOSIT_REQUEST_SUCCESS,
+                    data: JSON.parse(JSON.stringify(depositRequest)),
+                });
             return depositRequest;
         });
     }

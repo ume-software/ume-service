@@ -6,6 +6,7 @@ import prisma from "@/models/base.prisma";
 import {
     balanceHistoryRepository,
     balanceSettingRepository,
+    noticeRepository,
     withdrawalRequestRepository,
 } from "@/repositories";
 import { balanceService, errorService } from "@/services";
@@ -20,6 +21,7 @@ import {
     Prisma,
     WithdrawalRequestStatus,
     UnitCurrency,
+    NoticeType,
 } from "@prisma/client";
 
 export class WithdrawalRequestService extends BasePrismaService<
@@ -131,6 +133,22 @@ export class WithdrawalRequestService extends BasePrismaService<
                 };
             }
             withdrawalRequest = await this.repository.updateById(id, body, tx);
+
+            await noticeRepository.create(
+                {
+                    user: {
+                        connect: {
+                            id: withdrawalRequest?.requesterId!,
+                        },
+                    },
+                    type:
+                        status == COMPLETED
+                            ? NoticeType.ADMIN_HAS_COMPLETED_WITHDRAWAL_REQUEST
+                            : NoticeType.ADMIN_HAS_REJECTED_WITHDRAWAL_REQUEST,
+                    data: JSON.parse(JSON.stringify(withdrawalRequest)),
+                },
+                tx
+            );
             return withdrawalRequest;
         });
     }

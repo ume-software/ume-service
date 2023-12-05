@@ -1,11 +1,15 @@
-import { followRepository, userRepository } from "@/repositories";
+import {
+    followRepository,
+    noticeRepository,
+    userRepository,
+} from "@/repositories";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
-import { Follow } from "@prisma/client";
+import { Follow, NoticeType } from "@prisma/client";
 
 export class FollowService extends BasePrismaService<typeof followRepository> {
     constructor() {
@@ -36,7 +40,7 @@ export class FollowService extends BasePrismaService<typeof followRepository> {
             },
         });
         if (follow) return follow;
-        return await this.repository.create({
+        let result: any = await this.repository.create({
             follower: {
                 connect: {
                     id: followerId,
@@ -48,6 +52,42 @@ export class FollowService extends BasePrismaService<typeof followRepository> {
                 },
             },
         });
+
+        result = await this.repository.findOne({
+            where: {
+                id: result.id,
+            },
+            include: {
+                follower: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        slug: true,
+                        name: true,
+                    },
+                },
+                following: {
+                    select: {
+                        id: true,
+                        avatarUrl: true,
+                        slug: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+
+        noticeRepository.create({
+            user: {
+                connect: {
+                    id: following.id,
+                },
+            },
+            type: NoticeType.SOMEONE_FOLLOWING_YOU,
+            data: JSON.parse(JSON.stringify(result)),
+        });
+
+        return result;
     }
     async unFollow(followerId: string, followingId: string): Promise<Follow> {
         const following = await userRepository.findOne({

@@ -177,6 +177,25 @@ export class ProviderService extends BasePrismaService<
                 },
                 tx
             );
+            if (adminHandleBanProviderRequest.isBanned == true) {
+                noticeRepository.create({
+                    user: {
+                        connect: {
+                            id: provider.id,
+                        },
+                    },
+                    type: NoticeType.ADMIN_HAS_BANNED_PROVIDER,
+                });
+            } else if (adminHandleBanProviderRequest.isBanned == false) {
+                noticeRepository.create({
+                    user: {
+                        connect: {
+                            id: provider.id,
+                        },
+                    },
+                    type: NoticeType.ADMIN_HAS_UN_BANNED_PROVIDER,
+                });
+            }
             return userRepository.findOne(
                 {
                     where: {
