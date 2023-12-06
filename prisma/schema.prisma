@@ -443,8 +443,38 @@ model BookingHistory {
   feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
   balanceHistories        BalanceHistory[]
+  bookingComplaint        BookingComplaint?
 
   @@map("booking_history")
+}
+
+model BookingComplaint {
+  id                        String                     @id @default(uuid()) @map("id")
+  createdAt                 DateTime?                  @default(now()) @map("created_at")
+  updatedAt                 DateTime?                  @updatedAt @map("updated_at")
+  deletedAt                 DateTime?                  @map("deleted_at")
+  booking                   BookingHistory             @relation(fields: [bookingHistoryId], references: [id])
+  bookingHistoryId          String                     @unique @map("booking_history_id")
+  complaintDescription      String                     @map("complaint_description")
+  complaintStatus           BookingComplaintStatus     @map("complaint_status")
+  complaintType             BookingComplaintType       @map("complaint_type")
+  complaintImages           String[]                   @map("complaint_images")
+  bookingComplaintResponses BookingComplaintResponse[]
+
+  @@map("booking_complaint")
+}
+
+model BookingComplaintResponse {
+  id                           String                       @id @default(uuid()) @map("id")
+  createdAt                    DateTime?                    @default(now()) @map("created_at")
+  updatedAt                    DateTime?                    @updatedAt @map("updated_at")
+  deletedAt                    DateTime?                    @map("deleted_at")
+  bookingComplaint             BookingComplaint             @relation(fields: [bookingComplaintId], references: [id])
+  bookingComplaintId           String                       @map("booking_complaint_id")
+  bookingComplaintResponseType BookingComplaintResponseType @map("booking_complaint_response_type")
+  responseMessage              String                       @map("response_message") @db.Text()
+
+  @@map("complaint_response")
 }
 
 model VoucherRedeemedBooking {
@@ -857,10 +887,56 @@ enum ReportReasonType {
   OTHER
 }
 
-// ABUSIVE_LANGUAGE = "Lạm dụng ngôn ngữ và hành vi gây khó chịu"
-//     CHEATING = "Gian lận"
-//     SPAM_OR_HARASSMENT = "Spam hoặc quấy rối"
-//     INAPPROPRIATE_CONTENT = "Hình ảnh không phù hợp hoặc vi phạm đạo đức"
-//     VIOLENT_OR_DISCRIMINATORY_BEHAVIOR = "Hành vi bạo lực hoặc kỳ thị"
-//     FAKE_ACCOUNT_OR_SCAM = "Tài khoản giả mạo hoặc lừa đảo"
-//     ILLEGAL_TRANSACTIONS = "Tham gia vào giao dịch bất hợp pháp hoặc trao đổi thông tin cá nhân không an toàn"
+enum BookingComplaintStatus {
+  /// Khiếu nại đang chờ xử lý
+  PENDING_PROCESSING
+
+  /// Khiếu nại đang được xử lý
+  PROCESSING
+
+  /// Khiếu nại đã được giải quyết
+  RESOLVED
+
+  /// Khiếu nại bị từ chối
+  REJECTED
+
+  /// Khiếu nại cần thêm thông tin để xử lý
+  NEEDS_MORE_INFO
+
+  /// Khiếu nại đang chờ phản hồi từ nhà cung cấp dịch vụ
+  AWAITING_PROVIDER_RESPONSE
+
+  /// Khiếu nại cần được xác minh thông tin trước khi xử lý
+  NEEDS_VERIFICATION
+
+  /// Khiếu nại đã vượt quá thời gian xử lý
+  PROCESSING_TIMEOUT
+
+  /// Khiếu nại đã được giải quyết và đang chờ xác nhận từ người dùng
+  RESOLVED_AWAITING_CONFIRMATION
+
+  /// Khiếu nại không thể giải quyết
+  UNRESOLVABLE
+}
+
+enum BookingComplaintType {
+  /// Cung cấp không đúng dịch vụ
+  WRONG_SERVICE_PROVIDED
+
+  /// Lừa đảo trong giao dịch
+  FRAUD
+
+  /// Dịch vụ bị trì hoãn
+  DELAYED_SERVICE
+
+  /// Các loại khiếu nại khác
+  OTHER
+  // Các loại khác có thể được thêm vào tại đây và chú thích ý nghĩa của chúng
+}
+
+enum BookingComplaintResponseType {
+  PROVIDER_SEND_TO_ADMIN
+  BOOKER_SEND_TO_ADMIN
+  ADMIN_SEND_TO_PROVIDER
+  AMDIN_SEND_TO_BOOKER
+}

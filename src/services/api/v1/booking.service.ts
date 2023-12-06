@@ -608,16 +608,18 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     break;
                 }
             }
-
-            noticeRepository.create({
-                user: {
-                    connect: {
-                        id: provider.id,
+            if (type!) {
+                noticeRepository.create({
+                    user: {
+                        connect: {
+                            id: provider.id,
+                        },
                     },
-                },
-                type: type!,
-                data: JSON.parse(JSON.stringify(bookingHistory)),
-            });
+                    type,
+                    data: JSON.parse(JSON.stringify(bookingHistory)),
+                });
+            }
+
             return bookingHistory;
         });
     }
