@@ -9,7 +9,7 @@ import {
     UnitCurrency,
 } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { utilService } from "@/services";
+import { bcryptService, utilService } from "@/services";
 import { vietnamAddress } from "./data-seed/vietnamAddress";
 import prisma from "../base.prisma";
 const userDefault = [
@@ -484,7 +484,8 @@ async function seed() {
                                 },
                             },
                             defaultCost:
-                                faker.number.int({ min: 5000, max: 50000 }) || 10000,
+                                faker.number.int({ min: 5000, max: 50000 }) ||
+                                10000,
                             position:
                                 faker.number.int({ min: 1, max: 10 }) || 1,
                         },
@@ -609,7 +610,7 @@ async function seed() {
                         unitCurrency: UnitCurrency.VND,
                         feePercentage: 0.001,
                         surcharge: 0,
-                        balanceSettingType: BalanceSettingType.DEPOSIT,
+                        balanceSettingType: BalanceSettingType.WITHDRAWAL,
                         paymentSystemPlatform: PaymentSystemPlatform.MOMO,
                     },
                     {
@@ -748,6 +749,29 @@ async function seed() {
                     };
                 }),
                 skipDuplicates: true,
+            });
+        }
+        if (!(await prisma.admin.findFirst())) {
+            return await prisma.$transaction(async (tx) => {
+                const admin = await tx.admin.create({
+                    data: {
+                        email: "supperadmin@gmail.com",
+                        password: bcryptService.hashData("123123123"),
+                        isActivated: true,
+                        name: "Super Admin",
+                    },
+                });
+
+                await tx.adminRole.create({
+                    data: {
+                        admin: {
+                            connect: {
+                                id: admin.id,
+                            },
+                        },
+                        roleType: "SUPER_ADMIN",
+                    },
+                });
             });
         }
         console.log("Seed data created successfully!");
