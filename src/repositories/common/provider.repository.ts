@@ -133,42 +133,7 @@ export class ProviderRepository extends BasePrismaRepository {
                       : ""
               }
               ${isOnline != undefined ? `AND p.is_online = ${isOnline}` : ""}
-          ),
-          list_attribute AS (
-		    SELECT
-		        ps.id AS provider_service_id,
-		        CONCAT(
-		            '[',
-		            STRING_AGG(
-		                CONCAT(
-		                    '{"id":"', sa.id, '","viAttribute":"', sa.vi_attribute, '","attribute":"', sa.attribute, '","serviceAttributeValues":[',
-		                    COALESCE(
-		                        (
-		                            SELECT STRING_AGG(
-		                                CONCAT('{"id":"', sa.id, '","viValue":"', sav.vi_value, '","value":"', sav.value, '"}'), 
-		                                ','
-		                            )
-		                            FROM provider_service_attribute_value psav
-		                            JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
-		                            WHERE psav.provider_service_attribute_id = psa.id
-		                        ),
-		                        ''
-		                    ),
-		                    ']}'
-		                ),
-		                ','
-		            ),
-		            ']'
-		        ) AS list_attribute_value
-		    FROM
-		        provider_service ps
-		    JOIN
-		        provider_service_attribute psa ON psa.provider_service_id = ps.id
-		    JOIN
-		        service_attribute sa ON sa.id = psa.service_attribute_id
-		    GROUP BY
-		        ps.id, sa.vi_attribute, sa.attribute
-		    )
+          )
           SELECT
             pd.id,
             pd.slug,
@@ -190,11 +155,8 @@ export class ProviderRepository extends BasePrismaRepository {
             pd.dob,
             pd.star,
             pd.provider_status as provider_status,
-            pd.is_online as is_online,
-            la.list_attribute_value as list_attribute_value
-          FROM provider_data AS pd
-        LEFT JOIN
-            list_attribute la ON pd.provider_service_id = la.provider_service_id
+            pd.is_online as is_online
+        FROM provider_data AS pd
         WHERE pd.deleted_at IS NULL
         AND pd.position_rank = 1
           ${startCost != undefined ? `AND pd.cost >= ${startCost}` : ""}
@@ -221,14 +183,19 @@ export class ProviderRepository extends BasePrismaRepository {
         const countResult: any = await this.prisma.$queryRawUnsafe(
             `SELECT COUNT(*) as count FROM (${querySql}) AS subquery`
         );
+
+        const result =
+            await this.getListProviderHaveListServiceAttributeByProviderIds(
+                row.map((item) => item.id)
+            );
         return {
             row: row.map((item) => {
-                let serviceAttributes = [];
-                try {
-                    serviceAttributes = JSON.parse(
-                        item.list_attribute_value
-                    );
-                } catch (e) {}
+                // let serviceAttributes = [];
+                // try {
+                //     serviceAttributes = JSON.parse(
+                //         item.list_attribute_value
+                //     );
+                // } catch (e) {}
                 return {
                     id: item.id,
                     slug: item.slug,
@@ -251,7 +218,9 @@ export class ProviderRepository extends BasePrismaRepository {
                     star: item.star,
                     providerStatus: item.provider_status,
                     isOnline: item.is_online,
-                    serviceAttributes,
+                    serviceAttributeValues:
+                        result[item.provider_service_id]
+                            ?.serviceAttributeValues || [],
                 };
             }),
             count: Number(countResult[0].count),
@@ -283,7 +252,7 @@ export class ProviderRepository extends BasePrismaRepository {
     `;
         let idsWhere = "";
         let idsOrder = "";
-        const listIds = (await this.prisma.$queryRawUnsafe(`
+        const listIdsQuery = (await this.prisma.$queryRawUnsafe(`
     ${getListIdsQuery} 
     ${take != undefined ? `LIMIT ${take}` : ""}
     ${skip != undefined ? `OFFSET ${skip}` : ""}
@@ -291,11 +260,10 @@ export class ProviderRepository extends BasePrismaRepository {
         const countResult: any = await this.prisma.$queryRawUnsafe(
             `SELECT COUNT(*) as count FROM (${getListIdsQuery}) AS subquery`
         );
-        listIds.forEach((item, index) => {
-            idsWhere += `'${item.id}' ${
-                index < listIds.length - 1 ? "," : ""
-            }\n`;
-            idsOrder += `WHEN '${item.id}' THEN ${index + 1} \n`;
+        const listIds = listIdsQuery.map((item) => item.id);
+        listIds.forEach((id, index) => {
+            idsWhere += `'${id}' ${index < listIds.length - 1 ? "," : ""}\n`;
+            idsOrder += `WHEN '${id}' THEN ${index + 1} \n`;
         });
         idsOrder += `ELSE ${listIds.length + 1}`;
         const nowTimehhmm = moment()
@@ -371,41 +339,6 @@ export class ProviderRepository extends BasePrismaRepository {
                     AND p.id IN (
                         ${idsWhere}
                     )
-                ),
-                list_attribute AS (
-                    SELECT
-                        ps.id AS provider_service_id,
-                        CONCAT(
-                            '[',
-                            STRING_AGG(
-                                CONCAT(
-                                    '{"id":"', sa.id, '","viAttribute":"', sa.vi_attribute, '","name":"', sa.attribute, '","serviceAttributeValues":[',
-                                    COALESCE(
-                                        (
-                                            SELECT STRING_AGG(
-                                                CONCAT('{"id":"', sa.id, '","viValue":"', sav.vi_value, '","value":"', sav.value, '"}'), 
-                                                ','
-                                            )
-                                            FROM provider_service_attribute_value psav
-                                            JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
-                                            WHERE psav.provider_service_attribute_id = psa.id
-                                        ),
-                                        ''
-                                    ),
-                                    ']}'
-                                ),
-                                ','
-                            ),
-                            ']'
-                        ) AS list_attribute_value
-                    FROM
-                        provider_service ps
-                    JOIN
-                        provider_service_attribute psa ON psa.provider_service_id = ps.id
-                    JOIN
-                        service_attribute sa ON sa.id = psa.service_attribute_id
-                    GROUP BY
-                        ps.id, sa.vi_attribute, sa.attribute
                 )
                 SELECT
                     pd.id,
@@ -428,24 +361,20 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.dob,
                     pd.star,
                     pd.provider_status as provider_status,
-                    pd.is_online as is_online,
-                    la.list_attribute_value as list_attribute_value
+                    pd.is_online as is_online
                 FROM provider_data AS pd
-                LEFT JOIN
-		            list_attribute la ON pd.provider_service_id = la.provider_service_id
                 WHERE 
                     pd.deleted_at IS NULL
                     AND pd.position_rank = 1;
          `;
         const row: any[] = await this.prisma.$queryRawUnsafe(querySql);
+
+        const result =
+            await this.getListProviderHaveListServiceAttributeByProviderIds(
+                listIds
+            );
         return {
             row: row.map((item) => {
-                let serviceAttributes = [];
-                try {
-                    serviceAttributes = JSON.parse(
-                        item.list_attribute_value
-                    );
-                } catch (e) {}
                 return {
                     id: item.id,
                     slug: item.slug,
@@ -468,10 +397,92 @@ export class ProviderRepository extends BasePrismaRepository {
                     star: item.star,
                     providerStatus: item.provider_status,
                     isOnline: item.is_online,
-                    serviceAttributes,
+                    serviceAttributeValues:
+                        result[item.provider_service_id]
+                            ?.serviceAttributeValues || [],
                 };
             }),
             count: Number(countResult[0].count),
         };
+    }
+
+    async getListProviderHaveListServiceAttributeByProviderIds(
+        providerIds: string[]
+    ) {
+        let idsWhere = "";
+        providerIds.forEach((id, index) => {
+            idsWhere += `'${id}' ${
+                index < providerIds.length - 1 ? "," : ""
+            }\n`;
+        });
+        const querySql = `
+        SELECT
+            ps.id AS id,
+            u.name as user_name,
+            s.name AS service_name,
+            
+            CONCAT(
+                '[',
+                STRING_AGG(
+                    CONCAT(
+                        '{"viAttribute":"', sa.vi_attribute, '","attribute":"', sa.attribute, '","serviceAttributeValues":[',
+                        COALESCE(
+                            (
+                                SELECT STRING_AGG(
+                                    CONCAT('{"viValue":"', sav.vi_value, '","value":"', sav.value, '"}'), 
+                                    ','
+                                )
+                                FROM provider_service_attribute_value psav
+                                JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
+                                WHERE psav.provider_service_attribute_id = psa.id
+                            ),
+                            ''
+                        ),
+                        ']}'
+                    ),
+                    ','
+                ),
+                ']'
+            ) AS list_attribute_value
+        FROM
+            provider_service ps
+        JOIN
+            service s ON ps.service_id = s.id
+        JOIN provider_service_attribute psa ON psa.provider_service_id = ps.id
+        JOIN service_attribute sa ON sa.id = psa.service_attribute_id
+        JOIN  "user" u ON u.id = ps.provider_id 
+        WHERE
+            ps.deleted_at IS NULL
+            AND u.id IN (
+                ${idsWhere}
+            )
+        GROUP BY
+            ps.id, s.name,u."name" , sa.vi_attribute, sa.attribute
+        ORDER BY
+            ps.id;
+
+        `;
+
+        const data: any = await this.prisma.$queryRawUnsafe(querySql);
+        const result: any = {};
+        for (const item of data) {
+            let serviceAttributeValues = [];
+            try {
+                serviceAttributeValues = JSON.parse(item.list_attribute_value);
+            } catch {}
+            if (!result[item.id]) {
+                result[item.id] = {
+                    id: item.id,
+                    serviceAttributeValues,
+                };
+            } else {
+                result[item.id].serviceAttributeValues = [
+                    ...result[item.id].serviceAttributeValues,
+                    ...serviceAttributeValues,
+                ];
+            }
+        }
+
+        return result;
     }
 }
