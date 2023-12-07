@@ -9,4 +9,5 @@ export interface IOptionFilterProvider {
     gender: Gender | undefined;
     order: any[] | undefined;
     status: ProviderStatus;
+    isOnline: boolean | undefined;
 }

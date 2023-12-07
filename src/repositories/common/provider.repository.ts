@@ -39,6 +39,7 @@ export class ProviderRepository extends BasePrismaRepository {
             order,
             status,
             serviceAttributeValueIds,
+            isOnline,
         } = option;
         const nowTimehhmm = moment()
             .utcOffset(config.server.timezone)
@@ -131,7 +132,43 @@ export class ProviderRepository extends BasePrismaRepository {
                             .join(", ")}))`
                       : ""
               }
-          )
+              ${isOnline != undefined ? `AND p.is_online = ${isOnline}` : ""}
+          ),
+          list_attribute AS (
+		    SELECT
+		        ps.id AS provider_service_id,
+		        CONCAT(
+		            '[',
+		            STRING_AGG(
+		                CONCAT(
+		                    '{"id":"', sa.id, '","viAttribute":"', sa.vi_attribute, '","attribute":"', sa.attribute, '","serviceAttributeValues":[',
+		                    COALESCE(
+		                        (
+		                            SELECT STRING_AGG(
+		                                CONCAT('{"id":"', sa.id, '","viValue":"', sav.vi_value, '","value":"', sav.value, '"}'), 
+		                                ','
+		                            )
+		                            FROM provider_service_attribute_value psav
+		                            JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
+		                            WHERE psav.provider_service_attribute_id = psa.id
+		                        ),
+		                        ''
+		                    ),
+		                    ']}'
+		                ),
+		                ','
+		            ),
+		            ']'
+		        ) AS list_attribute_value
+		    FROM
+		        provider_service ps
+		    JOIN
+		        provider_service_attribute psa ON psa.provider_service_id = ps.id
+		    JOIN
+		        service_attribute sa ON sa.id = psa.service_attribute_id
+		    GROUP BY
+		        ps.id, sa.vi_attribute, sa.attribute
+		    )
           SELECT
             pd.id,
             pd.slug,
@@ -153,10 +190,13 @@ export class ProviderRepository extends BasePrismaRepository {
             pd.dob,
             pd.star,
             pd.provider_status as provider_status,
-            pd.is_online as is_online
+            pd.is_online as is_online,
+            la.list_attribute_value as list_attribute_value
           FROM provider_data AS pd
-          WHERE pd.deleted_at IS NULL
-          AND pd.position_rank = 1
+        LEFT JOIN
+            list_attribute la ON pd.provider_service_id = la.provider_service_id
+        WHERE pd.deleted_at IS NULL
+        AND pd.position_rank = 1
           ${startCost != undefined ? `AND pd.cost >= ${startCost}` : ""}
           ${endCost != undefined ? `AND pd.cost < ${endCost}` : ""}
           ${status != status ? `AND pd.providerStatus = ${status}` : ""}
@@ -182,29 +222,38 @@ export class ProviderRepository extends BasePrismaRepository {
             `SELECT COUNT(*) as count FROM (${querySql}) AS subquery`
         );
         return {
-            row: row.map((item) => ({
-                id: item.id,
-                slug: item.slug,
-                name: item.name,
-                avatarUrl: item.avatar_url,
-                voiceUrl: item.voice_url,
-                description: item.description,
-                createdAt: item.created_at,
-                updatedAt: item.updated_at,
-                deletedAt: item.deleted_at,
-                cost: item.cost,
-                providerServiceId: item.provider_service_id,
-                providerServicePosition: item.provider_service_position,
-                serviceSlug: item.service_slug,
-                serviceId: item.service_id,
-                serviceName: item.service_name,
-                serviceImageUrl: item.service_image_url,
-                gender: item.gender,
-                dob: item.dob,
-                star: item.star,
-                providerStatus: item.provider_status,
-                isOnline: item.is_provider,
-            })),
+            row: row.map((item) => {
+                let serviceAttributes = [];
+                try {
+                    serviceAttributes = JSON.parse(
+                        item.list_attribute_value
+                    );
+                } catch (e) {}
+                return {
+                    id: item.id,
+                    slug: item.slug,
+                    name: item.name,
+                    avatarUrl: item.avatar_url,
+                    voiceUrl: item.voice_url,
+                    description: item.description,
+                    createdAt: item.created_at,
+                    updatedAt: item.updated_at,
+                    deletedAt: item.deleted_at,
+                    cost: item.cost,
+                    serviceId: item.service_id,
+                    providerServiceId: item.provider_service_id,
+                    providerServicePosition: item.provider_service_position,
+                    serviceSlug: item.service_slug,
+                    serviceName: item.service_name,
+                    serviceImageUrl: item.service_image_url,
+                    gender: item.gender,
+                    dob: item.dob,
+                    star: item.star,
+                    providerStatus: item.provider_status,
+                    isOnline: item.is_online,
+                    serviceAttributes,
+                };
+            }),
             count: Number(countResult[0].count),
         };
     }
@@ -322,6 +371,41 @@ export class ProviderRepository extends BasePrismaRepository {
                     AND p.id IN (
                         ${idsWhere}
                     )
+                ),
+                list_attribute AS (
+                    SELECT
+                        ps.id AS provider_service_id,
+                        CONCAT(
+                            '[',
+                            STRING_AGG(
+                                CONCAT(
+                                    '{"id":"', sa.id, '","viAttribute":"', sa.vi_attribute, '","name":"', sa.attribute, '","serviceAttributeValues":[',
+                                    COALESCE(
+                                        (
+                                            SELECT STRING_AGG(
+                                                CONCAT('{"id":"', sa.id, '","viValue":"', sav.vi_value, '","value":"', sav.value, '"}'), 
+                                                ','
+                                            )
+                                            FROM provider_service_attribute_value psav
+                                            JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
+                                            WHERE psav.provider_service_attribute_id = psa.id
+                                        ),
+                                        ''
+                                    ),
+                                    ']}'
+                                ),
+                                ','
+                            ),
+                            ']'
+                        ) AS list_attribute_value
+                    FROM
+                        provider_service ps
+                    JOIN
+                        provider_service_attribute psa ON psa.provider_service_id = ps.id
+                    JOIN
+                        service_attribute sa ON sa.id = psa.service_attribute_id
+                    GROUP BY
+                        ps.id, sa.vi_attribute, sa.attribute
                 )
                 SELECT
                     pd.id,
@@ -344,37 +428,49 @@ export class ProviderRepository extends BasePrismaRepository {
                     pd.dob,
                     pd.star,
                     pd.provider_status as provider_status,
-                    pd.is_online as is_online
+                    pd.is_online as is_online,
+                    la.list_attribute_value as list_attribute_value
                 FROM provider_data AS pd
+                LEFT JOIN
+		            list_attribute la ON pd.provider_service_id = la.provider_service_id
                 WHERE 
                     pd.deleted_at IS NULL
                     AND pd.position_rank = 1;
          `;
         const row: any[] = await this.prisma.$queryRawUnsafe(querySql);
         return {
-            row: row.map((item) => ({
-                id: item.id,
-                slug: item.slug,
-                name: item.name,
-                avatarUrl: item.avatar_url,
-                voiceUrl: item.voice_url,
-                description: item.description,
-                createdAt: item.created_at,
-                updatedAt: item.updated_at,
-                deletedAt: item.deleted_at,
-                cost: item.cost,
-                serviceId: item.service_id,
-                providerServiceId: item.provider_service_id,
-                providerServicePosition: item.provider_service_position,
-                serviceSlug: item.service_slug,
-                serviceName: item.service_name,
-                serviceImageUrl: item.service_image_url,
-                gender: item.gender,
-                dob: item.dob,
-                star: item.star,
-                providerStatus: item.provider_status,
-                isOnline: item.is_online,
-            })),
+            row: row.map((item) => {
+                let serviceAttributes = [];
+                try {
+                    serviceAttributes = JSON.parse(
+                        item.list_attribute_value
+                    );
+                } catch (e) {}
+                return {
+                    id: item.id,
+                    slug: item.slug,
+                    name: item.name,
+                    avatarUrl: item.avatar_url,
+                    voiceUrl: item.voice_url,
+                    description: item.description,
+                    createdAt: item.created_at,
+                    updatedAt: item.updated_at,
+                    deletedAt: item.deleted_at,
+                    cost: item.cost,
+                    serviceId: item.service_id,
+                    providerServiceId: item.provider_service_id,
+                    providerServicePosition: item.provider_service_position,
+                    serviceSlug: item.service_slug,
+                    serviceName: item.service_name,
+                    serviceImageUrl: item.service_image_url,
+                    gender: item.gender,
+                    dob: item.dob,
+                    star: item.star,
+                    providerStatus: item.provider_status,
+                    isOnline: item.is_online,
+                    serviceAttributes,
+                };
+            }),
             count: Number(countResult[0].count),
         };
     }

@@ -83,6 +83,13 @@ export class ProviderController extends BaseController {
         const startCost = start_cost ? +start_cost : undefined;
         const end_cost = req.query["end-cost"]?.toString();
         const endCost = end_cost ? +end_cost : undefined;
+        const is_online = req.query["is-online"]?.toString();
+        const isOnline =
+            is_online == undefined
+                ? undefined
+                : is_online == "true"
+                ? true
+                : false;
         const result = await this.service.filterProvider(
             {
                 serviceAttributeValueIds,
@@ -93,6 +100,7 @@ export class ProviderController extends BaseController {
                 gender,
                 status,
                 order: queryInfoPrisma?.orderBy,
+                isOnline,
             } as IOptionFilterProvider,
             queryInfoPrisma!
         );

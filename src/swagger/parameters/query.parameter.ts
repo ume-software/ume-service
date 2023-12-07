@@ -176,6 +176,17 @@ export const filterProviderParameters = {
         Example : status=ACTIVATED
         `,
     },
+    "is-online": {
+        name: "is-online",
+        schema: {
+            type: SwaggerDefinitionConstant.Parameter.Type.BOOLEAN,
+            example: true,
+            default: true,
+        },
+        description: `
+        Example : is-online=true
+        `,
+    },
 };
 export const filterHotProviderParameters = {
     interval_days: {

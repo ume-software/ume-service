@@ -454,42 +454,132 @@ async function seed() {
             }
 
             // Create services
-            const services = [];
-            for (let i = 0; i < 10; i++) {
+
+            for (let serviceDefault of servicesDefault) {
                 const service = await prisma.service.create({
                     data: {
-                        name: servicesDefault[i]?.name!,
-                        imageUrl: servicesDefault[i]?.url!,
-                        slug: utilService.changeToSlug(
-                            servicesDefault[i]?.name!
-                        ),
+                        name: serviceDefault?.name!,
+                        imageUrl: serviceDefault?.url!,
+                        slug: utilService.changeToSlug(serviceDefault?.name!),
                     },
                 });
+                if (serviceDefault.attributes) {
+                    for (let attribute of serviceDefault.attributes) {
+                        const serviceAttribute =
+                            await prisma.serviceAttribute.create({
+                                data: {
+                                    attribute: attribute.enName,
+                                    viAttribute: attribute.name,
+                                    service: {
+                                        connect: {
+                                            id: service.id,
+                                        },
+                                    },
+                                },
+                            });
 
-                services.push(service);
+                        if (attribute.values) {
+                            for (let value of attribute.values) {
+                                await prisma.serviceAttributeValue.create({
+                                    data: {
+                                        value: value.enValue,
+                                        viValue: value.value,
+                                        serviceAttribute: {
+                                            connect: {
+                                                id: serviceAttribute.id,
+                                            },
+                                        },
+                                    },
+                                });
+                            }
+                        }
+                    }
+                }
             }
+            const services = await prisma.service.findMany({
+                include: {
+                    serviceAttributes: {
+                        include: {
+                            serviceAttributeValues: true,
+                        },
+                    },
+                },
+            });
             // Create provider services
             for (const provider of users) {
+                let position = 1;
+
                 for (const service of services) {
-                    await prisma.providerService.create({
-                        data: {
-                            provider: {
-                                connect: {
-                                    id: provider.id,
+                    const providerService = await prisma.providerService.create(
+                        {
+                            data: {
+                                provider: {
+                                    connect: {
+                                        id: provider.id,
+                                    },
                                 },
-                            },
-                            service: {
-                                connect: {
-                                    id: service.id!,
+                                service: {
+                                    connect: {
+                                        id: service.id!,
+                                    },
                                 },
+                                defaultCost:
+                                    (faker.number.int({ min: 5, max: 50 }) ||
+                                        10) * 1000,
+                                position: position++,
                             },
-                            defaultCost:
-                                faker.number.int({ min: 5000, max: 50000 }) ||
-                                10000,
-                            position:
-                                faker.number.int({ min: 1, max: 10 }) || 1,
-                        },
-                    });
+                        }
+                    );
+                    for (let serviceAttribute of service.serviceAttributes) {
+                        const providerServiceAttribute =
+                            await prisma.providerServiceAttribute.create({
+                                data: {
+                                    providerService: {
+                                        connect: {
+                                            id: providerService.id,
+                                        },
+                                    },
+                                    serviceAttribute: {
+                                        connect: {
+                                            id: serviceAttribute.id,
+                                        },
+                                    },
+                                },
+                            });
+                        const serviceAttributeValueLength =
+                            serviceAttribute.serviceAttributeValues.length;
+                        const randomTotalProviderServiceAttribute =
+                            faker.number.int({
+                                min: 0,
+                                max: serviceAttributeValueLength - 1,
+                            });
+                        for (
+                            let i = 0;
+                            i < randomTotalProviderServiceAttribute;
+                            i++
+                        ) {
+                            if (serviceAttribute?.serviceAttributeValues[i]?.id)
+                                await prisma.providerServiceAttributeValue.create(
+                                    {
+                                        data: {
+                                            providerServiceAttribute: {
+                                                connect: {
+                                                    id: providerServiceAttribute.id,
+                                                },
+                                            },
+                                            serviceAttributeValue: {
+                                                connect: {
+                                                    id: serviceAttribute
+                                                        ?.serviceAttributeValues[
+                                                        i
+                                                    ]?.id!,
+                                                },
+                                            },
+                                        },
+                                    }
+                                );
+                        }
+                    }
                 }
             }
             // Create booking costs
@@ -755,7 +845,8 @@ async function seed() {
             return await prisma.$transaction(async (tx) => {
                 const admin = await tx.admin.create({
                     data: {
-                        email: "supperadmin@gmail.com",
+                        email: "superadmin@gmail.com",
+                        username: "superadmin@gmail.com",
                         password: bcryptService.hashData("123123123"),
                         isActivated: true,
                         name: "Super Admin",

@@ -1,5 +1,10 @@
 import { Gender, ProviderStatus } from "@prisma/client";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
+import { ServiceAttributeResponse } from "../service";
 
 @ApiModel({
     description: "Filter Provider response",
@@ -124,4 +129,12 @@ export class FilterProviderResponse {
         enum: Object.values(ProviderStatus),
     })
     providerStatus?: ProviderStatus;
+
+    @ApiModelProperty({
+        description: "Create Service Attribute Value Request",
+        required: false,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: ServiceAttributeResponse,
+    })
+    serviceAttributes!: Array<ServiceAttributeResponse>;
 }
