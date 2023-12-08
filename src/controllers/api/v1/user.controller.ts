@@ -495,10 +495,7 @@ export class UserController extends BaseController {
         description: "Get follower by user slug",
         summary: "Get follower by user slug",
         parameters: {
-            query: {
-                ...limitParameter,
-                ...pageParameter,
-            },
+            query: queryParameters,
 
             path: {
                 slug: {
@@ -536,10 +533,7 @@ export class UserController extends BaseController {
         description: "Get following by user slug",
         summary: "Get following by user slug",
         parameters: {
-            query: {
-                ...limitParameter,
-                ...pageParameter,
-            },
+            query: queryParameters,
 
             path: {
                 slug: {

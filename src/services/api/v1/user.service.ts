@@ -215,7 +215,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         const row = await userRepository.findMany({
             ...queryInfoPrisma,
             where: {
-                id: { in: followers.row.map((item) => item.id) },
+                id: { in: followers.row.map((item) => item.followerId) },
             },
         });
 
@@ -256,7 +256,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         const row = await userRepository.findMany({
             ...queryInfoPrisma,
             where: {
-                id: { in: followers.row.map((item) => item.id) },
+                id: { in: followers.row.map((item) => item.followingId) },
             },
         });
 

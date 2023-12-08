@@ -458,7 +458,7 @@ model BookingComplaint {
   complaintDescription      String                     @map("complaint_description")
   complaintStatus           BookingComplaintStatus     @map("complaint_status")
   complaintType             BookingComplaintType       @map("complaint_type")
-  complaintImages           String[]                   @map("complaint_images")
+  attachments               Json[]                     @default([]) @map("attachments")
   bookingComplaintResponses BookingComplaintResponse[]
 
   @@map("booking_complaint")
@@ -473,8 +473,9 @@ model BookingComplaintResponse {
   bookingComplaintId           String                       @map("booking_complaint_id")
   bookingComplaintResponseType BookingComplaintResponseType @map("booking_complaint_response_type")
   responseMessage              String                       @map("response_message") @db.Text()
+  attachments                  Json[]                       @default([]) @map("attachments")
 
-  @@map("complaint_response")
+  @@map("booking_complaint_response")
 }
 
 model VoucherRedeemedBooking {
