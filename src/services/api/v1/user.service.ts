@@ -89,12 +89,12 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         if (result) {
             result.followerAmount = await prisma.follow.count({
                 where: {
-                    followerId: result.id,
+                    followingId: result.id,
                 },
             });
             result.followingAmount = await prisma.follow.count({
                 where: {
-                    followingId: result.id,
+                    followerId: result.id,
                 },
             });
             if (requesterId) {
