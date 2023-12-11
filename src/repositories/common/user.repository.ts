@@ -119,6 +119,16 @@ export class UserRepository extends BasePrismaRepository {
                                 startTimeOfDay: true,
                             },
                         },
+                        providerServiceAttributes: {
+                            include: {
+                                providerServiceAttributeValues: {
+                                    include: {
+                                        serviceAttributeValue: true,
+                                    },
+                                },
+                                providerService: true,
+                            },
+                        },
                     },
                 },
             },

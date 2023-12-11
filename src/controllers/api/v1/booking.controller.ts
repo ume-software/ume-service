@@ -18,6 +18,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { bookingService, errorService, feedbackService } from "@/services";
 import { BookingService } from "@/services/api/v1/booking.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 
 import {
     ApiOperationGet,
@@ -26,6 +27,7 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
+import _ from "lodash";
 
 @ApiPath({
     path: "/api/v1/booking",
@@ -60,6 +62,16 @@ export class BookingController extends BaseController {
             "/current-booking-user",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getCurrentBookingForUser)
+        );
+        this.router.get(
+            "/booker-history",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.bookerGetBookingHistory)
+        );
+        this.router.get(
+            "/provider-history",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.providerGetBookingHistory)
         );
         this.router.post(
             "/",
@@ -164,6 +176,7 @@ export class BookingController extends BaseController {
         security: {
             bearerAuth: [],
         },
+
         description: "Get current booking for user",
         summary: "Get current booking for user",
         responses: {
@@ -183,6 +196,96 @@ export class BookingController extends BaseController {
         this.onSuccessAsList(res, result);
     }
 
+    @ApiOperationGet({
+        path: "/booker-history",
+        operationId: "bookerGetBookingHistory",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Booker get booking history",
+        summary: "Booker get booking history",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Booker get booking history success",
+            },
+        },
+    })
+    async bookerGetBookingHistory(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(queryInfoPrisma, "where.bookerId", userId);
+        _.set(queryInfoPrisma, "include", {
+            providerService: {
+                include: {
+                    provider: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            avatarUrl: true,
+                        },
+                    },
+                    service: true,
+                },
+            },
+        });
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccessAsList(res, result);
+    }
+    @ApiOperationGet({
+        path: "/provider-history",
+        operationId: "providerGetBookingHistory",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Provider get booking history",
+        summary: "Provider get booking history",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Provider get booking history success",
+            },
+        },
+    })
+    async providerGetBookingHistory(req: Request, res: Response) {
+        const userId = this.getTokenInfo(req).id;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+
+        _.set(queryInfoPrisma, "where.providerService.providerId", userId);
+
+        _.set(queryInfoPrisma, "include", {
+            providerService: {
+                include: {
+                    service: true,
+                },
+            },
+            booker: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    avatarUrl: true,
+                },
+            },
+        });
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccessAsList(res, result);
+    }
     @ApiOperationPost({
         path: "",
         operationId: "createBooking",

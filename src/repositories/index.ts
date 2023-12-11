@@ -36,6 +36,8 @@ import { WithdrawalRequestRepository } from "./common/withdrawalRequest.reposito
 import { UserPaymentSystemRepository } from "./common/userPaymentSystem.repository";
 import { BannerRepository } from "./common/banner.repository";
 import { FollowRepository } from "./common/follow.repository";
+import { BookingComplaintRepository } from "./common/bookingComplaint.repository";
+import { BookingComplaintResponseRepository } from "./common/bookingComplaintResponse.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -77,6 +79,9 @@ const withdrawalRequestRepository = new WithdrawalRequestRepository();
 const userPaymentSystemRepository = new UserPaymentSystemRepository();
 const bannerRepository = new BannerRepository();
 const followRepository = new FollowRepository();
+const bookingComplaintRepository = new BookingComplaintRepository();
+const bookingComplaintResponseRepository =
+    new BookingComplaintResponseRepository();
 export {
     bookingCostRepository,
     bookingHistoryRepository,
@@ -116,4 +121,6 @@ export {
     userPaymentSystemRepository,
     bannerRepository,
     followRepository,
+    bookingComplaintRepository,
+    bookingComplaintResponseRepository,
 };
