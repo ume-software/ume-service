@@ -492,4 +492,21 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a admin tries to update status kyc request, resulting in a 400 Bad Request status.",
     },
+
+    YOU_HAVE_COMPLAINED_THIS_BOOKING_BEFORE: {
+        type: "booking_complaint_exception",
+        message: "You have complained about this booking before.",
+        codeNumber: 21400,
+        statusCode: 400,
+        description:
+            "This error occurs when a booker tries to complaint a booking multiple times when they have previously complained it, resulting in a 400 Bad Request status.",
+    },
+    THE_TIME_FOR_COMPLAINT_THIS_BOOKING_HAS_EXPIRED: {
+        type: "booking_complaint_exception",
+        message: "The time for you to complaint this booking has expired.",
+        codeNumber: 21400,
+        statusCode: 400,
+        description:
+            "This error occurs when a booker tries to complaint a booking when the time limit has expired, resulting in a 400 Bad Request status.",
+    },
 };

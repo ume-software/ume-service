@@ -1,5 +1,5 @@
 import { CreateBookingComplaintRequest } from "@/common/requests/bookingComplaint/createBookingComplaint.request";
-import { DepositPagingResponse } from "@/common/responses";
+import { BookingComplaintPagingResponse } from "@/common/responses";
 import {
     BaseController,
     Request,
@@ -8,8 +8,10 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { bookingComplaintService } from "@/services";
 import { BookingComplaintService } from "@/services/api/v1/bookingComplaint.service";
+import { queryParameters } from "@/swagger/parameters/query.parameter";
 import {
     ApiOperationGet,
+    ApiOperationPost,
     ApiPath,
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
@@ -23,19 +25,145 @@ export class BookingComplaintController extends BaseController {
     constructor() {
         super();
         this.service = bookingComplaintService;
-        this.path = "bookingComplaint";
+        this.path = "booking-complaint";
         this.customRouting();
     }
     service: BookingComplaintService;
     customRouting() {
+        this.router.get(
+            "/booker-history",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.bookerGetBookingComplaintHistory)
+        );
+        this.router.get(
+            "/provider-history",
+            this.accountTypeMiddlewares([EAccountType.USER]),
+            this.route(this.providerGetBookingComplaintHistory)
+        );
         this.router.post(
             "",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.createBookingComplaint)
         );
     }
-
     @ApiOperationGet({
+        path: "/booker-history",
+        operationId: "bookerGetBookingComplaintHistory",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Booker get booking complaint history",
+        summary: "Booker get booking complaint history",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingComplaintPagingResponse },
+                    },
+                },
+                description: "Approved success",
+            },
+        },
+    })
+    async bookerGetBookingComplaintHistory(req: Request, res: Response) {
+        const bookerId = this.getTokenInfo(req).id;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(queryInfoPrisma, "where.booking.bookerId", bookerId);
+        _.set(queryInfoPrisma, "include", {
+            booking: {
+                include: {
+                    booker: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            avatarUrl: true,
+                        },
+                    },
+                    providerService: {
+                        include: {
+                            provider: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                    avatarUrl: true,
+                                },
+                            },
+                            service: true,
+                        },
+                    },
+                },
+            },
+        });
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccess(res, result);
+    }
+    @ApiOperationGet({
+        path: "/provider-history",
+        operationId: "providerGetBookingComplaintHistory",
+        security: {
+            bearerAuth: [],
+        },
+        parameters: {
+            query: queryParameters,
+        },
+        description: "Provider get booking complaint history",
+        summary: "Provider get booking complaint history",
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingComplaintPagingResponse },
+                    },
+                },
+                description: "Approved success",
+            },
+        },
+    })
+    async providerGetBookingComplaintHistory(req: Request, res: Response) {
+        const providerId = this.getTokenInfo(req).id;
+        const queryInfoPrisma = req.queryInfoPrisma ?? {};
+        _.set(
+            queryInfoPrisma,
+            "where.booking.providerService.providerId",
+            providerId
+        );
+
+        _.set(queryInfoPrisma, "include", {
+            booking: {
+                include: {
+                    booker: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            avatarUrl: true,
+                        },
+                    },
+                    providerService: {
+                        include: {
+                            provider: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                    avatarUrl: true,
+                                },
+                            },
+                            service: true,
+                        },
+                    },
+                },
+            },
+        });
+        const result = await this.service.findAndCountAll(queryInfoPrisma);
+        this.onSuccess(res, result);
+    }
+    @ApiOperationPost({
         path: "",
         operationId: "createBookingComplaint",
         security: {
@@ -54,7 +182,7 @@ export class BookingComplaintController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: DepositPagingResponse },
+                        schema: { model: BookingComplaintPagingResponse },
                     },
                 },
                 description: "Approved success",

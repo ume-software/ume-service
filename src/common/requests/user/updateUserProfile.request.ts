@@ -83,7 +83,7 @@ export class UpdateUserProfileRequest {
         description: "isAllowNotificationToEmail",
         required: false,
         example: true,
-        type: SwaggerDefinitionConstant.STRING,
+        type: SwaggerDefinitionConstant.BOOLEAN,
     })
     @IsOptional()
     @IsBoolean()
@@ -93,7 +93,7 @@ export class UpdateUserProfileRequest {
         description: "isAllowNotificationMessage",
         required: false,
         example: true,
-        type: SwaggerDefinitionConstant.STRING,
+        type: SwaggerDefinitionConstant.BOOLEAN,
     })
     @IsOptional()
     @IsBoolean()
@@ -103,7 +103,7 @@ export class UpdateUserProfileRequest {
         description: "isAllowNotificationCall",
         required: false,
         example: true,
-        type: SwaggerDefinitionConstant.STRING,
+        type: SwaggerDefinitionConstant.BOOLEAN,
     })
     @IsOptional()
     @IsBoolean()

@@ -440,6 +440,7 @@ model BookingHistory {
   bookingPeriod           Int                      @map("booking_period")
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
   providerReceivedBalance Float?                   @map("provider_received_balance")
+  isProcessingComplaint   Boolean                  @default(false) @map("is_processing_complaint")
   feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
   balanceHistories        BalanceHistory[]

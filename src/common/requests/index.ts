@@ -14,3 +14,4 @@ export * from "./voucher";
 export * from "./kycRequest";
 export * from "./banner";
 export * from "./reportUser";
+export * from "./bookingComplaint";

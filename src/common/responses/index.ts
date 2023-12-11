@@ -21,3 +21,4 @@ export * from "./statistic";
 export * from "./follow";
 export * from "./kycRequest";
 export * from "./providerConfig";
+export * from "./bookingComplaint";
