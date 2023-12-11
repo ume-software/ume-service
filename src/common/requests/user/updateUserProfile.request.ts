@@ -5,7 +5,13 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
-import { IsDate, IsEnum, IsOptional, IsString } from "class-validator";
+import {
+    IsBoolean,
+    IsDate,
+    IsEnum,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import { Type } from "class-transformer";
 @ApiModel({
     description: "Update user profile request",
@@ -73,6 +79,35 @@ export class UpdateUserProfileRequest {
     @IsString()
     public phone!: string | null;
 
+    @ApiModelProperty({
+        description: "isAllowNotificationToEmail",
+        required: false,
+        example: true,
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    @IsOptional()
+    @IsBoolean()
+    isAllowNotificationToEmail?: boolean;
+
+    @ApiModelProperty({
+        description: "isAllowNotificationMessage",
+        required: false,
+        example: true,
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    @IsOptional()
+    @IsBoolean()
+    isAllowNotificationMessage?: boolean;
+
+    @ApiModelProperty({
+        description: "isAllowNotificationCall",
+        required: false,
+        example: true,
+        type: SwaggerDefinitionConstant.STRING,
+    })
+    @IsOptional()
+    @IsBoolean()
+    isAllowNotificationCall?: boolean;
     constructor(data: UpdateUserProfileRequest) {
         if (data) {
             Object.assign(
@@ -84,6 +119,9 @@ export class UpdateUserProfileRequest {
                     "gender",
                     "dob",
                     "avatarUrl",
+                    "isAllowNotificationToEmail",
+                    "isAllowNotificationMessage",
+                    "isAllowNotificationCall",
                 ])
             );
         }
