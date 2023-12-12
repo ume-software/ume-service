@@ -460,7 +460,7 @@ model BookingComplaint {
   complaintStatus           BookingComplaintStatus     @map("complaint_status")
   complaintType             BookingComplaintType       @map("complaint_type")
   attachments               Json[]                     @default([]) @map("attachments")
-  isSendedToProvider        Boolean                    @default(false) @map("is_sended_to_provider")
+  sendedToProviderAt        DateTime?                  @map("sended_to_provider_at")
   bookingComplaintResponses BookingComplaintResponse[]
 
   @@map("booking_complaint")
@@ -939,7 +939,6 @@ enum BookingComplaintType {
 
 enum BookingComplaintResponseType {
   PROVIDER_SEND_TO_ADMIN
-  BOOKER_SEND_TO_ADMIN
   ADMIN_SEND_TO_PROVIDER
-  AMDIN_SEND_TO_BOOKER
+  ADMIN_SEND_TO_BOOKER
 }

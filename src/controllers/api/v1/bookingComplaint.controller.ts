@@ -1,4 +1,4 @@
-import { CreateBookingComplaintRequest } from "@/common/requests/bookingComplaint/createBookingComplaint.request";
+import { CreateBookingComplaintRequest } from "@/common/requests";
 import { BookingComplaintPagingResponse } from "@/common/responses";
 import {
     BaseController,
@@ -9,6 +9,7 @@ import { EAccountType } from "@/enums/accountType.enum";
 import { bookingComplaintService } from "@/services";
 import { BookingComplaintService } from "@/services/api/v1/bookingComplaint.service";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
+import { BookingComplaintResponseType } from "@prisma/client";
 import {
     ApiOperationGet,
     ApiOperationPost,
@@ -98,9 +99,21 @@ export class BookingComplaintController extends BaseController {
                     },
                 },
             },
+            bookingComplaintResponses: {
+                where: {
+                    deletedAt: null,
+                    bookingComplaintResponseType: {
+                        in: [BookingComplaintResponseType.ADMIN_SEND_TO_BOOKER],
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            },
         });
+
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
     @ApiOperationGet({
         path: "/provider-history",
@@ -159,9 +172,24 @@ export class BookingComplaintController extends BaseController {
                     },
                 },
             },
+            bookingComplaintResponses: {
+                where: {
+                    deletedAt: null,
+                    bookingComplaintResponseType: {
+                        in: [
+                            BookingComplaintResponseType.ADMIN_SEND_TO_PROVIDER,
+                            BookingComplaintResponseType.PROVIDER_SEND_TO_ADMIN,
+                        ],
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            },
         });
+
         const result = await this.service.findAndCountAll(queryInfoPrisma);
-        this.onSuccess(res, result);
+        this.onSuccessAsList(res, result);
     }
     @ApiOperationPost({
         path: "",

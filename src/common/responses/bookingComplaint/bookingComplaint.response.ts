@@ -6,8 +6,7 @@ import {
 } from "express-swagger-typescript";
 import { AttachmentResponse } from "./attechment.response";
 import { BookingHistoryResponse } from "../booking/bookingHistory.response";
-import { UserInformationResponse } from "../user";
-
+import { BookingComplaintResponseResponse } from "./bookingComplaintResponse.response";
 @ApiModel({
     description: "Booking complaint response",
 })
@@ -70,14 +69,15 @@ export class BookingComplaintResponse {
     attachments!: Array<AttachmentResponse>;
 
     @ApiModelProperty({
-        description: "Booker",
-        model: UserInformationResponse,
-    })
-    booker!: UserInformationResponse;
-
-    @ApiModelProperty({
         description: "Booking",
         model: BookingHistoryResponse,
     })
     booking!: BookingHistoryResponse;
+
+    @ApiModelProperty({
+        description: "Booking complaint response",
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: BookingComplaintResponseResponse,
+    })
+    bookingComplaintResponse!: Array<BookingComplaintResponseResponse>;
 }
