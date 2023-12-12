@@ -409,6 +409,7 @@ export class ProviderRepository extends BasePrismaRepository {
     async getListProviderHaveListServiceAttributeByProviderIds(
         providerIds: string[]
     ) {
+        if (!providerIds.length) return {};
         let idsWhere = "";
         providerIds.forEach((id, index) => {
             idsWhere += `'${id}' ${

@@ -46,6 +46,7 @@ import { StatisticService } from "./api/v1/statistic.service";
 import { FollowService } from "./api/v1/follow.service";
 import { NodemailerService } from "./common/nodemailer.service";
 import { BookingComplaintService } from "./api/v1/bookingComplaint.service";
+import { BookingComplaintResponseService } from "./api/v1/bookingComplaintResponse.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -94,6 +95,7 @@ const statisticService = new StatisticService();
 const followService = new FollowService();
 const nodemailerService = new NodemailerService();
 const bookingComplaintService = new BookingComplaintService();
+const bookingComplaintResponseService = new BookingComplaintResponseService();
 
 export {
     scheduleService,
@@ -143,4 +145,5 @@ export {
     statisticService,
     followService,
     bookingComplaintService,
+    bookingComplaintResponseService,
 };

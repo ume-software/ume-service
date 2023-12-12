@@ -509,4 +509,12 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a booker tries to complaint a booking when the time limit has expired, resulting in a 400 Bad Request status.",
     },
+    THE_DEADLINE_TO_RESPOND_TO_THE_COMPLAINT_IS_OVERDUE: {
+        type: "booking_complaint_exception",
+        message: "The deadline to respond to the complaint is overdue.",
+        codeNumber: 21401,
+        statusCode: 400,
+        description:
+            "This error occurs when a booker tries to complaint response a booking when the time limit has expired, resulting in a 400 Bad Request status.",
+    },
 };
