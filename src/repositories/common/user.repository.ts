@@ -121,12 +121,12 @@ export class UserRepository extends BasePrismaRepository {
                         },
                         providerServiceAttributes: {
                             include: {
+                                serviceAttribute: true,
                                 providerServiceAttributeValues: {
                                     include: {
                                         serviceAttributeValue: true,
                                     },
                                 },
-                                providerService: true,
                             },
                         },
                     },
