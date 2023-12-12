@@ -291,7 +291,7 @@ export class AdminManageStatisticController extends BaseController {
     })
     async adminGetTotalDepositWithdrawal(_req: Request, res: Response) {
         const data = await this.service.adminGetTotalDepositWithdrawal();
-        this.onSuccess(res, { data });
+        this.onSuccess(res, data);
     }
 
     @ApiOperationGet({
@@ -323,7 +323,7 @@ export class AdminManageStatisticController extends BaseController {
             unit as EIntervalUnit,
             gapUnit as EIntervalUnit
         );
-        this.onSuccess(res, data);
+        this.onSuccess(res, { data });
     }
 
     @ApiOperationGet({
