@@ -1,4 +1,5 @@
 import {
+    AdminGetTotalDepositWithdrawalResponse,
     AdminGetTotalUserResponse,
     BaseSingleChartStatisticResponse,
     BaseSingleChartTimeStatisticResponse,
@@ -279,7 +280,9 @@ export class AdminManageStatisticController extends BaseController {
             200: {
                 content: {
                     [SwaggerDefinitionConstant.Produce.JSON]: {
-                        schema: { model: BaseSingleChartStatisticResponse },
+                        schema: {
+                            model: AdminGetTotalDepositWithdrawalResponse,
+                        },
                     },
                 },
                 description: "Admin get total deposit and withdrawal success",

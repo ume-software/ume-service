@@ -44,13 +44,13 @@ export class CreateBookingComplaintRequest {
 
     @ApiModelProperty({
         description: "Attachments",
-        required: true,
+        required: false,
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: AttachmentRequest,
     })
     @IsArray()
     @IsObject({ each: true })
-    attachments!: Array<AttachmentRequest>;
+    attachments?: Array<AttachmentRequest>;
 
     constructor(data: CreateBookingComplaintRequest) {
         if (data) {

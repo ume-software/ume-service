@@ -460,6 +460,7 @@ model BookingComplaint {
   complaintStatus           BookingComplaintStatus     @map("complaint_status")
   complaintType             BookingComplaintType       @map("complaint_type")
   attachments               Json[]                     @default([]) @map("attachments")
+  isSendedToProvider        Boolean                    @default(false) @map("is_sended_to_provider")
   bookingComplaintResponses BookingComplaintResponse[]
 
   @@map("booking_complaint")

@@ -36,7 +36,7 @@ export class BookingComplaintResponseController extends BaseController {
     }
     @ApiOperationPost({
         path: "",
-        operationId: "createBookingComplaint",
+        operationId: "providerCreateBookingComplaintResponse",
         security: {
             bearerAuth: [],
         },
