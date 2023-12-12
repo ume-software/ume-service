@@ -323,7 +323,7 @@ export class AdminManageStatisticController extends BaseController {
             unit as EIntervalUnit,
             gapUnit as EIntervalUnit
         );
-        this.onSuccess(res, { data });
+        this.onSuccess(res, data);
     }
 
     @ApiOperationGet({
