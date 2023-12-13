@@ -67,7 +67,7 @@ export class BookingComplaintService extends BasePrismaService<
         if (
             moment(bookingHistory.acceptedAt)
                 .add(12 + bookingHistory.bookingPeriod, "hours")
-                .toDate() > nowDate
+                .toDate() < nowDate
         ) {
             throw errorService.badRequest(
                 ERROR_MESSAGE.THE_TIME_FOR_COMPLAINT_THIS_BOOKING_HAS_EXPIRED
