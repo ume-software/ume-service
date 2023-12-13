@@ -122,7 +122,7 @@ export class DepositRequestRepository extends BasePrismaRepository {
             SELECT date_trunc('${gapUnit}', CURRENT_DATE - INTERVAL '${interval}' + (n || ' ${gapUnit}')::interval) AS time
             FROM generate_series(0, ${generateSeries}) n
         )
-        SELECT COUNT(dr.created_at)::int AS value, sd.time AS time
+        SELECT SUM(dr.amount_money)::int AS value, sd.time AS time
         FROM statistic_deposit sd
         LEFT JOIN deposit_request dr ON date_trunc('${gapUnit}', dr.created_at) = sd.time
         WHERE dr.status = '${DepositRequestStatus.APPROVED}'

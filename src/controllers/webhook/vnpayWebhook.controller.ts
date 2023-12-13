@@ -139,8 +139,8 @@ export class VNPayWebhookController extends BaseController {
                     {
                         status:
                             vnp_Params["vnp_ResponseCode"] == "07"
-                                ? DepositRequestStatus.APPROVED
-                                : DepositRequestStatus.REJECTED,
+                                ? DepositRequestStatus.REJECTED
+                                : DepositRequestStatus.APPROVED,
                     },
                     {
                         where: {

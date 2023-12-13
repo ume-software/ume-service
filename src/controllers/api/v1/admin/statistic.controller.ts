@@ -202,7 +202,7 @@ export class AdminManageStatisticController extends BaseController {
             bearerAuth: [],
         },
         parameters: {
-            path: {
+            query: {
                 top: {
                     required: true,
                     schema: {
@@ -226,7 +226,7 @@ export class AdminManageStatisticController extends BaseController {
         },
     })
     async adminGetMostProviderServicesStatistics(req: Request, res: Response) {
-        let { top } = req.params;
+        let { top } = req.query;
         if (!top) top = "10";
         const data = await this.service.getMostProviderServicesStatistics(+top);
         this.onSuccess(res, { data });
@@ -239,7 +239,7 @@ export class AdminManageStatisticController extends BaseController {
             bearerAuth: [],
         },
         parameters: {
-            path: {
+            query: {
                 top: {
                     required: true,
                     schema: {
@@ -263,8 +263,9 @@ export class AdminManageStatisticController extends BaseController {
         },
     })
     async adminGetMostBookingServicesStatistics(req: Request, res: Response) {
-        let { top } = req.params;
+        let { top } = req.query;
         if (!top) top = "10";
+        console.log(top);
         const data = await this.service.getMostBookingServicesStatistics(+top);
         this.onSuccess(res, { data });
     }
