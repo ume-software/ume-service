@@ -1,3 +1,4 @@
+import { AdminHandleBookingComplaintRequest } from "@/common/requests";
 import { BookingComplaintPagingResponse } from "@/common/responses";
 import { BookingComplaintResponseResponse } from "@/common/responses/bookingComplaint/bookingComplaintResponse.response";
 import {
@@ -131,6 +132,13 @@ export class AdminManageBookingComplaintController extends BaseController {
         },
         description: "Admin get booking complaint history",
         summary: "Admin get booking complaint history",
+        requestBody: {
+            content: {
+                [SwaggerDefinitionConstant.Produce.JSON]: {
+                    schema: { model: AdminHandleBookingComplaintRequest },
+                },
+            },
+        },
         responses: {
             200: {
                 content: {
@@ -144,10 +152,12 @@ export class AdminManageBookingComplaintController extends BaseController {
     })
     async adminHandleBookingComplaintHistoryById(req: Request, res: Response) {
         const { id } = req.params;
-        const queryInfoPrisma = req.queryInfoPrisma || {};
-        if (!queryInfoPrisma.where) queryInfoPrisma.where = {};
-        if (!queryInfoPrisma.where.id) queryInfoPrisma.where.id = id;
-        const result = await this.service.findOne(queryInfoPrisma);
+        const adminHandleBookingComplaintRequest =
+            new AdminHandleBookingComplaintRequest({
+                ...req.body,
+                id,
+            });
+        const result = await this.service.adminHandleBookingComplaintHistory(adminHandleBookingComplaintRequest);
         this.onSuccess(res, result);
     }
 }

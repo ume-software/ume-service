@@ -897,26 +897,19 @@ enum BookingComplaintStatus {
   /// Khiếu nại đang được xử lý
   PROCESSING
 
-  /// Khiếu nại đã được giải quyết
-  RESOLVED
-
   /// Khiếu nại bị từ chối
   REJECTED
-
-  /// Khiếu nại cần thêm thông tin để xử lý
-  NEEDS_MORE_INFO
 
   /// Khiếu nại đang chờ phản hồi từ nhà cung cấp dịch vụ
   AWAITING_PROVIDER_RESPONSE
 
   /// Khiếu nại cần được xác minh thông tin trước khi xử lý
-  NEEDS_VERIFICATION
+  PROCESSING_RESPONSE_FROM_PROVIDER
 
-  /// Khiếu nại đã vượt quá thời gian xử lý
-  PROCESSING_TIMEOUT
+  REJECTED_RESPONSE_FROM_PROVIDER
 
   /// Khiếu nại đã được giải quyết và đang chờ xác nhận từ người dùng
-  RESOLVED_AWAITING_CONFIRMATION
+  RESOLVED
 
   /// Khiếu nại không thể giải quyết
   UNRESOLVABLE

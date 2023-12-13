@@ -6,6 +6,7 @@ import {
 } from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { AttachmentRequest } from "./attachments.request";
+import { BookingComplaintResponseType } from "@prisma/client";
 
 @ApiModel({
     description: "Create booking complaint request",
@@ -40,7 +41,7 @@ export class CreateBookingComplaintResponseRequest {
     @IsArray()
     @IsObject({ each: true })
     attachments?: Array<AttachmentRequest>;
-
+    bookingComplaintResponseType!: BookingComplaintResponseType;
     constructor(data: CreateBookingComplaintResponseRequest) {
         if (data) {
             Object.assign(
