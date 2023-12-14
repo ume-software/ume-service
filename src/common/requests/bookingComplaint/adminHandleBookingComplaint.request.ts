@@ -1,5 +1,9 @@
-import { IsEnum, IsObject } from "class-validator";
-import { ApiModel, ApiModelProperty } from "express-swagger-typescript";
+import { IsArray, IsEnum } from "class-validator";
+import {
+    ApiModel,
+    ApiModelProperty,
+    SwaggerDefinitionConstant,
+} from "express-swagger-typescript";
 import { mappingDataRequest } from "../base";
 import { BookingComplaintStatus } from "@prisma/client";
 import { CreateBookingComplaintResponseRequest } from "./createBookingComplaintResponse.request";
@@ -8,7 +12,6 @@ import { CreateBookingComplaintResponseRequest } from "./createBookingComplaintR
     description: "Create booking complaint request",
 })
 export class AdminHandleBookingComplaintRequest {
-    
     id!: string;
     @ApiModelProperty({
         description: "Booking complaint status",
@@ -21,10 +24,11 @@ export class AdminHandleBookingComplaintRequest {
     @ApiModelProperty({
         description: "booking complaint response request",
         required: true,
-        model: CreateBookingComplaintResponseRequest,
+        type: SwaggerDefinitionConstant.ARRAY,
+        itemType: CreateBookingComplaintResponseRequest,
     })
-    @IsObject()
-    bookingComplaintResponseRequest?: CreateBookingComplaintResponseRequest;
+    @IsArray()
+    bookingComplaintResponseRequests?: Array<CreateBookingComplaintResponseRequest>;
 
     constructor(data: AdminHandleBookingComplaintRequest) {
         if (data) {
@@ -33,7 +37,7 @@ export class AdminHandleBookingComplaintRequest {
                 mappingDataRequest(AdminHandleBookingComplaintRequest, data, [
                     "id",
                     "bookingComplaintStatus",
-                    "bookingComplaintResponseRequest",
+                    "bookingComplaintResponseRequests",
                 ])
             );
         }

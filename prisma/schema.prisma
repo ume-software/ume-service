@@ -892,27 +892,18 @@ enum ReportReasonType {
 
 enum BookingComplaintStatus {
   /// Khiếu nại đang chờ xử lý
-  PENDING_PROCESSING
-
-  /// Khiếu nại đang được xử lý
-  PROCESSING
+  PENDING_PROCESSING // Mới init   => (1) : Từ chối chối"..lý do" [REJECTED]   (2): Gửi thông báo tới provider "...lý do (option)" [AWAITING_PROVIDER_RESPONSE]
 
   /// Khiếu nại bị từ chối
-  REJECTED
+  REJECTED // END
 
   /// Khiếu nại đang chờ phản hồi từ nhà cung cấp dịch vụ
-  AWAITING_PROVIDER_RESPONSE
-
-  /// Khiếu nại cần được xác minh thông tin trước khi xử lý
-  PROCESSING_RESPONSE_FROM_PROVIDER
-
-  REJECTED_RESPONSE_FROM_PROVIDER
-
+  AWAITING_PROVIDER_RESPONSE // Sau khi phản hồi => (1) : Từ chối phản hồi "...Lý do"[REJECTED_RESPONSE_FROM_PROVIDER]   (2)
+  // 
+  PROVIDER_RESPONDED
+  responded
   /// Khiếu nại đã được giải quyết và đang chờ xác nhận từ người dùng
   RESOLVED
-
-  /// Khiếu nại không thể giải quyết
-  UNRESOLVABLE
 }
 
 enum BookingComplaintType {

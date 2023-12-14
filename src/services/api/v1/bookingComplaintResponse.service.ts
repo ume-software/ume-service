@@ -97,8 +97,7 @@ export class BookingComplaintResponseService extends BasePrismaService<
             attachments: attachments as any,
         });
         await bookingComplaintRepository.updateById(bookingComplaint.id, {
-            complaintStatus:
-                BookingComplaintStatus.PROCESSING_RESPONSE_FROM_PROVIDER,
+            complaintStatus: BookingComplaintStatus.PROVIDER_RESPONDED,
         });
         return result;
     }

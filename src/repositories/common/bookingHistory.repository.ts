@@ -91,11 +91,11 @@ export class BookingHistoryRepository extends BasePrismaRepository {
 
     async updateById(
         id: string,
-        bookingCostUpdateInput: Prisma.BookingCostUpdateInput,
+        bookingHistoryUpdateInput: Prisma.BookingHistoryUpdateInput,
         tx: PrismaTransaction = this.prisma
     ): Promise<BookingHistoryIncludeBookerAndProviderServiceIncludeProvider> {
         return await tx.bookingHistory.update({
-            data: bookingCostUpdateInput,
+            data: bookingHistoryUpdateInput,
             where: { id },
             include: {
                 booker: true,

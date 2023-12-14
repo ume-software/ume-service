@@ -1,4 +1,4 @@
-import { IsArray, IsObject, IsString, IsUUID } from "class-validator";
+import { IsArray, IsEnum, IsObject, IsString } from "class-validator";
 import {
     ApiModel,
     ApiModelProperty,
@@ -13,13 +13,6 @@ import { BookingComplaintResponseType } from "@prisma/client";
 })
 export class CreateBookingComplaintResponseRequest {
     requesterId!: string;
-    @ApiModelProperty({
-        description: "Booking Id",
-        required: true,
-        example: "42ac81c2-1815-45f7-b598-412487161e1f",
-        type: SwaggerDefinitionConstant.STRING,
-    })
-    @IsUUID()
     bookingComplaintId!: string;
 
     @ApiModelProperty({
@@ -41,6 +34,18 @@ export class CreateBookingComplaintResponseRequest {
     @IsArray()
     @IsObject({ each: true })
     attachments?: Array<AttachmentRequest>;
+
+    @ApiModelProperty({
+        description: "Booking Complaint responseType",
+        required: true,
+        example: BookingComplaintResponseType.ADMIN_SEND_TO_BOOKER,
+        type: SwaggerDefinitionConstant.STRING,
+        enum: [
+            BookingComplaintResponseType.ADMIN_SEND_TO_BOOKER,
+            BookingComplaintResponseType.ADMIN_SEND_TO_PROVIDER,
+        ],
+    })
+    @IsEnum(BookingComplaintResponseType)
     bookingComplaintResponseType!: BookingComplaintResponseType;
     constructor(data: CreateBookingComplaintResponseRequest) {
         if (data) {
@@ -54,6 +59,7 @@ export class CreateBookingComplaintResponseRequest {
                         "bookingComplaintId",
                         "responseMessage",
                         "attachments",
+                        "bookingComplaintResponseType",
                     ]
                 )
             );

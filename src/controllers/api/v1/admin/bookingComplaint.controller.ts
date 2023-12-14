@@ -114,7 +114,7 @@ export class AdminManageBookingComplaintController extends BaseController {
     }
 
     @ApiOperationPost({
-        path: "/{id}",
+        path: "/{id}/handle",
         operationId: "adminHandleBookingComplaintHistoryById",
         security: {
             bearerAuth: [],
