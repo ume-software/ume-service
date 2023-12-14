@@ -128,7 +128,6 @@ export class AdminManageBookingComplaintController extends BaseController {
                     },
                 },
             },
-            query: queryParameters,
         },
         description: "Admin get booking complaint history",
         summary: "Admin get booking complaint history",

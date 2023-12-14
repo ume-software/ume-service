@@ -79,5 +79,5 @@ export class BookingComplaintResponse {
         type: SwaggerDefinitionConstant.ARRAY,
         itemType: BookingComplaintResponseResponse,
     })
-    bookingComplaintResponse!: Array<BookingComplaintResponseResponse>;
+    bookingComplaintResponses!: Array<BookingComplaintResponseResponse>;
 }
