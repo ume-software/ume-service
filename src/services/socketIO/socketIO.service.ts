@@ -14,7 +14,9 @@ export const SOCKET_EVENTS = {
 
     // EMIT
     USER_BOOKING_PROVIDER: "USER_BOOKING_PROVIDER",
+    USER_HANDLED_BOOKING: "PROVIDER_HANDLED_BOOKING",
     PROVIDER_HANDLED_BOOKING: "PROVIDER_HANDLED_BOOKING",
+    ADMIN_HANDLE_KYC: "ADMIN_HANDLE_KYC",
 };
 
 export const SOCKET_EXPRESS = "socketIO";
@@ -140,5 +142,13 @@ export class SocketService {
     public emitProviderHandledBooking(socket: Socket, data: any) {
         console.log("PROVIDER_HANDLED_BOOKING ===> ", data);
         socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data);
+    }
+    public emitUserHandledBooking(socket: Socket, data: any) {
+        console.log("PROVIDER_HANDLED_BOOKING ===> ", data);
+        socket.emit(SOCKET_EVENTS.PROVIDER_HANDLED_BOOKING, data);
+    }
+    public emitAdminHandledKYC(socket: Socket, data: any) {
+        console.log("ADMIN_HANDLE_KYC ===> ", data);
+        socket.emit(SOCKET_EVENTS.ADMIN_HANDLE_KYC, data);
     }
 }

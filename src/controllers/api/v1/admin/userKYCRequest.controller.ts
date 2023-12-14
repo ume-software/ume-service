@@ -11,6 +11,7 @@ import {
 import { EAccountType } from "@/enums/accountType.enum";
 import { errorService, userService } from "@/services";
 import { UserService } from "@/services/api/v1/user.service";
+import { socketService } from "@/services/socketIO";
 import { queryParameters } from "@/swagger/parameters/query.parameter";
 import { UserKYCStatus } from "@prisma/client";
 import {
@@ -109,6 +110,12 @@ export class AdminManageUserKYCRequestController extends BaseController {
         const result = await this.service.adminHandleUserKYCRequest(
             adminHandleUserKYCRequestRequest
         );
+        const socketIO = this.socketIO(req);
+        if (socketIO.connections && result.userId) {
+            const socket = socketIO.connections[result.userId];
+            if (socket)
+                socketService.emitProviderHandledBooking(socket, result);
+        }
         this.onSuccess(res, result);
     }
 
@@ -165,6 +172,12 @@ export class AdminManageUserKYCRequestController extends BaseController {
         const result = await this.service.adminHandleUserKYCRequest(
             adminHandleUserKYCRequestRequest
         );
+        const socketIO = this.socketIO(req);
+        if (socketIO.connections && result.userId) {
+            const socket = socketIO.connections[result.userId];
+            if (socket)
+                socketService.emitProviderHandledBooking(socket, result);
+        }
         this.onSuccess(res, result);
     }
 

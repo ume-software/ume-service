@@ -571,7 +571,7 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
                     case "BOOKER": {
                         const socket = socketIO.connections[providerId];
                         if (socket) {
-                            socketService.emitProviderHandledBooking(
+                            socketService.emitUserHandledBooking(
                                 socket,
                                 bookingHistory
                             );

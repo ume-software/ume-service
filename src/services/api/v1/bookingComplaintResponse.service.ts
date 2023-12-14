@@ -1,6 +1,9 @@
 import { CreateBookingComplaintResponseRequest } from "@/common/requests";
 import prisma from "@/models/base.prisma";
-import { bookingComplaintResponseRepository } from "@/repositories";
+import {
+    bookingComplaintRepository,
+    bookingComplaintResponseRepository,
+} from "@/repositories";
 import { errorService } from "@/services";
 import {
     BasePrismaService,
@@ -75,14 +78,14 @@ export class BookingComplaintResponseService extends BasePrismaService<
             throw errorService.badRequest();
         }
         if (
-            moment(bookingComplaint.updatedAt).add(7, "days").toDate() >
+            moment(bookingComplaint.updatedAt).add(7, "days").toDate() <
             new Date()
         ) {
             throw errorService.badRequest(
                 ERROR_MESSAGE.THE_DEADLINE_TO_RESPOND_TO_THE_COMPLAINT_IS_OVERDUE
             );
         }
-        return await this.repository.create({
+        const result = await this.repository.create({
             bookingComplaint: {
                 connect: {
                     id: bookingComplaintId,
@@ -93,6 +96,11 @@ export class BookingComplaintResponseService extends BasePrismaService<
             responseMessage: responseMessage,
             attachments: attachments as any,
         });
+        await bookingComplaintRepository.updateById(bookingComplaint.id, {
+            complaintStatus:
+                BookingComplaintStatus.PROCESSING_RESPONSE_FROM_PROVIDER,
+        });
+        return result;
     }
     async findAndCountAll(query?: ICrudOptionPrisma) {
         return await this.repository.findAndCountAll(query);
