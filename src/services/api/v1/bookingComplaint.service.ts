@@ -209,22 +209,22 @@ export class BookingComplaintService extends BasePrismaService<
                                     break;
                                 }
                             }
-
-                            sendEmails.push({
-                                to: booker.email!,
-                                description: nodemailerService.contentMail(
-                                    booker.name!,
-                                    `<p style="color: white;">${content}
+                            if (booker.isAllowNotificationToEmail)
+                                sendEmails.push({
+                                    to: booker.email!,
+                                    description: nodemailerService.contentMail(
+                                        booker.name!,
+                                        `<p style="color: white;">${content}
                                     .</p >${
                                         "content"
                                             ? `<p style="color: white;">Lời nhắn : ${bookingComplaintResponseRequest.responseMessage}</p>`
                                             : ""
                                     }`
-                                ),
-                                preview: `UME - ${content}`,
-                                subject:
-                                    "UME - Có một thông báo từ quản trị viên về khiếu nại của bạn",
-                            });
+                                    ),
+                                    preview: `UME - ${content}`,
+                                    subject:
+                                        "UME - Có một thông báo từ quản trị viên về khiếu nại của bạn",
+                                });
                             break;
                         }
                         case BookingComplaintResponseType.ADMIN_SEND_TO_PROVIDER: {
@@ -242,21 +242,22 @@ export class BookingComplaintService extends BasePrismaService<
                                     break;
                                 }
                             }
-                            sendEmails.push({
-                                to: provider.email!,
-                                description: nodemailerService.contentMail(
-                                    provider.name!,
-                                    `<p style="color: white;">${content}
+                            if (provider.isAllowNotificationToEmail)
+                                sendEmails.push({
+                                    to: provider.email!,
+                                    description: nodemailerService.contentMail(
+                                        provider.name!,
+                                        `<p style="color: white;">${content}
                                     .</p >${
                                         "content"
                                             ? `<p style="color: white;">Lời nhắn :  ${bookingComplaintResponseRequest.responseMessage}</p>`
                                             : ""
                                     }`
-                                ),
-                                preview: `UME - ${content}`,
-                                subject:
-                                    "UME - Có một thông báo từ quản trị viên về việc bạn bị ánh",
-                            });
+                                    ),
+                                    preview: `UME - ${content}`,
+                                    subject:
+                                        "UME - Có một thông báo từ quản trị viên về việc bạn bị ánh",
+                                });
                             break;
                         }
                     }

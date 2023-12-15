@@ -230,7 +230,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
             )
             AND accepted_at  IS NOT NULL
             AND (
-                    (status IN ('PROVIDER_FINISH_SOON','USER_FINISH_SOON') AND updated_at < NOW() - INTERVAL '1 hour' * 24) OR
+                    (status IN ('PROVIDER_FINISH_SOON','USER_FINISH_SOON') AND updated_at > NOW() - INTERVAL '1 hour' * 24) OR
                     (status = 'PROVIDER_ACCEPT' AND accepted_at > NOW() - INTERVAL '1 hour' * (-booking_period + 24))
                 )
             AND NOT EXISTS (

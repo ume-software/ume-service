@@ -552,7 +552,7 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 },
                 tx
             );
-            if (user.email) {
+            if (user.email && user.isAllowNotificationToEmail) {
                 nodemailerService.sendEmail({
                     to: user.email,
                     description: nodemailerService.contentMail(
