@@ -103,7 +103,10 @@ export class BookingComplaintController extends BaseController {
                 where: {
                     deletedAt: null,
                     bookingComplaintResponseType: {
-                        in: [BookingComplaintResponseType.ADMIN_SEND_TO_BOOKER],
+                        in: [
+                            BookingComplaintResponseType.ADMIN_SEND_TO_BOOKER,
+                            BookingComplaintResponseType.PROVIDER_SEND_TO_ADMIN,
+                        ],
                     },
                 },
                 orderBy: {
