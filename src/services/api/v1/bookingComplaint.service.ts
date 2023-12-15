@@ -215,7 +215,7 @@ export class BookingComplaintService extends BasePrismaService<
                                 description: nodemailerService.contentMail(
                                     booker.name!,
                                     `<p style="color: white;">${content}
-                                    }.</p >${
+                                    .</p >${
                                         "content"
                                             ? `<p style="color: white;">Lời nhắn : ${bookingComplaintResponseRequest.responseMessage}</p>`
                                             : ""
@@ -247,7 +247,7 @@ export class BookingComplaintService extends BasePrismaService<
                                 description: nodemailerService.contentMail(
                                     provider.name!,
                                     `<p style="color: white;">${content}
-                                    }.</p >${
+                                    .</p >${
                                         "content"
                                             ? `<p style="color: white;">Lời nhắn :  ${bookingComplaintResponseRequest.responseMessage}</p>`
                                             : ""
