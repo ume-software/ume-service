@@ -312,6 +312,20 @@ export class UserService extends BasePrismaService<typeof userRepository> {
             "where.booking.providerService.providerId",
             user.id
         );
+        _.set(queryInfoPrisma, "include.booking", {
+            select: {
+                id: true,
+                bookerId: true,
+                booker: {
+                    select: {
+                        id: true,
+                        name: true,
+                        avatarUrl: true,
+                        slug: true,
+                    },
+                },
+            },
+        });
 
         return await feedbackRepository.findAndCountAll(queryInfoPrisma);
     }
