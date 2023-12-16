@@ -319,9 +319,11 @@ export class UserService extends BasePrismaService<typeof userRepository> {
                 booker: {
                     select: {
                         id: true,
-                        name: true,
                         avatarUrl: true,
+                        dob: true,
+                        name: true,
                         slug: true,
+                        gender: true,
                     },
                 },
             },
