@@ -97,12 +97,18 @@ export class BalanceService extends BasePrismaService<
             await withdrawalRequestRepository.getTotalBalanceFrozenByRequesterId(
                 user.id
             );
+        const getTotalBalanceFrozenBooking =
+            await withdrawalRequestRepository.getTotalBalanceFrozenBooking(
+                user.id
+            );
+
         return {
             userId: user.id,
             totalBalanceAvailable:
                 totalBalance -
                 getTotalBalanceFrozenFromBooking -
-                getTotalBalanceFrozenFromWithdrawal,
+                getTotalBalanceFrozenFromWithdrawal -
+                getTotalBalanceFrozenBooking,
             totalBalance,
         };
     }

@@ -2,6 +2,7 @@ import { AdminHandleBookingComplaintRequest } from "@/common/requests";
 import { CreateBookingComplaintRequest } from "@/common/requests/bookingComplaint/createBookingComplaint.request";
 import prisma from "@/models/base.prisma";
 import {
+    balanceHistoryRepository,
     bookingComplaintRepository,
     bookingComplaintResponseRepository,
     bookingHistoryRepository,
@@ -293,7 +294,11 @@ export class BookingComplaintService extends BasePrismaService<
                     tx
                 );
             }
-
+            if (bookingComplaintStatus == BookingComplaintStatus.RESOLVED) {
+                await balanceHistoryRepository.deleteMany({
+                    bookingId: bookingHistory.id,
+                });
+            }
             for (const sendEmail of sendEmails) {
                 nodemailerService.sendEmail(sendEmail);
             }

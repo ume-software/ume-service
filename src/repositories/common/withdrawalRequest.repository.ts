@@ -133,7 +133,26 @@ export class WithdrawalRequestRepository extends BasePrismaRepository {
             )._sum.amountBalance || 0
         );
     }
-
+    async getTotalBalanceFrozenBooking(requesterId: string): Promise<number> {
+        return (
+            (
+                (await this.prisma.$queryRawUnsafe(`
+        SELECT SUM("provider_received_balance")::int as sum
+        FROM 
+        (SELECT "public"."booking_history"."provider_received_balance" 
+            FROM "public"."booking_history"
+            WHERE (("public"."booking_history"."is_processing_complaint" = true OR "public"."booking_history"."accepted_at"  > NOW() - INTERVAL '1 hour' * (-booking_period + 12)) 
+            AND ("public"."booking_history"."id") 
+            IN (SELECT "t0"."id"
+            FROM "public"."booking_history" AS "t0" 
+            INNER JOIN "public"."provider_service" AS "j0"
+            ON ("j0"."id") = ("t0"."provider_service_id") 
+            WHERE ("j0"."provider_id" = '${requesterId}' AND "t0"."id" IS NOT NULL))
+        )) AS "sub"
+        `)) as any
+            )[0].sum || 0
+        );
+    }
     async amountMoneyWithdrawalStatistics(
         time: number = 12,
         unit: EIntervalUnit = EIntervalUnit.months,
