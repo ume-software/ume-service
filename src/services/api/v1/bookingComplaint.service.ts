@@ -299,21 +299,17 @@ export class BookingComplaintService extends BasePrismaService<
                 );
             }
             if (bookingComplaintStatus == BookingComplaintStatus.RESOLVED) {
-                const balanceHistories =
-                    await balanceHistoryRepository.findMany(
-                        {
-                            where: {
-                                bookingId: bookingHistory.id,
-                                balanceType: {
-                                    in: [
-                                        BalanceType.GET_BOOKING,
-                                        BalanceType.SPEND_BOOKING,
-                                    ],
-                                },
-                            },
+                const balanceHistories = await tx.balanceHistory.findMany({
+                    where: {
+                        bookingId: bookingHistory.id,
+                        balanceType: {
+                            in: [
+                                BalanceType.GET_BOOKING,
+                                BalanceType.SPEND_BOOKING,
+                            ],
                         },
-                        tx
-                    );
+                    },
+                });
                 for (const balanceHistory of balanceHistories) {
                     balanceHistoryRepository.create({
                         user: {
