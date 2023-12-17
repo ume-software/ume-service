@@ -101,7 +101,11 @@ export class BalanceService extends BasePrismaService<
             await withdrawalRequestRepository.getTotalBalanceFrozenBooking(
                 user.id
             );
-
+        console.log({
+            getTotalBalanceFrozenFromBooking,
+            getTotalBalanceFrozenFromWithdrawal,
+            getTotalBalanceFrozenBooking,
+        });
         return {
             userId: user.id,
             totalBalanceAvailable:

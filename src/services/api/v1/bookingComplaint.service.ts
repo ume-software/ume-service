@@ -17,6 +17,7 @@ import {
 } from "@/services/base/basePrisma.service";
 import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import {
+    BalanceType,
     BookingComplaintResponseType,
     BookingComplaintStatus,
     BookingStatus,
@@ -290,14 +291,49 @@ export class BookingComplaintService extends BasePrismaService<
                     bookingHistory.id,
                     {
                         isProcessingComplaint: false,
+                        isRefund:
+                            bookingComplaintStatus ==
+                            BookingComplaintStatus.RESOLVED,
                     },
                     tx
                 );
             }
             if (bookingComplaintStatus == BookingComplaintStatus.RESOLVED) {
-                await balanceHistoryRepository.deleteMany({
-                    bookingId: bookingHistory.id,
-                });
+                const balanceHistories =
+                    await balanceHistoryRepository.findMany(
+                        {
+                            where: {
+                                bookingId: bookingHistory.id,
+                                balanceType: {
+                                    in: [
+                                        BalanceType.GET_BOOKING,
+                                        BalanceType.SPEND_BOOKING,
+                                    ],
+                                },
+                            },
+                        },
+                        tx
+                    );
+                for (const balanceHistory of balanceHistories) {
+                    balanceHistoryRepository.create({
+                        user: {
+                            connect: {
+                                id: balanceHistory.userId,
+                            },
+                        },
+                        booking: {
+                            connect: {
+                                id: bookingHistory.id,
+                            },
+                        },
+                        amount: -(balanceHistory.amount || 0),
+                        balanceType:
+                            balanceHistory.balanceType ==
+                            BalanceType.GET_BOOKING
+                                ? BalanceType.PROVIDER_REFUND
+                                : BalanceType.REFUND_TO_USER,
+                    });
+                }
             }
             for (const sendEmail of sendEmails) {
                 nodemailerService.sendEmail(sendEmail);

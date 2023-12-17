@@ -441,6 +441,7 @@ model BookingHistory {
   appliedVoucherIds       String[]                 @default([]) @map("applied_voucher_ids")
   providerReceivedBalance Float?                   @map("provider_received_balance")
   isProcessingComplaint   Boolean                  @default(false) @map("is_processing_complaint")
+  isRefund                Boolean                  @default(false) @map("is_refund")
   feedback                Feedback?
   voucherRedeemedBookings VoucherRedeemedBooking[]
   balanceHistories        BalanceHistory[]
@@ -739,6 +740,8 @@ enum BalanceType {
   GET_MISSION
   WITHDRAWAL
   ADMIN
+  REFUND_TO_USER
+  PROVIDER_REFUND
 }
 
 enum LoginType {

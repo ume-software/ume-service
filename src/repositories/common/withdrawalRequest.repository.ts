@@ -142,7 +142,7 @@ export class WithdrawalRequestRepository extends BasePrismaRepository {
         FROM 
         (SELECT "public"."booking_history"."provider_received_balance" 
             FROM "public"."booking_history"
-            WHERE (("public"."booking_history"."is_processing_complaint" = true OR "public"."booking_history"."accepted_at"  > NOW() - INTERVAL '1 hour' * (-booking_period + 12)) 
+            WHERE (("public"."booking_history"."is_processing_complaint" = true OR ("public"."booking_history"."accepted_at"  > NOW() - INTERVAL '1 hour' * (-booking_period + 12) AND "public"."booking_history"."is_refund" = false)) 
             AND ("public"."booking_history"."id") 
             IN (SELECT "t0"."id"
             FROM "public"."booking_history" AS "t0" 
