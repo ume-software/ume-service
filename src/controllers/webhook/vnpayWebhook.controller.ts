@@ -113,6 +113,7 @@ export class VNPayWebhookController extends BaseController {
                 transactionCode: vnp_TxnRef,
             },
         });
+        console.log("vnp_Params ===> ", vnp_Params);
         if (
             depositRequest &&
             [
@@ -138,9 +139,9 @@ export class VNPayWebhookController extends BaseController {
                 depositRequest = await depositRequestRepository.update(
                     {
                         status:
-                            vnp_Params["vnp_ResponseCode"] == "07"
-                                ? DepositRequestStatus.REJECTED
-                                : DepositRequestStatus.APPROVED,
+                            vnp_Params["vnp_ResponseCode"] == "00"
+                                ? DepositRequestStatus.APPROVED
+                                : DepositRequestStatus.REJECTED,
                     },
                     {
                         where: {

@@ -901,7 +901,7 @@ enum BookingComplaintStatus {
   AWAITING_PROVIDER_RESPONSE // Sau khi phản hồi => (1) : Từ chối phản hồi "...Lý do"[REJECTED_RESPONSE_FROM_PROVIDER]   (2)
   // 
   PROVIDER_RESPONDED
-  responded
+
   /// Khiếu nại đã được giải quyết và đang chờ xác nhận từ người dùng
   RESOLVED
 }
