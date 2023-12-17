@@ -125,6 +125,7 @@ export class WithdrawalRequestRepository extends BasePrismaRepository {
                     where: {
                         requesterId,
                         status: WithdrawalRequestStatus.PENDING,
+                        deletedAt: null,
                     },
                     _sum: {
                         amountBalance: true,

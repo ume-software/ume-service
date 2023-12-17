@@ -24,6 +24,7 @@ export class BalanceHistoryRepository extends BasePrismaRepository {
                     balanceType: {
                         in: balanceTypes,
                     },
+                    deletedAt: null,
                 },
                 _sum: {
                     amount: true,

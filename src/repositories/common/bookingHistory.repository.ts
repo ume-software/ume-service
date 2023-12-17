@@ -175,6 +175,7 @@ export class BookingHistoryRepository extends BasePrismaRepository {
                         createdAt: {
                             gte: now,
                         },
+                        deletedAt: null,
                     },
                     _sum: {
                         totalCost: true,
