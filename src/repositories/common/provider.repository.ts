@@ -436,6 +436,7 @@ export class ProviderRepository extends BasePrismaRepository {
                                 FROM provider_service_attribute_value psav
                                 JOIN service_attribute_value sav ON sav.id = psav.service_attribute_value_id
                                 WHERE psav.provider_service_attribute_id = psa.id
+                                AND psav.deleted_at IS NULL AND psa.deleted_at IS NULL
                             ),
                             ''
                         ),
