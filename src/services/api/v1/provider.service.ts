@@ -96,7 +96,13 @@ export class ProviderService extends BasePrismaService<
                                 endTimeOfDay: true,
                                 startTimeOfDay: true,
                             },
+                            where: {
+                                deletedAt: null,
+                            },
                         },
+                    },
+                    where: {
+                        deletedAt: null,
                     },
                 },
             },

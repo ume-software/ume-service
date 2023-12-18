@@ -1522,80 +1522,6 @@ const userDefault = [
 ];
 const servicesDefault = [
     {
-        url: "https://static-oss.epal.gg/data/static/v2/img10_v2_LeagueofLegends.png",
-        name: "League of Legends",
-        attributes: [
-            {
-                name: "Rank",
-                enName: "Hạng",
-                values: [
-                    {
-                        value: "Sắt",
-                        enValue: "Iron",
-                    },
-                    {
-                        value: "Đồng",
-                        enValue: "Bronze",
-                    },
-                    {
-                        value: "Bạc",
-                        enValue: "Silver",
-                    },
-                    {
-                        value: "Vàng",
-                        enValue: "Gold",
-                    },
-                    {
-                        value: "Bạch Kim",
-                        enValue: "Platinum",
-                    },
-                    {
-                        value: "Kim cương",
-                        enValue: "Diamond",
-                    },
-                    {
-                        value: "Cao thủ",
-                        enValue: "Master",
-                    },
-                    {
-                        value: "Đại cao thủ",
-                        enValue: "Grandmaster",
-                    },
-                    {
-                        value: "Thách đấu",
-                        enValue: "Challenger",
-                    },
-                ],
-            },
-            {
-                name: "Vị trí",
-                enName: "Lance",
-                values: [
-                    {
-                        value: "Hỗ trợ",
-                        enValue: "Support",
-                    },
-                    {
-                        value: "Xạ thủ",
-                        enValue: "ADC",
-                    },
-                    {
-                        value: "Đừng trên",
-                        enValue: "Top",
-                    },
-                    {
-                        value: "Đừng giữa",
-                        enValue: "Mid",
-                    },
-                    {
-                        value: "Rừng",
-                        enValue: "Jungle",
-                    },
-                ],
-            },
-        ],
-    },
-    {
         url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Valorant.png",
         name: "Valorant",
         attributes: [
@@ -1906,6 +1832,80 @@ const servicesDefault = [
     {
         url: "https://static-oss.epal.gg/data/static/v2/img10_Partyanimal.png",
         name: "Party Animals",
+    },
+    {
+        url: "https://static-oss.epal.gg/data/static/v2/img10_v2_LeagueofLegends.png",
+        name: "League of Legends",
+        attributes: [
+            {
+                name: "Rank",
+                enName: "Hạng",
+                values: [
+                    {
+                        value: "Sắt",
+                        enValue: "Iron",
+                    },
+                    {
+                        value: "Đồng",
+                        enValue: "Bronze",
+                    },
+                    {
+                        value: "Bạc",
+                        enValue: "Silver",
+                    },
+                    {
+                        value: "Vàng",
+                        enValue: "Gold",
+                    },
+                    {
+                        value: "Bạch Kim",
+                        enValue: "Platinum",
+                    },
+                    {
+                        value: "Kim cương",
+                        enValue: "Diamond",
+                    },
+                    {
+                        value: "Cao thủ",
+                        enValue: "Master",
+                    },
+                    {
+                        value: "Đại cao thủ",
+                        enValue: "Grandmaster",
+                    },
+                    {
+                        value: "Thách đấu",
+                        enValue: "Challenger",
+                    },
+                ],
+            },
+            {
+                name: "Vị trí",
+                enName: "Lance",
+                values: [
+                    {
+                        value: "Hỗ trợ",
+                        enValue: "Support",
+                    },
+                    {
+                        value: "Xạ thủ",
+                        enValue: "ADC",
+                    },
+                    {
+                        value: "Đừng trên",
+                        enValue: "Top",
+                    },
+                    {
+                        value: "Đừng giữa",
+                        enValue: "Mid",
+                    },
+                    {
+                        value: "Rừng",
+                        enValue: "Jungle",
+                    },
+                ],
+            },
+        ],
     },
 ];
 // const prisma = new PrismaClient();
