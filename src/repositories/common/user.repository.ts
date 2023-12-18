@@ -126,7 +126,13 @@ export class UserRepository extends BasePrismaRepository {
                                     include: {
                                         serviceAttributeValue: true,
                                     },
+                                    where: {
+                                        deletedAt: null,
+                                    },
                                 },
+                            },
+                            where: {
+                                deletedAt: null,
                             },
                         },
                     },
