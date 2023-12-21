@@ -50,6 +50,7 @@ export class AdminManageServiceController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.ADMIN]),
             this.route(this.adminCreateService)
         );
+
         this.router.patch(
             "/:id",
             this.accountTypeMiddlewares([EAccountType.ADMIN]),

@@ -98,6 +98,7 @@ export class ProviderServiceRepository extends BasePrismaRepository {
                 },
             },
         ];
+       
         return await tx.providerService.findFirst({
             where,
             include: {

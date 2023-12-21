@@ -74,7 +74,15 @@ export class UserService extends BasePrismaService<typeof userRepository> {
         if (!result) {
             throw errorService.error(ERROR_MESSAGE.ACCOUNT_NOT_FOUND);
         }
-
+        if (!result.isVerified) {
+            (result as any).isWaitingKYC =
+                !!(await prisma.userKYCRequest.findFirst({
+                    where: {
+                        userId: result.id,
+                        userKYCStatus: UserKYCStatus.PENDING,
+                    },
+                }));
+        }
         return utilService.exclude(result, [
             "createdAt",
             "updatedAt",

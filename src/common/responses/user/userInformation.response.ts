@@ -209,4 +209,11 @@ export class UserInformationResponse {
         type: SwaggerDefinitionConstant.BOOLEAN,
     })
     isFollowing?: boolean;
+    
+    @ApiModelProperty({
+        description: "isWaitingKYC",
+        required: false,
+        type: SwaggerDefinitionConstant.BOOLEAN,
+    })
+    isWaitingKYC?: boolean;
 }

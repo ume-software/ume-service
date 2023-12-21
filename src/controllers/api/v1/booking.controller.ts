@@ -58,6 +58,7 @@ export class BookingController extends BaseController {
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.getCurrentBookingForProvider)
         );
+
         this.router.get(
             "/current-booking-user",
             this.accountTypeMiddlewares([EAccountType.USER]),
@@ -72,6 +73,10 @@ export class BookingController extends BaseController {
             "/provider-history",
             this.accountTypeMiddlewares([EAccountType.USER]),
             this.route(this.providerGetBookingHistory)
+        );
+        this.router.get(
+            "/:slug/current-booking",
+            this.route(this.getCurrentBookingByUserSlug)
         );
         this.router.post(
             "/",
@@ -286,6 +291,42 @@ export class BookingController extends BaseController {
         const result = await this.service.findAndCountAll(queryInfoPrisma);
         this.onSuccessAsList(res, result);
     }
+
+    @ApiOperationGet({
+        path: "/{slug}/current-booking",
+        operationId: "getCurrentBookingByUserSlug",
+        description: "Get current booking by user",
+        summary: "Get current booking by user",
+        parameters: {
+            path: {
+                slug: {
+                    required: true,
+                    schema: {
+                        type: SwaggerDefinitionConstant.Parameter.Type.STRING,
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                content: {
+                    [SwaggerDefinitionConstant.Produce.JSON]: {
+                        schema: { model: BookingHistoryPagingResponse },
+                    },
+                },
+                description: "Get current booking for provider success",
+            },
+        },
+    })
+    async getCurrentBookingByUserSlug(req: Request, res: Response) {
+        const { slug } = req.params;
+        if (!slug) {
+            throw errorService.badRequest();
+        }
+        const result = await this.service.getCurrentBookingByUserSlug(slug);
+        this.onSuccessAsList(res, result);
+    }
+
     @ApiOperationPost({
         path: "",
         operationId: "createBooking",

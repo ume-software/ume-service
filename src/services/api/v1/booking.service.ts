@@ -71,6 +71,46 @@ export class BookingService extends BasePrismaService<BookingHistoryRepository> 
             count: bookingLists.length,
         };
     }
+
+    async getCurrentBookingByUserSlug(providerSlug: string) {
+        const provider = await userRepository.findOne({
+            where: {
+                OR: [
+                    {
+                        id: providerSlug,
+                    },
+                    {
+                        slug: providerSlug,
+                    },
+                ],
+            },
+        });
+        if (!provider) {
+            throw errorService.error(
+                ERROR_MESSAGE.THIS_PROVIDER_DOES_NOT_EXISTED
+            );
+        }
+
+        const [currentBookingByProviderId, currentBookingByBookerId] =
+            await Promise.all([
+                await bookingHistoryRepository.findAllCurrentBookingByProviderId(
+                    provider.id
+                ),
+                await bookingHistoryRepository.findAllCurrentBookingByBookerId(
+                    provider.id
+                ),
+            ]);
+
+        const bookingLists = [
+            ...currentBookingByProviderId,
+            ...currentBookingByBookerId,
+        ];
+        return {
+            row: bookingLists,
+            count: bookingLists.length,
+        };
+    }
+
     async getCurrentBookingForProvider(providerId: string) {
         const bookingLists =
             await bookingHistoryRepository.findAllCurrentBookingByProviderId(
