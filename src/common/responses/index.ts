@@ -22,3 +22,4 @@ export * from "./follow";
 export * from "./kycRequest";
 export * from "./providerConfig";
 export * from "./bookingComplaint";
+export * from "./instantCard";

@@ -15,3 +15,4 @@ export * from "./kycRequest";
 export * from "./banner";
 export * from "./reportUser";
 export * from "./bookingComplaint";
+export * from "./instantCard";

@@ -38,6 +38,9 @@ import { BannerRepository } from "./common/banner.repository";
 import { FollowRepository } from "./common/follow.repository";
 import { BookingComplaintRepository } from "./common/bookingComplaint.repository";
 import { BookingComplaintResponseRepository } from "./common/bookingComplaintResponse.repository";
+import { HashTagRepository } from "./common/hashTag.repository";
+import { InstantCardHashTagRepository } from "./common/instantCardHashTag.repository";
+import { InstantCardRepository } from "./common/instantCard.repository";
 
 const bookingCostRepository = new BookingCostRepository();
 const bookingHistoryRepository = new BookingHistoryRepository();
@@ -82,7 +85,13 @@ const followRepository = new FollowRepository();
 const bookingComplaintRepository = new BookingComplaintRepository();
 const bookingComplaintResponseRepository =
     new BookingComplaintResponseRepository();
+const hashTagRepository = new HashTagRepository();
+const instantCardHashTagRepository = new InstantCardHashTagRepository();
+const instantCardRepository = new InstantCardRepository();
 export {
+    hashTagRepository,
+    instantCardHashTagRepository,
+    instantCardRepository,
     bookingCostRepository,
     bookingHistoryRepository,
     balanceHistoryRepository,

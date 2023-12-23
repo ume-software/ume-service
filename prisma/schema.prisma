@@ -55,6 +55,7 @@ model User {
   reportedUsers              ReportUser[]              @relation("ReportedUsers")
   follows                    Follow[]                  @relation("UserFollows")
   followers                  Follow[]                  @relation("UserFollowers")
+  instantCards               InstantCard[]
 
   @@map("user")
 }
@@ -727,6 +728,44 @@ model Donation {
   balanceHistories BalanceHistory[]
 
   @@map("donation")
+}
+
+model InstantCard {
+  id                 String               @id @default(uuid()) @map("id")
+  createdAt          DateTime?            @default(now()) @map("created_at")
+  updatedAt          DateTime?            @updatedAt @map("updated_at")
+  deletedAt          DateTime?            @map("deleted_at")
+  user               User                 @relation(fields: [userId], references: [id])
+  userId             String               @map("user_id")
+  content            String               @map("content")
+  gradientColors     String[]             @map("gradient_colors")
+  instantCardHashTag InstantCardHashTag[]
+
+  @@map("instant_card")
+}
+
+model InstantCardHashTag {
+  id            String      @id @default(uuid()) @map("id")
+  createdAt     DateTime?   @default(now()) @map("created_at")
+  updatedAt     DateTime?   @updatedAt @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
+  instantCard   InstantCard @relation(fields: [instantCardId], references: [id])
+  instantCardId String      @map("instant_card_id")
+  hashTag       HashTag     @relation(fields: [hashTagId], references: [id])
+  hashTagId     String      @map("hash_tag")
+
+  @@map("instant_card_hash_tag")
+}
+
+model HashTag {
+  id                 String               @id @default(uuid()) @map("id")
+  createdAt          DateTime?            @default(now()) @map("created_at")
+  updatedAt          DateTime?            @updatedAt @map("updated_at")
+  deletedAt          DateTime?            @map("deleted_at")
+  content            String?              @map("content") @db.VarChar(10)
+  instantCardHashTag InstantCardHashTag[]
+
+  @@map("hash_tag")
 }
 
 enum BalanceType {

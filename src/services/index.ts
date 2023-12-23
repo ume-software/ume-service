@@ -47,6 +47,8 @@ import { FollowService } from "./api/v1/follow.service";
 import { NodemailerService } from "./common/nodemailer.service";
 import { BookingComplaintService } from "./api/v1/bookingComplaint.service";
 import { BookingComplaintResponseService } from "./api/v1/bookingComplaintResponse.service";
+import { InstantCardService } from "./api/v1/instantCard.service";
+import { HashTagService } from "./api/v1/hashTag.service";
 
 const fileService = new FileService();
 const imageService = new ImageService();
@@ -96,7 +98,8 @@ const followService = new FollowService();
 const nodemailerService = new NodemailerService();
 const bookingComplaintService = new BookingComplaintService();
 const bookingComplaintResponseService = new BookingComplaintResponseService();
-
+const instantCardService = new InstantCardService();
+const hashTagService = new HashTagService();
 export {
     scheduleService,
     errorService,
@@ -146,4 +149,6 @@ export {
     followService,
     bookingComplaintService,
     bookingComplaintResponseService,
+    instantCardService,
+    hashTagService
 };
