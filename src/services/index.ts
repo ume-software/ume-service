@@ -34,7 +34,6 @@ import { PaymentQrSettingService } from "./api/v1/paymentQrSetting.service";
 import { QrPaymentService } from "./api/v1/qrPayment.service";
 import { GoogleService } from "./common/google.service";
 import { LoginService } from "./common/login.service";
-import { VietnamAddressService } from "./api/v1/vietnamAddress.service";
 import { VNPayService } from "./api/v1/vnpay.service";
 import { MomoService } from "./api/v1/momo.service";
 import { ServiceAttributeService } from "./api/v1/serviceAttribute.service";
@@ -84,7 +83,6 @@ const watchedPostService = new WatchedPostService();
 const noticeService = new NoticeService();
 const voucherService = new VoucherService();
 const voucherRedeemedBookingService = new VoucherRedeemedBookingService();
-const vietnamAddressService = new VietnamAddressService();
 const donationService = new DonationService();
 const vnpayService = new VNPayService();
 const momoService = new MomoService();
@@ -136,7 +134,6 @@ export {
     noticeService,
     voucherService,
     voucherRedeemedBookingService,
-    vietnamAddressService,
     donationService,
     vnpayService,
     momoService,

@@ -11,7 +11,6 @@ import {
 } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { bcryptService, utilService } from "@/services";
-import { vietnamAddress } from "./data-seed/vietnamAddress";
 import prisma from "../base.prisma";
 import { balanceSettingRepository } from "@/repositories";
 const userDefault = [
@@ -2482,44 +2481,7 @@ async function seed() {
                 }
             }
         }
-        if (!(await prisma.province.findFirst())) {
-            await prisma.province.createMany({
-                data: vietnamAddress.province.map((item) => {
-                    return {
-                        id: item.idProvince,
-                        name: item.name,
-                        enName: item.enName,
-                    };
-                }),
-                skipDuplicates: true,
-            });
-        }
-        if (!(await prisma.district.findFirst())) {
-            await prisma.district.createMany({
-                data: vietnamAddress.district.map((item) => {
-                    return {
-                        id: item.idDistrict,
-                        provinceId: item.idProvince,
-                        name: item.name,
-                        enName: item.enName,
-                    };
-                }),
-                skipDuplicates: true,
-            });
-        }
-        if (!(await prisma.commune.findFirst())) {
-            await prisma.commune.createMany({
-                data: vietnamAddress.commune.map((item) => {
-                    return {
-                        id: item.idCommune,
-                        districtId: item.idDistrict,
-                        name: item.name,
-                        enName: item.enName,
-                    };
-                }),
-                skipDuplicates: true,
-            });
-        }
+
         if (!(await prisma.admin.findFirst())) {
             return await prisma.$transaction(async (tx) => {
                 const admin = await tx.admin.create({

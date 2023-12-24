@@ -22,9 +22,6 @@ import { AdminRepository } from "./common/admin.repository";
 import { PaymentQrSettingRepository } from "./common/paymentQrSetting.repository";
 import { AdminPaymentSystemRepository } from "./common/adminPaymentSystem.repository";
 import { AdminRoleRepository } from "./common/adminRole.repository";
-import { ProvinceRepository } from "./common/province.repository";
-import { DistrictRepository } from "./common/district.repository";
-import { CommuneRepository } from "./common/commune.repository";
 import { ProviderConfigRepository } from "./common/providerConfig.repository";
 import { UserKYCRequestRepository } from "./common/userKYCRequest.repository";
 import { ServiceAttributeRepository } from "./common/serviceAttribute.repository";
@@ -66,9 +63,6 @@ const donationRepository = new DonationRepository();
 const voucherRepository = new VoucherRepository();
 const voucherRedeemedBookingRepository = new VoucherRedeemedBookingRepository();
 const paymentQrSettingRepository = new PaymentQrSettingRepository();
-const provinceRepository = new ProvinceRepository();
-const districtRepository = new DistrictRepository();
-const communeRepository = new CommuneRepository();
 const providerConfigRepository = new ProviderConfigRepository();
 const userKYCRequestRepository = new UserKYCRequestRepository();
 const serviceAttributeRepository = new ServiceAttributeRepository();
@@ -116,9 +110,6 @@ export {
     voucherRepository,
     voucherRedeemedBookingRepository,
     paymentQrSettingRepository,
-    provinceRepository,
-    districtRepository,
-    communeRepository,
     providerConfigRepository,
     userKYCRequestRepository,
     serviceAttributeRepository,
