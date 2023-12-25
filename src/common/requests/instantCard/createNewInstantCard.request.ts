@@ -26,12 +26,10 @@ export class CreateNewInstantCardRequest {
         description: "Gradient colors",
         required: true,
         example: ["#833ab4", "#fd1d1d", "#fcb045"],
-        type: SwaggerDefinitionConstant.ARRAY,
-        itemType: SwaggerDefinitionConstant.STRING,
+        type: SwaggerDefinitionConstant.STRING,
     })
-    @IsArray()
-    @IsString({ each: true })
-    gradientColors!: Array<string>;
+    @IsString()
+    gradientColors!: string;
 
     @ApiModelProperty({
         description: "Hash tags",
