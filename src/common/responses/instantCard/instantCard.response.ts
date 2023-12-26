@@ -4,6 +4,7 @@ import {
     SwaggerDefinitionConstant,
 } from "express-swagger-typescript";
 import { InstantCardHashTagResponse } from "./instantCardHashTag.response";
+import { UserInformationResponse } from "../user";
 
 @ApiModel({
     description: "Instant card response",
@@ -44,6 +45,13 @@ export class InstantCardResponse {
     userId!: string;
 
     @ApiModelProperty({
+        description: "User Info",
+        required: false,
+        model: UserInformationResponse,
+    })
+    user?: UserInformationResponse;
+
+    @ApiModelProperty({
         description: "Content",
         required: true,
         type: SwaggerDefinitionConstant.STRING,
@@ -53,11 +61,9 @@ export class InstantCardResponse {
     @ApiModelProperty({
         description: "Gradient colors",
         required: true,
-        example: ["#833ab4", "#fd1d1d", "#fcb045"],
-        type: SwaggerDefinitionConstant.ARRAY,
-        itemType: SwaggerDefinitionConstant.STRING,
+        type: SwaggerDefinitionConstant.STRING,
     })
-    gradientColors!: Array<string>;
+    gradientColors!: string;
 
     @ApiModelProperty({
         description: "Instant card hash tags",

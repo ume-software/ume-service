@@ -82,6 +82,17 @@ export class InstantCardService extends BasePrismaService<
             "where.createdAt.gte",
             new Date(new Date().getTime() - 30 * 60000)
         );
+        _.set(query, "include.user.gte", {
+            select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+                dob: true,
+                slug: true,
+                gender: true,
+                isOnline: true,
+            },
+        });
 
         return await this.repository.findAndCountAll(query);
     }
