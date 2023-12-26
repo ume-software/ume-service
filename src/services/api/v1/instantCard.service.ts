@@ -82,15 +82,25 @@ export class InstantCardService extends BasePrismaService<
             "where.createdAt.gte",
             new Date(new Date().getTime() - 30 * 60000)
         );
-        _.set(query, "include.user.gte", {
-            select: {
-                id: true,
-                name: true,
-                avatarUrl: true,
-                dob: true,
-                slug: true,
-                gender: true,
-                isOnline: true,
+        _.set(query, "include", {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                    dob: true,
+                    slug: true,
+                    gender: true,
+                    isOnline: true,
+                },
+            },
+            instantCardHashTag: {
+                include: {
+                    hashTag: true,
+                },
+                where: {
+                    deletedAt: null,
+                },
             },
         });
 

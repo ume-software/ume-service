@@ -25,7 +25,8 @@ export class CreateNewInstantCardRequest {
     @ApiModelProperty({
         description: "Gradient colors",
         required: true,
-        example: ["#833ab4", "#fd1d1d", "#fcb045"],
+        example:
+            "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%",
         type: SwaggerDefinitionConstant.STRING,
     })
     @IsString()
