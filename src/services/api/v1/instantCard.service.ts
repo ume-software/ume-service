@@ -1,6 +1,10 @@
 import { CreateNewInstantCardRequest } from "@/common/requests";
 import prisma from "@/models/base.prisma";
-import { instantCardRepository } from "@/repositories";
+import {
+    hashTagRepository,
+    instantCardHashTagRepository,
+    instantCardRepository,
+} from "@/repositories";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
@@ -18,8 +22,8 @@ export class InstantCardService extends BasePrismaService<
             const { content, gradientColors, userId } =
                 createNewInstantCardRequest;
 
-            const instantCard = await tx.instantCard.create({
-                data: {
+            const instantCard = await instantCardRepository.create(
+                {
                     content,
                     gradientColors,
                     user: {
@@ -28,23 +32,28 @@ export class InstantCardService extends BasePrismaService<
                         },
                     },
                 },
-            });
+                tx
+            );
 
             for (const hashTagForInstantCard of createNewInstantCardRequest.hashTags) {
-                let hashTag = await tx.hashTag.findFirst({
-                    where: {
-                        content: hashTagForInstantCard.trim(),
-                    },
-                });
-                if (!hashTag) {
-                    hashTag = await tx.hashTag.create({
-                        data: {
+                let hashTag = await hashTagRepository.findOne(
+                    {
+                        where: {
                             content: hashTagForInstantCard.trim(),
                         },
-                    });
+                    },
+                    tx
+                );
+                if (!hashTag) {
+                    hashTag = await hashTagRepository.create(
+                        {
+                            content: hashTagForInstantCard.trim(),
+                        },
+                        tx
+                    );
                 }
-                await tx.instantCardHashTag.create({
-                    data: {
+                await instantCardHashTagRepository.create(
+                    {
                         instantCard: {
                             connect: {
                                 id: instantCard.id,
@@ -56,24 +65,28 @@ export class InstantCardService extends BasePrismaService<
                             },
                         },
                     },
-                });
+                    tx
+                );
             }
 
-            return await tx.instantCard.findFirst({
-                where: {
-                    id: instantCard.id,
-                },
-                include: {
-                    instantCardHashTag: {
-                        include: {
-                            hashTag: true,
-                        },
-                        where: {
-                            deletedAt: null,
+            return await this.repository.findOne(
+                {
+                    where: {
+                        id: instantCard.id,
+                    },
+                    include: {
+                        instantCardHashTags: {
+                            include: {
+                                hashTag: true,
+                            },
+                            where: {
+                                deletedAt: null,
+                            },
                         },
                     },
                 },
-            });
+                tx
+            );
         });
     }
     async findAndCountAll(query: ICrudOptionPrisma) {

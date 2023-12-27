@@ -656,7 +656,7 @@ model InstantCard {
   userId             String               @map("user_id")
   content            String               @map("content")
   gradientColors     String               @map("gradient_colors")
-  instantCardHashTag InstantCardHashTag[]
+  instantCardHashTags InstantCardHashTag[]
 
   @@map("instant_card")
 }

@@ -1,13 +1,14 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { Prisma, HashTag } from "@prisma/client";
-import { BasePrismaRepository } from "../base/basePrisma.repository";
-
+import {
+    BasePrismaRepository,
+    PrismaTransaction,
+} from "../base/basePrisma.repository";
 
 export class HashTagRepository extends BasePrismaRepository {
     constructor() {
-        super()
+        super();
     }
-
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: HashTag[];
@@ -16,52 +17,82 @@ export class HashTagRepository extends BasePrismaRepository {
         const [row, count] = await this.prisma.$transaction([
             this.prisma.hashTag.findMany(query),
             this.prisma.hashTag.count({
-                where: query?.where
-            })
+                where: query?.where,
+            }),
         ]);
         return {
             row,
-            count
-        }
-
+            count,
+        };
     }
 
-    async delete(HashTagWhereInput: Prisma.HashTagWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.hashTag.deleteMany({ where: HashTagWhereInput })
+    async delete(
+        HashTagWhereInput: Prisma.HashTagWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.hashTag.deleteMany({
+            where: HashTagWhereInput,
+        });
     }
 
-    async updateById(id: string, hashTagUpdateInput: Prisma.HashTagUpdateInput) {
-        return await this.prisma.hashTag.update({ data: hashTagUpdateInput, where: { id } })
+    async updateById(
+        id: string,
+        hashTagUpdateInput: Prisma.HashTagUpdateInput,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.hashTag.update({
+            data: hashTagUpdateInput,
+            where: { id },
+        });
     }
 
-    async update(hashTagUpdateInput: Prisma.HashTagUpdateInput, query: ICrudOptionPrisma) {
-        return await this.prisma.hashTag.update({ data: hashTagUpdateInput, where: query.where })
+    async update(
+        hashTagUpdateInput: Prisma.HashTagUpdateInput,
+        query: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.hashTag.update({
+            data: hashTagUpdateInput,
+            where: query.where,
+        });
     }
 
-  
-    async create(hashTagCreateInput: Prisma.HashTagCreateInput): Promise<HashTag> {
-        return await this.prisma.$transaction(async (tx) => {
-            const hashTag = await tx.hashTag.create({ data: hashTagCreateInput })
-            return hashTag;
-        })
-
+    async create(
+        hashTagCreateInput: Prisma.HashTagCreateInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<HashTag> {
+        return await tx.hashTag.create({
+            data: hashTagCreateInput,
+        });
     }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<HashTag | null> {
-        return await this.prisma.hashTag.findFirst(query)
+    async findOne(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<HashTag | null> {
+        return await tx.hashTag.findFirst(query);
     }
 
-
-    async findMany(query?: ICrudOptionPrisma): Promise<HashTag[]> {
-        return await this.prisma.hashTag.findMany(query)
+    async findMany(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<HashTag[]> {
+        return await tx.hashTag.findMany(query);
     }
 
-    async deleteById(id: string): Promise<HashTag> {
-        return await this.prisma.hashTag.delete({ where: { id } })
+    async deleteById(
+        id: string,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<HashTag> {
+        return await tx.hashTag.delete({ where: { id } });
     }
 
-    async deleteMany(hashTagWhereInput: Prisma.HashTagWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.hashTag.deleteMany({ where: hashTagWhereInput })
+    async deleteMany(
+        hashTagWhereInput: Prisma.HashTagWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.hashTag.deleteMany({
+            where: hashTagWhereInput,
+        });
     }
-
 }

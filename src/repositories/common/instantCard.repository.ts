@@ -1,13 +1,14 @@
 import { ICrudOptionPrisma } from "@/services/base/basePrisma.service";
 import { Prisma, InstantCard } from "@prisma/client";
-import { BasePrismaRepository } from "../base/basePrisma.repository";
-
+import {
+    BasePrismaRepository,
+    PrismaTransaction,
+} from "../base/basePrisma.repository";
 
 export class InstantCardRepository extends BasePrismaRepository {
     constructor() {
-        super()
+        super();
     }
-
 
     async findAndCountAll(query?: ICrudOptionPrisma): Promise<{
         row: InstantCard[];
@@ -16,52 +17,82 @@ export class InstantCardRepository extends BasePrismaRepository {
         const [row, count] = await this.prisma.$transaction([
             this.prisma.instantCard.findMany(query),
             this.prisma.instantCard.count({
-                where: query?.where
-            })
+                where: query?.where,
+            }),
         ]);
         return {
             row,
-            count
-        }
-
+            count,
+        };
     }
 
-    async delete(InstantCardWhereInput: Prisma.InstantCardWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.instantCard.deleteMany({ where: InstantCardWhereInput })
+    async delete(
+        InstantCardWhereInput: Prisma.InstantCardWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.instantCard.deleteMany({
+            where: InstantCardWhereInput,
+        });
     }
 
-    async updateById(id: string, instantCardUpdateInput: Prisma.InstantCardUpdateInput) {
-        return await this.prisma.instantCard.update({ data: instantCardUpdateInput, where: { id } })
+    async updateById(
+        id: string,
+        instantCardUpdateInput: Prisma.InstantCardUpdateInput,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.instantCard.update({
+            data: instantCardUpdateInput,
+            where: { id },
+        });
     }
 
-    async update(instantCardUpdateInput: Prisma.InstantCardUpdateInput, query: ICrudOptionPrisma) {
-        return await this.prisma.instantCard.update({ data: instantCardUpdateInput, where: query.where })
+    async update(
+        instantCardUpdateInput: Prisma.InstantCardUpdateInput,
+        query: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ) {
+        return await tx.instantCard.update({
+            data: instantCardUpdateInput,
+            where: query.where,
+        });
     }
 
-  
-    async create(instantCardCreateInput: Prisma.InstantCardCreateInput): Promise<InstantCard> {
-        return await this.prisma.$transaction(async (tx) => {
-            const instantCard = await tx.instantCard.create({ data: instantCardCreateInput })
-            return instantCard;
-        })
-
+    async create(
+        instantCardCreateInput: Prisma.InstantCardCreateInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<InstantCard> {
+        return await tx.instantCard.create({
+            data: instantCardCreateInput,
+        });
     }
 
-    async findOne(query?: ICrudOptionPrisma): Promise<InstantCard | null> {
-        return await this.prisma.instantCard.findFirst(query)
+    async findOne(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<InstantCard | null> {
+        return await tx.instantCard.findFirst(query);
     }
 
-
-    async findMany(query?: ICrudOptionPrisma): Promise<InstantCard[]> {
-        return await this.prisma.instantCard.findMany(query)
+    async findMany(
+        query?: ICrudOptionPrisma,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<InstantCard[]> {
+        return await tx.instantCard.findMany(query);
     }
 
-    async deleteById(id: string): Promise<InstantCard> {
-        return await this.prisma.instantCard.delete({ where: { id } })
+    async deleteById(
+        id: string,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<InstantCard> {
+        return await tx.instantCard.delete({ where: { id } });
     }
 
-    async deleteMany(instantCardWhereInput: Prisma.InstantCardWhereInput): Promise<Prisma.BatchPayload> {
-        return await this.prisma.instantCard.deleteMany({ where: instantCardWhereInput })
+    async deleteMany(
+        instantCardWhereInput: Prisma.InstantCardWhereInput,
+        tx: PrismaTransaction = this.prisma
+    ): Promise<Prisma.BatchPayload> {
+        return await tx.instantCard.deleteMany({
+            where: instantCardWhereInput,
+        });
     }
-
 }
