@@ -1,16 +1,11 @@
-import { config } from "@/configs";
 import {
     BaseController,
     Request,
     Response,
 } from "@/controllers/base/base.controller";
-import prisma from "@/models/base.prisma";
-import {
-    depositRequestRepository,
-    balanceHistoryRepository,
-} from "@/repositories";
 import { vnpayService } from "@/services";
-import { DepositRequestStatus, BalanceType } from "@prisma/client";
+import { VNPayService } from "@/services/api/v1/vnpay.service";
+
 // const responseCodeTable = {
 //     "00": {
 //         vn: "Giao dịch thành công",
@@ -84,75 +79,17 @@ import { DepositRequestStatus, BalanceType } from "@prisma/client";
 export class VNPayWebhookController extends BaseController {
     constructor() {
         super();
-
+        this.service = vnpayService;
         this.path = "vnpay_webhook";
         this.customRouting();
     }
-
+    service: VNPayService;
     customRouting() {
         this.router.get("", this.route(this.vnpayWebhook));
     }
 
     async vnpayWebhook(req: Request, res: Response) {
-        let vnp_Params = req.query;
-        delete vnp_Params["vnp_SecureHash"];
-        delete vnp_Params["vnp_SecureHashType"];
-
-        vnp_Params = vnpayService.sortObject(vnp_Params);
-
-        let secretKey = config.vnpay.hashSecret;
-
-        let querystring = require("qs");
-        let signData = querystring.stringify(vnp_Params, { encode: false });
-        let crypto = require("crypto");
-        let hmac = crypto.createHmac("sha512", secretKey);
-        hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-        const vnp_TxnRef = vnp_Params["vnp_TxnRef"];
-        let depositRequest = await depositRequestRepository.findOne({
-            where: {
-                transactionCode: vnp_TxnRef,
-            },
-        });
-        console.log("vnp_Params ===> ", vnp_Params);
-        if (
-            depositRequest &&
-            [
-                DepositRequestStatus.INIT,
-                DepositRequestStatus.PENDING,
-                DepositRequestStatus.USER_NOTICES_PAID,
-            ].includes(depositRequest.status as any)
-        )
-            await prisma.$transaction(async (tx) => {
-                await balanceHistoryRepository.create(
-                    {
-                        user: {
-                            connect: {
-                                id: depositRequest?.requesterId!,
-                            },
-                        },
-                        amount: depositRequest?.amountBalance!,
-                        balanceType: BalanceType.DEPOSIT,
-                    },
-                    tx
-                );
-
-                depositRequest = await depositRequestRepository.update(
-                    {
-                        status:
-                            vnp_Params["vnp_ResponseCode"] == "00"
-                                ? DepositRequestStatus.APPROVED
-                                : DepositRequestStatus.REJECTED,
-                    },
-                    {
-                        where: {
-                            id: depositRequest?.id,
-                        },
-                    },
-                    tx
-                );
-                return depositRequest;
-            });
-
+        await this.service.handleWebhook(req);
         res.send(
             '<script>window.open("", "_blank", "");window.close();</script>'
         );

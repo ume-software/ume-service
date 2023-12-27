@@ -1,6 +1,14 @@
 import moment from "moment";
 import { config } from "@/configs";
+import prisma from "@/models/base.prisma";
+import {
+    depositRequestRepository,
+    balanceHistoryRepository,
+} from "@/repositories";
+import { vnpayService } from "@/services";
+import { DepositRequestStatus, BalanceType } from "@prisma/client";
 
+import { Request } from "@/controllers/base/base.controller";
 let querystring = require("qs");
 let crypto = require("crypto");
 interface VNPParams {
@@ -83,5 +91,64 @@ export class VNPayService {
             );
         }
         return sorted;
+    }
+    async handleWebhook(req: Request) {
+        let vnp_Params = req.query;
+        delete vnp_Params["vnp_SecureHash"];
+        delete vnp_Params["vnp_SecureHashType"];
+
+        vnp_Params = vnpayService.sortObject(vnp_Params);
+
+        let secretKey = config.vnpay.hashSecret;
+
+        let querystring = require("qs");
+        let signData = querystring.stringify(vnp_Params, { encode: false });
+        let crypto = require("crypto");
+        let hmac = crypto.createHmac("sha512", secretKey);
+        hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+        const vnp_TxnRef = vnp_Params["vnp_TxnRef"];
+        let depositRequest = await depositRequestRepository.findOne({
+            where: {
+                transactionCode: vnp_TxnRef,
+            },
+        });
+        if (
+            depositRequest &&
+            [
+                DepositRequestStatus.INIT,
+                DepositRequestStatus.PENDING,
+                DepositRequestStatus.USER_NOTICES_PAID,
+            ].includes(depositRequest.status as any)
+        )
+            await prisma.$transaction(async (tx) => {
+                await balanceHistoryRepository.create(
+                    {
+                        user: {
+                            connect: {
+                                id: depositRequest?.requesterId!,
+                            },
+                        },
+                        amount: depositRequest?.amountBalance!,
+                        balanceType: BalanceType.DEPOSIT,
+                    },
+                    tx
+                );
+
+                depositRequest = await depositRequestRepository.update(
+                    {
+                        status:
+                            vnp_Params["vnp_ResponseCode"] == "00"
+                                ? DepositRequestStatus.APPROVED
+                                : DepositRequestStatus.REJECTED,
+                    },
+                    {
+                        where: {
+                            id: depositRequest?.id,
+                        },
+                    },
+                    tx
+                );
+                return depositRequest;
+            });
     }
 }
