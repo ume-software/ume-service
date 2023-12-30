@@ -107,7 +107,7 @@ export class InstantCardService extends BasePrismaService<
                     isOnline: true,
                 },
             },
-            instantCardHashTag: {
+            instantCardHashTags: {
                 include: {
                     hashTag: true,
                 },
