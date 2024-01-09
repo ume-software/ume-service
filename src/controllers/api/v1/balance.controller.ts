@@ -41,7 +41,7 @@ export class BalanceController extends BaseController {
         this.path = "balance";
         this.customRouting();
     }
-    service: BalanceService;
+    private service: BalanceService;
 
     customRouting() {
         this.router.get(

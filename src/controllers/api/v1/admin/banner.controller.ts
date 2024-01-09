@@ -34,7 +34,7 @@ export class AdminManageBannerController extends BaseController {
         this.path = "banner";
         this.customRouting();
     }
-    service: BannerService;
+    private service: BannerService;
     customRouting() {
         this.router.get(
             "",

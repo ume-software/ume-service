@@ -55,7 +55,7 @@ export class BaseController {
         }
         return req.tokenInfo;
     }
-    onError(res: Response, error: any) {
+    private onError(res: Response, error: any) {
         // Raven.captureException(error);
         if (!error.options) {
             console.log("UNKNOW ERROR", error);

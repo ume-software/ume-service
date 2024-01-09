@@ -36,7 +36,7 @@ export class AdminManageVoucherController extends BaseController {
         this.path = "voucher";
         this.customRouting();
     }
-    service: VoucherService;
+    private service: VoucherService;
     customRouting() {
         this.router.get(
             "",

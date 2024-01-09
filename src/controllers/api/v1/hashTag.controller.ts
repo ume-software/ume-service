@@ -23,7 +23,7 @@ export class HashTagController extends BaseController {
         this.path = "hashtag";
         this.customRouting();
     }
-    service: HashTagService;
+    private service: HashTagService;
     customRouting() {
         this.router.get(
             "/top-instant-card",

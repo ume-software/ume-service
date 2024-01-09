@@ -51,7 +51,7 @@ export class ServiceController extends BaseController {
             this.route(this.getServiceAttributeByServiceSlug)
         );
     }
-    service: ServiceService;
+    private service: ServiceService;
 
     @ApiOperationGet({
         path: "",

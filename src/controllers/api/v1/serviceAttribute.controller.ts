@@ -34,7 +34,7 @@ export class ServiceAttributeController extends BaseController {
             this.route(this.getServiceAttributeValueByServiceAttributeId)
         );
     }
-    service: ServiceAttributeService;
+    private service: ServiceAttributeService;
 
     @ApiOperationGet({
         path: "/{id}/values",

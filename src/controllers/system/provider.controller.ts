@@ -1,4 +1,4 @@
-import { providerRepository, userRepository } from "@/repositories";
+import { userRepository } from "@/repositories";
 import { BaseController, Request, Response } from "../base/base.controller";
 import { errorService, providerService } from "@/services";
 import { ProviderService } from "@/services/api/v1/provider.service";
@@ -19,7 +19,7 @@ export class providerController extends BaseController {
             this.route(this.getListProviderByUserIds)
         );
     }
-    service: ProviderService;
+    private service: ProviderService;
 
     async getProviderByUserId(req: Request, res: Response) {
         const { id } = req.params;
@@ -41,7 +41,7 @@ export class providerController extends BaseController {
     }
     async getListProviderByUserIds(req: Request, res: Response) {
         const { ids } = req.body;
-        const result = await providerRepository.findAndCountAll({
+        const result = await this.service.findAndCountAll({
             where: {
                 userId: {
                     in: ids as Array<String>,

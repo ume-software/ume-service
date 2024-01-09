@@ -40,7 +40,7 @@ export class PostController extends BaseController {
         this.path = "post";
         this.customRouting();
     }
-    service: PostService;
+    private service: PostService;
 
     customRouting() {
         this.router.get(

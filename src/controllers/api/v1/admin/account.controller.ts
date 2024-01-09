@@ -29,7 +29,7 @@ export class AccountAdminController extends BaseController {
         this.path = "account";
         this.customRouting();
     }
-    service: AdminService;
+    private service: AdminService;
 
     customRouting() {
         this.router.get(

@@ -41,7 +41,7 @@ export class ProviderServiceController extends BaseController {
         this.path = "provider-service";
         this.customRouting();
     }
-    service: ProviderServiceService;
+    private service: ProviderServiceService;
 
     customRouting() {
         this.router.get(

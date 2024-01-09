@@ -760,10 +760,10 @@ enum DepositRequestStatus {
 }
 
 enum WithdrawalRequestStatus {
-  PENDING
-  CANCEL
-  REJECTED
-  COMPLETED
+    PENDING
+    CANCEL
+    REJECTED
+    COMPLETED
 }
 
 enum BalanceSettingType {

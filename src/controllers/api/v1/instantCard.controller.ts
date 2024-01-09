@@ -30,7 +30,7 @@ export class InstantCardController extends BaseController {
         this.path = "instant-card";
         this.customRouting();
     }
-    service: InstantCardService;
+    private service: InstantCardService;
     customRouting() {
         this.router.get("/", this.route(this.getAllInstantCard));
         this.router.post(

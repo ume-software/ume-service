@@ -26,7 +26,7 @@ export class BookingComplaintResponseController extends BaseController {
         this.path = "booking-complaint-response";
         this.customRouting();
     }
-    service: BookingComplaintResponseService;
+    private service: BookingComplaintResponseService;
     customRouting() {
         this.router.post(
             "",

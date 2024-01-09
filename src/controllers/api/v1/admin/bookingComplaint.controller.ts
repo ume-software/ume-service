@@ -29,7 +29,7 @@ export class AdminManageBookingComplaintController extends BaseController {
         this.path = "booking-complaint";
         this.customRouting();
     }
-    service: BookingComplaintService;
+    private service: BookingComplaintService;
     customRouting() {
         this.router.get(
             "",

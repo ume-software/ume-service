@@ -56,7 +56,7 @@ export class UserController extends BaseController {
         this.path = "user";
         this.customRouting();
     }
-    service: UserService;
+    private service: UserService;
 
     customRouting() {
         this.router.get(

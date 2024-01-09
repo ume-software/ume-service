@@ -42,7 +42,7 @@ export class AdminManageProviderController extends BaseController {
         this.path = "provider";
         this.customRouting();
     }
-    service: ProviderService;
+    private service: ProviderService;
     customRouting() {
         this.router.get(
             "/",

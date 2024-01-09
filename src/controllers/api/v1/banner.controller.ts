@@ -25,7 +25,7 @@ export class BannerController extends BaseController {
         this.path = "banner";
         this.customRouting();
     }
-    service: BannerService;
+    private service: BannerService;
     customRouting() {
         this.router.get("", this.route(this.getListBanner));
         this.router.get("/:id", this.route(this.getOneBanner));

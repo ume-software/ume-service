@@ -33,7 +33,7 @@ export class DonationController extends BaseController {
         this.path = "donation";
         this.customRouting();
     }
-    service: DonationService;
+    private service: DonationService;
     customRouting() {
         this.router.get(
             "/top-recipient",

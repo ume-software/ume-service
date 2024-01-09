@@ -12,7 +12,7 @@ export class MomoWebhookController extends BaseController {
         this.path = "momo_webhook";
         this.customRouting();
     }
-    service: MomoService;
+    private service: MomoService;
     customRouting() {
         this.router.get("", this.route(this.momoWebhook));
     }

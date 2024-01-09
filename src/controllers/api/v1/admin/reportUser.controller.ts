@@ -29,7 +29,7 @@ export class AdminManageReportUserController extends BaseController {
         this.path = "report-user";
         this.customRouting();
     }
-    service: ReportUserService;
+    private service: ReportUserService;
     customRouting() {
         this.router.get(
             "",

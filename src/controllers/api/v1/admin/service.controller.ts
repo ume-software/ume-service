@@ -57,7 +57,7 @@ export class AdminManageServiceController extends BaseController {
             this.route(this.adminUpdateServiceById)
         );
     }
-    service: ServiceService;
+    private service: ServiceService;
 
     @ApiOperationGet({
         path: "",

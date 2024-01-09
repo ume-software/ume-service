@@ -49,7 +49,7 @@ export class UserPaymentSystemController extends BaseController {
             this.route(this.deleteUserPaymentSystem)
         );
     }
-    service: UserPaymentSystemService;
+    private service: UserPaymentSystemService;
 
     @ApiOperationGet({
         path: "",

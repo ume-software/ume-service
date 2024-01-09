@@ -29,7 +29,7 @@ export class BookingComplaintController extends BaseController {
         this.path = "booking-complaint";
         this.customRouting();
     }
-    service: BookingComplaintService;
+    private service: BookingComplaintService;
     customRouting() {
         this.router.get(
             "/booker-history",

@@ -83,7 +83,7 @@ export class VNPayWebhookController extends BaseController {
         this.path = "vnpay_webhook";
         this.customRouting();
     }
-    service: VNPayService;
+    private service: VNPayService;
     customRouting() {
         this.router.get("", this.route(this.vnpayWebhook));
     }

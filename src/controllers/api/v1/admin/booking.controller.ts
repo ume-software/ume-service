@@ -28,7 +28,7 @@ export class AdminManageBookingController extends BaseController {
         this.path = "booking";
         this.customRouting();
     }
-    service: BookingService;
+    private service: BookingService;
     customRouting() {
         this.router.get(
             "/",

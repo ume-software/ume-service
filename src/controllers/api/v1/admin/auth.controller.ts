@@ -36,7 +36,7 @@ export class AdminAuthController extends BaseController {
         this.router.post("/login", this.route(this.adminLogin));
         this.router.post("/renew-token", this.route(this.adminRenewToken));
     }
-    service: AuthService;
+    private service: AuthService;
 
     @ApiOperationPost({
         path: "/login",

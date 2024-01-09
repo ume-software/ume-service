@@ -33,7 +33,7 @@ export class AdminManageStatisticController extends BaseController {
         this.path = "statistic";
         this.customRouting();
     }
-    service: StatisticService;
+    private service: StatisticService;
     customRouting() {
         this.router.get(
             "/new-user",

@@ -32,7 +32,7 @@ export class AdminManageUserKYCRequestController extends BaseController {
         this.path = "user-kyc-request";
         this.customRouting();
     }
-    service: UserService;
+    private service: UserService;
     customRouting() {
         this.router.get(
             "",

@@ -26,7 +26,7 @@ export class AdminManageDonationController extends BaseController {
         this.path = "donation";
         this.customRouting();
     }
-    service: DonationService;
+    private service: DonationService;
     customRouting() {
         this.router.get(
             "/",

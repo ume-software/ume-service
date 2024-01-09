@@ -32,7 +32,7 @@ export class AdminManageWithdrawalRequestController extends BaseController {
         this.path = "withdrawal-request";
         this.customRouting();
     }
-    service: WithdrawalRequestService;
+    private service: WithdrawalRequestService;
     customRouting() {
         this.router.get(
             "",

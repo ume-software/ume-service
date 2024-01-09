@@ -38,7 +38,7 @@ export class AuthController extends BaseController {
         this.router.post("/renew-token", this.route(this.renewToken));
         this.router.post("/login-sns", this.route(this.userLoginSns));
     }
-    service: AuthService;
+    private service: AuthService;
 
     @ApiOperationGet({
         path: "/info",

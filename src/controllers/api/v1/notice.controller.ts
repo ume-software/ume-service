@@ -39,7 +39,7 @@ export class NoticeController extends BaseController {
             this.route(this.amountNewNotice)
         );
     }
-    service: NoticeService;
+    private service: NoticeService;
 
     @ApiOperationGet({
         path: "/amount-new",

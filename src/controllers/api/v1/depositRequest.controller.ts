@@ -36,7 +36,7 @@ export class DepositRequestController extends BaseController {
         this.path = "deposit-request";
         this.customRouting();
     }
-    service: DepositRequestService;
+    private service: DepositRequestService;
 
     customRouting() {
         this.router.get(
