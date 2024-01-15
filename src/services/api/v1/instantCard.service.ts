@@ -5,10 +5,12 @@ import {
     instantCardHashTagRepository,
     instantCardRepository,
 } from "@/repositories";
+import { errorService } from "@/services";
 import {
     BasePrismaService,
     ICrudOptionPrisma,
 } from "@/services/base/basePrisma.service";
+import { ERROR_MESSAGE } from "@/services/errors/errorMessage";
 import _ from "lodash";
 
 export class InstantCardService extends BasePrismaService<
@@ -18,6 +20,17 @@ export class InstantCardService extends BasePrismaService<
         super(instantCardRepository);
     }
     async create(createNewInstantCardRequest: CreateNewInstantCardRequest) {
+        const checkInstanceCreatedWithinMinutes = await this.findOne({
+            where:{
+                userId : createNewInstantCardRequest.userId,
+                createdAt:{
+                    gte : new Date(new Date().getTime() - 30 * 60000)
+                }
+            }
+        })
+        if(checkInstanceCreatedWithinMinutes){
+            throw errorService.error(ERROR_MESSAGE.YOU_CAN_ONLY_CREATE_INSTANTS_FOR_THREE_MINUTES_AT_A_TIME)
+        }
         return await prisma.$transaction(async (tx) => {
             const { content, gradientColors, userId } =
                 createNewInstantCardRequest;

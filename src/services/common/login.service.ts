@@ -142,13 +142,13 @@ export class LoginService {
         };
     }
 
-    async generateAccessToken(
+    private async generateAccessToken(
         accessTokenPayload: IAccessToken
     ): Promise<string> {
         return await tokenService.generateToken(accessTokenPayload);
     }
 
-    async generateRefreshTokenUser(userId: string): Promise<string> {
+    private async generateRefreshTokenUser(userId: string): Promise<string> {
         const refreshTokenUser =
             await refreshTokenUserRepository.findOneByUserId(userId);
         if (refreshTokenUser) {
@@ -336,7 +336,7 @@ export class LoginService {
         };
     }
 
-    async generateRefreshTokenAdmin(adminId: string): Promise<string> {
+    private async generateRefreshTokenAdmin(adminId: string): Promise<string> {
         const refreshTokenAdmin =
             await refreshTokenAdminRepository.findOneByAdminId(adminId);
         if (refreshTokenAdmin) {

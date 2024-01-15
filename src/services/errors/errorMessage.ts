@@ -517,4 +517,12 @@ export const ERROR_MESSAGE = {
         description:
             "This error occurs when a booker tries to complaint response a booking when the time limit has expired, resulting in a 400 Bad Request status.",
     },
+    YOU_CAN_ONLY_CREATE_INSTANTS_FOR_THREE_MINUTES_AT_A_TIME: {
+        type: "booking_complaint_exception",
+        message: "You can only create instants for three minutes at a time.",
+        codeNumber: 21502,
+        statusCode: 400,
+        description:
+            "You can only create instants for three minutes at a time, resulting in a 400 Bad Request status.",
+    },
 };
