@@ -1757,7 +1757,7 @@ const servicesDefault = [
         ],
     },
     {
-        url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Terraria.png",
+        url: "https://static-oss.epal.gg/data/static/v2/img10_v2_Poke%CC%81monUnite.png",
         name: "Pokémon Unite",
         attributes: [
             {
@@ -2403,6 +2403,20 @@ async function seed() {
                 }
             }
             // Create Feedback
+        }
+        if (!(await prisma.follow.findFirst())) {
+            for (let i = 0; i < userDefault.length; i++) {
+                for (let j = 0; j < userDefault.length; j++) {
+                    if (userDefault[i]?.id != userDefault[j]?.id) {
+                        await prisma.follow.create({
+                            data: {
+                                followerId: userDefault[i]?.id!,
+                                followingId: userDefault[i]?.id!,
+                            },
+                        });
+                    }
+                }
+            }
         }
 
         if (!(await prisma.post.findFirst())) {
